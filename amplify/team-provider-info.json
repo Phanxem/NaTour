@@ -1,0 +1,25 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-natour-dev-164004-authRole",
+      "UnauthRoleArn": "arn:aws:iam::535233387769:role/amplify-natour-dev-164004-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::535233387769:role/amplify-natour-dev-164004-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-natour-dev-164004-deployment",
+      "UnauthRoleName": "amplify-natour-dev-164004-unauthRole",
+      "StackName": "amplify-natour-dev-164004",
+      "StackId": "arn:aws:cloudformation:eu-west-1:535233387769:stack/amplify-natour-dev-164004/ac1a5c60-0c27-11ed-8c02-06a9c54e0a83",
+      "AmplifyAppId": "d286gn1juxq1js"
+    },
+    "categories": {
+      "auth": {
+        "natour180e3e36": {
+          "userPoolId": "eu-west-1_tX8IgKSQQ",
+          "userPoolName": "NaTour_UserPool",
+          "webClientId": "7urpbnftq3fo8knc31i0fovobf",
+          "nativeClientId": "26bk3j99p5hagctpjleqs9e55f"
+        }
+      }
+    }
+  }
+}

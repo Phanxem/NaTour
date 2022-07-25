@@ -1,0 +1,11 @@
+{
+  "auth": {
+    "natour180e3e36": {
+      "service": "Cognito",
+      "serviceType": "imported",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  }
+}
