@@ -4,6 +4,79 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".controllers.AttivaAccountActivity">
+    tools:context=".views.activities.AttivaAccountActivity">
+
+    <TextView
+        android:id="@+id/AccountActivation_textView_completaRegistrazione"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/AttivaAccount_titolo"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/AccountActivation_constraintLayout_codice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccountActivation_textView_completaRegistrazione">
+
+        <TextView
+            android:id="@+id/AccountActivation_textView_codice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/AttivaAccount_textView_Codice"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/AccountActivation_numberField_codice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/AccountActivation_textView_codice" />
+
+        <TextView
+            android:id="@+id/AccountActivation_textView_reinviaCodice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/AttivaAccount_textView_inviaDiNuovoCodice"
+            android:textColor="@color/blue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/AccountActivation_numberField_codice" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/AccountActivation_button_conferma"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/blue"
+        android:text="@string/AttivaAccount_button_conferma"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="@+id/AccountActivation_constraintLayout_codice"
+        app:layout_constraintTop_toBottomOf="@+id/AccountActivation_constraintLayout_codice" />
+
+    <Button
+        android:id="@+id/AccountActivation_button_annulla"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/blue"
+        android:text="@string/AttivaAccount_button_annulla"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@+id/AccountActivation_constraintLayout_codice"
+        app:layout_constraintTop_toBottomOf="@+id/AccountActivation_constraintLayout_codice" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

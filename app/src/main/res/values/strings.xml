@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">NaTour</string>
+
+    <!-- UI value -->
+    <string name="SplashScreen_textView_loading">Loading...</string>
+
+    <string name="Autenticazione_titolo">Accesso</string>
+    <string name="Autenticazione_textView_usernameEmail">Username o E-mail</string>
+    <string name="Autenticazione_textView_password">Password</string>
+    <string name="Autenticazione_button_signIn">Sign-In</string>
+    <string name="Autenticazione_textView_signUp">Non hai un account? Registrati</string>
+    <string name="Autenticazione_textView_passwordRecovery">Recupera Password</string>
+
+    <string name="Registrazione_titolo">Registrazione</string>
+    <string name="Registrazione_textView_username">Username</string>
+    <string name="Registrazione_textView_password">Password</string>
+    <string name="Registrazione_textView_email">E-mail</string>
+    <string name="Registrazione_button_signUp">Sign-Up</string>
+
+    <string name="AttivaAccount_titolo">Completa la Registrazione</string>
+    <string name="AttivaAccount_textView_Codice">Inserisci il Codice di Conferma</string>
+    <string name="AttivaAccount_textView_inviaDiNuovoCodice">Invia di nuovo il codice</string>
+    <string name="AttivaAccount_button_conferma">Conferma</string>
+    <string name="AttivaAccount_button_annulla">Annulla</string>
+
+    <string name="RecuperoPassword_titolo">Recupero Password</string>
+    <string name="IniziaRecuperoPassword_textView_username">Inserisci l\'username</string>
+    <string name="IniziaRecuperoPassword_button_avanti">Avanti</string>
+    <string name="CompletaRecuperoPassword_textView_codiceDiConferma">Inserisci il Codice di Conferma</string>
+    <string name="CompletaRecuperoPassword_textView_nuovaPassword1">Inserisci la Nuova Password</string>
+    <string name="CompletaRecuperoPassword_textView_nuovaPassword2">Reinserisci la Nuova Password</string>
+    <string name="CompletaRecuperoPassword_button_conferma">Conferma</string>
+
+
 </resources>

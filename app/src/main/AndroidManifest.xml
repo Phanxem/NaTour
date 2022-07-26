@@ -11,16 +11,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NaTour">
         <activity
-            android:name=".controllers.AutenticazioneActivity"
+            android:name=".views.activities.CompletaRecuperoPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".controllers.AttivaAccountActivity"
+            android:name=".views.activities.IniziaRecuperoPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".controllers.HomeActivity"
+            android:name=".views.activities.AutenticazioneActivity"
             android:exported="false" />
         <activity
-            android:name=".controllers.SplashScreenActivity"
+            android:name=".views.activities.AttivaAccountActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.activities.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.activities.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
