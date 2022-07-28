@@ -18,9 +18,13 @@ public class RecuperoPasswordController {
     Activity activity;
     MessageDialog messageDialog;
 
+    AutenticazioneController autenticazioneController;
+
     public RecuperoPasswordController(Activity activity){
         this.activity = activity;
         this.messageDialog = new MessageDialog(activity);
+
+        this.autenticazioneController = new AutenticazioneController(activity);
     }
 
     @SuppressLint("LongLogTag")
@@ -53,6 +57,8 @@ public class RecuperoPasswordController {
                 code,
                 () -> {
                     Log.i(TAG, "New password confirmed");
+                    autenticazioneController.openAutenticazioneActivity();
+
                 },
                 error ->{
                     Log.e(TAG, error.toString());

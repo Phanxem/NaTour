@@ -45,7 +45,9 @@ public class AttivaAccountController {
         this.username = intent.getStringExtra(EXTRA_USERNAME);
         this.password = intent.getStringExtra(EXTRA_PASSWORD);
 
+    }
 
+    public void initAccountActivation(){
         String packageName = activity.getApplicationContext().getPackageName();
         SharedPreferences sharedPreferences = activity.getSharedPreferences(packageName,Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
@@ -56,7 +58,6 @@ public class AttivaAccountController {
         sharedPreferencesEditor.commit();
     }
 
-
     public void activeAccount(String code){
 
         ExceptionHandler.isThereAnEmptyField(messageDialog,code);
@@ -65,7 +66,7 @@ public class AttivaAccountController {
                 username,
                 code,
                 confirmSignUpResult -> {
-                    Log.i("TEST", "Confirm signUp succeeded");
+                    Log.i(TAG, "Confirm signUp succeeded");
 
                     String packageName = activity.getApplicationContext().getPackageName();
                     SharedPreferences sharedPreferences = activity.getSharedPreferences(packageName,Context.MODE_PRIVATE);
@@ -125,6 +126,7 @@ public class AttivaAccountController {
 
     public void openAttivaAccountActivity(String username, String password){
         if( !(activity instanceof RegistrazioneActivity) ){
+            Log.i(TAG, "open not from RegistrazioneActivity");
             Intent intentAutenticazioneActivity = new Intent(activity, AutenticazioneActivity.class);
             intentAutenticazioneActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             activity.startActivity(intentAutenticazioneActivity);

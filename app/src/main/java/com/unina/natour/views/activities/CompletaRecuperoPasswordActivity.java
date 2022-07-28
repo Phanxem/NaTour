@@ -23,6 +23,9 @@ public class CompletaRecuperoPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_completa_recupero_password);
 
         recuperoPasswordController = new RecuperoPasswordController(this);
+
+        pressButtonComplete();
+        pressIconBack();
     }
 
 
@@ -35,10 +38,10 @@ public class CompletaRecuperoPasswordActivity extends AppCompatActivity {
                 String code = String.valueOf(textField_code.getText());
 
                 EditText textField_password1 = findViewById(R.id.CompletaRecuperoPassword_editPassword_password1);
-                String password1 = String.valueOf(textField_code.getText());
+                String password1 = String.valueOf(textField_password1.getText());
 
                 EditText textField_password2 = findViewById(R.id.CompletaRecuperoPassword_editPassword_password2);
-                String password2 = String.valueOf(textField_code.getText());
+                String password2 = String.valueOf(textField_password2.getText());
 
                 recuperoPasswordController.completePasswordRecovery(code,password1,password2);
             }
@@ -47,7 +50,7 @@ public class CompletaRecuperoPasswordActivity extends AppCompatActivity {
 
 
     public void pressIconBack(){
-        ImageView icon_back = findViewById(R.id.StartPasswordRecovery_imageView_iconaIndietro);
+        ImageView icon_back = findViewById(R.id.CompletaRecuperoPassword_imageView_iconaIndietro);
         icon_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

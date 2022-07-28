@@ -20,6 +20,9 @@
             android:name=".views.activities.AutenticazioneActivity"
             android:exported="false" />
         <activity
+            android:name=".views.activities.RegistrazioneActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.activities.AttivaAccountActivity"
             android:exported="false" />
         <activity

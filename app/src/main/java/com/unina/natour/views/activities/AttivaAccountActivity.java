@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.AttivaAccountController;
@@ -23,6 +24,8 @@ public class AttivaAccountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_attiva_account);
 
         attivaAccountController = new AttivaAccountController(this);
+
+        attivaAccountController.initAccountActivation();
 
         pressButtonConfirm();
         pressButtonCancel();
@@ -53,8 +56,8 @@ public class AttivaAccountActivity extends AppCompatActivity {
     }
 
     public void pressTextResendCode(){
-        Button button_cancel = findViewById(R.id.AccountActivation_button_annulla);
-        button_cancel.setOnClickListener(new View.OnClickListener() {
+        TextView textView_resend = findViewById(R.id.AccountActivation_textView_reinviaCodice);
+        textView_resend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 attivaAccountController.resendCode();

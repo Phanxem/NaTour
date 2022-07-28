@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,10 +23,13 @@ public class RegistrazioneActivity extends AppCompatActivity {
         setContentView(R.layout.activity_registrazione);
 
         registrazioneController = new RegistrazioneController(this);
+
+        pressButtonSignUp();
+        pressIconBack();
     }
 
-    public void pressButtonSignUp(View view) {
-        Button button_signUp = findViewById(R.id.SignIn_button_signIn);
+    public void pressButtonSignUp() {
+        Button button_signUp = findViewById(R.id.SignUp_button_signUp);
         button_signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,8 +48,16 @@ public class RegistrazioneActivity extends AppCompatActivity {
         });
     }
 
-    public void pressIconBack(View view) {
-        registrazioneController.back();
+
+
+    public void pressIconBack() {
+        ImageView icon_back = findViewById(R.id.SignUp_imageView_iconaIndietro);
+        icon_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                registrazioneController.back();
+            }
+        });
     }
 
 
