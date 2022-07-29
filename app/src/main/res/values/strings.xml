@@ -31,5 +31,9 @@
     <string name="CompletaRecuperoPassword_textView_nuovaPassword2">Reinserisci la Nuova Password</string>
     <string name="CompletaRecuperoPassword_button_conferma">Conferma</string>
 
+    <string name="PersonalizzaAccountImmagineProfilo_textView_impostaImmagine">Imposta una nuova immagine del profilo</string>
+    <string name="button_next">Avanti</string>
+    <string name="PersonalizzaAccount_titolo">Personalizza Account</string>
+
 
 </resources>

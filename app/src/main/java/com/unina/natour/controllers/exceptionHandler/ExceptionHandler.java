@@ -6,6 +6,7 @@ import com.amplifyframework.auth.AuthException;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +53,15 @@ public class ExceptionHandler {
                 break;
             }
         }
+
+        messageDialog.showOverUi();
+    }
+
+    public static void handleMessageError(MessageDialog messageDialog, IOException error){
+        String errorMessage = error.getCause().getMessage();
+        messageDialog.setMessage(ERROR_MESSAGE_UNKNOWN);
+
+        Log.e("ERROR_MESSAGE:", errorMessage );
 
         messageDialog.showOverUi();
     }
