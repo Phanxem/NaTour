@@ -1,4 +1,4 @@
-package com.unina.natour.configs;
+package com.unina.natour.amplify;
 
 import android.app.Application;
 import android.util.Log;

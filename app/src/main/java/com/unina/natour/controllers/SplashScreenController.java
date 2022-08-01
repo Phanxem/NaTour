@@ -1,18 +1,15 @@
 package com.unina.natour.controllers;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
+import com.amplifyframework.auth.cognito.AWSCognitoUserPoolTokens;
+import com.amplifyframework.auth.result.AuthSessionResult;
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
-import com.unina.natour.views.activities.AttivaAccountActivity;
-import com.unina.natour.views.activities.AutenticazioneActivity;
-import com.unina.natour.views.activities.HomeActivity;
-import com.unina.natour.views.activities.RegistrazioneActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 public class SplashScreenController {
@@ -38,6 +35,15 @@ public class SplashScreenController {
     public void redirectToRightActivity(){
         Amplify.Auth.fetchAuthSession(
                 result -> {
+
+                    AWSCognitoAuthSession cognitoAuthSession = (AWSCognitoAuthSession) result;
+
+                    AuthSessionResult<AWSCognitoUserPoolTokens> authSessionResult = cognitoAuthSession.getUserPoolTokens();
+                    AWSCognitoUserPoolTokens awsCognitoUserPoolTokens = authSessionResult.getValue();
+
+                    if(awsCognitoUserPoolTokens == null) Log.i(TAG, "NULL");
+                    else Log.i(TAG, "accessToken: " + awsCognitoUserPoolTokens.getAccessToken());
+
                     Log.i(TAG, result.toString());
                     if(result.isSignedIn()){
                         homeController.openHomeActivity();

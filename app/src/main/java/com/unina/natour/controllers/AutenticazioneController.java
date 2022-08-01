@@ -2,14 +2,13 @@ package com.unina.natour.controllers;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.views.activities.AutenticazioneActivity;
-import com.unina.natour.views.activities.HomeActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 public class AutenticazioneController {
@@ -32,7 +31,6 @@ public class AutenticazioneController {
         if(!ExceptionHandler.isThereAnEmptyField(messageDialog,usernameEmail,password)) return;
 
         effectiveSignIn(usernameEmail,password);
-
     }
 
     @SuppressLint("LongLogTag")

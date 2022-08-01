@@ -1,7 +1,5 @@
 package com.unina.natour.controllers;
 
-import static android.content.ContentValues.TAG;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,12 +7,24 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AnonymousAWSCredentials;
+import com.amazonaws.services.cognitoidentity.model.CognitoIdentityProvider;
+import com.amazonaws.services.cognitoidentityprovider.AmazonCognitoIdentityProvider;
+
+import com.amazonaws.services.cognitoidentityprovider.AmazonCognitoIdentityProviderClient;
+import com.amazonaws.services.cognitoidentityprovider.model.AdminDeleteUserRequest;
 import com.amplifyframework.core.Amplify;
+
+import com.unina.natour.amplify.AmplifyUtils;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.views.activities.AttivaAccountActivity;
 import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.activities.RegistrazioneActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
+
+
 
 public class AttivaAccountController {
 
@@ -86,6 +96,34 @@ public class AttivaAccountController {
     }
 
     public void cancelAccountActivation(){
+
+
+        /*
+        AmplifyUtils amplifyUtils = new AmplifyUtils(activity);
+        AmazonCognitoIdentityProviderClient cognitoIdentityProviderClient = new AmazonCognitoIdentityProviderClient();
+
+        cognitoIdentityProviderClient.setRegion(amplifyUtils.getRegion());
+
+        AdminDeleteUserRequest adminDeleteUserRequest = new AdminDeleteUserRequest();
+        adminDeleteUserRequest.setUsername(username);
+        adminDeleteUserRequest.setUserPoolId(amplifyUtils.getPoolId());
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                cognitoIdentityProviderClient.adminDeleteUser(adminDeleteUserRequest);
+                Log.i(TAG, "Account deleted");
+            }
+        });
+
+        thread.start();
+
+*/
+
+
+
+        //---
+
         String packageName = activity.getApplicationContext().getPackageName();
         SharedPreferences sharedPreferences = activity.getSharedPreferences(packageName,Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();

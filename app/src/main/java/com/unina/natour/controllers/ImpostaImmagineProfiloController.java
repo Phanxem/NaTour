@@ -12,31 +12,38 @@ import android.util.Log;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.dto.MessageDTO;
+import com.unina.natour.models.dao.classes.UserDAOImpl;
+import com.unina.natour.models.dao.interfaces.UserDAO;
+import com.unina.natour.views.activities.PersonalizzaAccountImmagineActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.io.IOException;
 
-public class ModificaProfiloController {
+public class ImpostaImmagineProfiloController {
 
-    private final static String TAG ="ModificaProfiloController";
+    private final static String TAG ="ImpostaImmagineProfiloController";
 
     public final static int REQUEST_CODE = 01;
 
     Activity activity;
     MessageDialog messageDialog;
 
-    private Uri imageUri;
+    private Bitmap profileImage;
 
-    public ModificaProfiloController(Activity activity){
+    private UserDAO userDAO;
+
+    public ImpostaImmagineProfiloController(Activity activity){
         this.activity = activity;
         this.messageDialog = new MessageDialog(activity);
+
+        this.userDAO = new UserDAOImpl(activity);
     }
 
-    public Uri getProfileImage(ActivityResult result){
+    public Bitmap getProfileImage(ActivityResult result){
 
         if (result == null) {
             //TODO ERROR
@@ -56,26 +63,32 @@ public class ModificaProfiloController {
 
         Uri uri = result.getData().getData();
 
-        if(uri != null) this.imageUri = uri;
+        if(uri == null){
+            //TODO ERROR
+            return null;
+        }
 
-        return uri;
+        ImageDecoder.Source source = ImageDecoder.createSource(activity.getContentResolver(), uri);
+        Bitmap bitmap = null;
+        try {
+            bitmap = ImageDecoder.decodeBitmap(source);
+            this.profileImage = bitmap;
+        } catch (IOException e) {
+            ExceptionHandler.handleMessageError(messageDialog,e);
+        }
+
+        return bitmap;
     }
 
-    public void setProfileImage(){
-        if(imageUri == null){
+    public void modificaImmagineProfilo(){
+        if(profileImage == null){
             return;
         }
 
-        ImageDecoder.Source source = ImageDecoder.createSource(activity.getContentResolver(), imageUri);
+        MessageDTO result = userDAO.updateProfileImage(profileImage);
+        if(result != null) Log.i(TAG, "immagine impostata");
+        else Log.e(TAG, "ERRORE");
 
-        try {
-            Bitmap bitmap = ImageDecoder.decodeBitmap(source);
-            //POST request al server con il bitmap come argomento
-            Log.i(TAG, "immagine impostata");
-        }
-        catch (IOException e) {
-            ExceptionHandler.handleMessageError(messageDialog,e);
-        }
     }
 
     public void openGallery(ActivityResultLauncher<Intent> startForResult){
@@ -89,5 +102,13 @@ public class ModificaProfiloController {
         intent.setType("image/*");
         startForResult.launch(intent);
     }
+
+
+    public void openPersonalizzaAccountImmagineActivity(){
+        Intent intent = new Intent(activity, PersonalizzaAccountImmagineActivity.class);
+        activity.startActivity(intent);
+        activity.finish();
+    }
+
 
 }

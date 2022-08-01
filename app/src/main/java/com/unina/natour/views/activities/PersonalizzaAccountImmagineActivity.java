@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,28 +18,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.unina.natour.R;
-import com.unina.natour.controllers.ModificaProfiloController;
+import com.unina.natour.controllers.ImpostaImmagineProfiloController;
 
-public class PersonalizzaAccountImmagineProfiloActivity extends AppCompatActivity {
+public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
 
-    private final static String TAG ="PersonalizzaAccountActivity";
+    private final static String TAG ="PersonalizzaAccountImmagineActivity";
 
-    private ModificaProfiloController modificaProfiloController;
+    private ImpostaImmagineProfiloController impostaImmagineProfiloController;
 
     private ActivityResultLauncher<Intent> startForResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_personalizza_account_immagine_profilo);
+        setContentView(R.layout.activity_personalizza_account_immagine);
 
-        modificaProfiloController = new ModificaProfiloController(this);
+        impostaImmagineProfiloController = new ImpostaImmagineProfiloController(this);
         startForResult = startForResult();
 
         pressTextSetProfileImage();
         pressButtonNext();
     }
-
 
     public ActivityResultLauncher<Intent> startForResult(){
         ImageView imageView_profileImage = findViewById(R.id.PersonalizzaAccount_imageView_immagine);
@@ -49,20 +48,22 @@ public class PersonalizzaAccountImmagineProfiloActivity extends AppCompatActivit
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        Uri uri = modificaProfiloController.getProfileImage(result);
-                        imageView_profileImage.setImageURI(uri);
+                        Bitmap bitmap = impostaImmagineProfiloController.getProfileImage(result);
+                        imageView_profileImage.setImageBitmap(bitmap);
                     }
                 }
         );
         return startForResult;
     }
 
+
+
     public void pressTextSetProfileImage(){
         TextView textView_setProfileImage = findViewById(R.id.PersonalizzaAccount_textView_selezionaImmagine);
         textView_setProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                modificaProfiloController.openGallery(startForResult);
+                impostaImmagineProfiloController.openGallery(startForResult);
             }
         });
     }
@@ -72,7 +73,10 @@ public class PersonalizzaAccountImmagineProfiloActivity extends AppCompatActivit
         button_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                modificaProfiloController.setProfileImage();
+                impostaImmagineProfiloController.modificaImmagineProfilo();
+
+                //open ACTIVIRY
+
             }
         });
     }
@@ -82,11 +86,11 @@ public class PersonalizzaAccountImmagineProfiloActivity extends AppCompatActivit
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == ModificaProfiloController.REQUEST_CODE) {
+        if (requestCode == ImpostaImmagineProfiloController.REQUEST_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.i(TAG , "Calling Permission is granted");
 
-                modificaProfiloController.openGallery(startForResult);
+                impostaImmagineProfiloController.openGallery(startForResult);
             }
             else {
                 //TODO ERRORE

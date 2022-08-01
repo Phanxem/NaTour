@@ -32,8 +32,13 @@
     <string name="CompletaRecuperoPassword_button_conferma">Conferma</string>
 
     <string name="PersonalizzaAccountImmagineProfilo_textView_impostaImmagine">Imposta una nuova immagine del profilo</string>
-    <string name="button_next">Avanti</string>
     <string name="PersonalizzaAccount_titolo">Personalizza Account</string>
 
+
+
+
+    <string name="button_next">Avanti</string>
+    <string name="PersonalizzaAccount_textView_luogoDiResidenza">Luogo di Residenza</string>
+    <string name="PersonalizzaAccount_textView_dataDiNascita">Data di Nascita</string>
 
 </resources>
