@@ -87,7 +87,9 @@ public class AttivaAccountController {
                     sharedPreferencesEditor.remove(SHARED_PREFERENCES_PASSWORD);
                     sharedPreferencesEditor.commit();
 
-                    autenticazioneController.effectiveSignIn(username,password);
+                    autenticazioneController.effectiveSignIn(username,password,true);
+
+
                 },
                 error -> {
                     ExceptionHandler.handleMessageError(messageDialog, error);

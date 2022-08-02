@@ -1,5 +1,16 @@
 package com.unina.natour.views.activities;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -7,24 +18,16 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.unina.natour.R;
 import com.unina.natour.controllers.ImpostaImmagineProfiloController;
+import com.unina.natour.controllers.*;
 
 public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
 
     private final static String TAG ="PersonalizzaAccountImmagineActivity";
 
     private ImpostaImmagineProfiloController impostaImmagineProfiloController;
+    private ImpostaInfoOpzionaliProfiloController impostaInfoOpzionaliProfiloController;
 
     private ActivityResultLauncher<Intent> startForResult;
 
@@ -34,12 +37,26 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_personalizza_account_immagine);
 
         impostaImmagineProfiloController = new ImpostaImmagineProfiloController(this);
-        startForResult = startForResult();
+        impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(this);
+
+        ImageView imageView_profileImage = findViewById(R.id.PersonalizzaAccount_imageView_immagine);
+
+        startForResult = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        Bitmap bitmap = impostaImmagineProfiloController.getProfileImage(result);
+                        imageView_profileImage.setImageBitmap(bitmap);
+                    }
+                }
+        );
 
         pressTextSetProfileImage();
         pressButtonNext();
     }
 
+    /*
     public ActivityResultLauncher<Intent> startForResult(){
         ImageView imageView_profileImage = findViewById(R.id.PersonalizzaAccount_imageView_immagine);
 
@@ -55,9 +72,7 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
         );
         return startForResult;
     }
-
-
-
+*/
     public void pressTextSetProfileImage(){
         TextView textView_setProfileImage = findViewById(R.id.PersonalizzaAccount_textView_selezionaImmagine);
         textView_setProfileImage.setOnClickListener(new View.OnClickListener() {
@@ -75,8 +90,7 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
             public void onClick(View v) {
                 impostaImmagineProfiloController.modificaImmagineProfilo();
 
-                //open ACTIVIRY
-
+                impostaInfoOpzionaliProfiloController.openPersonalizzaAccountInfoOpzionaliActivity();
             }
         });
     }

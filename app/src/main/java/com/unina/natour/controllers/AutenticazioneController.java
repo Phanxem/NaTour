@@ -19,28 +19,31 @@ public class AutenticazioneController {
     MessageDialog messageDialog;
 
     HomeController homeController;
+    ImpostaImmagineProfiloController impostaImmagineProfiloController;
 
     public AutenticazioneController(Activity activity){
         this.activity = activity;
         this.messageDialog = new MessageDialog(activity);
         this.homeController = new HomeController(activity);
+        this.impostaImmagineProfiloController = new ImpostaImmagineProfiloController(activity);
     }
 
     public void signIn(String usernameEmail, String password) {
 
         if(!ExceptionHandler.isThereAnEmptyField(messageDialog,usernameEmail,password)) return;
 
-        effectiveSignIn(usernameEmail,password);
+        effectiveSignIn(usernameEmail,password, false);
     }
 
     @SuppressLint("LongLogTag")
-    public void effectiveSignIn(String usernameEmail, String password){
+    public void effectiveSignIn(String usernameEmail, String password, boolean isFirstSignIn){
         Amplify.Auth.signIn(
                 usernameEmail,
                 password,
                 result -> {
                     Log.i(TAG, "Confirm signIn succeeded");
-                    homeController.openHomeActivity();
+                    if(isFirstSignIn) impostaImmagineProfiloController.openPersonalizzaAccountImmagineActivity();
+                    else homeController.openHomeActivity();
                 },
                 error -> {
                     ExceptionHandler.handleMessageError(messageDialog, error);

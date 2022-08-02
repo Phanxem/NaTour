@@ -18,28 +18,8 @@ public class JsonConverter {
 
     private static final String TAG = "ASF";
 
-    public static File toFile(Bitmap bitmap){
-        //Convert bitmap to byte array
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0, byteArrayOutputStream);
-        byte[] byteArrayBitmap = byteArrayOutputStream.toByteArray();
 
-        File file = new File ("image.png");
-
-
-        try {
-            FileUtils.writeByteArrayToFile(file,byteArrayBitmap);
-        } catch (IOException e) {
-            Log.e(TAG, "error");
-            e.printStackTrace();
-        }
-
-
-        return file;
-
-    }
-
-    public static File toFile2(Context context, Bitmap bitmap){
+    public static File toFile(Context context, Bitmap bitmap){
         //create a file to write bitmap data
         File f = new File(context.getCacheDir(), "bitmap.png");
         final boolean newFile;
@@ -68,6 +48,7 @@ public class JsonConverter {
 
         return f;
     }
+
 
     public static MessageDTO toMessageDTO(JsonObject jsonObjectResult) {
 

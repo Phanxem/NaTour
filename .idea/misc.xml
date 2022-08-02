@@ -3,14 +3,20 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/drawable-anydpi/ic_account.xml" value="0.290625" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/drawable-anydpi/ic_community.xml" value="0.290625" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/drawable-anydpi/ic_generic_account.xml" value="0.15989583333333332" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/drawable-anydpi/ic_home.xml" value="0.290625" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/drawable-anydpi/ic_planning.xml" value="0.290625" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/drawable-hdpi/effect_ripple.xml" value="0.15989583333333332" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/drawable-hdpi/layout_border.xml" value="0.15989583333333332" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/drawable/empty_tall_divider.xml" value="0.290625" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_attiva_account.xml" value="0.4" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_autenticazione.xml" value="0.264" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_completa_recupero_password.xml" value="0.2" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_home.xml" value="0.264" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_inizia_recupero_password.xml" value="0.264" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_personalizza_account_immagine.xml" value="0.264" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_personalizza_account_immagine_profilo.xml" value="0.264" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_personalizza_account_info_opzionali.xml" value="0.264" />
@@ -18,6 +24,11 @@
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_registrazione.xml" value="0.4" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_splash_screen.xml" value="0.13645833333333332" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/dialog_message.xml" value="0.25317028985507245" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_community.xml" value="0.20425724637681159" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_home.xml" value="0.20425724637681159" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_pianifica.xml" value="0.20425724637681159" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_profilo.xml" value="0.20425724637681159" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/menu/bottom_menu.xml" value="0.27447916666666666" />
       </map>
     </option>
   </component>

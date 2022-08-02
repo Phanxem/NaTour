@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/bottomMenu_home"
+        android:title="Home"
+        android:icon="@drawable/ic_home" />
+    <item android:id="@+id/bottomMenu_profilo"
+        android:title="Profilo"
+        android:icon="@drawable/ic_account" />
+    <item android:id="@+id/bottomMenu_pianifica"
+        android:title="Pianifica"
+        android:icon="@drawable/ic_planning"/>
+    <item android:id="@+id/bottomMenu_community"
+        android:title="Community"
+        android:icon="@drawable/ic_community" />
+</menu>

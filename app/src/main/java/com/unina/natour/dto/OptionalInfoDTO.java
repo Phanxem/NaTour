@@ -5,11 +5,11 @@ import java.util.Date;
 public class OptionalInfoDTO {
 
     private String placeOfResidence;
-    private Date dateOfBirth;
+    private String dateOfBirth;
 
     public OptionalInfoDTO(){};
 
-    public OptionalInfoDTO(String placeOfResidence, Date dateOfBirth) {
+    public OptionalInfoDTO(String placeOfResidence, String dateOfBirth) {
         this.placeOfResidence = placeOfResidence;
         this.dateOfBirth = dateOfBirth;
 
@@ -21,12 +21,12 @@ public class OptionalInfoDTO {
     public void setPlaceOfResidence(String placeOfResidence) {
         this.placeOfResidence = placeOfResidence;
     }
-    public Date getDateOfBirth() {
+
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
-    public void setDateOfBirth(Date dateOfBirth) {
+
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
-
-
 }

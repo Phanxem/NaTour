@@ -35,10 +35,10 @@
     <string name="PersonalizzaAccount_titolo">Personalizza Account</string>
 
 
-
-
     <string name="button_next">Avanti</string>
     <string name="PersonalizzaAccount_textView_luogoDiResidenza">Luogo di Residenza</string>
     <string name="PersonalizzaAccount_textView_dataDiNascita">Data di Nascita</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

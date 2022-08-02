@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
+import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -28,6 +29,9 @@ public class ImpostaImmagineProfiloController {
     private final static String TAG ="ImpostaImmagineProfiloController";
 
     public final static int REQUEST_CODE = 01;
+
+    public final static int MIN_HEIGHT = 300;
+    public final static int MIN_WIDTH = 300;
 
     Activity activity;
     MessageDialog messageDialog;
@@ -85,11 +89,37 @@ public class ImpostaImmagineProfiloController {
             return;
         }
 
-        MessageDTO result = userDAO.updateProfileImage(profileImage);
+        if(!isValid(profileImage)){
+            Log.e(TAG, "immagein non valida");
+            return;
+        }
+
+        Bitmap resizedProfileImage = resizeBitmap(profileImage, MIN_WIDTH);
+
+        MessageDTO result = userDAO.updateProfileImage(resizedProfileImage);
         if(result != null) Log.i(TAG, "immagine impostata");
         else Log.e(TAG, "ERRORE");
 
     }
+
+
+    public Bitmap resizeBitmap(Bitmap image, int minSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            height = minSize;
+            width = (int) (height * bitmapRatio);
+
+        } else {
+            width = minSize;
+            height = (int) (width / bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+
 
     public void openGallery(ActivityResultLauncher<Intent> startForResult){
         if(ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
@@ -108,6 +138,19 @@ public class ImpostaImmagineProfiloController {
         Intent intent = new Intent(activity, PersonalizzaAccountImmagineActivity.class);
         activity.startActivity(intent);
         activity.finish();
+    }
+
+
+    //VALIDATORs---------------
+
+    public boolean isValid(Bitmap bitmap){
+
+        if( profileImage != null && (bitmap.getWidth() < MIN_WIDTH || bitmap.getHeight() < MIN_HEIGHT) ){
+            //TODO ERRORE
+            return false;
+        }
+
+        return true;
     }
 
 

@@ -24,6 +24,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity extends AppCompatActivity 
 
     private ImpostaInfoOpzionaliProfiloController impostaInfoOpzionaliProfiloController;
 
+
     private DatePickerDialog datePickerDialog;
 
     @Override
@@ -33,8 +34,10 @@ public class PersonalizzaAccountInfoOpzionaliActivity extends AppCompatActivity 
 
         impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(this);
 
+
         initDatePicker();
         pressButtonDate();
+        pressButtonNext();
     }
 
     private void initDatePicker() {
@@ -83,6 +86,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity extends AppCompatActivity 
                 String luogoDiResidenza = String.valueOf(editText_luogoDiResidenza.getText());
 
                 impostaInfoOpzionaliProfiloController.modificaInfoOpzionali(luogoDiResidenza);
+
             }
         });
     }
