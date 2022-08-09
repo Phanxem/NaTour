@@ -12,7 +12,7 @@ import com.unina.natour.R;
 import com.unina.natour.views.fragments.CommunityFragment;
 import com.unina.natour.views.fragments.HomeFragment;
 import com.unina.natour.views.fragments.PianificaFragment;
-import com.unina.natour.views.fragments.ProfiloFragment;
+import com.unina.natour.views.fragments.ProfiloPersonaleFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         HomeFragment homeFragment = new HomeFragment();
-        ProfiloFragment profiloFragment = new ProfiloFragment();
+        ProfiloPersonaleFragment profiloFragment = new ProfiloPersonaleFragment();
         PianificaFragment pianificaFragment = new PianificaFragment();
         CommunityFragment communityFragment = new CommunityFragment();
 

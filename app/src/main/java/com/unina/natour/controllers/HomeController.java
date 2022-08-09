@@ -23,9 +23,13 @@ public class HomeController {
     Activity activity;
     MessageDialog messageDialog;
 
+    String searchString;
+
     public HomeController(Activity activity){
         this.activity = activity;
         this.messageDialog = new MessageDialog(activity);
+
+        this.searchString = null;
     }
 
     public void openHomeActivity(){
@@ -33,6 +37,11 @@ public class HomeController {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         activity.startActivity(intent);
     }
+
+
+
+
+
 
     public void g(){
         Resources resources = activity.getResources();

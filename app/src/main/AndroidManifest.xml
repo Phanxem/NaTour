@@ -20,16 +20,22 @@
         android:theme="@style/Theme.NaTour"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".views.activities.ModificaPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.activities.ModificaProfiloActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.activities.PersonalizzaAccountImmagineActivity"
             android:exported="false" />
         <activity
-            android:name=".views.activities.SplashScreenActivity"
+            android:name=".views.activities.MainActivity"
             android:exported="false" />
         <activity
             android:name=".views.activities.ProfiloPersonaleActivity"
             android:exported="false" />
         <activity
-            android:name=".views.activities.PersonalizzaAccountInfoOpzionaliActivity"
+            android:name=".views.activities.SplashScreenActivity"
             android:exported="false" />
         <activity
             android:name=".views.activities.CompletaRecuperoPasswordActivity"
@@ -50,7 +56,7 @@
             android:name=".views.activities.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".views.activities.MainActivity"
+            android:name=".views.activities.PersonalizzaAccountInfoOpzionaliActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

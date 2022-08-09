@@ -1,11 +1,15 @@
-package com.unina.natour.dto;
+package com.unina.natour.models;
+
+import android.graphics.Bitmap;
 
 import java.util.Date;
 
-public class UserDTO {
+public class ProfiloPersonaleModel {
 
     private Long id;
     private String username;
+    private String email;
+    private Bitmap profileImage;
     private String placeOfResidence;
     private String dateOfBirth;
 
@@ -23,6 +27,22 @@ public class UserDTO {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Bitmap getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(Bitmap profileImage) {
+        this.profileImage = profileImage;
     }
 
     public String getPlaceOfResidence() {

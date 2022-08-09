@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout   xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/SelectString_textView_titolo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Seleziona la nazione di residenza"
+        android:textSize="24sp" />
+
+    <ListView
+        android:id="@+id/SelectString_listView_lista"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        app:layout_constraintVertical_bias="1.0" />
+</LinearLayout >

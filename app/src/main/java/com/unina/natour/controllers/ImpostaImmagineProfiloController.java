@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
-import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -16,11 +15,15 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.core.app.ActivityCompat;
 
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.exceptionHandler.clientException.ClientException;
 import com.unina.natour.dto.MessageDTO;
 import com.unina.natour.models.dao.classes.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.PersonalizzaAccountImmagineActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
+
+import com.unina.natour.controllers.*;
+
 
 import java.io.IOException;
 
@@ -36,6 +39,8 @@ public class ImpostaImmagineProfiloController {
     Activity activity;
     MessageDialog messageDialog;
 
+    ImpostaInfoOpzionaliProfiloController impostaInfoOpzionaliProfiloController;
+
     private Bitmap profileImage;
 
     private UserDAO userDAO;
@@ -44,31 +49,33 @@ public class ImpostaImmagineProfiloController {
         this.activity = activity;
         this.messageDialog = new MessageDialog(activity);
 
+        impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(activity);
+
         this.userDAO = new UserDAOImpl(activity);
     }
 
     public Bitmap getProfileImage(ActivityResult result){
 
         if (result == null) {
-            //TODO ERROR
+            ExceptionHandler.handleMessageError(messageDialog,new ClientException());
             return null;
         }
 
         if (result.getResultCode() != Activity.RESULT_OK) {
-            //TODO ERROR
+            ExceptionHandler.handleMessageError(messageDialog,new ClientException());
             return null;
         }
 
         if (result.getData() == null) {
             Log.e(TAG, "DATA null");
-            //TODO ERROR
+            ExceptionHandler.handleMessageError(messageDialog,new ClientException());
             return null;
         }
 
         Uri uri = result.getData().getData();
 
         if(uri == null){
-            //TODO ERROR
+            ExceptionHandler.handleMessageError(messageDialog,new ClientException());
             return null;
         }
 
@@ -89,7 +96,8 @@ public class ImpostaImmagineProfiloController {
             return;
         }
 
-        if(!isValid(profileImage)){
+        if(!isValidBitmap(profileImage)){
+            ExceptionHandler.handleMessageError(messageDialog,new ClientException());
             Log.e(TAG, "immagein non valida");
             return;
         }
@@ -97,8 +105,13 @@ public class ImpostaImmagineProfiloController {
         Bitmap resizedProfileImage = resizeBitmap(profileImage, MIN_WIDTH);
 
         MessageDTO result = userDAO.updateProfileImage(resizedProfileImage);
-        if(result != null) Log.i(TAG, "immagine impostata");
-        else Log.e(TAG, "ERRORE");
+        if(result == null) {
+            ExceptionHandler.handleMessageError(messageDialog,new ClientException());
+            Log.e(TAG, "ERRORE");
+        }
+
+        Log.i(TAG, "immagine impostata");
+        impostaInfoOpzionaliProfiloController.openPersonalizzaAccountInfoOpzionaliActivity();
 
     }
 
@@ -143,10 +156,10 @@ public class ImpostaImmagineProfiloController {
 
     //VALIDATORs---------------
 
-    public boolean isValid(Bitmap bitmap){
+    public boolean isValidBitmap(Bitmap bitmap){
 
         if( profileImage != null && (bitmap.getWidth() < MIN_WIDTH || bitmap.getHeight() < MIN_HEIGHT) ){
-            //TODO ERRORE
+            ExceptionHandler.handleMessageError(messageDialog,new ClientException());
             return false;
         }
 

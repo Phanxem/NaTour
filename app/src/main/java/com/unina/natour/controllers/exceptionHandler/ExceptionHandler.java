@@ -3,6 +3,7 @@ package com.unina.natour.controllers.exceptionHandler;
 import android.util.Log;
 
 import com.amplifyframework.auth.AuthException;
+import com.unina.natour.controllers.exceptionHandler.clientException.ClientException;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 
@@ -65,6 +66,23 @@ public class ExceptionHandler {
 
         messageDialog.showOverUi();
     }
+
+    public static void handleMessageError(MessageDialog messageDialog, ClientException error){
+        String errorMessage = error.getMessage();
+        messageDialog.setMessage(errorMessage);
+
+        Log.e("ERROR_MESSAGE:", errorMessage );
+
+        messageDialog.showOverUi();
+    }
+
+
+
+
+
+
+
+
 
 
     public static boolean isThereAnEmptyField(MessageDialog messageDialog, String... strings){

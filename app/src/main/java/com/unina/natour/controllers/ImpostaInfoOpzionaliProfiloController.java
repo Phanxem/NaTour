@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
+import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.exceptionHandler.clientException.ClientException;
 import com.unina.natour.dto.MessageDTO;
 import com.unina.natour.dto.OptionalInfoDTO;
+import com.unina.natour.models.ImpostaInfoOpzionaliProfiloModel;
 import com.unina.natour.models.dao.classes.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.PersonalizzaAccountInfoOpzionaliActivity;
@@ -16,7 +19,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 
 public class ImpostaInfoOpzionaliProfiloController {
 
@@ -31,52 +33,114 @@ public class ImpostaInfoOpzionaliProfiloController {
 
     private HomeController homeController;
 
-    String date;
+    //Model---
+    ImpostaInfoOpzionaliProfiloModel impostaInfoOpzionaliProfiloModel;
+
+    //---
+
 
     UserDAO userDAO;
 
     public ImpostaInfoOpzionaliProfiloController(Activity activity){
         this.activity = activity;
         this.messageDialog = new MessageDialog(activity);
-        this.date = null;
 
         homeController = new HomeController(activity);
+
+        this.impostaInfoOpzionaliProfiloModel = new ImpostaInfoOpzionaliProfiloModel();
 
         this.userDAO = new UserDAOImpl(activity);
     }
 
-    public void setDate(Calendar calendar){
+    public ImpostaInfoOpzionaliProfiloModel getImpostaInfoOpzionaliProfiloModel() {
+        return impostaInfoOpzionaliProfiloModel;
+    }
 
+    public void setDateOfBirth(Calendar calendar){
+
+        impostaInfoOpzionaliProfiloModel.setDateOfBirth(calendar);
+
+        /*
         Date date = new Date(calendar.getTimeInMillis());
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String stringDate = dateFormat.format(date);
 
-        this.date = stringDate;
+        this.dateOfBirth = stringDate;
+        */
+    }
 
+    public void setCountry(String country){
+        impostaInfoOpzionaliProfiloModel.setCountry(country);
+    }
+
+    public String getCountry(){
+        String string = impostaInfoOpzionaliProfiloModel.getCountry();
+        return string;
+    }
+
+    public void setCity(String city) {
+        impostaInfoOpzionaliProfiloModel.setCity(city);
+    }
+
+    public String getCity(){
+        return impostaInfoOpzionaliProfiloModel.getCity();
     }
 
 
-    public void modificaInfoOpzionali(String luogoDiResidenza){
+
+
+
+    public void modificaInfoOpzionali(String address){
         OptionalInfoDTO optionalInfoDTO = new OptionalInfoDTO();
 
-        if(luogoDiResidenza != null) optionalInfoDTO.setPlaceOfResidence(luogoDiResidenza);
-        if(date != null) {
-            if(!isValidDate(date)) return;
-            optionalInfoDTO.setDateOfBirth(date);
+        Calendar dateOfBirth = impostaInfoOpzionaliProfiloModel.getDateOfBirth();
+        if(dateOfBirth != null) {
+            if(!isValidDate(dateOfBirth)){
+                Log.e(TAG, "error");
+                ExceptionHandler.handleMessageError(messageDialog,new ClientException());
+                return;
+            }
+
+            Date date = new Date(dateOfBirth.getTimeInMillis());
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            String stringDate = dateFormat.format(date);
+
+            optionalInfoDTO.setDateOfBirth(stringDate);
         }
+
+        String placeOfResidence = null;
+        String country = impostaInfoOpzionaliProfiloModel.getCountry();
+        if(country != null && !country.isEmpty()){
+            placeOfResidence = country;
+
+            String city = impostaInfoOpzionaliProfiloModel.getCity();
+            if(city != null && !city.isEmpty()) {
+                placeOfResidence = placeOfResidence + ", " + city;
+
+                if(address != null && !address.isEmpty()) placeOfResidence = placeOfResidence + ", " + address;
+            }
+
+            optionalInfoDTO.setPlaceOfResidence(placeOfResidence);
+        }
+
 
         MessageDTO result = userDAO.updateOptionalInfo(optionalInfoDTO);
         if(result == null) {
             Log.e(TAG, "ERRORE");
+            ExceptionHandler.handleMessageError(messageDialog,new ClientException());
             return;
         }
-        if(result.getCode() == SUCCESS_CODE){
-            homeController.openHomeActivity();
-            Log.i(TAG, "immagine impostata");
+        if(result.getCode() != SUCCESS_CODE){
+            ExceptionHandler.handleMessageError(messageDialog,new ClientException());
+            Log.e(TAG, "ERRORE");
+            return;
         }
-        else Log.e(TAG, "ERRORE");
 
+        Log.i(TAG, "immagine impostata");
+        homeController.openHomeActivity();
     }
+
+
 
 
     public void openPersonalizzaAccountInfoOpzionaliActivity(){
@@ -86,29 +150,35 @@ public class ImpostaInfoOpzionaliProfiloController {
     }
 
 
-    public boolean isValidDate(String stringDate){
 
-        if(stringDate != null){
-            DateFormat dateFormat = new SimpleDateFormat();
-            Date date = null;
-            try { date = dateFormat.parse(stringDate); }
-            catch (ParseException e) {
-                e.printStackTrace();
-                //TODO EXCEPTION
-                return false;
-            }
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
 
-            Calendar currentCalendar = Calendar.getInstance();
 
-            if(!calendar.before(currentCalendar)){
-                //TODO EXCEPTION
-                return false;
-            }
+
+
+
+
+
+
+
+
+    public boolean isValidDate(Calendar date){
+
+        if(date == null){
+            return true;
+        }
+
+        Calendar currentCalendar = Calendar.getInstance();
+
+        if(!date.before(currentCalendar)){
+            //TODO EXCEPTION
+            Log.e(TAG, "expetion");
+            return false;
+
         }
 
         return true;
     }
+
+
 }

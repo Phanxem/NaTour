@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/ProfiloPersonaleF_popupMenu_modifica"
+        android:title="Modifica Profilo" />
+    <item
+        android:id="@+id/ProfiloPersonaleF_popupMenu_esci"
+        android:title="Esci" />
+</menu>

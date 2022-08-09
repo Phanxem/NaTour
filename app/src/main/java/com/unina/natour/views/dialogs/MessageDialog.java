@@ -16,11 +16,11 @@ import com.unina.natour.R;
 
 public class MessageDialog extends Dialog {
 
-    Context context;
+    Activity activity;
 
-    public MessageDialog(@NonNull Context context) {
-        super(context);
-        this.context = context;
+    public MessageDialog(Activity activity) {
+        super(activity);
+        this.activity = activity;
         this.setContentView(R.layout.dialog_message);
         this.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
@@ -47,7 +47,7 @@ public class MessageDialog extends Dialog {
 
     public void showOverUi(){
         Dialog dialog = this;
-        ((Activity)context).runOnUiThread(new Runnable() {
+        activity.runOnUiThread(new Runnable() {
             public void run() {
                 dialog.show();
             }

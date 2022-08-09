@@ -44,6 +44,7 @@ public class SplashScreenController {
                     if(awsCognitoUserPoolTokens == null) Log.i(TAG, "NULL");
                     else Log.i(TAG, "accessToken: " + awsCognitoUserPoolTokens.getAccessToken());
 
+
                     Log.i(TAG, result.toString());
                     if(result.isSignedIn()){
                         homeController.openHomeActivity();
