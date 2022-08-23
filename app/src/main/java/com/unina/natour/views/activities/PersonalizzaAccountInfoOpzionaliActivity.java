@@ -2,6 +2,7 @@ package com.unina.natour.views.activities;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,7 +34,12 @@ public class PersonalizzaAccountInfoOpzionaliActivity
 
     private final static String TAG ="PersonalizzaAccountActivity";
 
+    public final static String PREV_ACTIVITY = "PrevActivity";
+
     private ImpostaInfoOpzionaliProfiloController impostaInfoOpzionaliProfiloController;
+    //private HomeController homeController;
+
+    private MainController mainController;
 
     private ImpostaInfoOpzionaliProfiloModel impostaInfoOpzionaliProfiloModel;
 
@@ -43,6 +49,8 @@ public class PersonalizzaAccountInfoOpzionaliActivity
         setContentView(R.layout.activity_personalizza_account_info_opzionali);
 
         impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(this);
+        //homeController = new HomeController(this);
+        mainController = new MainController(this);
 
         impostaInfoOpzionaliProfiloModel = impostaInfoOpzionaliProfiloController.getImpostaInfoOpzionaliProfiloModel();
         impostaInfoOpzionaliProfiloModel.registerObserver(this);
@@ -79,6 +87,14 @@ public class PersonalizzaAccountInfoOpzionaliActivity
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, AlertDialog.THEME_HOLO_LIGHT, dateSetListener, year, month, day);
         return datePickerDialog;
+    }
+
+
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        impostaInfoOpzionaliProfiloModel.undergisterObserver(this);
     }
 
     public void pressButtonDate(DatePickerDialog datePickerDialog){
@@ -125,11 +141,18 @@ public class PersonalizzaAccountInfoOpzionaliActivity
             @Override
             public void onClick(View v) {
 
-                EditText editText_luogoDiResidenza = findViewById(R.id.PersonalizzaAccount_editText_indirizzo);
-                String luogoDiResidenza = String.valueOf(editText_luogoDiResidenza.getText());
+                EditText editText_indirizzoDiResidenza = findViewById(R.id.PersonalizzaAccount_editText_indirizzo);
+                String indirizzoDiResidenza = String.valueOf(editText_indirizzoDiResidenza.getText());
 
-                impostaInfoOpzionaliProfiloController.modificaInfoOpzionali(luogoDiResidenza);
+                Boolean result = impostaInfoOpzionaliProfiloController.modificaInfoOpzionali(indirizzoDiResidenza);
 
+                Intent intent = getIntent();
+                Boolean isFirstUpdate = intent.getBooleanExtra(PREV_ACTIVITY,false);
+
+                if(result){
+                    if(isFirstUpdate) mainController.openMainActivity();
+                    else finish();
+                }
             }
         });
     }

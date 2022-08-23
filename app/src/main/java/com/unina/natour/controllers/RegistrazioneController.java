@@ -1,24 +1,23 @@
 package com.unina.natour.controllers;
 
-import static android.content.ContentValues.TAG;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import com.amplifyframework.auth.AuthUserAttributeKey;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
-import com.unina.natour.views.activities.AttivaAccountActivity;
-import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.activities.RegistrazioneActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class RegistrazioneController {
 
     private final static String TAG ="RegistrazioneController";
@@ -29,26 +28,29 @@ public class RegistrazioneController {
     MessageDialog messageDialog;
 
     AutenticazioneController autenticazioneController;
-    AttivaAccountController attivaAccountController;
+
     
     public RegistrazioneController(Activity activity){
         this.activity = activity;
         this.messageDialog = new MessageDialog(activity);
 
         this.autenticazioneController = new AutenticazioneController(activity);
-        this.attivaAccountController = new AttivaAccountController(activity);
+
     }
 
     
 
-    public void signUp(String username, String email, String password){
 
-        if(!ExceptionHandler.isThereAnEmptyField(messageDialog,username,email,password)) return;
+    public Boolean signUp(String username, String email, String password){
+
+        if(!ExceptionHandler.areAllFieldsFull(messageDialog,username,email,password)) return false;
 
         AuthSignUpOptions options = AuthSignUpOptions
                 .builder()
                 .userAttribute(AuthUserAttributeKey.email(), email)
                 .build();
+
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<Boolean>();
 
         Amplify.Auth.signUp(
                 username,
@@ -56,12 +58,27 @@ public class RegistrazioneController {
                 options,
                 result -> {
                     Log.i(TAG, "Result: " + result.toString());
-                    attivaAccountController.openAttivaAccountActivity(username, password);
+                    completableFuture.complete(true);
                 },
                 error -> {
                     ExceptionHandler.handleMessageError(messageDialog, error);
+                    completableFuture.complete(false);
                 }
         );
+
+        Boolean result = false;
+        try {
+            result = completableFuture.get();
+        }
+        catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+
     }
 
     public void openRegistrazioneActivity(){

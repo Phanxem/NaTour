@@ -3,6 +3,7 @@ package com.unina.natour.views.activities;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.unina.natour.R;
@@ -27,6 +29,7 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
     private final static String TAG ="PersonalizzaAccountImmagineActivity";
 
     private ImpostaImmagineProfiloController impostaImmagineProfiloController;
+    private ImpostaInfoOpzionaliProfiloController impostaInfoOpzionaliProfiloController;
 
     private ActivityResultLauncher<Intent> startForResult;
 
@@ -36,12 +39,13 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_personalizza_account_immagine);
 
         impostaImmagineProfiloController = new ImpostaImmagineProfiloController(this);
+        impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(this);
 
         ImageView imageView_profileImage = findViewById(R.id.PersonalizzaAccount_imageView_immagine);
-
         startForResult = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
+                    @RequiresApi(api = Build.VERSION_CODES.P)
                     @Override
                     public void onActivityResult(ActivityResult result) {
                         Bitmap bitmap = impostaImmagineProfiloController.getProfileImage(result);
@@ -69,9 +73,9 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
         button_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                impostaImmagineProfiloController.modificaImmagineProfilo();
+                Boolean result = impostaImmagineProfiloController.modificaImmagineProfilo();
 
-
+                if(result) impostaInfoOpzionaliProfiloController.openPersonalizzaAccountInfoOpzionaliActivity(true);
             }
         });
     }

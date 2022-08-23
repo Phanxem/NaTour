@@ -1,15 +1,10 @@
-package com.unina.natour.controllers.exceptionHandler.clientException;
+package com.unina.natour.controllers.exceptionHandler.exceptions;
 
-public class ClientException extends Exception{
-
+public class AppException extends Exception{
     private long code;
     private String message;
 
-    public ClientException(){
-        this.code = -100;
-        this.message = "TODO Exception";
-    }
-
+    public AppException(){ }
 
     public long getCode() {
         return code;
@@ -23,6 +18,5 @@ public class ClientException extends Exception{
     public void setMessage(String message) {
         this.message = message;
     }
-
 
 }

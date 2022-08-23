@@ -3,13 +3,18 @@ package com.unina.natour.controllers;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 
-import com.amplifyframework.api.rest.RestOptions;
+import androidx.annotation.RequiresApi;
+
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class AutenticazioneController {
 
@@ -18,37 +23,50 @@ public class AutenticazioneController {
     Activity activity;
     MessageDialog messageDialog;
 
-    HomeController homeController;
-    ImpostaImmagineProfiloController impostaImmagineProfiloController;
-
     public AutenticazioneController(Activity activity){
         this.activity = activity;
         this.messageDialog = new MessageDialog(activity);
-        this.homeController = new HomeController(activity);
-        this.impostaImmagineProfiloController = new ImpostaImmagineProfiloController(activity);
     }
 
-    public void signIn(String usernameEmail, String password) {
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public Boolean signIn(String usernameEmail, String password) {
 
-        if(!ExceptionHandler.isThereAnEmptyField(messageDialog,usernameEmail,password)) return;
+        if(!ExceptionHandler.areAllFieldsFull(messageDialog,usernameEmail,password)) return false;
 
-        effectiveSignIn(usernameEmail,password, false);
+        return effectiveSignIn(usernameEmail,password);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("LongLogTag")
-    public void effectiveSignIn(String usernameEmail, String password, boolean isFirstSignIn){
+    public Boolean effectiveSignIn(String usernameEmail, String password){
+
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<Boolean>();
+
         Amplify.Auth.signIn(
                 usernameEmail,
                 password,
                 result -> {
                     Log.i(TAG, "Confirm signIn succeeded");
-                    if(isFirstSignIn) impostaImmagineProfiloController.openPersonalizzaAccountImmagineActivity();
-                    else homeController.openHomeActivity();
+                    completableFuture.complete(true);
                 },
                 error -> {
                     ExceptionHandler.handleMessageError(messageDialog, error);
+                    completableFuture.complete(false);
                 }
         );
+
+        Boolean result = false;
+        try {
+            result = completableFuture.get();
+        }
+        catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     public void openAutenticazioneActivity(){

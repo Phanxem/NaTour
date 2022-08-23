@@ -1,14 +1,16 @@
-package com.unina.natour.models.dao.classes;
+package com.unina.natour.models.dao.implementation;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.dto.MessageDTO;
 import com.unina.natour.dto.OptionalInfoDTO;
 import com.unina.natour.dto.UserDTO;
@@ -31,9 +33,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class UserDAOImpl implements UserDAO {
 
-    private static final String SERVER_URL = "http://192.168.1.3:8080/user";
+    private static final String SERVER_URL = "http://192.168.1.6:8080/user";
 
     private static final String UPDATE_IMAGE = "/update/image";
     private static final String UPDATE_OPTIONAL_INFO = "/update/optionalInfo";
@@ -53,7 +56,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public UserDTO getUser(String username) {
+    public UserDTO getUser(String username) throws ExecutionException, InterruptedException, IOException, ServerException {
         //String username = Amplify.Auth.getCurrentUser().getUsername();
 
         String url = SERVER_URL + GET_USER + "?username=" + username;
@@ -66,55 +69,43 @@ public class UserDAOImpl implements UserDAO {
 
         Call call = client.newCall(request);
 
-        CompletableFuture<UserDTO> completableFuture = new CompletableFuture<UserDTO>();
+        final IOException[] exception = {null};
+        CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();
 
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e("ERRORE: ", e.getMessage(), e);
-
+                exception[0] = e;
                 completableFuture.complete(null);
                 return;
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if(!response.isSuccessful()){
-                    Log.e("ERRORE: ","Risposta chiamata api fallita");
-                    completableFuture.complete(null);
-                    return;
-                }
-
-
                 String jsonStringResult = response.body().string();
-                Log.i("JSON: ", jsonStringResult);
-
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 
-                UserDTO userDTO = JsonConverter.toUserDTO(jsonObjectResult);
-
-                completableFuture.complete(userDTO);
+                completableFuture.complete(jsonObjectResult);
             }
         });
 
-        UserDTO result = null;
 
-        try {
-            result = completableFuture.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return null;
-        }
+        //can throw ExecutionException, InterruptedException
+        JsonObject jsonObjectResult = completableFuture.get();
+
+        //can throw IOException
+        if(jsonObjectResult == null) throw exception[0];
+
+        //can throw MessageException
+        UserDTO result = JsonConverter.toUserDTO(jsonObjectResult);
 
         return result;
     }
 
+
     @Override
-    public Bitmap getUserProfileImage(String username) {
+    public Bitmap getUserProfileImage(String username) throws ExecutionException, InterruptedException, ServerException, IOException {
         String url = SERVER_URL + GET_USER_IMAGE + "?username=" + username;
 
         Request request = new Request.Builder()
@@ -125,13 +116,14 @@ public class UserDAOImpl implements UserDAO {
 
         Call call = client.newCall(request);
 
-        CompletableFuture<Bitmap> completableFuture = new CompletableFuture<Bitmap>();
+        final IOException[] exception = {null};
+        final JsonObject[] jsonObject = {null};
+        CompletableFuture<byte[]> completableFuture = new CompletableFuture<byte[]>();
 
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e("ERRORE: ", e.getMessage(), e);
-
+                exception[0] = e;
                 completableFuture.complete(null);
                 return;
             }
@@ -139,34 +131,36 @@ public class UserDAOImpl implements UserDAO {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(!response.isSuccessful()){
-                    Log.e("ERRORE: ","Risposta chiamata api fallita");
+                    String jsonStringResult = response.body().string();
+                    JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
+                    jsonObject[0] = jsonElementResult.getAsJsonObject();
                     completableFuture.complete(null);
-                    return;
                 }
 
-                Bitmap bitmap = FileConverter.toBitmap(response.body().bytes());
-
-                completableFuture.complete(bitmap);
+                completableFuture.complete(response.body().bytes());
             }
         });
 
-        Bitmap result = null;
+        //can throw ExecutionException, InterruptedException
+        byte[] bytes = completableFuture.get();
 
-        try {
-            result = completableFuture.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return null;
+        //can throw IOException, MessageException
+        if(bytes == null){
+            if(exception[0] == null){
+                MessageDTO messageDTO = JsonConverter.toMessageDTO(jsonObject[0]);
+                throw new ServerException(messageDTO);
+            }
+            else throw exception[0];
         }
+
+        Bitmap result = FileConverter.toBitmap(bytes);
 
         return result;
     }
 
+
     @Override
-    public MessageDTO updateProfileImage(Bitmap profileImage) {
+    public MessageDTO updateProfileImage(Bitmap profileImage) throws IOException, ExecutionException, InterruptedException, ServerException {
 
         File file = FileConverter.toPngFile(context, profileImage);
 
@@ -183,10 +177,6 @@ public class UserDAOImpl implements UserDAO {
                 ).build();
 
 
-
-
-        //---
-
         String url = SERVER_URL + UPDATE_IMAGE + "?username=" + username;
 
         Request request = new Request.Builder()
@@ -198,60 +188,43 @@ public class UserDAOImpl implements UserDAO {
 
         Call call = client.newCall(request);
 
-        CompletableFuture<MessageDTO> completableFuture = new CompletableFuture<MessageDTO>();
+        final IOException[] exception = {null};
+        CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();
 
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e("ERRORE: ", e.getMessage(), e);
-
+                exception[0] = e;
                 completableFuture.complete(null);
                 return;
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if(!response.isSuccessful()){
-                    Log.e("ERRORE: ","Risposta chiamata api fallita");
-                    completableFuture.complete(null);
-                    return;
-                }
-
-
                 String jsonStringResult = response.body().string();
-                Log.i("JSON: ", jsonStringResult);
-
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 
-                MessageDTO messageDTO = JsonConverter.toMessageDTO(jsonObjectResult);
-
-                completableFuture.complete(messageDTO);
+                completableFuture.complete(jsonObjectResult);
             }
         });
 
-        MessageDTO result = null;
+        JsonObject jsonObjectResult = completableFuture.get();
 
+        if(jsonObjectResult == null) throw exception[0];
 
-
-        try {
-            result = completableFuture.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        MessageDTO result = JsonConverter.toMessageDTO(jsonObjectResult);
 
         return result;
 
     }
 
+
     @Override
-    public MessageDTO updateOptionalInfo(OptionalInfoDTO optionalInfo) {
+    public MessageDTO updateOptionalInfo(OptionalInfoDTO optionalInfo) throws ExecutionException, InterruptedException, IOException, ServerException {
 
         //String username = Amplify.Auth.getCurrentUser().getUsername();
         String username = TEST_USER;
-
 
 
         FormBody.Builder builder = new FormBody.Builder();
@@ -271,49 +244,33 @@ public class UserDAOImpl implements UserDAO {
 
         Call call = client.newCall(request);
 
-        CompletableFuture<MessageDTO> completableFuture = new CompletableFuture<MessageDTO>();
+        final IOException[] exception = {null};
+        CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();
 
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e("ERRORE: ", e.getMessage(), e);
-
+                exception[0] = e;
                 completableFuture.complete(null);
                 return;
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if(!response.isSuccessful()){
-                    Log.e("ERRORE: ","Risposta chiamata api fallita");
-                    completableFuture.complete(null);
-                    return;
-                }
-
-
                 String jsonStringResult = response.body().string();
-                Log.i("JSON: ", jsonStringResult);
-
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 
-                MessageDTO messageDTO = JsonConverter.toMessageDTO(jsonObjectResult);
-
-                completableFuture.complete(messageDTO);
+                completableFuture.complete(jsonObjectResult);
             }
         });
 
-        MessageDTO result = null;
+        JsonObject jsonObjectResult = completableFuture.get();
 
-        try {
-            result = completableFuture.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        if(jsonObjectResult == null) throw exception[0];
+
+        MessageDTO result = JsonConverter.toMessageDTO(jsonObjectResult);
 
         return result;
-
     }
 }

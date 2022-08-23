@@ -1,24 +1,21 @@
 package com.unina.natour.controllers;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
-import com.unina.natour.controllers.exceptionHandler.clientException.ClientException;
+import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.MessageDTO;
 import com.unina.natour.dto.OptionalInfoDTO;
 import com.unina.natour.models.ImpostaInfoOpzionaliProfiloModel;
-import com.unina.natour.models.dao.classes.UserDAOImpl;
+import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.PersonalizzaAccountInfoOpzionaliActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class ImpostaInfoOpzionaliProfiloController {
 
@@ -31,7 +28,7 @@ public class ImpostaInfoOpzionaliProfiloController {
     Activity activity;
     MessageDialog messageDialog;
 
-    private HomeController homeController;
+    //private HomeController homeController;
 
     //Model---
     ImpostaInfoOpzionaliProfiloModel impostaInfoOpzionaliProfiloModel;
@@ -45,7 +42,7 @@ public class ImpostaInfoOpzionaliProfiloController {
         this.activity = activity;
         this.messageDialog = new MessageDialog(activity);
 
-        homeController = new HomeController(activity);
+
 
         this.impostaInfoOpzionaliProfiloModel = new ImpostaInfoOpzionaliProfiloModel();
 
@@ -90,25 +87,25 @@ public class ImpostaInfoOpzionaliProfiloController {
 
 
 
-    public void modificaInfoOpzionali(String address){
+    @SuppressLint("LongLogTag")
+    public Boolean modificaInfoOpzionali(String address){
         OptionalInfoDTO optionalInfoDTO = new OptionalInfoDTO();
 
         Calendar dateOfBirth = impostaInfoOpzionaliProfiloModel.getDateOfBirth();
         if(dateOfBirth != null) {
             if(!isValidDate(dateOfBirth)){
                 Log.e(TAG, "error");
-                ExceptionHandler.handleMessageError(messageDialog,new ClientException());
-                return;
+                ExceptionHandler.handleMessageError(messageDialog,new ServerException());
+                return false;
             }
 
-            Date date = new Date(dateOfBirth.getTimeInMillis());
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            String stringDate = dateFormat.format(date);
+            String stringDate = TimeUtils.toSimpleString(dateOfBirth);
 
             optionalInfoDTO.setDateOfBirth(stringDate);
         }
 
         String placeOfResidence = null;
+
         String country = impostaInfoOpzionaliProfiloModel.getCountry();
         if(country != null && !country.isEmpty()){
             placeOfResidence = country;
@@ -124,20 +121,29 @@ public class ImpostaInfoOpzionaliProfiloController {
         }
 
 
-        MessageDTO result = userDAO.updateOptionalInfo(optionalInfoDTO);
-        if(result == null) {
-            Log.e(TAG, "ERRORE");
-            ExceptionHandler.handleMessageError(messageDialog,new ClientException());
-            return;
+        MessageDTO result = null;
+        try {
+            result = userDAO.updateOptionalInfo(optionalInfoDTO);
         }
-        if(result.getCode() != SUCCESS_CODE){
-            ExceptionHandler.handleMessageError(messageDialog,new ClientException());
+        catch (UnknownException e) {
+            e.printStackTrace();
             Log.e(TAG, "ERRORE");
-            return;
+            ExceptionHandler.handleMessageError(messageDialog, e);
+        }
+
+        if(result == null) return false;
+
+
+        if(result.getCode() != SUCCESS_CODE){
+            //TODO
+            ExceptionHandler.handleMessageError(messageDialog,new ServerException());
+            Log.e(TAG, "ERRORE");
+            return false;
         }
 
         Log.i(TAG, "immagine impostata");
-        homeController.openHomeActivity();
+        return true;
+
     }
 
 
@@ -145,6 +151,13 @@ public class ImpostaInfoOpzionaliProfiloController {
 
     public void openPersonalizzaAccountInfoOpzionaliActivity(){
         Intent intent = new Intent(activity, PersonalizzaAccountInfoOpzionaliActivity.class);
+        activity.startActivity(intent);
+        activity.finish();
+    }
+
+    public void openPersonalizzaAccountInfoOpzionaliActivity(boolean isFirstUpdate){
+        Intent intent = new Intent(activity, PersonalizzaAccountInfoOpzionaliActivity.class);
+        if(isFirstUpdate) intent.putExtra(PersonalizzaAccountInfoOpzionaliActivity.PREV_ACTIVITY,true);
         activity.startActivity(intent);
         activity.finish();
     }
@@ -162,6 +175,7 @@ public class ImpostaInfoOpzionaliProfiloController {
 
 
 
+    @SuppressLint("LongLogTag")
     public boolean isValidDate(Calendar date){
 
         if(date == null){

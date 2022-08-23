@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.unina.natour.R;
+import com.unina.natour.controllers.AutenticazioneController;
 import com.unina.natour.controllers.RecuperoPasswordController;
 
 public class CompletaRecuperoPasswordActivity extends AppCompatActivity {
@@ -16,6 +17,7 @@ public class CompletaRecuperoPasswordActivity extends AppCompatActivity {
     private final static String TAG ="CompletaRecuperoPasswordActivity";
 
     private RecuperoPasswordController recuperoPasswordController;
+    private AutenticazioneController autenticazioneController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +25,7 @@ public class CompletaRecuperoPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_completa_recupero_password);
 
         recuperoPasswordController = new RecuperoPasswordController(this);
+        autenticazioneController = new AutenticazioneController(this);
 
         pressButtonComplete();
         pressIconBack();
@@ -43,7 +46,9 @@ public class CompletaRecuperoPasswordActivity extends AppCompatActivity {
                 EditText textField_password2 = findViewById(R.id.CompletaRecuperoPassword_editPassword_password2);
                 String password2 = String.valueOf(textField_password2.getText());
 
-                recuperoPasswordController.completePasswordRecovery(code,password1,password2);
+                Boolean result = recuperoPasswordController.completePasswordRecovery(code,password1,password2);
+
+                if(result) autenticazioneController.openAutenticazioneActivity();
             }
         });
     }

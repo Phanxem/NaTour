@@ -12,6 +12,10 @@ public class MessageDTO {
         this.message = message;
     }
 
+    public static MessageDTO unknownErrorMessage() {
+        return new MessageDTO(-100,"Errore Sconosciuto");
+    }
+
     public long getCode() {
         return code;
     }

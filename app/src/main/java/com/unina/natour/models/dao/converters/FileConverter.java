@@ -21,28 +21,25 @@ public class FileConverter {
         return bitmap;
     }
 
-    public static File toPngFile(Context context, byte[] bytes){
+    public static File toPngFile(Context context, byte[] bytes) throws IOException {
         if(bytes == null || bytes.length <= 0) return null;
 
         File file = new File(context.getCacheDir(), "file.png");
         final boolean newFile;
-        try {
-            newFile = file.createNewFile();
 
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(bytes);
-            fileOutputStream.flush();
-            fileOutputStream.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        newFile = file.createNewFile();
+
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        fileOutputStream.write(bytes);
+        fileOutputStream.flush();
+        fileOutputStream.close();
+
         return file;
     }
 
 
 
-    public static File toPngFile(Context context, Bitmap bitmap){
+    public static File toPngFile(Context context, Bitmap bitmap) throws IOException {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 0, byteArrayOutputStream);

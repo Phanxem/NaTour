@@ -43,7 +43,7 @@ public class HomeController {
 
 
 
-    public void g(){
+    public void openAwsConfigurationFile(){
         Resources resources = activity.getResources();
 
         InputStream inputStream = resources.openRawResource(R.raw.awsconfiguration);

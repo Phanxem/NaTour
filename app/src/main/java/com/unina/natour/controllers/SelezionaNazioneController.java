@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.unina.natour.views.observers.Observer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,6 +28,8 @@ public class SelezionaNazioneController {
             Locale locale = new Locale("en", locales[i]);
             countries[i] = locale.getDisplayCountry(locale);
         }
+
+        Arrays.sort(countries);
     }
 
     public String[] getCountries() {

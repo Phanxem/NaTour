@@ -36,7 +36,9 @@ public class IniziaRecuperoPasswordActivity extends AppCompatActivity {
                 EditText textField_username = findViewById(R.id.StartPasswordRecovery_editText_username);
                 String username = String.valueOf(textField_username.getText());
 
-                recuperoPasswordController.startPasswordRecovery(username);
+                Boolean result = recuperoPasswordController.startPasswordRecovery(username);
+
+                if(result) recuperoPasswordController.openCompletaRecuperoPasswordActivity();
             }
         });
     }

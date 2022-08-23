@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.AutenticazioneController;
+import com.unina.natour.controllers.HomeController;
 import com.unina.natour.controllers.RecuperoPasswordController;
 import com.unina.natour.controllers.RegistrazioneController;
 import com.unina.natour.controllers.SplashScreenController;
@@ -21,6 +22,7 @@ public class AutenticazioneActivity extends AppCompatActivity {
     private AutenticazioneController autenticazioneController;
     private RegistrazioneController registrazioneController;
     private RecuperoPasswordController recuperoPasswordController;
+    private HomeController homeController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,7 @@ public class AutenticazioneActivity extends AppCompatActivity {
         autenticazioneController = new AutenticazioneController(this);
         registrazioneController = new RegistrazioneController(this);
         recuperoPasswordController = new RecuperoPasswordController(this);
+        homeController = new HomeController(this);
 
         pressButtonSignIn();
         pressTextSignUp();
@@ -47,7 +50,9 @@ public class AutenticazioneActivity extends AppCompatActivity {
                 EditText textField_password = findViewById(R.id.SignIn_passwordField_password);
                 String password = String.valueOf(textField_password.getText());
 
-                autenticazioneController.signIn(usernameEmail, password);
+                Boolean result = autenticazioneController.signIn(usernameEmail, password);
+
+                if(result) homeController.openHomeActivity();
             }
         });
     }

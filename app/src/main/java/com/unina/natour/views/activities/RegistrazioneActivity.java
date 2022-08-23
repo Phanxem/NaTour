@@ -9,12 +9,15 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.unina.natour.R;
+import com.unina.natour.controllers.AttivaAccountController;
 import com.unina.natour.controllers.RegistrazioneController;
 
 public class RegistrazioneActivity extends AppCompatActivity {
 
     private final static String TAG ="RegistrazioneActivity";
+
     private RegistrazioneController registrazioneController;
+    private AttivaAccountController attivaAccountController;
 
 
     @Override
@@ -23,6 +26,7 @@ public class RegistrazioneActivity extends AppCompatActivity {
         setContentView(R.layout.activity_registrazione);
 
         registrazioneController = new RegistrazioneController(this);
+        attivaAccountController = new AttivaAccountController(this);
 
         pressButtonSignUp();
         pressIconBack();
@@ -43,7 +47,9 @@ public class RegistrazioneActivity extends AppCompatActivity {
                 String email = String.valueOf(textField_email.getText());
 
 
-                registrazioneController.signUp(username,email,password);
+                Boolean result = registrazioneController.signUp(username,email,password);
+
+                if(result) attivaAccountController.openAttivaAccountActivity(username, password);
             }
         });
     }

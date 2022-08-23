@@ -3,13 +3,14 @@ package com.unina.natour.controllers.exceptionHandler;
 import android.util.Log;
 
 import com.amplifyframework.auth.AuthException;
-import com.unina.natour.controllers.exceptionHandler.clientException.ClientException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class ExceptionHandler {
 
@@ -41,12 +42,13 @@ public class ExceptionHandler {
 
     }
 
-
+    //Eccezioni di Cognito
+    //l'errore viene identificato secondo il messaggio
     public static void handleMessageError(MessageDialog messageDialog, AuthException error){
         String errorMessage = error.getCause().getMessage();
         messageDialog.setMessage(ERROR_MESSAGE_UNKNOWN);
 
-        Log.e("ERROR_MESSAGE:", errorMessage );
+        //TODO funzione di ricerca dell'errore (basata sui messaggi restituiti dall'eccezione)
 
         for(Map.Entry<String, String> entry : exceptionMessages.entrySet()){
             if(errorMessage.contains(entry.getKey())){
@@ -58,6 +60,18 @@ public class ExceptionHandler {
         messageDialog.showOverUi();
     }
 
+    //Eccezioni del server
+    public static void handleMessageError(MessageDialog messageDialog, ServerException error){
+        String errorMessage = error.getMessage();
+        messageDialog.setMessage(errorMessage);
+
+        //TODO funzione di ricerca dell'errore (basata sui codici restituiti dall'eccezione)
+
+        messageDialog.showOverUi();
+    }
+
+
+    //Eccezioni interne dell'app
     public static void handleMessageError(MessageDialog messageDialog, IOException error){
         String errorMessage = error.getCause().getMessage();
         messageDialog.setMessage(ERROR_MESSAGE_UNKNOWN);
@@ -67,11 +81,19 @@ public class ExceptionHandler {
         messageDialog.showOverUi();
     }
 
-    public static void handleMessageError(MessageDialog messageDialog, ClientException error){
-        String errorMessage = error.getMessage();
+
+
+    //Eccezioni chiamate API async (eccezioni derivanti dalla classe CompletableFuture)
+    public static void handleMessageError(MessageDialog messageDialog, InterruptedException error){
+        String errorMessage = "E' stato riscontrato un errore, non è possibile completare l'operazione";
         messageDialog.setMessage(errorMessage);
 
-        Log.e("ERROR_MESSAGE:", errorMessage );
+        messageDialog.showOverUi();
+    }
+
+    public static void handleMessageError(MessageDialog messageDialog, ExecutionException error){
+        String errorMessage = "E' stato riscontrato un errore, non è possibile completare l'operazione";
+        messageDialog.setMessage(errorMessage);
 
         messageDialog.showOverUi();
     }
@@ -85,7 +107,29 @@ public class ExceptionHandler {
 
 
 
-    public static boolean isThereAnEmptyField(MessageDialog messageDialog, String... strings){
+
+
+
+/*
+    //Visualizza messaggio
+    public static void handleMessageError(MessageDialog messageDialog, MessageDTO messageDTO){
+        String errorMessage = messageDTO.getMessage();
+        messageDialog.setMessage(errorMessage);
+
+        Log.e("ERROR_MESSAGE:", errorMessage );
+
+        messageDialog.showOverUi();
+    }
+*/
+
+
+
+
+
+
+
+
+    public static boolean areAllFieldsFull(MessageDialog messageDialog, String... strings){
 
         for(String string : strings){
             if(string == null || string.isEmpty()){

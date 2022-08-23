@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -67,6 +68,8 @@ public class SelezionaCittàController {
         for(int i = 0; i < jsonArrayCities.size(); i++){
             cities[i] = jsonArrayCities.get(i).getAsString();
         }
+
+        Arrays.sort(cities);
 
         this.country = country;
         this.cities = cities;

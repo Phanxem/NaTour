@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import com.unina.natour.R;
+
 public class ModificaPasswordActivity extends AppCompatActivity {
 
     @Override

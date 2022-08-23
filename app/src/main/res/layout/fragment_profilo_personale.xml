@@ -45,9 +45,9 @@
             android:id="@+id/ProfiloPersonaleF_imageView_immagineProfilo"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             android:src="@drawable/ic_generic_account"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -55,46 +55,71 @@
             android:id="@+id/ProfiloPersonaleF_textView_username"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:textSize="18sp"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ProfiloPersonaleF_imageView_immagineProfilo"
-            app:layout_constraintTop_toTopOf="@+id/ProfiloPersonaleF_imageView_immagineProfilo" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/ProfiloPersonaleF_textView_email"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/ProfiloPersonaleF_textView_username"
             app:layout_constraintTop_toBottomOf="@+id/ProfiloPersonaleF_textView_username" />
 
-        <TextView
-            android:id="@+id/ProfiloPersonaleF_textView_residence"
+        <LinearLayout
+            android:id="@+id/ProfiloPersonale_linearLayout_residence"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:visibility="visible"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/ProfiloPersonaleF_textView_email"
-            app:layout_constraintTop_toBottomOf="@+id/ProfiloPersonaleF_textView_email" />
+            app:layout_constraintStart_toStartOf="@+id/ProfiloPersonaleF_textView_username"
+            app:layout_constraintTop_toBottomOf="@+id/ProfiloPersonaleF_textView_email">
 
-        <TextView
-            android:id="@+id/ProfiloPersonaleF_textView_birth"
+            <TextView
+                android:id="@+id/ProfiloPersonale_textView_titoloResidence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Luogo di residenza" />
+
+            <TextView
+                android:id="@+id/ProfiloPersonaleF_textView_residence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ProfiloPersonale_linearLayout_birth"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/ProfiloPersonaleF_textView_residence"
-            app:layout_constraintTop_toBottomOf="@+id/ProfiloPersonaleF_textView_residence" />
+            app:layout_constraintStart_toStartOf="@+id/ProfiloPersonaleF_textView_username"
+            app:layout_constraintTop_toBottomOf="@+id/ProfiloPersonale_linearLayout_residence">
+
+            <TextView
+                android:id="@+id/ProfiloPersonaleF_textView_titoloBirth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Data di nascita" />
+
+            <TextView
+                android:id="@+id/ProfiloPersonaleF_textView_birth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

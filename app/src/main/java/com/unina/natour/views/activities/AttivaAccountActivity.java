@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,12 +12,16 @@ import android.widget.TextView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.AttivaAccountController;
+import com.unina.natour.controllers.AutenticazioneController;
+import com.unina.natour.controllers.ImpostaImmagineProfiloController;
 import com.unina.natour.controllers.RegistrazioneController;
 
 public class AttivaAccountActivity extends AppCompatActivity {
 
     private final static String TAG ="AttivaAcountActivity";
+
     private AttivaAccountController attivaAccountController;
+    private ImpostaImmagineProfiloController impostaImmagineProfiloController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +29,7 @@ public class AttivaAccountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_attiva_account);
 
         attivaAccountController = new AttivaAccountController(this);
+        impostaImmagineProfiloController = new ImpostaImmagineProfiloController(this);
 
         attivaAccountController.initAccountActivation();
 
@@ -40,7 +46,11 @@ public class AttivaAccountActivity extends AppCompatActivity {
                 EditText numberField_code = findViewById(R.id.AccountActivation_numberField_codice);
                 String code = String.valueOf(numberField_code.getText());
 
-                attivaAccountController.activeAccount(code);
+                Boolean result = attivaAccountController.activeAccount(code);
+
+                Log.i(TAG, "IS: " + result);
+
+                if(result) impostaImmagineProfiloController.openPersonalizzaAccountImmagineActivity(true);
             }
         });
     }

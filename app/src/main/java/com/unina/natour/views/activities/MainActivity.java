@@ -1,30 +1,63 @@
 package com.unina.natour.views.activities;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.unina.natour.R;
+import com.unina.natour.controllers.ImportaFileGPXController;
+import com.unina.natour.controllers.MainController;
+import com.unina.natour.controllers.PianificaItinerarioController;
+import com.unina.natour.controllers.ProfiloPersonaleController;
 import com.unina.natour.views.fragments.CommunityFragment;
 import com.unina.natour.views.fragments.HomeFragment;
-import com.unina.natour.views.fragments.PianificaFragment;
+import com.unina.natour.views.fragments.PianificaItinerarioFragment;
 import com.unina.natour.views.fragments.ProfiloPersonaleFragment;
 
 public class MainActivity extends AppCompatActivity {
+
+
+
+    MainController mainController;
+
+    ProfiloPersonaleController profiloPersonaleController;
+    PianificaItinerarioController pianificaItinerarioController;
+    //home controller ecc...
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mainController = new MainController(this);
+
+        profiloPersonaleController = new ProfiloPersonaleController(this);
+
+        pianificaItinerarioController = new PianificaItinerarioController(this);
+
+
         HomeFragment homeFragment = new HomeFragment();
-        ProfiloPersonaleFragment profiloFragment = new ProfiloPersonaleFragment();
-        PianificaFragment pianificaFragment = new PianificaFragment();
+        ProfiloPersonaleFragment profiloFragment = ProfiloPersonaleFragment.newInstance(profiloPersonaleController);
+        PianificaItinerarioFragment pianificaFragment = PianificaItinerarioFragment.newInstance(pianificaItinerarioController);
         CommunityFragment communityFragment = new CommunityFragment();
+
+
+
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.Main_navigationBar_menu);
         getSupportFragmentManager().beginTransaction()
@@ -70,7 +103,11 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-
     }
+
+
+
+
+
+
 }

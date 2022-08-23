@@ -4,26 +4,22 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.AnonymousAWSCredentials;
-import com.amazonaws.services.cognitoidentity.model.CognitoIdentityProvider;
-import com.amazonaws.services.cognitoidentityprovider.AmazonCognitoIdentityProvider;
+import androidx.annotation.RequiresApi;
 
-import com.amazonaws.services.cognitoidentityprovider.AmazonCognitoIdentityProviderClient;
-import com.amazonaws.services.cognitoidentityprovider.model.AdminDeleteUserRequest;
 import com.amplifyframework.core.Amplify;
 
-import com.unina.natour.amplify.AmplifyUtils;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.views.activities.AttivaAccountActivity;
 import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.activities.RegistrazioneActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 
 public class AttivaAccountController {
@@ -68,9 +64,17 @@ public class AttivaAccountController {
         sharedPreferencesEditor.commit();
     }
 
-    public void activeAccount(String code){
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public Boolean activeAccount(String code){
 
-        ExceptionHandler.isThereAnEmptyField(messageDialog,code);
+
+        if(!ExceptionHandler.areAllFieldsFull(messageDialog,code)) {
+            Log.i(TAG, "--------------------- empty field");
+            return false;
+        }
+
+
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<Boolean>();
 
         Amplify.Auth.confirmSignUp(
                 username,
@@ -87,14 +91,27 @@ public class AttivaAccountController {
                     sharedPreferencesEditor.remove(SHARED_PREFERENCES_PASSWORD);
                     sharedPreferencesEditor.commit();
 
-                    autenticazioneController.effectiveSignIn(username,password,true);
-
-
+                    Boolean result = autenticazioneController.effectiveSignIn(username,password);
+                    completableFuture.complete(true);
                 },
                 error -> {
                     ExceptionHandler.handleMessageError(messageDialog, error);
+                    completableFuture.complete(false);
                 }
         );
+
+        Boolean result = true;
+        try {
+            result = completableFuture.get();
+        }
+        catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     public void cancelAccountActivation(){

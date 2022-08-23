@@ -3,7 +3,10 @@ package com.unina.natour.controllers;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
@@ -11,6 +14,9 @@ import com.unina.natour.views.activities.CompletaRecuperoPasswordActivity;
 import com.unina.natour.views.activities.IniziaRecuperoPasswordActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class RecuperoPasswordController {
 
     private final static String TAG ="RecuperoPasswordController";
@@ -18,53 +24,85 @@ public class RecuperoPasswordController {
     Activity activity;
     MessageDialog messageDialog;
 
-    AutenticazioneController autenticazioneController;
-
     public RecuperoPasswordController(Activity activity){
         this.activity = activity;
         this.messageDialog = new MessageDialog(activity);
-
-        this.autenticazioneController = new AutenticazioneController(activity);
     }
 
+
     @SuppressLint("LongLogTag")
-    public void startPasswordRecovery(String username) {
-        if(!ExceptionHandler.isThereAnEmptyField(messageDialog,username)) return;
+    public Boolean startPasswordRecovery(String username) {
+
+        if(!ExceptionHandler.areAllFieldsFull(messageDialog,username)) return false;
+
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<Boolean>();
 
         Amplify.Auth.resetPassword(
                 username,
                 result -> {
                     Log.i(TAG, result.toString());
-                    openCompletaRecuperoPasswordActivity();
 
+                    completableFuture.complete(true);
                 },
                 error -> {
                     Log.e(TAG, error.toString());
                     ExceptionHandler.handleMessageError(messageDialog, error);
+
+                    completableFuture.complete(false);
                 }
         );
+
+
+        Boolean result = false;
+        try {
+            result = completableFuture.get();
+        }
+        catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     @SuppressLint("LongLogTag")
-    public void completePasswordRecovery(String code, String password1, String password2){
+    public Boolean completePasswordRecovery(String code, String password1, String password2){
 
-        if(!ExceptionHandler.isThereAnEmptyField(messageDialog,code,password1,password2)) return;
+        if(!ExceptionHandler.areAllFieldsFull(messageDialog,code,password1,password2)) return false;
 
-        if(!ExceptionHandler.doPasswordMatch(messageDialog,password1,password2)) return;
+        if(!ExceptionHandler.doPasswordMatch(messageDialog,password1,password2)) return false;
+
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<Boolean>();
 
         Amplify.Auth.confirmResetPassword(
                 password1,
                 code,
                 () -> {
                     Log.i(TAG, "New password confirmed");
-                    autenticazioneController.openAutenticazioneActivity();
+                    completableFuture.complete(true);
 
                 },
                 error ->{
                     Log.e(TAG, error.toString());
                     ExceptionHandler.handleMessageError(messageDialog, error);
+                    completableFuture.complete(false);
                 }
         );
+
+        Boolean result = false;
+        try {
+            result = completableFuture.get();
+        }
+        catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     public void back() {

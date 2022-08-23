@@ -19,6 +19,7 @@ public class HomeActivity extends AppCompatActivity {
     private HomeController homeController;
 
     private DisconnessioneController disconnessioneController;
+    private AutenticazioneController autenticazioneController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,9 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         homeController = new HomeController(this);
+
         disconnessioneController = new DisconnessioneController(this);
+        autenticazioneController = new AutenticazioneController(this);
 
         pressButtonSignOut();
     }
@@ -37,7 +40,12 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                disconnessioneController.signOut();
+                Boolean result = disconnessioneController.signOut();
+
+                if(result){
+                    autenticazioneController.openAutenticazioneActivity();
+                    finish();
+                }
             }
         });
     }
