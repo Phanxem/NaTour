@@ -10,8 +10,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+
     <application
-        android:name=".amplify.AmplifyConfig"
+        android:name=".amplify.ApplicationConfig"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -38,7 +39,7 @@
             android:name=".views.activities.PersonalizzaAccountImmagineActivity"
             android:exported="false" />
         <activity
-            android:name=".views.activities.SplashScreenActivity"
+            android:name=".views.activities.MainActivity"
             android:exported="false" />
         <activity
             android:name=".views.activities.TESTActivity"
@@ -62,10 +63,7 @@
             android:name=".views.activities.AttivaAccountActivity"
             android:exported="false" />
         <activity
-            android:name=".views.activities.HomeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".views.activities.MainActivity"
+            android:name=".views.activities.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

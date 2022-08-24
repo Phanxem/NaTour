@@ -76,7 +76,7 @@ public class AddressDAOImpl implements AddressDAO {
         JsonObject jsonObjectResult = completableFuture.get();
 
         //can throw IOException
-        if(jsonObjectResult != null) throw exception[0];
+        if(jsonObjectResult == null) throw exception[0];
 
         //can throw MessageException
         AddressModel result = JsonConverter.toAddressModel(jsonObjectResult);

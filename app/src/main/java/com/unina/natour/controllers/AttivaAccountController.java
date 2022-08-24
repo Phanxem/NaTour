@@ -13,6 +13,8 @@ import androidx.annotation.RequiresApi;
 import com.amplifyframework.core.Amplify;
 
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedConfirmSignUpException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.EmptyFieldActivationAccountCodeException;
 import com.unina.natour.views.activities.AttivaAccountActivity;
 import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.activities.RegistrazioneActivity;
@@ -21,7 +23,7 @@ import com.unina.natour.views.dialogs.MessageDialog;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class AttivaAccountController {
 
     private final static String TAG ="AttivaAcountController";
@@ -41,16 +43,21 @@ public class AttivaAccountController {
     String username;
     String password;
 
-    public AttivaAccountController(Activity activity){
-        this.activity = activity;
-        this.messageDialog = new MessageDialog(activity);
 
-        this.autenticazioneController = new AutenticazioneController(activity);
+    public AttivaAccountController(Activity activity, MessageDialog messageDialog){
+        this.activity = activity;
+        this.messageDialog = messageDialog;
+
+        this.autenticazioneController = new AutenticazioneController(activity, messageDialog);
 
         Intent intent = activity.getIntent();
         this.username = intent.getStringExtra(EXTRA_USERNAME);
         this.password = intent.getStringExtra(EXTRA_PASSWORD);
 
+    }
+
+    public MessageDialog getMessageDialog() {
+        return messageDialog;
     }
 
     public void initAccountActivation(){
@@ -64,15 +71,13 @@ public class AttivaAccountController {
         sharedPreferencesEditor.commit();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public Boolean activeAccount(String code){
 
-
-        if(!ExceptionHandler.areAllFieldsFull(messageDialog,code)) {
-            Log.i(TAG, "--------------------- empty field");
+        if(!ExceptionHandler.areAllFieldsFull(code)) {
+            EmptyFieldActivationAccountCodeException exception = new EmptyFieldActivationAccountCodeException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
             return false;
         }
-
 
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<Boolean>();
 
@@ -92,7 +97,7 @@ public class AttivaAccountController {
                     sharedPreferencesEditor.commit();
 
                     Boolean result = autenticazioneController.effectiveSignIn(username,password);
-                    completableFuture.complete(true);
+                    completableFuture.complete(result);
                 },
                 error -> {
                     ExceptionHandler.handleMessageError(messageDialog, error);
@@ -104,11 +109,10 @@ public class AttivaAccountController {
         try {
             result = completableFuture.get();
         }
-        catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
+        catch (ExecutionException | InterruptedException e) {
+            NotCompletedConfirmSignUpException exception = new NotCompletedConfirmSignUpException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            result = false;
         }
 
         return result;

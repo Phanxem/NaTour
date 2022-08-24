@@ -3,15 +3,23 @@ package com.unina.natour.controllers;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.amplifyframework.auth.cognito.AWSCognitoUserPoolTokens;
 import com.amplifyframework.auth.result.AuthSessionResult;
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFetchAuthSessionException;
 import com.unina.natour.views.dialogs.MessageDialog;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class SplashScreenController {
 
     private final static String TAG ="SplashScreenController";
@@ -19,23 +27,77 @@ public class SplashScreenController {
     Activity activity;
     MessageDialog messageDialog;
 
-    HomeController homeController;
+    MainController mainController;
     AttivaAccountController attivaAccountController;
     AutenticazioneController autenticazioneController;
 
-    public SplashScreenController(Activity activity){
-        this.activity = activity;
-        this.messageDialog = new MessageDialog(activity);
 
-        this.homeController = new HomeController(activity);
-        this.attivaAccountController = new AttivaAccountController(activity);
-        this.autenticazioneController = new AutenticazioneController(activity);
+    public SplashScreenController(Activity activity, MessageDialog messageDialog){
+        this.activity = activity;
+        this.messageDialog = messageDialog;
+
+        this.mainController = new MainController(activity, messageDialog);
+        this.attivaAccountController = new AttivaAccountController(activity, messageDialog);
+        this.autenticazioneController = new AutenticazioneController(activity, messageDialog);
+    }
+
+    public MessageDialog getMessageDialog() {
+        return messageDialog;
     }
 
     public void redirectToRightActivity(){
+
+        CompletableFuture<AWSCognitoAuthSession> completableFuture = new CompletableFuture<AWSCognitoAuthSession>();
+
         Amplify.Auth.fetchAuthSession(
                 result -> {
+                    AWSCognitoAuthSession cognitoAuthSession = (AWSCognitoAuthSession) result;
+                    completableFuture.complete(cognitoAuthSession);
+                },
+                error -> {
+                    ExceptionHandler.handleMessageError(messageDialog,error);
+                    completableFuture.complete(null);
+                }
+        );
 
+        AWSCognitoAuthSession result = null;
+
+        try {
+            result = completableFuture.get();
+        }
+        catch (ExecutionException | InterruptedException e) {
+            NotCompletedFetchAuthSessionException exception = new NotCompletedFetchAuthSessionException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+
+        }
+
+        if(result != null && result.isSignedIn()){
+            mainController.openMainActivity();
+        }
+        else {
+            String packageName = activity.getApplicationContext().getPackageName();
+            SharedPreferences sharedPreferences = activity.getSharedPreferences(packageName, Context.MODE_PRIVATE);
+
+            boolean mustActivateAccount = sharedPreferences.getBoolean(AttivaAccountController.SHARED_PREFERENCES_ACCOUNT_ACTIVATION, false);
+
+            if(mustActivateAccount){
+                String username = sharedPreferences.getString(AttivaAccountController.SHARED_PREFERENCES_USERNAME, null);
+                String password = sharedPreferences.getString(AttivaAccountController.SHARED_PREFERENCES_PASSWORD, null);
+
+                attivaAccountController.openAttivaAccountActivity(username,password);
+            }
+            else autenticazioneController.openAutenticazioneActivity();
+        }
+
+        activity.finish();
+    }
+
+}
+
+
+/*
+* Amplify.Auth.fetchAuthSession(
+                result -> {
                     AWSCognitoAuthSession cognitoAuthSession = (AWSCognitoAuthSession) result;
 
                     AuthSessionResult<AWSCognitoUserPoolTokens> authSessionResult = cognitoAuthSession.getUserPoolTokens();
@@ -77,37 +139,4 @@ public class SplashScreenController {
                     ExceptionHandler.handleMessageError(messageDialog,error);
                 }
         );
-    }
-
-    /*
-    public void openHomeActivity(){
-        Intent intent = new Intent(activity, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        activity.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(activity).toBundle());
-    }
-
-    public void openAttivaAccountActivity(String username, String password){
-
-        Intent intentAutenticazioneActivity = new Intent(activity, AutenticazioneActivity.class);
-        intentAutenticazioneActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        activity.startActivity(intentAutenticazioneActivity);
-
-        Intent intentRegistrazioneActivity = new Intent(activity, RegistrazioneActivity.class);
-        intentRegistrazioneActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        activity.startActivity(intentRegistrazioneActivity);
-
-        Intent intent = new Intent(activity, AttivaAccountActivity.class);
-        intent.putExtra(AttivaAccountController.EXTRA_USERNAME,username);
-        intent.putExtra(AttivaAccountController.EXTRA_PASSWORD,password);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        activity.startActivity(intent);
-    }
-
-    public void openAutenticazioneActivity(){
-        Intent intent = new Intent(activity, AutenticazioneActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        activity.startActivity(intent);
-    }
-*/
-}
+* */

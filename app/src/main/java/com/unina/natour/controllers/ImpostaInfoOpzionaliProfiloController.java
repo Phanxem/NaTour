@@ -3,9 +3,16 @@ package com.unina.natour.controllers;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureUpdateOptionalInfoException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.InvalidBirthDateException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindAddressException;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.MessageDTO;
 import com.unina.natour.dto.OptionalInfoDTO;
@@ -15,8 +22,12 @@ import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.PersonalizzaAccountInfoOpzionaliActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
+import java.io.IOException;
 import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
+@SuppressLint("LongLogTag")
 public class ImpostaInfoOpzionaliProfiloController {
 
     private final static String TAG ="ImpostaInfoOpzionaliProfiloController";
@@ -28,25 +39,22 @@ public class ImpostaInfoOpzionaliProfiloController {
     Activity activity;
     MessageDialog messageDialog;
 
-    //private HomeController homeController;
-
-    //Model---
     ImpostaInfoOpzionaliProfiloModel impostaInfoOpzionaliProfiloModel;
-
-    //---
-
 
     UserDAO userDAO;
 
-    public ImpostaInfoOpzionaliProfiloController(Activity activity){
+
+    public ImpostaInfoOpzionaliProfiloController(Activity activity, MessageDialog messageDialog){
         this.activity = activity;
-        this.messageDialog = new MessageDialog(activity);
-
-
+        this.messageDialog = messageDialog;
 
         this.impostaInfoOpzionaliProfiloModel = new ImpostaInfoOpzionaliProfiloModel();
 
         this.userDAO = new UserDAOImpl(activity);
+    }
+
+    public MessageDialog getMessageDialog() {
+        return messageDialog;
     }
 
     public ImpostaInfoOpzionaliProfiloModel getImpostaInfoOpzionaliProfiloModel() {
@@ -54,16 +62,7 @@ public class ImpostaInfoOpzionaliProfiloController {
     }
 
     public void setDateOfBirth(Calendar calendar){
-
         impostaInfoOpzionaliProfiloModel.setDateOfBirth(calendar);
-
-        /*
-        Date date = new Date(calendar.getTimeInMillis());
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String stringDate = dateFormat.format(date);
-
-        this.dateOfBirth = stringDate;
-        */
     }
 
     public void setCountry(String country){
@@ -87,22 +86,23 @@ public class ImpostaInfoOpzionaliProfiloController {
 
 
 
-    @SuppressLint("LongLogTag")
+
     public Boolean modificaInfoOpzionali(String address){
         OptionalInfoDTO optionalInfoDTO = new OptionalInfoDTO();
 
         Calendar dateOfBirth = impostaInfoOpzionaliProfiloModel.getDateOfBirth();
-        if(dateOfBirth != null) {
-            if(!isValidDate(dateOfBirth)){
-                Log.e(TAG, "error");
-                ExceptionHandler.handleMessageError(messageDialog,new ServerException());
-                return false;
-            }
 
-            String stringDate = TimeUtils.toSimpleString(dateOfBirth);
-
-            optionalInfoDTO.setDateOfBirth(stringDate);
+        if(!isValidDate(dateOfBirth)){
+            InvalidBirthDateException exception = new InvalidBirthDateException();
+            ExceptionHandler.handleMessageError(messageDialog, exception);
+            return false;
         }
+
+        String stringDate = null;
+        if(dateOfBirth != null) stringDate = TimeUtils.toSimpleString(dateOfBirth);
+
+        optionalInfoDTO.setDateOfBirth(stringDate);
+
 
         String placeOfResidence = null;
 
@@ -122,28 +122,31 @@ public class ImpostaInfoOpzionaliProfiloController {
 
 
         MessageDTO result = null;
+
         try {
             result = userDAO.updateOptionalInfo(optionalInfoDTO);
         }
-        catch (UnknownException e) {
-            e.printStackTrace();
-            Log.e(TAG, "ERRORE");
-            ExceptionHandler.handleMessageError(messageDialog, e);
+        catch (ExecutionException | InterruptedException e) {
+            NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return false;
         }
-
-        if(result == null) return false;
-
-
-        if(result.getCode() != SUCCESS_CODE){
-            //TODO
-            ExceptionHandler.handleMessageError(messageDialog,new ServerException());
-            Log.e(TAG, "ERRORE");
+        catch (IOException e) {
+            FailureUpdateOptionalInfoException exception = new FailureUpdateOptionalInfoException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return false;
+        }
+        catch (ServerException e) {
+            ExceptionHandler.handleMessageError(messageDialog,e);
+            return false;
+        }
+        if(result == null || result.getCode() != SUCCESS_CODE){
+            FailureUpdateOptionalInfoException exception = new FailureUpdateOptionalInfoException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
             return false;
         }
 
-        Log.i(TAG, "immagine impostata");
         return true;
-
     }
 
 
@@ -165,31 +168,11 @@ public class ImpostaInfoOpzionaliProfiloController {
 
 
 
-
-
-
-
-
-
-
-
-
-
-    @SuppressLint("LongLogTag")
     public boolean isValidDate(Calendar date){
-
-        if(date == null){
-            return true;
-        }
+        if(date == null) return true;
 
         Calendar currentCalendar = Calendar.getInstance();
-
-        if(!date.before(currentCalendar)){
-            //TODO EXCEPTION
-            Log.e(TAG, "expetion");
-            return false;
-
-        }
+        if(!date.before(currentCalendar)) return false;
 
         return true;
     }

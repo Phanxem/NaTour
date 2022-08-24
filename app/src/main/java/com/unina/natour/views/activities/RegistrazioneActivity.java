@@ -1,17 +1,21 @@
 package com.unina.natour.views.activities;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.AttivaAccountController;
 import com.unina.natour.controllers.RegistrazioneController;
+import com.unina.natour.views.dialogs.MessageDialog;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class RegistrazioneActivity extends AppCompatActivity {
 
     private final static String TAG ="RegistrazioneActivity";
@@ -19,14 +23,16 @@ public class RegistrazioneActivity extends AppCompatActivity {
     private RegistrazioneController registrazioneController;
     private AttivaAccountController attivaAccountController;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registrazione);
 
-        registrazioneController = new RegistrazioneController(this);
-        attivaAccountController = new AttivaAccountController(this);
+        MessageDialog messageDialog = new MessageDialog();
+        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+
+        registrazioneController = new RegistrazioneController(this, messageDialog);
+        attivaAccountController = new AttivaAccountController(this, messageDialog);
 
         pressButtonSignUp();
         pressIconBack();
@@ -54,8 +60,6 @@ public class RegistrazioneActivity extends AppCompatActivity {
         });
     }
 
-
-
     public void pressIconBack() {
         ImageView icon_back = findViewById(R.id.SignUp_imageView_iconaIndietro);
         icon_back.setOnClickListener(new View.OnClickListener() {
@@ -66,17 +70,4 @@ public class RegistrazioneActivity extends AppCompatActivity {
         });
     }
 
-
-
-/*
-    public void showPasswordPolicy(){
-
-        final String PASSWORD_POLICY = "\nUna password valida deve:\n - Essere lunga almeno 8 caratteri\n - Deve contentere almeno un numero\n - Deve contenere almeno un carattere speciale\n - Deve contenere almeno una lettera maiuscola\n - Deve contentere almeno una lettera minuscola";
-
-        //textView_passwordPolicy.setLayoutParams(new ViewGroup.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT));
-        textView_passwordPolicy.setVisibility(View.VISIBLE);
-        textView_passwordPolicy.setText(PASSWORD_POLICY);
-    }
-
- */
 }

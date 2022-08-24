@@ -6,6 +6,10 @@ public class AppException extends Exception{
 
     public AppException(){ }
 
+    public AppException(Exception exception){
+        super(exception);
+    }
+
     public long getCode() {
         return code;
     }

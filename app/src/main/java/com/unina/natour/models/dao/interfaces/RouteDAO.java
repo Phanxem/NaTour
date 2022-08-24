@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface RouteDAO {
-    RouteDTO findRouteByCoordinates(String coordinates) throws UnknownException, ServerException, IOException, ExecutionException, InterruptedException;
+    RouteDTO findRouteByCoordinates(String coordinates) throws ServerException, IOException, ExecutionException, InterruptedException;
 
-    RouteDTO findRouteByGeoPoints(List<GeoPoint> geoPoints) throws UnknownException, ServerException, InterruptedException, ExecutionException, IOException;
+    RouteDTO findRouteByGeoPoints(List<GeoPoint> geoPoints) throws ServerException, InterruptedException, ExecutionException, IOException;
 }

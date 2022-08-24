@@ -1,7 +1,9 @@
 package com.unina.natour.views.activities;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,10 +13,13 @@ import android.widget.TextView;
 import com.unina.natour.R;
 import com.unina.natour.controllers.AutenticazioneController;
 import com.unina.natour.controllers.HomeController;
+import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.RecuperoPasswordController;
 import com.unina.natour.controllers.RegistrazioneController;
 import com.unina.natour.controllers.SplashScreenController;
+import com.unina.natour.views.dialogs.MessageDialog;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class AutenticazioneActivity extends AppCompatActivity {
 
     private final static String TAG ="AutenticazioneActivity";
@@ -22,17 +27,20 @@ public class AutenticazioneActivity extends AppCompatActivity {
     private AutenticazioneController autenticazioneController;
     private RegistrazioneController registrazioneController;
     private RecuperoPasswordController recuperoPasswordController;
-    private HomeController homeController;
+    private MainController mainController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autenticazione);
 
-        autenticazioneController = new AutenticazioneController(this);
-        registrazioneController = new RegistrazioneController(this);
-        recuperoPasswordController = new RecuperoPasswordController(this);
-        homeController = new HomeController(this);
+        MessageDialog messageDialog = new MessageDialog();
+        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+
+        autenticazioneController = new AutenticazioneController(this, messageDialog);
+        registrazioneController = new RegistrazioneController(this, messageDialog);
+        recuperoPasswordController = new RecuperoPasswordController(this, messageDialog);
+        mainController = new MainController(this, messageDialog);
 
         pressButtonSignIn();
         pressTextSignUp();
@@ -52,7 +60,7 @@ public class AutenticazioneActivity extends AppCompatActivity {
 
                 Boolean result = autenticazioneController.signIn(usernameEmail, password);
 
-                if(result) homeController.openHomeActivity();
+                if(result) mainController.openMainActivity();
             }
         });
     }
@@ -60,6 +68,7 @@ public class AutenticazioneActivity extends AppCompatActivity {
     public void pressTextSignUp() {
         TextView textView_signUp = findViewById(R.id.SignIn_textView_registrati);
         textView_signUp.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 registrazioneController.openRegistrazioneActivity();

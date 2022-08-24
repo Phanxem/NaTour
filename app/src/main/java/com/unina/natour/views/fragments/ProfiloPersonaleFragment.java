@@ -1,5 +1,6 @@
 package com.unina.natour.views.fragments;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.unina.natour.R;
@@ -20,11 +22,14 @@ import com.unina.natour.controllers.DisconnessioneController;
 import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.ProfiloPersonaleController;
 import com.unina.natour.models.ProfiloPersonaleModel;
+import com.unina.natour.views.dialogs.MessageDialog;
 
-
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class ProfiloPersonaleFragment extends Fragment {
 
     View view;
+    MessageDialog messageDialog;
+
     ProfiloPersonaleController profiloPersonaleController;
     DisconnessioneController disconnessioneController;
     AutenticazioneController autenticazioneController;
@@ -43,6 +48,7 @@ public class ProfiloPersonaleFragment extends Fragment {
         return profiloPersonaleFragment;
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_profilo_personale, container, false);
@@ -50,17 +56,17 @@ public class ProfiloPersonaleFragment extends Fragment {
         Bundle args = getArguments();
         if(args != null){
             this.profiloPersonaleController = (ProfiloPersonaleController) args.getParcelable(MainController.KEY_CONTROLLER);
-            Log.i("TAG", "controller passato con successo");
-            if(this.profiloPersonaleController == null) Log.i("TAG", "controller null");
+            this.messageDialog = profiloPersonaleController.getMessageDialog();
 
         }
         else{
-            Log.i("TAG", "controller non passato");
-            this.profiloPersonaleController = new ProfiloPersonaleController(getActivity());
+            messageDialog = new MessageDialog();
+            messageDialog.setSupportFragmentManager(getParentFragmentManager());
+            this.profiloPersonaleController = new ProfiloPersonaleController(getActivity(),messageDialog);
         }
 
-        this.disconnessioneController = new DisconnessioneController(getActivity());
-        this.autenticazioneController = new AutenticazioneController(getActivity());
+        this.disconnessioneController = new DisconnessioneController(getActivity(), messageDialog);
+        this.autenticazioneController = new AutenticazioneController(getActivity(), messageDialog);
 
         this.profiloPersonaleModel = profiloPersonaleController.getProfiloPersonaleModel();
 

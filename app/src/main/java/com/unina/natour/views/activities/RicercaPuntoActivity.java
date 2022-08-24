@@ -1,6 +1,7 @@
 package com.unina.natour.views.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -10,6 +11,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,22 +28,28 @@ import com.unina.natour.R;
 import com.unina.natour.controllers.RicercaPuntoController;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.RicercaPuntoModel;
+import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.observers.Observer;
 
 import java.util.List;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class RicercaPuntoActivity extends AppCompatActivity implements Observer {
 
     RicercaPuntoController ricercaPuntoController;
 
     RicercaPuntoModel ricercaPuntoModel;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ricerca_punto);
 
-        ricercaPuntoController = new RicercaPuntoController(this);
+        MessageDialog messageDialog = new MessageDialog();
+        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+
+        ricercaPuntoController = new RicercaPuntoController(this, messageDialog);
 
         ricercaPuntoModel = ricercaPuntoController.getModel();
         ricercaPuntoModel.registerObserver(this);

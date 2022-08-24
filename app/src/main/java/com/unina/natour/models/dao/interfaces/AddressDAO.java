@@ -11,8 +11,8 @@ import java.util.concurrent.ExecutionException;
 
 public interface AddressDAO {
 
-    AddressModel findAddressByGeoPoint(GeoPoint geoPoint) throws ServerException, UnknownException, IOException, ExecutionException, InterruptedException;
+    AddressModel findAddressByGeoPoint(GeoPoint geoPoint) throws ServerException, IOException, ExecutionException, InterruptedException;
 
-    List<AddressModel> findAddressesByQuery(String query) throws ServerException, UnknownException, IOException, ExecutionException, InterruptedException;
+    List<AddressModel> findAddressesByQuery(String query) throws ServerException, IOException, ExecutionException, InterruptedException;
 
 }

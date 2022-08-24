@@ -1,11 +1,14 @@
 package com.unina.natour.views.fragments;
 
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
+import android.os.Message;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +30,7 @@ import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.RouteLegModel;
 import com.unina.natour.models.PianificaItinerarioModel;
+import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.observers.Observer;
 
 import org.osmdroid.util.BoundingBox;
@@ -39,12 +43,13 @@ import org.osmdroid.views.overlay.Polyline;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class PianificaItinerarioFragment extends Fragment implements Observer {
 
     private static final String TAG = "salada";
-    View view;
 
+    View view;
+    MessageDialog messageDialog;
 
     MapView mapView;
     Marker selectionMarker;
@@ -65,6 +70,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
         return pianificaFragment;
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_pianifica_itinerario, container, false);
@@ -72,8 +78,13 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
         Bundle args = getArguments();
         if(args != null){
             this.pianificaItinerarioController = (PianificaItinerarioController) args.getParcelable(MainController.KEY_CONTROLLER);
+            this.messageDialog = pianificaItinerarioController.getMessageDialog();
         }
-        else this.pianificaItinerarioController = new PianificaItinerarioController(getActivity());
+        else{
+            this.messageDialog = new MessageDialog();
+            this.messageDialog.setSupportFragmentManager(getParentFragmentManager());
+            this.pianificaItinerarioController = new PianificaItinerarioController(getActivity(),messageDialog);
+        }
 
         pianificaItinerarioModel = pianificaItinerarioController.getModel();
         pianificaItinerarioModel.registerObserver(this);

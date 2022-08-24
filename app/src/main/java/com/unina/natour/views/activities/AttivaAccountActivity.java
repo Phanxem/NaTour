@@ -1,8 +1,10 @@
 package com.unina.natour.views.activities;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +17,8 @@ import com.unina.natour.controllers.AttivaAccountController;
 import com.unina.natour.controllers.AutenticazioneController;
 import com.unina.natour.controllers.ImpostaImmagineProfiloController;
 import com.unina.natour.controllers.RegistrazioneController;
-
+import com.unina.natour.views.dialogs.MessageDialog;
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class AttivaAccountActivity extends AppCompatActivity {
 
     private final static String TAG ="AttivaAcountActivity";
@@ -23,13 +26,17 @@ public class AttivaAccountActivity extends AppCompatActivity {
     private AttivaAccountController attivaAccountController;
     private ImpostaImmagineProfiloController impostaImmagineProfiloController;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attiva_account);
 
-        attivaAccountController = new AttivaAccountController(this);
-        impostaImmagineProfiloController = new ImpostaImmagineProfiloController(this);
+        MessageDialog messageDialog = new MessageDialog();
+        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+
+        attivaAccountController = new AttivaAccountController(this, messageDialog);
+        impostaImmagineProfiloController = new ImpostaImmagineProfiloController(this, messageDialog);
 
         attivaAccountController.initAccountActivation();
 

@@ -56,7 +56,8 @@ public class SelectCountryDialog extends DialogFragment {
     }
 
 
-    @Override public void onAttach(Context context) {
+    @Override
+    public void onAttach(Context context) {
         super.onAttach(context);
         try {
             onCountryListener = (OnCountryListener)getActivity();

@@ -10,12 +10,15 @@ import androidx.annotation.RequiresApi;
 
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.EmptyFieldUsernameEmailException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedSignInException;
 import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-
+@RequiresApi(api = Build.VERSION_CODES.N)
+@SuppressLint("LongLogTag")
 public class AutenticazioneController {
 
     private final static String TAG ="AutenticazioneController";
@@ -23,21 +26,29 @@ public class AutenticazioneController {
     Activity activity;
     MessageDialog messageDialog;
 
-    public AutenticazioneController(Activity activity){
+
+    public AutenticazioneController(Activity activity, MessageDialog messageDialog){
         this.activity = activity;
-        this.messageDialog = new MessageDialog(activity);
+        this.messageDialog = messageDialog;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    public MessageDialog getMessageDialog() {
+        return messageDialog;
+    }
+
+
     public Boolean signIn(String usernameEmail, String password) {
 
-        if(!ExceptionHandler.areAllFieldsFull(messageDialog,usernameEmail,password)) return false;
+        if(!ExceptionHandler.areAllFieldsFull(usernameEmail,password)){
+            EmptyFieldUsernameEmailException exception = new EmptyFieldUsernameEmailException();
+            ExceptionHandler.handleMessageError(messageDialog, exception);
+            return false;
+        }
 
         return effectiveSignIn(usernameEmail,password);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @SuppressLint("LongLogTag")
+
     public Boolean effectiveSignIn(String usernameEmail, String password){
 
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<Boolean>();
@@ -59,12 +70,12 @@ public class AutenticazioneController {
         try {
             result = completableFuture.get();
         }
-        catch (ExecutionException e) {
-            e.printStackTrace();
+        catch (ExecutionException | InterruptedException e) {
+            NotCompletedSignInException exception = new NotCompletedSignInException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            result = false;
         }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
 
         return result;
     }

@@ -43,7 +43,53 @@
     <string name="SelezionaCittà_titolo">Seleziona Città</string>
 
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- TODO: Exception Messages -->
+
+    <!-- AMPLIFY ERROR MESSAGES -->
+    <!-- SignUp Exceptions -->
+    <string name="AmplifyException_UserAlreadyExists">User already exists</string>
+    <string name="AmplifyException_EmailAlreadyExists">PreSignUp failed with error EmailExistsException</string>
+    <string name="AmplifyException_PasswordNotConformPolicy">Password did not conform with policy</string>
+    <string name="AmplifyException_InvalidVerificationCode">Invalid verification code provided</string>
+    <string name="AmplifyException_InvalidEmailFormat">Invalid email address format</string>
+
+    <!-- SignIn Exceptions -->
+    <string name="AmplifyException_UserNotExist">User does not exist</string>
+    <string name="AmplifyException_IncorrectUserPassword">Incorrect username or password"</string>
+    <string name="AmplifyException_UserNotConfirmed">User is not confirmed</string>
+
+    <!-- Password Recovery Exceptions -->
+    <string name="AmplifyException_AccountNotFound">Username/client id combination not found</string>
+    <string name="AmplifyException_ErrorPasswordRecovery_UserNotConfirmed">Cannot reset password for the user as there is no registered/verified email or phone_number</string>
+
+
+
+    <!-- Generic Exceptions -->
+    <string name="UnknownException">È stato riscontrato un problema</string>
+    <string name="EmptyFieldException">Uno o più campi non sono stati compilati</string>
+
+
+    <!-- SignUp Exceptions -->
+    <string name="UserAlreadyExists">L\'username inserito è già utilizzato.</string>
+    <string name="EmailAlreadyExists">L\'email inserita è già utilizzata.</string>
+    <string name="PasswordNotConformPolicy">La password inserita è troppo corta. Una password deve essere lunga almeno 8 caratteri.</string>
+    <string name="InvalidVerificationCode">Il codice inserito non è valido</string>
+    <string name="InvalidEmailFormat">L\'e-mail inserita non è valida</string>
+
+    <!-- SignIn Exceptions -->
+    <string name="UserNotExist">Username o Email errata</string>
+    <string name="IncorrectUserPassword">Password errata"</string>
+    <string name="UserNotConfirmed">Account non attivo</string>
+
+    <!-- Password Recovery Exceptions -->
+    <string name="AccountNotFound">L\'username o l\'email inserita non corrisponde a nessun account</string>
+    <string name="ErrorPasswordRecovery_UserNotConfirmed">L\'account dell\'utente non risulta attivato, non è quindi possibile effettuare il recupero della password</string>
+    <string name="UnmatchPasswords">Le password inserite non corrispondono</string>
+
+
+
+
 
 </resources>

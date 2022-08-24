@@ -27,6 +27,14 @@ import androidx.preference.PreferenceManager;
 
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureFindAddressException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureFindRouteException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.InvalidIndexPointException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.InvalidURLFormatException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NoIndexSelectedException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NoPointSelectedException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindAddressException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindRouteException;
 import com.unina.natour.controllers.utils.GPSUtils;
 import com.unina.natour.dto.RouteDTO;
 import com.unina.natour.models.AddressModel;
@@ -51,6 +59,7 @@ import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -87,11 +96,11 @@ public class PianificaItinerarioController implements Parcelable {
 
 
 
-    public PianificaItinerarioController(FragmentActivity activity){
+    public PianificaItinerarioController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
-        this.messageDialog = new MessageDialog(activity);
+        this.messageDialog = messageDialog;
 
-        this.ricercaPuntoController = new RicercaPuntoController(activity);
+        this.ricercaPuntoController = new RicercaPuntoController(activity, messageDialog);
 
         this.activityResultLauncherRicercaPunto = activity.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -146,24 +155,20 @@ public class PianificaItinerarioController implements Parcelable {
 
                                 try {
                                     routeDTO = routeDAO.findRouteByGeoPoints(geoPoints);
+                                    pianificaItinerarioModel.updateRoutes(routeDTO.getRouteLegs());
+                                    puntiIntermediListAdapter.notifyDataSetChanged();
                                 }
                                 catch (ServerException e) {
-                                    ExceptionHandler.handleMessageError(messageDialog, e);
+                                    ExceptionHandler.handleMessageError(messageDialog,e);
                                 }
-                                //TODO per le successive eccezioni definire delle eccezioni eprsonalizzate da passare all'handler
-                                catch (InterruptedException e) {
-                                    ExceptionHandler.handleMessageError(messageDialog, e);
-                                }
-                                catch (ExecutionException e){
-                                    ExceptionHandler.handleMessageError(messageDialog, e);
+                                catch (InterruptedException | ExecutionException e) {
+                                    NotCompletedFindRouteException exception = new NotCompletedFindRouteException(e);
+                                    ExceptionHandler.handleMessageError(messageDialog,exception);
                                 }
                                 catch (IOException e) {
-                                    ExceptionHandler.handleMessageError(messageDialog, e);
+                                    FailureFindRouteException exception = new FailureFindRouteException(e);
+                                    ExceptionHandler.handleMessageError(messageDialog,exception);
                                 }
-
-
-                                pianificaItinerarioModel.updateRoutes(routeDTO.getRouteLegs());
-                                puntiIntermediListAdapter.notifyDataSetChanged();
                             }
                         }
                     }
@@ -175,12 +180,7 @@ public class PianificaItinerarioController implements Parcelable {
                 new ActivityResultCallback<Boolean>() {
                     @Override
                     public void onActivityResult(Boolean result) {
-                        if (result) {
-                            openImportaFileGPXActivity();
-                            Log.i("ACCEPT", "acceptated tutt cos");
-                            return;
-                        }
-                        Log.i("NOT ACCEPT", "acceptaNOT ted NOT tutt cos");
+                        if (result) openImportaFileGPXActivity();
                     }
                 }
         );
@@ -195,6 +195,10 @@ public class PianificaItinerarioController implements Parcelable {
 
         this.routeDAO = new RouteDAOImpl();
         this.addressDAO = new AddressDAOImpl();
+    }
+
+    public MessageDialog getMessageDialog() {
+        return messageDialog;
     }
 
     public void initMap(MapView mapView){
@@ -217,7 +221,6 @@ public class PianificaItinerarioController implements Parcelable {
                 super.draw(canvas,mapView,shadow);
             }
 
-            @SuppressLint("LongLogTag")
             @Override
             public boolean onSingleTapConfirmed(MotionEvent motionEvent, MapView mapView) {
                 Projection projection = mapView.getProjection();
@@ -338,7 +341,8 @@ public class PianificaItinerarioController implements Parcelable {
         AddressModel address = pianificaItinerarioModel.getPointSelectedOnMap();
 
         if(address == null){
-            //TODO ERRORE
+            NoPointSelectedException exception = new NoPointSelectedException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
             return;
         }
 
@@ -353,7 +357,8 @@ public class PianificaItinerarioController implements Parcelable {
         AddressModel address = pianificaItinerarioModel.getPointSelectedOnMap();
 
         if(address == null){
-            //TODO ERRORE
+            NoPointSelectedException exception = new NoPointSelectedException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
             return;
         }
 
@@ -369,7 +374,8 @@ public class PianificaItinerarioController implements Parcelable {
         Integer index = pianificaItinerarioModel.getIndexPointSelected();
 
         if(address == null){
-            //TODO ERRORE
+            NoPointSelectedException exception = new NoPointSelectedException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
             return;
         }
 
@@ -397,42 +403,39 @@ public class PianificaItinerarioController implements Parcelable {
     public void updateInterestPointByIndexSelected(AddressModel address){
         Integer indexPointSelected = pianificaItinerarioModel.getIndexPointSelected();
         if(indexPointSelected == null){
-            //TODO ERROR
+            NoIndexSelectedException exception = new NoIndexSelectedException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
             return;
         }
 
         if(indexPointSelected.equals(STARTING_POINT_CODE)){
-            Log.e(TAG, "Start");
             pianificaItinerarioModel.setStartingPoint(address);
             updateRouteWithSetPoint(STARTING_POINT_CODE);
             return;
         }
         if(indexPointSelected.equals(DESTINATION_POINT_CODE)){
-            Log.e(TAG, "Destination");
             pianificaItinerarioModel.setDestinationPoint(address);
             updateRouteWithSetPoint(DESTINATION_POINT_CODE);
             return;
         }
         if(indexPointSelected >= 0 && indexPointSelected < pianificaItinerarioModel.getIntermediatePointsSize()){
-            Log.e(TAG, "Intermediate " + indexPointSelected);
             pianificaItinerarioModel.setIntermediatePoint(indexPointSelected,address);
             updateRouteWithSetPoint(indexPointSelected);
             return;
         }
         if(indexPointSelected == pianificaItinerarioModel.getIntermediatePointsSize()){
-            Log.e(TAG, "New Intermediate");
             pianificaItinerarioModel.addIntermediatePoint(address);
             updateRouteWithAddPoint();
             return;
         }
 
-
-        Log.e(TAG, "indice lista errato");
     }
 
 
     private void updateRouteWithRemovePoint(int index) {
         if(!getModel().isValidIndexPoint(index)){
+            InvalidIndexPointException exception = new InvalidIndexPointException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
             return;
         }
 
@@ -460,18 +463,26 @@ public class PianificaItinerarioController implements Parcelable {
         geoPoints.add(startingAddressRoute.getPoint());
         geoPoints.add(destinationAddressRoute.getPoint());
         RouteDTO routeDTO = null;
+
         try {
             routeDTO = routeDAO.findRouteByGeoPoints(geoPoints);
         }
-        catch (UnknownException e) {
-            e.printStackTrace();
-        }
         catch (ServerException e) {
-            e.printStackTrace();
+            ExceptionHandler.handleMessageError(messageDialog,e);
+            return;
         }
+        catch (InterruptedException | ExecutionException e) {
+            NotCompletedFindRouteException exception = new NotCompletedFindRouteException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        }
+        catch (IOException e) {
+            FailureFindRouteException exception = new FailureFindRouteException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        }
+
         RouteLegModel routeLeg = routeDTO.getRouteLegs().get(0);
-
-
         List<RouteLegModel> route = pianificaItinerarioModel.getRouteLegs();
 
         route.remove(index+1);
@@ -481,6 +492,8 @@ public class PianificaItinerarioController implements Parcelable {
     private void updateRouteWithSetPoint(int index) {
 
         if(!getModel().isValidIndexPoint(index)){
+            InvalidIndexPointException exception = new InvalidIndexPointException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
             return;
         }
 
@@ -532,12 +545,21 @@ public class PianificaItinerarioController implements Parcelable {
         try {
             routeDTO = routeDAO.findRouteByGeoPoints(geoPoints);
         }
-        catch (UnknownException e) {
-            e.printStackTrace();
-        }
         catch (ServerException e) {
-            e.printStackTrace();
+            ExceptionHandler.handleMessageError(messageDialog,e);
+            return;
         }
+        catch (InterruptedException | ExecutionException e) {
+            NotCompletedFindRouteException exception = new NotCompletedFindRouteException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        }
+        catch (IOException e) {
+            FailureFindRouteException exception = new FailureFindRouteException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        }
+
         RouteLegModel routeLeg0 = routeDTO.getRouteLegs().get(0);
         RouteLegModel routeLeg1 = null;
         if(intermediateAddressRoute != null) routeLeg1 = routeDTO.getRouteLegs().get(1);
@@ -557,7 +579,6 @@ public class PianificaItinerarioController implements Parcelable {
 
         route.set(index, routeLeg0);
         route.set(index+1, routeLeg1);
-
     }
 
     private void updateRouteWithAddPoint() {
@@ -576,12 +597,21 @@ public class PianificaItinerarioController implements Parcelable {
         try {
             routeDTO = routeDAO.findRouteByGeoPoints(geoPoints);
         }
-        catch (UnknownException e) {
-            e.printStackTrace();
-        }
         catch (ServerException e) {
-            e.printStackTrace();
+            ExceptionHandler.handleMessageError(messageDialog,e);
+            return;
         }
+        catch (InterruptedException | ExecutionException e) {
+            NotCompletedFindRouteException exception = new NotCompletedFindRouteException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        }
+        catch (IOException e) {
+            FailureFindRouteException exception = new FailureFindRouteException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        }
+
         RouteLegModel routeLeg0 = routeDTO.getRouteLegs().get(0);
         RouteLegModel routeLeg1 = routeDTO.getRouteLegs().get(1);
 
@@ -593,7 +623,7 @@ public class PianificaItinerarioController implements Parcelable {
     }
 
 
-//---
+
 
     public PianificaItinerarioModel getModel() {
         return pianificaItinerarioModel;
@@ -607,12 +637,29 @@ public class PianificaItinerarioController implements Parcelable {
             address = addressDAO.findAddressByGeoPoint(geoPoint);
         }
         catch (ServerException e) {
-            e.printStackTrace();
+            ExceptionHandler.handleMessageError(messageDialog,e);
+            return;
         }
-        catch (UnknownException e) {
-            e.printStackTrace();
+        catch (InterruptedException | ExecutionException e) {
+            NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
         }
-        if(address == null) return;
+        catch (IOException e) {
+            if(e instanceof UnsupportedEncodingException){
+                InvalidURLFormatException exception = new InvalidURLFormatException(e);
+                ExceptionHandler.handleMessageError(messageDialog,exception);
+                return;
+            }
+            FailureFindAddressException exception = new FailureFindAddressException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        }
+        if(address == null) {
+            FailureFindAddressException exception = new FailureFindAddressException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        };
 
         pianificaItinerarioModel.setPointSelectedOnMap(address);
 
@@ -632,7 +679,6 @@ public class PianificaItinerarioController implements Parcelable {
     }
 
     public void openImportaFileGPXActivity(){
-
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             activityResultLauncherPermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
             return;

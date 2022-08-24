@@ -1,7 +1,9 @@
 package com.unina.natour.views.activities;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -14,11 +16,12 @@ import android.widget.TextView;
 import com.unina.natour.R;
 import com.unina.natour.controllers.ImportaFileGPXController;
 import com.unina.natour.models.ImportaFileGPXModel;
+import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.observers.Observer;
 
 import java.io.File;
 import java.util.List;
-
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class ImportaFileGPXActivity extends AppCompatActivity implements Observer {
 
 
@@ -26,12 +29,16 @@ public class ImportaFileGPXActivity extends AppCompatActivity implements Observe
 
     ImportaFileGPXModel importaFileGPXModel;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_importa_file_gpx);
 
-        importaFileGPXController = new ImportaFileGPXController(this);
+        MessageDialog messageDialog = new MessageDialog();
+        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+
+        importaFileGPXController = new ImportaFileGPXController(this, messageDialog);
 
         importaFileGPXModel = importaFileGPXController.getImportaFileGPXModel();
         importaFileGPXModel.registerObserver(this);

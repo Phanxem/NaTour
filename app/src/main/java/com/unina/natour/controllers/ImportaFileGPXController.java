@@ -2,11 +2,21 @@ package com.unina.natour.controllers;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.ListView;
 
+import androidx.annotation.RequiresApi;
+
+import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureFindAddressException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureReadGPXFileException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.InvalidURLFormatException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindAddressException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotExistDirectoryException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotExistParentDirectoryException;
 import com.unina.natour.controllers.utils.FileUtils;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.ImportaFileGPXModel;
@@ -20,9 +30,11 @@ import org.osmdroid.util.GeoPoint;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Latitude;
@@ -31,6 +43,7 @@ import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class ImportaFileGPXController {
     public static final int REQUEST_CODE = 98;
 
@@ -47,9 +60,10 @@ public class ImportaFileGPXController {
 
     private AddressDAO addressDAO;
 
-    public ImportaFileGPXController(Activity activity){
+
+    public ImportaFileGPXController(Activity activity, MessageDialog messageDialog){
         this.activity = activity;
-        this.messageDialog = new MessageDialog(activity);
+        this.messageDialog = messageDialog;
 
         this.importaFileGPXModel = new ImportaFileGPXModel();
 
@@ -60,6 +74,10 @@ public class ImportaFileGPXController {
         );
         this.addressDAO = new AddressDAOImpl();
 
+    }
+
+    public MessageDialog getMessageDialog() {
+        return messageDialog;
     }
 
     public void initListViewFiles(ListView listView_files) {
@@ -78,188 +96,125 @@ public class ImportaFileGPXController {
             openDirectory(importaFileGPXModel.getParentDirectory());
             return;
         }
-        //TODO ERRORE
+        NotExistParentDirectoryException exception = new NotExistParentDirectoryException();
+        ExceptionHandler.handleMessageError(messageDialog,exception);
     }
 
     public void openDirectory(File directory) {
         if(directory == null || !directory.isDirectory()){
+            NotExistDirectoryException exception = new NotExistDirectoryException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
             return;
         }
 
         List<File> files = Arrays.asList(directory.listFiles(FileUtils.extensionFileFilter(FileUtils.EXTENSION_GPX)));
-        //List<File> files = Arrays.asList(directory.listFiles());
-
         importaFileGPXModel.set(directory,files);
         fileGpxListAdapter.notifyDataSetChanged();
-
-        return;
-
     }
 
     public boolean readGPXFile(File gpxFile) {
         GPX.Reader gpxReader = GPX.reader();
+        GPX gpx = null;
 
         try {
-            Log.i("START", "starting");
-            GPX gpx = gpxReader.read(gpxFile);
-            if(gpx == null) return false;
+            gpx = gpxReader.read(gpxFile);
+        }
+        catch (IOException e) {
+            FailureReadGPXFileException exception = new FailureReadGPXFileException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return false;
+        }
+        if(gpx == null){
+            FailureReadGPXFileException exception = new FailureReadGPXFileException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return false;
+        }
 
-            List<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
 
-            List<WayPoint> wayPoints = gpx.getWayPoints();
-            List<Track> tracks = gpx.getTracks();
-            if(wayPoints != null && !wayPoints.isEmpty()){
-                for(WayPoint wayPoint : wayPoints){
-                    GeoPoint geoPoint = new GeoPoint(wayPoint.getLatitude().doubleValue(),wayPoint.getLongitude().doubleValue());
-                    geoPoints.add(geoPoint);
-                }
+        List<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
+        List<WayPoint> wayPoints = gpx.getWayPoints();
+        List<Track> tracks = gpx.getTracks();
+        if(wayPoints != null && !wayPoints.isEmpty()){
+            for(WayPoint wayPoint : wayPoints){
+                GeoPoint geoPoint = new GeoPoint(wayPoint.getLatitude().doubleValue(),wayPoint.getLongitude().doubleValue());
+                geoPoints.add(geoPoint);
             }
-            else if(tracks != null && !tracks.isEmpty() ){
-                Track track = tracks.get(0);
+        }
+        else if(tracks != null && !tracks.isEmpty() ){
+            Track track = tracks.get(0);
 
-                List<TrackSegment> trackSegments = track.getSegments();
+            List<TrackSegment> trackSegments = track.getSegments();
 
-                if(trackSegments == null || trackSegments.isEmpty()) return false;
+            if(trackSegments == null || trackSegments.isEmpty()) return false;
 
-                WayPoint firstWayPoint;
-                WayPoint lastWayPoint;
+            WayPoint firstWayPoint;
+            WayPoint lastWayPoint;
 
-                RouteLegModel routeLegModel = new RouteLegModel();
+            TrackSegment firstSegment = trackSegments.get(0);
+            TrackSegment lastSegment = trackSegments.get(trackSegments.size()-1);
 
-                if(trackSegments.size() == 1){
-                    TrackSegment segment = trackSegments.get(0);
+            List<WayPoint> firstSegmentWayPoints = firstSegment.getPoints();
+            List<WayPoint> lastSegmentWayPoints = lastSegment.getPoints();
 
-                    List<WayPoint> segmentWayPoints = segment.getPoints();
+            firstWayPoint = firstSegmentWayPoints.get(0);
+            lastWayPoint = lastSegmentWayPoints.get(lastSegmentWayPoints.size()-1);
 
-                    firstWayPoint = segmentWayPoints.get(0);
-                    lastWayPoint = segmentWayPoints.get(segmentWayPoints.size()-1);
-                }
-                else{
-                    TrackSegment firstSegment = trackSegments.get(0);
-                    TrackSegment lastSegment = trackSegments.get(trackSegments.size()-1);
+            Latitude lat = firstWayPoint.getLatitude();
+            Longitude lon = firstWayPoint.getLongitude();
+            GeoPoint startGeoPoint = new GeoPoint(lat.doubleValue(),lon.doubleValue());
 
-                    List<WayPoint> firstSegmentWayPoints = firstSegment.getPoints();
-                    List<WayPoint> lastSegmentWayPoints = lastSegment.getPoints();
+            lat = lastWayPoint.getLatitude();
+            lon = lastWayPoint.getLongitude();
+            GeoPoint destinationGeoPoint = new GeoPoint(lat.doubleValue(), lon.doubleValue());
 
-                    firstWayPoint = firstSegmentWayPoints.get(0);
-                    lastWayPoint = lastSegmentWayPoints.get(lastSegmentWayPoints.size()-1);
-                }
+            geoPoints.add(startGeoPoint);
+            geoPoints.add(destinationGeoPoint);
+        }
+        else {
+            FailureReadGPXFileException exception = new FailureReadGPXFileException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return false;
+        }
 
-                Latitude lat = firstWayPoint.getLatitude();
-                Longitude lon = firstWayPoint.getLongitude();
-                GeoPoint startGeoPoint = new GeoPoint(lat.doubleValue(),lon.doubleValue());
 
-                lat = lastWayPoint.getLatitude();
-                lon = lastWayPoint.getLongitude();
-                GeoPoint destinationGeoPoint = new GeoPoint(lat.doubleValue(), lon.doubleValue());
-
-                geoPoints.add(startGeoPoint);
-                geoPoints.add(destinationGeoPoint);
+        ArrayList<AddressModel> addresses = new ArrayList<AddressModel>();
+        for(GeoPoint geoPoint: geoPoints){
+            AddressModel address = null;
+            try {
+                address = addressDAO.findAddressByGeoPoint(geoPoint);
             }
-            else{
+            catch (ServerException e) {
+                ExceptionHandler.handleMessageError(messageDialog,e);
+            }
+            catch (IOException e) {
+                if(e instanceof UnsupportedEncodingException){
+                    InvalidURLFormatException exception = new InvalidURLFormatException(e);
+                    ExceptionHandler.handleMessageError(messageDialog,exception);
+                    return false;
+                }
+                FailureFindAddressException exception = new FailureFindAddressException(e);
+                ExceptionHandler.handleMessageError(messageDialog,exception);
+                return false;
+
+            }
+            catch (ExecutionException | InterruptedException e) {
+                NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
+                ExceptionHandler.handleMessageError(messageDialog,exception);
                 return false;
             }
 
-            ArrayList<AddressModel> addresses = new ArrayList<AddressModel>();
-            for(GeoPoint geoPoint: geoPoints){
-                AddressModel address = addressDAO.findAddressByGeoPoint(geoPoint);
-                addresses.add(address);
-            }
-
-            Log.i("END", "ending");
-
-            Intent intent = new Intent();
-            intent.putParcelableArrayListExtra(EXTRA_ADDRESSES, addresses);
-            activity.setResult(RESULT_CODE_RETURN_ALL_ADDRESSES, intent);
-            activity.finish();
-            return true;
-
-        }
-        catch (IOException e) {
-            Log.e("GPXCONTROLLER", "errore import", e);
-        }
-        catch (UnknownException e) {
-            e.printStackTrace();
-        }
-        catch (ServerException e) {
-            e.printStackTrace();
+            addresses.add(address);
         }
 
-        return false;
+        Intent intent = new Intent();
+        intent.putParcelableArrayListExtra(EXTRA_ADDRESSES, addresses);
+        activity.setResult(RESULT_CODE_RETURN_ALL_ADDRESSES, intent);
+        activity.finish();
+        return true;
+
     }
 
     public ImportaFileGPXModel getImportaFileGPXModel(){
         return this.importaFileGPXModel;
     }
-
-
-/*
-            if(!hasWayPoints){
-
-                Length length = gpx.tracks()
-                        .flatMap(Track::segments)
-                        .findFirst()
-                        .map(TrackSegment::points).orElse(Stream.empty())
-                        .collect(Geoid.WGS84.toPathLength());
-
-
-
-
-                Track track = tracks.get(0);
-
-                List<TrackSegment> trackSegments = track.getSegments();
-
-
-                if(trackSegments == null || trackSegments.isEmpty()) return false;
-
-                WayPoint firstWayPoint;
-                WayPoint lastWayPoint;
-
-                RouteLegModel routeLegModel = new RouteLegModel();
-
-                for(TrackSegment segment: trackSegments){
-                    List<WayPoint>  segmentWayPoints = segment.getPoints();
-
-                    for(WayPoint wayPoint: segmentWayPoints){
-
-                    }
-
-
-                }
-
-
-
-
-                if(trackSegments.size() == 1){
-                    TrackSegment segment = trackSegments.get(0);
-
-                    List<WayPoint> segmentWayPoints = segment.getPoints();
-
-                    firstWayPoint = segmentWayPoints.get(0);
-                    lastWayPoint = segmentWayPoints.get(segmentWayPoints.size()-1);
-                }
-                else{
-                    TrackSegment firstSegment = trackSegments.get(0);
-                    TrackSegment lastSegment = trackSegments.get(trackSegments.size()-1);
-
-                    List<WayPoint> firstSegmentWayPoints = firstSegment.getPoints();
-                    List<WayPoint> lastSegmentWayPoints = lastSegment.getPoints();
-
-                    firstWayPoint = firstSegmentWayPoints.get(0);
-                    lastWayPoint = lastSegmentWayPoints.get(lastSegmentWayPoints.size()-1);
-                }
-
-                Latitude lat = firstWayPoint.getLatitude();
-                Longitude lon = firstWayPoint.getLongitude();
-                GeoPoint startGeoPoint = new GeoPoint(lat.doubleValue(),lon.doubleValue());
-
-                lat = lastWayPoint.getLatitude();
-                lon = lastWayPoint.getLongitude();
-                GeoPoint destinationGeoPoint = new GeoPoint(lat.doubleValue(), lon.doubleValue());
-
-
-            }
-*/
-
-
 }

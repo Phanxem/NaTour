@@ -8,13 +8,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.unina.natour.R;
-import com.unina.natour.views.activities.HomeActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 
 public class HomeController {
 
@@ -25,21 +22,16 @@ public class HomeController {
 
     String searchString;
 
-    public HomeController(Activity activity){
+    public HomeController(Activity activity, MessageDialog messageDialog){
         this.activity = activity;
-        this.messageDialog = new MessageDialog(activity);
+        this.messageDialog = messageDialog;
 
         this.searchString = null;
     }
 
-    public void openHomeActivity(){
-        Intent intent = new Intent(activity, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        activity.startActivity(intent);
+    public MessageDialog getMessageDialog() {
+        return messageDialog;
     }
-
-
-
 
 
 

@@ -162,6 +162,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public MessageDTO updateProfileImage(Bitmap profileImage) throws IOException, ExecutionException, InterruptedException, ServerException {
 
+        //can throw IOException
         File file = FileConverter.toPngFile(context, profileImage);
 
         //String username = Amplify.Auth.getCurrentUser().getUsername();
@@ -272,5 +273,11 @@ public class UserDAOImpl implements UserDAO {
         MessageDTO result = JsonConverter.toMessageDTO(jsonObjectResult);
 
         return result;
+    }
+
+    @Override
+    public MessageDTO removeProfileImage() {
+        //TODO
+        return null;
     }
 }

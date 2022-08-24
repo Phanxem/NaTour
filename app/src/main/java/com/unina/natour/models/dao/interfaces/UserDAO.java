@@ -12,15 +12,16 @@ import java.util.concurrent.ExecutionException;
 
 public interface UserDAO {
 
-    UserDTO getUser(String username) throws ExecutionException, InterruptedException, ServerException, UnknownException, IOException;
+    UserDTO getUser(String username) throws ExecutionException, InterruptedException, ServerException, IOException;
     //UserDTO getUser(long id);
 
     Bitmap getUserProfileImage(String username) throws ExecutionException, InterruptedException, ServerException, IOException;
     //File getUserProfileImage(long id);
 
 
-    MessageDTO updateProfileImage(Bitmap profileImage) throws UnknownException, IOException, ExecutionException, InterruptedException, ServerException;
-    MessageDTO updateOptionalInfo(OptionalInfoDTO optionalInfo) throws UnknownException, ExecutionException, InterruptedException, IOException, ServerException;
+    MessageDTO updateProfileImage(Bitmap profileImage) throws  IOException, ExecutionException, InterruptedException, ServerException;
+    MessageDTO updateOptionalInfo(OptionalInfoDTO optionalInfo) throws  ExecutionException, InterruptedException, IOException, ServerException;
 
+    MessageDTO removeProfileImage();
 
 }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 
 import com.unina.natour.views.activities.MainActivity;
-import com.unina.natour.views.activities.PersonalizzaAccountInfoOpzionaliActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 public class MainController {
@@ -15,9 +14,13 @@ public class MainController {
     Activity activity;
     MessageDialog messageDialog;
 
-    public MainController(Activity activity){
+    public MainController(Activity activity, MessageDialog messageDialog){
         this.activity = activity;
-        this.messageDialog = new MessageDialog(activity);
+        this.messageDialog = messageDialog;
+    }
+
+    public MessageDialog getMessageDialog() {
+        return messageDialog;
     }
 
     public void openMainActivity(){

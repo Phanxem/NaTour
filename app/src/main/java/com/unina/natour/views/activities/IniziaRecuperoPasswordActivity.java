@@ -1,7 +1,9 @@
 package com.unina.natour.views.activities;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,19 +12,25 @@ import android.widget.ImageView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.RecuperoPasswordController;
+import com.unina.natour.views.dialogs.MessageDialog;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class IniziaRecuperoPasswordActivity extends AppCompatActivity {
 
     private final static String TAG ="IniziaRecuperoPasswordActivity";
 
     private RecuperoPasswordController recuperoPasswordController;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inizia_recupero_password);
 
-        recuperoPasswordController = new RecuperoPasswordController(this);
+        MessageDialog messageDialog = new MessageDialog();
+        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+
+        recuperoPasswordController = new RecuperoPasswordController(this, messageDialog);
 
         pressButtonNext();
         pressIconBack();

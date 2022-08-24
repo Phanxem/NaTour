@@ -4,17 +4,19 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Build;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.RequiresApi;
 
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedSignInException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedSignOutException;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-
+@RequiresApi(api = Build.VERSION_CODES.N)
+@SuppressLint("LongLogTag")
 public class DisconnessioneController {
 
     private final static String TAG ="DisconnessioneController";
@@ -24,16 +26,17 @@ public class DisconnessioneController {
 
     AutenticazioneController autenticazioneController;
 
-    public DisconnessioneController(Activity activity){
+    public DisconnessioneController(Activity activity, MessageDialog messageDialog){
         this.activity = activity;
-        this.messageDialog = new MessageDialog(activity);
+        this.messageDialog = messageDialog;
 
-        this.autenticazioneController = new AutenticazioneController(activity);
-
+        this.autenticazioneController = new AutenticazioneController(activity, messageDialog);
     }
 
-    @SuppressLint("LongLogTag")
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    public MessageDialog getMessageDialog() {
+        return messageDialog;
+    }
+
     public Boolean signOut(){
 
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<Boolean>();
@@ -53,12 +56,12 @@ public class DisconnessioneController {
         try {
             result = completableFuture.get();
         }
-        catch (ExecutionException e) {
-            e.printStackTrace();
+        catch (ExecutionException | InterruptedException e) {
+            NotCompletedSignOutException exception = new NotCompletedSignOutException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            result = false;
         }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
 
         return result;
     }

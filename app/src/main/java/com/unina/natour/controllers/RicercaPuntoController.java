@@ -6,16 +6,25 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.util.Log;
 import android.widget.ListView;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.CurrentLocationNotFoundException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureFindAddressException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSFeatureNotPresentException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSNotEnabledException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSPermissionNotGrantedException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindAddressException;
 import com.unina.natour.controllers.utils.GPSUtils;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.RicercaPuntoModel;
@@ -26,8 +35,11 @@ import com.unina.natour.views.listAdapters.RisultatiRicercaPuntoListAdapter;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class RicercaPuntoController {
     public static final int REQUEST_CODE = 100;
 
@@ -49,9 +61,10 @@ public class RicercaPuntoController {
 
 
 
-    public RicercaPuntoController(FragmentActivity activity){
+
+    public RicercaPuntoController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
-        this.messageDialog = new MessageDialog(activity);
+        this.messageDialog = messageDialog;
 
         this.ricercaPuntoModel = new RicercaPuntoModel();
 
@@ -66,19 +79,16 @@ public class RicercaPuntoController {
                 new ActivityResultCallback<Boolean>() {
                     @Override
                     public void onActivityResult(Boolean result) {
-                        if (result) {
-                            selectCurrentPosition();
-                            Log.i("ACCEPT", "acceptated tutt cos");
-                            return;
-                        }
-                        Log.i("NOT ACCEPT", "acceptaNOT ted NOT tutt cos");
+                        if (result) selectCurrentPosition();
                     }
                 }
         );
 
-
-
         this.addressDAO = new AddressDAOImpl();
+    }
+
+    public MessageDialog getMessageDialog() {
+        return messageDialog;
     }
 
     public void initListViewResultPoints(ListView listView_risultatiPunti) {
@@ -91,19 +101,18 @@ public class RicercaPuntoController {
 
     public void selectCurrentPosition() {
         if(!GPSUtils.hasGPSFeature(activity)){
-            //TODO ERRORE
-            Log.e("RIC_PUNT: ", "GPS NOT PRESENT");
+            GPSFeatureNotPresentException exception = new GPSFeatureNotPresentException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
             return;
         }
 
         if(!GPSUtils.isGPSEnabled(activity)){
-            //TODO ERRORE
-            Log.e("RIC_PUNT: ", "GPS DISABLED");
+            GPSNotEnabledException exception = new GPSNotEnabledException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
             return;
         }
 
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.e("RIC_PUNT: ", "GPS PERMISSION REQUIRED");
             activityResultLauncherPermissions.launch(Manifest.permission.ACCESS_FINE_LOCATION);
             return;
         }
@@ -114,22 +123,37 @@ public class RicercaPuntoController {
         if(location == null) location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         if(location == null){
-            //TODO ERRORE
-            Log.e("RIC_PUNT: ", "location null");
+            CurrentLocationNotFoundException exception = new CurrentLocationNotFoundException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
             return;
         }
 
         GeoPoint geoPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
         AddressModel address = null;
+
         try {
             address = addressDAO.findAddressByGeoPoint(geoPoint);
         }
         catch (ServerException e) {
-            e.printStackTrace();
+            ExceptionHandler.handleMessageError(messageDialog,e);
+            return;
         }
-        catch (UnknownException e) {
-            e.printStackTrace();
+        catch (IOException e) {
+            FailureFindAddressException exception = new FailureFindAddressException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
         }
+        catch (ExecutionException | InterruptedException e) {
+            NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        }
+        if(address == null){
+            FailureFindAddressException exception = new FailureFindAddressException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        }
+
 
         Intent intent = new Intent();
         intent.putExtra(EXTRA_ADDRESS, address);
@@ -151,14 +175,28 @@ public class RicercaPuntoController {
             return;
         }
         List<AddressModel> resultAddresses = null;
+
         try {
             resultAddresses = addressDAO.findAddressesByQuery(searchString);
         }
         catch (ServerException e) {
-            e.printStackTrace();
+            ExceptionHandler.handleMessageError(messageDialog,e);
+            return;
         }
-        catch (UnknownException e) {
-            e.printStackTrace();
+        catch (IOException e) {
+            FailureFindAddressException exception = new FailureFindAddressException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        }
+        catch (ExecutionException | InterruptedException e) {
+            NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        }
+        if(resultAddresses == null){
+            FailureFindAddressException exception = new FailureFindAddressException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
         }
         ricercaPuntoModel.setResultPoints(resultAddresses);
         risultatiRicercaPuntoListAdapter.notifyDataSetChanged();

@@ -1,5 +1,6 @@
 package com.unina.natour.views.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -22,8 +23,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.unina.natour.R;
 import com.unina.natour.controllers.ImpostaImmagineProfiloController;
 import com.unina.natour.controllers.*;
+import com.unina.natour.views.dialogs.MessageDialog;
 
-
+@RequiresApi(api = Build.VERSION_CODES.N)
+@SuppressLint("LongLogTag")
 public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
 
     private final static String TAG ="PersonalizzaAccountImmagineActivity";
@@ -38,8 +41,11 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personalizza_account_immagine);
 
-        impostaImmagineProfiloController = new ImpostaImmagineProfiloController(this);
-        impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(this);
+        MessageDialog messageDialog = new MessageDialog();
+        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+
+        impostaImmagineProfiloController = new ImpostaImmagineProfiloController(this, messageDialog);
+        impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(this, messageDialog);
 
         ImageView imageView_profileImage = findViewById(R.id.PersonalizzaAccount_imageView_immagine);
         startForResult = registerForActivityResult(
@@ -49,7 +55,7 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
                     @Override
                     public void onActivityResult(ActivityResult result) {
                         Bitmap bitmap = impostaImmagineProfiloController.getProfileImage(result);
-                        imageView_profileImage.setImageBitmap(bitmap);
+                        if(bitmap != null) imageView_profileImage.setImageBitmap(bitmap);
                     }
                 }
         );
@@ -79,6 +85,7 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
     @Override

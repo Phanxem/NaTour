@@ -11,6 +11,8 @@ import com.amplifyframework.auth.AuthUserAttributeKey;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.EmptyFieldSignUpException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedSignUpException;
 import com.unina.natour.views.activities.RegistrazioneActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
@@ -30,12 +32,16 @@ public class RegistrazioneController {
     AutenticazioneController autenticazioneController;
 
     
-    public RegistrazioneController(Activity activity){
+    public RegistrazioneController(Activity activity, MessageDialog messageDialog){
         this.activity = activity;
-        this.messageDialog = new MessageDialog(activity);
+        this.messageDialog = messageDialog;
 
-        this.autenticazioneController = new AutenticazioneController(activity);
+        this.autenticazioneController = new AutenticazioneController(activity, messageDialog);
 
+    }
+
+    public MessageDialog getMessageDialog() {
+        return messageDialog;
     }
 
     
@@ -43,7 +49,11 @@ public class RegistrazioneController {
 
     public Boolean signUp(String username, String email, String password){
 
-        if(!ExceptionHandler.areAllFieldsFull(messageDialog,username,email,password)) return false;
+        if(!ExceptionHandler.areAllFieldsFull(username,email,password)){
+            EmptyFieldSignUpException exception = new EmptyFieldSignUpException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return false;
+        }
 
         AuthSignUpOptions options = AuthSignUpOptions
                 .builder()
@@ -57,7 +67,6 @@ public class RegistrazioneController {
                 password,
                 options,
                 result -> {
-                    Log.i(TAG, "Result: " + result.toString());
                     completableFuture.complete(true);
                 },
                 error -> {
@@ -70,11 +79,10 @@ public class RegistrazioneController {
         try {
             result = completableFuture.get();
         }
-        catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
+        catch (ExecutionException | InterruptedException e) {
+            NotCompletedSignUpException exception = new NotCompletedSignUpException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return false;
         }
 
         return result;

@@ -1,8 +1,10 @@
 package com.unina.natour.views.activities;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,12 +13,14 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.*;
 import com.unina.natour.models.ImpostaInfoOpzionaliProfiloModel;
+import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.dialogs.SelectCityDialog;
 import com.unina.natour.views.dialogs.SelectCountryDialog;
 import com.unina.natour.views.observers.Observer;
@@ -26,7 +30,8 @@ import java.time.format.TextStyle;
 import java.util.Calendar;
 import java.util.Locale;
 
-
+@RequiresApi(api = Build.VERSION_CODES.N)
+@SuppressLint("LongLogTag")
 public class PersonalizzaAccountInfoOpzionaliActivity
         extends AppCompatActivity
         implements Observer, SelectCountryDialog.OnCountryListener, SelectCityDialog.OnCityListener
@@ -43,14 +48,18 @@ public class PersonalizzaAccountInfoOpzionaliActivity
 
     private ImpostaInfoOpzionaliProfiloModel impostaInfoOpzionaliProfiloModel;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personalizza_account_info_opzionali);
 
-        impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(this);
+        MessageDialog messageDialog = new MessageDialog();
+        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+
+        impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(this, messageDialog);
         //homeController = new HomeController(this);
-        mainController = new MainController(this);
+        mainController = new MainController(this, messageDialog);
 
         impostaInfoOpzionaliProfiloModel = impostaInfoOpzionaliProfiloController.getImpostaInfoOpzionaliProfiloModel();
         impostaInfoOpzionaliProfiloModel.registerObserver(this);
@@ -245,6 +254,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity
             }
         });
     }
+
 
 
 
