@@ -27,7 +27,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class RouteDAOImpl implements RouteDAO {
-    private static final String SERVER_URL = "http://192.168.1.6:8080/route";
+    private static final String URL = SERVER_URL + "/route";
 
     private static final String GET_ROUTE = "/get";
 
@@ -35,7 +35,7 @@ public class RouteDAOImpl implements RouteDAO {
     @Override
     public RouteDTO findRouteByCoordinates(String coordinates) throws IOException, ExecutionException, InterruptedException, ServerException {
         //can throw UnsupportedEncodingException
-        String url = SERVER_URL + GET_ROUTE + "/" + URLEncoder.encode(coordinates,"UTF-8");
+        String url = URL + GET_ROUTE + "/" + URLEncoder.encode(coordinates,"UTF-8");
 
         Request request = new Request.Builder()
                 .url(url)

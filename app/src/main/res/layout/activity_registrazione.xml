@@ -23,11 +23,13 @@
         android:layout_height="wrap_content"
         android:background="@drawable/effect_ripple"
         android:clickable="true"
+        android:focusable="true"
         android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/SignUp_textView_registrazione"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/SignUp_textView_registrazione"
-        app:srcCompat="@drawable/ic_back" />
+        app:srcCompat="@drawable/ic_back"
+         />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/SignUp_constraintLayout_username"

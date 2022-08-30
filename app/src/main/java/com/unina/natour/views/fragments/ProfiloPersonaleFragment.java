@@ -61,7 +61,7 @@ public class ProfiloPersonaleFragment extends Fragment {
         }
         else{
             messageDialog = new MessageDialog();
-            messageDialog.setSupportFragmentManager(getParentFragmentManager());
+            this.messageDialog.setFragmentActivity(getActivity());
             this.profiloPersonaleController = new ProfiloPersonaleController(getActivity(),messageDialog);
         }
 

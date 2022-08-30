@@ -29,7 +29,7 @@ public class RegistrazioneActivity extends AppCompatActivity {
         setContentView(R.layout.activity_registrazione);
 
         MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+        messageDialog.setFragmentActivity(this);
 
         registrazioneController = new RegistrazioneController(this, messageDialog);
         attivaAccountController = new AttivaAccountController(this, messageDialog);

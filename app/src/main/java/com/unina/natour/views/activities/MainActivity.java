@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+        messageDialog.setFragmentActivity(this);
 
         mainController = new MainController(this, messageDialog);
 

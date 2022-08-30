@@ -47,7 +47,7 @@ public class RicercaPuntoActivity extends AppCompatActivity implements Observer 
         setContentView(R.layout.activity_ricerca_punto);
 
         MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+        messageDialog.setFragmentActivity(this);
 
         ricercaPuntoController = new RicercaPuntoController(this, messageDialog);
 

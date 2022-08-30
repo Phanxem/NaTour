@@ -7,6 +7,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentActivity;
 
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
@@ -23,11 +24,11 @@ public class AutenticazioneController {
 
     private final static String TAG ="AutenticazioneController";
 
-    Activity activity;
+    FragmentActivity activity;
     MessageDialog messageDialog;
 
 
-    public AutenticazioneController(Activity activity, MessageDialog messageDialog){
+    public AutenticazioneController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
     }

@@ -44,7 +44,7 @@ public class CommunityFragment extends Fragment {
         }
         else{
             this.messageDialog = new MessageDialog();
-            this.messageDialog.setSupportFragmentManager(getParentFragmentManager());
+            this.messageDialog.setFragmentActivity(getActivity());
             this.communityController = new CommunityController(getActivity(),messageDialog);
         }
 

@@ -6,6 +6,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentActivity;
 
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
@@ -21,12 +22,12 @@ public class DisconnessioneController {
 
     private final static String TAG ="DisconnessioneController";
 
-    Activity activity;
+    FragmentActivity activity;
     MessageDialog messageDialog;
 
     AutenticazioneController autenticazioneController;
 
-    public DisconnessioneController(Activity activity, MessageDialog messageDialog){
+    public DisconnessioneController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
 

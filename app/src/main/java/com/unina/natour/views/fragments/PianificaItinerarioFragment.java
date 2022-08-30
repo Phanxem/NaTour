@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.unina.natour.R;
 import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.PianificaItinerarioController;
+import com.unina.natour.controllers.SalvaItinerarioController;
 import com.unina.natour.controllers.utils.DrawableUtils;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.models.AddressModel;
@@ -57,6 +58,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
     ArrayList<Polyline> routeTracks;
 
     PianificaItinerarioController pianificaItinerarioController;
+    SalvaItinerarioController salvaItinerarioController;
 
     PianificaItinerarioModel pianificaItinerarioModel;
 
@@ -82,9 +84,11 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
         }
         else{
             this.messageDialog = new MessageDialog();
-            this.messageDialog.setSupportFragmentManager(getParentFragmentManager());
+            this.messageDialog.setFragmentActivity(getActivity());
             this.pianificaItinerarioController = new PianificaItinerarioController(getActivity(),messageDialog);
         }
+
+        salvaItinerarioController = new SalvaItinerarioController(getActivity(),messageDialog);
 
         pianificaItinerarioModel = pianificaItinerarioController.getModel();
         pianificaItinerarioModel.registerObserver(this);
@@ -125,6 +129,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
         pressButtonSetAsStartingPoint();
         pressButtonSetAsDestinationPoint();
         pressButtonSetAsIntermediatePoint();
+        pressButtonSave();
 
         update();
 
@@ -280,6 +285,19 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
             }
         });
     }
+
+
+    public void pressButtonSave() {
+        Button button_save = view.findViewById(R.id.InsertItinerary_button_salva);
+        button_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                salvaItinerarioController.openSalvaItinerarioActivity(pianificaItinerarioModel.getDuration(), pianificaItinerarioModel.getDistance(), (ArrayList<AddressModel>) pianificaItinerarioModel.getInterestPoints());
+            }
+        });
+    }
+
+
 
 
 //---

@@ -1,6 +1,9 @@
 package com.unina.natour.models;
 
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.unina.natour.controllers.PianificaItinerarioController;
 import com.unina.natour.views.observers.Observable;
@@ -11,6 +14,7 @@ import java.util.List;
 
 import okhttp3.Route;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class PianificaItinerarioModel implements Observable {
 
     private AddressModel startingPoint;
@@ -185,6 +189,28 @@ public class PianificaItinerarioModel implements Observable {
 
 
 
+    public float getDistance(){
+        if(routeLegs == null || routeLegs.isEmpty()) return 0;
+
+        float distance = 0;
+        for(RouteLegModel routeLeg: routeLegs){
+            distance = distance + routeLeg.getDistance();
+        }
+
+        return distance;
+    }
+
+    public float getDuration(){
+        if(routeLegs == null || routeLegs.isEmpty()) return 0;
+
+        float duration = 0;
+        for(RouteLegModel routeLeg: routeLegs){
+            duration = duration + routeLeg.getDuration();
+        }
+
+        return duration;
+    }
+
     public void updateInterestPoints(List<AddressModel> addresses){
 
         if(addresses == null || addresses.isEmpty()) return;
@@ -214,6 +240,7 @@ public class PianificaItinerarioModel implements Observable {
 
         notifyObservers();
     }
+
 
     public boolean isValidIndexPoint(int i) {
         if (i == PianificaItinerarioController.STARTING_POINT_CODE || i == PianificaItinerarioController.DESTINATION_POINT_CODE) return true;

@@ -29,7 +29,7 @@ import okhttp3.Response;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class AddressDAOImpl implements AddressDAO {
 
-    private static final String SERVER_URL = "http://192.168.1.6:8080/address";
+    private static final String URL = SERVER_URL + "/address";
 
     private static final String GET_ADDRESS = "/get";
     private static final String SEARCH_ADDRESSES = "/search";
@@ -40,7 +40,7 @@ public class AddressDAOImpl implements AddressDAO {
         String coordinates = geoPoint.getLongitude() + "," + geoPoint.getLatitude();
 
         //can throw UnsupportedEncodingException
-        String url = SERVER_URL + GET_ADDRESS + "/" + URLEncoder.encode(coordinates,"UTF-8");
+        String url = URL + GET_ADDRESS + "/" + URLEncoder.encode(coordinates,"UTF-8");
 
         Request request = new Request.Builder()
                 .url(url)
@@ -87,7 +87,7 @@ public class AddressDAOImpl implements AddressDAO {
     @Override
     public List<AddressModel> findAddressesByQuery(String query) throws  IOException, ExecutionException, InterruptedException, ServerException {
 
-        String url = SERVER_URL + SEARCH_ADDRESSES + "?" + "query=" + URLEncoder.encode(query,"UTF-8");
+        String url = URL + SEARCH_ADDRESSES + "?" + "query=" + URLEncoder.encode(query,"UTF-8");
 
         Request request = new Request.Builder()
                 .url(url)

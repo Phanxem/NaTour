@@ -7,6 +7,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentActivity;
 
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.amplifyframework.auth.cognito.AWSCognitoUserPoolTokens;
@@ -24,7 +25,7 @@ public class SplashScreenController {
 
     private final static String TAG ="SplashScreenController";
 
-    Activity activity;
+    FragmentActivity activity;
     MessageDialog messageDialog;
 
     MainController mainController;
@@ -32,7 +33,7 @@ public class SplashScreenController {
     AutenticazioneController autenticazioneController;
 
 
-    public SplashScreenController(Activity activity, MessageDialog messageDialog){
+    public SplashScreenController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
 

@@ -7,6 +7,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentActivity;
 
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
@@ -27,10 +28,10 @@ public class RecuperoPasswordController {
 
     private final static String TAG ="RecuperoPasswordController";
 
-    Activity activity;
+    FragmentActivity activity;
     MessageDialog messageDialog;
 
-    public RecuperoPasswordController(Activity activity, MessageDialog messageDialog){
+    public RecuperoPasswordController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
     }

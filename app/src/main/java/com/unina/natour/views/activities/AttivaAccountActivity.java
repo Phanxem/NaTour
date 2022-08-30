@@ -18,7 +18,7 @@ import com.unina.natour.controllers.AutenticazioneController;
 import com.unina.natour.controllers.ImpostaImmagineProfiloController;
 import com.unina.natour.controllers.RegistrazioneController;
 import com.unina.natour.views.dialogs.MessageDialog;
-@RequiresApi(api = Build.VERSION_CODES.N)
+@RequiresApi(api = Build.VERSION_CODES.P)
 public class AttivaAccountActivity extends AppCompatActivity {
 
     private final static String TAG ="AttivaAcountActivity";
@@ -33,7 +33,7 @@ public class AttivaAccountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_attiva_account);
 
         MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+        messageDialog.setFragmentActivity(this);
 
         attivaAccountController = new AttivaAccountController(this, messageDialog);
         impostaImmagineProfiloController = new ImpostaImmagineProfiloController(this, messageDialog);

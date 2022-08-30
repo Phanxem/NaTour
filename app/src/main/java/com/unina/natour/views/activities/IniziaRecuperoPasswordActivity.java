@@ -28,7 +28,7 @@ public class IniziaRecuperoPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inizia_recupero_password);
 
         MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+        messageDialog.setFragmentActivity(this);
 
         recuperoPasswordController = new RecuperoPasswordController(this, messageDialog);
 

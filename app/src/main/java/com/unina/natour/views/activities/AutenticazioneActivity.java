@@ -35,7 +35,7 @@ public class AutenticazioneActivity extends AppCompatActivity {
         setContentView(R.layout.activity_autenticazione);
 
         MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+        messageDialog.setFragmentActivity(this);
 
         autenticazioneController = new AutenticazioneController(this, messageDialog);
         registrazioneController = new RegistrazioneController(this, messageDialog);

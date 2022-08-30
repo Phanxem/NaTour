@@ -10,7 +10,7 @@ import com.unina.natour.dto.UserDTO;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-public interface UserDAO {
+public interface UserDAO extends ServerDAO{
 
     UserDTO getUser(String username) throws ExecutionException, InterruptedException, ServerException, IOException;
     //UserDTO getUser(long id);

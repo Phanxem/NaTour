@@ -23,18 +23,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.unina.natour.R;
 import com.unina.natour.controllers.ImpostaImmagineProfiloController;
 import com.unina.natour.controllers.*;
+import com.unina.natour.models.ImpostaImmagineProfiloModel;
 import com.unina.natour.views.dialogs.MessageDialog;
+import com.unina.natour.views.observers.Observer;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
+@RequiresApi(api = Build.VERSION_CODES.P)
 @SuppressLint("LongLogTag")
-public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
+public class PersonalizzaAccountImmagineActivity extends AppCompatActivity implements Observer {
 
     private final static String TAG ="PersonalizzaAccountImmagineActivity";
 
     private ImpostaImmagineProfiloController impostaImmagineProfiloController;
     private ImpostaInfoOpzionaliProfiloController impostaInfoOpzionaliProfiloController;
 
-    private ActivityResultLauncher<Intent> startForResult;
+    private ImpostaImmagineProfiloModel impostaImmagineProfiloModel;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,23 +46,13 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_personalizza_account_immagine);
 
         MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+        messageDialog.setFragmentActivity(this);
 
         impostaImmagineProfiloController = new ImpostaImmagineProfiloController(this, messageDialog);
-        impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(this, messageDialog);
+        impostaImmagineProfiloModel = impostaImmagineProfiloController.getImpostaImmagineProfiloModel();
+        impostaImmagineProfiloModel.registerObserver(this);
 
-        ImageView imageView_profileImage = findViewById(R.id.PersonalizzaAccount_imageView_immagine);
-        startForResult = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @RequiresApi(api = Build.VERSION_CODES.P)
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        Bitmap bitmap = impostaImmagineProfiloController.getProfileImage(result);
-                        if(bitmap != null) imageView_profileImage.setImageBitmap(bitmap);
-                    }
-                }
-        );
+        impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(this, messageDialog);
 
         pressTextSetProfileImage();
         pressButtonNext();
@@ -69,7 +63,7 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
         textView_setProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                impostaImmagineProfiloController.openGallery(startForResult);
+                impostaImmagineProfiloController.openGallery();
             }
         });
     }
@@ -86,24 +80,10 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity {
         });
     }
 
-
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == ImpostaImmagineProfiloController.REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.i(TAG , "Calling Permission is granted");
-
-                impostaImmagineProfiloController.openGallery(startForResult);
-            }
-            else {
-                //TODO ERRORE
-                Log.i(TAG, "Calling Permission is denied");
-            }
-        }
+    public void update() {
+        ImageView imageView_immagineProfilo = findViewById(R.id.PersonalizzaAccount_imageView_immagine);
+        Bitmap immagineProfilo = impostaImmagineProfiloModel.getProfileImage();
+        imageView_immagineProfilo.setImageBitmap(immagineProfilo);
     }
-
-
 }

@@ -6,6 +6,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentActivity;
 
 import com.amplifyframework.auth.AuthUserAttributeKey;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
@@ -26,13 +27,13 @@ public class RegistrazioneController {
 
 
 
-    Activity activity;
+    FragmentActivity activity;
     MessageDialog messageDialog;
 
     AutenticazioneController autenticazioneController;
 
     
-    public RegistrazioneController(Activity activity, MessageDialog messageDialog){
+    public RegistrazioneController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
 

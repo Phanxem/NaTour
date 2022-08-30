@@ -3,6 +3,8 @@ package com.unina.natour.controllers;
 import android.app.Activity;
 import android.util.Log;
 
+import androidx.fragment.app.FragmentActivity;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -21,12 +23,12 @@ import java.util.Locale;
 public class SelezionaCittàController {
 
     private static final String TAG = "SEDANO";
-    Activity activity;
+    FragmentActivity activity;
 
     private String country;
     private String[] cities;
 
-    public SelezionaCittàController(Activity activity){
+    public SelezionaCittàController(FragmentActivity activity){
         this.activity = activity;
     }
 

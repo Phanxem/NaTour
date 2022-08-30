@@ -28,7 +28,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
 
         MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+        messageDialog.setFragmentActivity(this);
 
         splashScreenController = new SplashScreenController(this, messageDialog);
         splashScreenController.redirectToRightActivity();

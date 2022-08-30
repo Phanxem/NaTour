@@ -13,9 +13,12 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
@@ -24,6 +27,7 @@ import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.InvalidProfileImageException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedUpdateProfileImageException;
 import com.unina.natour.dto.MessageDTO;
+import com.unina.natour.models.ImpostaImmagineProfiloModel;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.PersonalizzaAccountImmagineActivity;
@@ -33,7 +37,7 @@ import com.unina.natour.views.dialogs.MessageDialog;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
+@RequiresApi(api = Build.VERSION_CODES.P)
 @SuppressLint("LongLogTag")
 public class ImpostaImmagineProfiloController {
 
@@ -44,17 +48,63 @@ public class ImpostaImmagineProfiloController {
     public final static int MIN_HEIGHT = 300;
     public final static int MIN_WIDTH = 300;
 
-    Activity activity;
+    FragmentActivity activity;
     MessageDialog messageDialog;
 
-    private Bitmap profileImage;
+    private ActivityResultLauncher<Intent> activityResultLauncherGallery;
+    private ActivityResultLauncher<String> activityResultLauncherPermissions;
+
+    private ImpostaImmagineProfiloModel impostaImmagineProfiloModel;
 
     private UserDAO userDAO;
 
-
-    public ImpostaImmagineProfiloController(Activity activity, MessageDialog messageDialog){
+    @RequiresApi(api = Build.VERSION_CODES.P)
+    public ImpostaImmagineProfiloController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
+
+        this.impostaImmagineProfiloModel = new ImpostaImmagineProfiloModel();
+
+
+        this.activityResultLauncherGallery = activity.registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result == null ||
+                                result.getResultCode() != Activity.RESULT_OK )
+                        {
+                            FailureReadProfileImageException exception = new FailureReadProfileImageException();
+                            ExceptionHandler.handleMessageError(messageDialog,exception);
+                            return;
+                        }
+                        if(result.getData() == null){
+                            return;
+                        }
+
+                        Uri uri = result.getData().getData();
+                        if(uri == null){
+                            FailureReadProfileImageException exception = new FailureReadProfileImageException();
+                            ExceptionHandler.handleMessageError(messageDialog,exception);
+                            return;
+                        }
+
+                        Bitmap bitmap = getBitmap(uri);
+
+                        impostaImmagineProfiloModel.setProfileImage(bitmap);
+                    }
+                }
+        );
+
+        this.activityResultLauncherPermissions = activity.registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                new ActivityResultCallback<Boolean>() {
+                    @Override
+                    public void onActivityResult(Boolean result) {
+                        if (result) openGallery();
+                    }
+                }
+        );
 
         this.userDAO = new UserDAOImpl(activity);
     }
@@ -63,48 +113,14 @@ public class ImpostaImmagineProfiloController {
         return messageDialog;
     }
 
-
-
-    @RequiresApi(api = Build.VERSION_CODES.P)
-    public Bitmap getProfileImage(ActivityResult result){
-
-        if (result == null ||
-            result.getResultCode() != Activity.RESULT_OK )
-        {
-            FailureReadProfileImageException exception = new FailureReadProfileImageException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
-            return null;
-        }
-        if(result.getData() == null){
-            return null;
-        }
-
-
-        Uri uri = result.getData().getData();
-
-        if(uri == null){
-            FailureReadProfileImageException exception = new FailureReadProfileImageException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
-            return null;
-        }
-
-        ImageDecoder.Source source = ImageDecoder.createSource(activity.getContentResolver(), uri);
-        Bitmap bitmap = null;
-        try {
-            bitmap = ImageDecoder.decodeBitmap(source);
-            this.profileImage = bitmap;
-        }
-        catch (IOException e) {
-            FailureReadProfileImageException exception = new FailureReadProfileImageException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
-            return null;
-        }
-
-        return bitmap;
+    public ImpostaImmagineProfiloModel getImpostaImmagineProfiloModel() {
+        return impostaImmagineProfiloModel;
     }
 
 
     public Boolean modificaImmagineProfilo(){
+        Bitmap profileImage = impostaImmagineProfiloModel.getProfileImage();
+
         if(!isValidBitmap(profileImage)){
             InvalidProfileImageException exception = new InvalidProfileImageException();
             ExceptionHandler.handleMessageError(messageDialog, exception);
@@ -148,6 +164,23 @@ public class ImpostaImmagineProfiloController {
     }
 
 
+    public Bitmap getBitmap(Uri uri){
+        Bitmap bitmap = null;
+
+        ImageDecoder.Source source = ImageDecoder.createSource(activity.getContentResolver(), uri);
+
+        try {
+            bitmap = ImageDecoder.decodeBitmap(source);
+        }
+        catch (IOException e) {
+            FailureReadProfileImageException exception = new FailureReadProfileImageException(e);
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return null;
+        }
+
+        return bitmap;
+    }
+
     public Bitmap resizeBitmap(Bitmap image, int minSize) {
         int width = image.getWidth();
         int height = image.getHeight();
@@ -166,20 +199,16 @@ public class ImpostaImmagineProfiloController {
     }
 
 
-
-    //TODO da aggiornare
-    public void openGallery(ActivityResultLauncher<Intent> startForResult){
-        if(ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            Log.e(TAG, "permesso non dato");
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
+    public void openGallery(){
+        if(ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            activityResultLauncherPermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
             return;
         }
 
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        startForResult.launch(intent);
+        activityResultLauncherGallery.launch(intent);
     }
-
 
     public void openPersonalizzaAccountImmagineActivity(){
         Intent intent = new Intent(activity, PersonalizzaAccountImmagineActivity.class);
@@ -199,12 +228,13 @@ public class ImpostaImmagineProfiloController {
 
     public boolean isValidBitmap(Bitmap bitmap){
 
-        if(profileImage == null) return true;
+        if(bitmap == null) return true;
 
         if((bitmap.getWidth() < MIN_WIDTH || bitmap.getHeight() < MIN_HEIGHT) ) return false;
 
         return true;
     }
+
 
 
 }

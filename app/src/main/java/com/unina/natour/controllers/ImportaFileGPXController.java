@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.ListView;
 
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentActivity;
 
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
@@ -51,7 +52,7 @@ public class ImportaFileGPXController {
 
     public static final String EXTRA_ADDRESSES = "Addresses";
 
-    Activity activity;
+    FragmentActivity activity;
     MessageDialog messageDialog;
 
     private FileGpxListAdapter fileGpxListAdapter;
@@ -61,7 +62,7 @@ public class ImportaFileGPXController {
     private AddressDAO addressDAO;
 
 
-    public ImportaFileGPXController(Activity activity, MessageDialog messageDialog){
+    public ImportaFileGPXController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
 

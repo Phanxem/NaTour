@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 
+import androidx.fragment.app.FragmentActivity;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -17,12 +19,12 @@ public class HomeController {
 
     private final static String TAG ="HomeController";
 
-    Activity activity;
+    FragmentActivity activity;
     MessageDialog messageDialog;
 
     String searchString;
 
-    public HomeController(Activity activity, MessageDialog messageDialog){
+    public HomeController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
 

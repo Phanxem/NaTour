@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public interface RouteDAO {
+public interface RouteDAO extends ServerDAO{
     RouteDTO findRouteByCoordinates(String coordinates) throws ServerException, IOException, ExecutionException, InterruptedException;
 
     RouteDTO findRouteByGeoPoints(List<GeoPoint> geoPoints) throws ServerException, InterruptedException, ExecutionException, IOException;

@@ -29,9 +29,10 @@ import java.util.concurrent.ExecutionException;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class ProfiloPersonaleController implements Parcelable {
 
+    private final static String TAG ="ProfiloPersonaleController";
+
     private final static String USERNAME = "user";
 
-    private final static String TAG ="ProfiloPersonaleController";
     FragmentActivity activity;
     MessageDialog messageDialog;
 

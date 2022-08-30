@@ -45,7 +45,7 @@ public class HomeFragment extends Fragment {
         }
         else{
             this.messageDialog = new MessageDialog();
-            this.messageDialog.setSupportFragmentManager(getParentFragmentManager());
+            this.messageDialog.setFragmentActivity(getActivity());
             this.homeController = new HomeController(getActivity(),messageDialog);
         }
 

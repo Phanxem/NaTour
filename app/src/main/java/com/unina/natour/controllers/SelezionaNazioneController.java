@@ -2,6 +2,8 @@ package com.unina.natour.controllers;
 
 import android.app.Activity;
 
+import androidx.fragment.app.FragmentActivity;
+
 import com.unina.natour.views.observers.Observer;
 
 import java.util.ArrayList;
@@ -11,11 +13,11 @@ import java.util.Locale;
 
 public class SelezionaNazioneController {
 
-    Activity activity;
+    FragmentActivity activity;
 
     private String[] countries;
 
-    public SelezionaNazioneController(Activity activity){
+    public SelezionaNazioneController(FragmentActivity activity){
 
         this.activity = activity;
 

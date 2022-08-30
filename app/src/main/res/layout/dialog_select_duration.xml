@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="400dp"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/SelectDuration_textView_titolo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:text="Seleziona la durata dell'itinerario"
+        android:textSize="24sp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/SelectDuration_constraintLayout_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <EditText
+            android:id="@+id/SelectDuration_editNumber_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="48dp"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="00"
+            android:inputType="number"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/SelectDuration_textView_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="h"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@+id/SelectDuration_editNumber_hours"
+            app:layout_constraintStart_toEndOf="@+id/SelectDuration_editNumber_hours"
+            app:layout_constraintTop_toTopOf="@+id/SelectDuration_editNumber_hours" />
+
+        <EditText
+            android:id="@+id/SelectDuration_editNumber_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:width="48dp"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="00"
+            android:inputType="number"
+            android:textSize="24sp"
+            app:layout_constraintStart_toEndOf="@+id/SelectDuration_textView_hours"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/SelectDuration_textView_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="m"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@+id/SelectDuration_editNumber_minutes"
+            app:layout_constraintStart_toEndOf="@+id/SelectDuration_editNumber_minutes"
+            app:layout_constraintTop_toTopOf="@+id/SelectDuration_editNumber_minutes" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/SelectDuration_linearLayout_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/SelectDuration_button_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="CANCEL"
+            android:textColor="@color/blue" />
+
+        <Button
+            android:id="@+id/SelectDuration_button_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="OK"
+            android:textColor="@color/blue" />
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -36,7 +36,7 @@ public class ImportaFileGPXActivity extends AppCompatActivity implements Observe
         setContentView(R.layout.activity_importa_file_gpx);
 
         MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+        messageDialog.setFragmentActivity(this);
 
         importaFileGPXController = new ImportaFileGPXController(this, messageDialog);
 

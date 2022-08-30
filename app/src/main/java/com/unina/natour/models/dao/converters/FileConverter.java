@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import io.jenetics.jpx.GPX;
+
 public class FileConverter {
 
     public static Bitmap toBitmap(byte[] bytes){
@@ -49,4 +51,11 @@ public class FileConverter {
         return toPngFile(context, bitmapBytes);
     }
 
+
+    public static File toFile(Context context, GPX gpx) throws IOException {
+        File file = new File(context.getCacheDir(), "file.gpx");
+        GPX.writer().write(gpx,file);
+
+        return file;
+    }
 }

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentActivity;
 
 import com.amplifyframework.core.Amplify;
 
@@ -35,7 +36,7 @@ public class AttivaAccountController {
     public static final String EXTRA_USERNAME = "USERNAME";
     public static final String EXTRA_PASSWORD = "PASSWORD";
 
-    Activity activity;
+    FragmentActivity activity;
     MessageDialog messageDialog;
 
     AutenticazioneController autenticazioneController;
@@ -44,7 +45,7 @@ public class AttivaAccountController {
     String password;
 
 
-    public AttivaAccountController(Activity activity, MessageDialog messageDialog){
+    public AttivaAccountController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
 

@@ -7,6 +7,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentActivity;
 
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
@@ -36,7 +37,7 @@ public class ImpostaInfoOpzionaliProfiloController {
 
     private final static long SUCCESS_CODE = 0;
 
-    Activity activity;
+    FragmentActivity activity;
     MessageDialog messageDialog;
 
     ImpostaInfoOpzionaliProfiloModel impostaInfoOpzionaliProfiloModel;
@@ -44,7 +45,7 @@ public class ImpostaInfoOpzionaliProfiloController {
     UserDAO userDAO;
 
 
-    public ImpostaInfoOpzionaliProfiloController(Activity activity, MessageDialog messageDialog){
+    public ImpostaInfoOpzionaliProfiloController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
 

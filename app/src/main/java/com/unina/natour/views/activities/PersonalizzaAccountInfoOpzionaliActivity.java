@@ -55,7 +55,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity
         setContentView(R.layout.activity_personalizza_account_info_opzionali);
 
         MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+        messageDialog.setFragmentActivity(this);
 
         impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(this, messageDialog);
         //homeController = new HomeController(this);

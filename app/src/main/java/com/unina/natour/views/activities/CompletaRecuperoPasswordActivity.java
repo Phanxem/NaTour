@@ -29,7 +29,7 @@ public class CompletaRecuperoPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_completa_recupero_password);
 
         MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setSupportFragmentManager(getSupportFragmentManager());
+        messageDialog.setFragmentActivity(this);
 
         recuperoPasswordController = new RecuperoPasswordController(this, messageDialog);
         autenticazioneController = new AutenticazioneController(this, messageDialog);

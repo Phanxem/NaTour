@@ -43,8 +43,6 @@
     <string name="SelezionaCittà_titolo">Seleziona Città</string>
 
 
-
-
     <!-- TODO: Exception Messages -->
 
     <!-- AMPLIFY ERROR MESSAGES -->
@@ -63,7 +61,6 @@
     <!-- Password Recovery Exceptions -->
     <string name="AmplifyException_AccountNotFound">Username/client id combination not found</string>
     <string name="AmplifyException_ErrorPasswordRecovery_UserNotConfirmed">Cannot reset password for the user as there is no registered/verified email or phone_number</string>
-
 
 
     <!-- Generic Exceptions -->
@@ -87,9 +84,6 @@
     <string name="AccountNotFound">L\'username o l\'email inserita non corrisponde a nessun account</string>
     <string name="ErrorPasswordRecovery_UserNotConfirmed">L\'account dell\'utente non risulta attivato, non è quindi possibile effettuare il recupero della password</string>
     <string name="UnmatchPasswords">Le password inserite non corrispondono</string>
-
-
-
 
 
 </resources>

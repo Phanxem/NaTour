@@ -30,32 +30,25 @@ public class MessageDialog extends DialogFragment {
 
     private static final String TAG = "MessageDialog";
     private String message = "";
+    private boolean goBackOnClose = false;
 
+    private View view;
 
-
-    public void setSupportFragmentManager(FragmentManager supportFragmentManager) {
-        this.supportFragmentManager = supportFragmentManager;
-    }
-
-    public FragmentManager getSupportFragmentManager() {
-        return supportFragmentManager;
-    }
-
-    private FragmentManager supportFragmentManager;
-
-
+    private FragmentActivity fragmentActivity;
 
     public MessageDialog() { }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_message, container, false);
+        view = inflater.inflate(R.layout.dialog_message, container, false);
 
         Button buttonOK = view.findViewById(R.id.Message_button_OK);
         buttonOK.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 getDialog().dismiss();
+                if(goBackOnClose) fragmentActivity.finish();
             }
         });
 
@@ -74,10 +67,20 @@ public class MessageDialog extends DialogFragment {
     }
 
 
+    public void setGoBackOnClose(boolean goBackOnClose){
+        this.goBackOnClose = goBackOnClose;
+    }
 
+    public FragmentActivity getFragmentActivity() {
+        return fragmentActivity;
+    }
+
+    public void setFragmentActivity(FragmentActivity fragmentActivity) {
+        this.fragmentActivity = fragmentActivity;
+    }
 
     public void showOverUi(){
-        this.show(getSupportFragmentManager(), "");
+        this.show(fragmentActivity.getSupportFragmentManager(), "");
     }
 
 

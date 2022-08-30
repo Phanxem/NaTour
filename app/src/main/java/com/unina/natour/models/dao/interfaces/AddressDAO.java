@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public interface AddressDAO {
+public interface AddressDAO extends ServerDAO{
 
     AddressModel findAddressByGeoPoint(GeoPoint geoPoint) throws ServerException, IOException, ExecutionException, InterruptedException;
 
