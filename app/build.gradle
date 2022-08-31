@@ -73,5 +73,7 @@ dependencies {
     implementation 'stax:stax-api:1.0.1'
     implementation 'com.fasterxml:aalto-xml:1.3.0'
 
+    //okhttp socket handler
+    implementation 'com.squareup.okhttp3:okhttp:3.6.0'
 
 }

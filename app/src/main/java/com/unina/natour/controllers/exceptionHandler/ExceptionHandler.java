@@ -3,6 +3,8 @@ package com.unina.natour.controllers.exceptionHandler;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.fragment.app.FragmentActivity;
+
 import com.amplifyframework.AmplifyException;
 import com.amplifyframework.auth.AuthException;
 import com.unina.natour.R;
@@ -12,11 +14,16 @@ import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 public class ExceptionHandler {
+
+    //TODO TESTING new context
+
     //Eccezioni di Amplify
     //l'errore viene identificato secondo il messaggio
     public static void handleMessageError(MessageDialog messageDialog, AmplifyException exception){
+        FragmentActivity activity = messageDialog.getFragmentActivity();
+
         String amplifyMessage = exception.getCause().getMessage();
-        String message = findMessageFromAmplifyMessage(amplifyMessage);
+        String message = findMessageFromAmplifyMessage(activity, amplifyMessage);
         messageDialog.setMessage(message);
         //messageDialog.show(messageDialog.requireActivity().getSupportFragmentManager(), "");
         messageDialog.showOverUi();
@@ -24,11 +31,12 @@ public class ExceptionHandler {
 
     //Eccezioni del server
     public static void handleMessageError(MessageDialog messageDialog, ServerException exception){
+        FragmentActivity activity = messageDialog.getFragmentActivity();
         String errorMessage = exception.getMessage();
 
         long serverCode = exception.getCode();
 
-        String message = findMessageFromServerCode(serverCode);
+        String message = findMessageFromServerCode(activity, serverCode);
         messageDialog.setMessage(message);
         //messageDialog.show(messageDialog.requireActivity().getSupportFragmentManager(), "");
         messageDialog.showOverUi();
@@ -37,7 +45,9 @@ public class ExceptionHandler {
 
     //Eccezioni del app
     public static void handleMessageError(MessageDialog messageDialog, AppException exception){
-        String message = findMessageFromExceptionType(exception);
+        FragmentActivity activity = messageDialog.getFragmentActivity();
+
+        String message = findMessageFromExceptionType(activity, exception);
         messageDialog.setMessage(message);
         //messageDialog.show(messageDialog.requireActivity().getSupportFragmentManager(), "");
         messageDialog.showOverUi();
@@ -47,8 +57,8 @@ public class ExceptionHandler {
 
 
 
-    private static String findMessageFromAmplifyMessage(String message){
-        Context context = ApplicationConfig.getAppContext();
+    private static String findMessageFromAmplifyMessage(Context context, String message){
+        //Context context = ApplicationConfig.getAppContext();
         String amplifyMessage = null;
 
         amplifyMessage = context.getString(R.string.AmplifyException_UserAlreadyExists);
@@ -106,14 +116,14 @@ public class ExceptionHandler {
         return context.getString(R.string.UnknownException);
     }
 
-    private static String findMessageFromServerCode(long code){
-        Context context = ApplicationConfig.getAppContext();
+    private static String findMessageFromServerCode(Context context, long code){
+        //Context context = ApplicationConfig.getAppContext();
 
         return context.getString(R.string.UnknownException);
     }
 
-    private static String findMessageFromExceptionType(AppException exception){
-        Context context = ApplicationConfig.getAppContext();
+    private static String findMessageFromExceptionType(Context context, AppException exception){
+        //Context context = ApplicationConfig.getAppContext();
 
         return context.getString(R.string.UnknownException);
     }

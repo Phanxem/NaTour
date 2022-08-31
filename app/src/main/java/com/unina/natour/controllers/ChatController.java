@@ -1,5 +1,6 @@
 package com.unina.natour.controllers;
 
+import android.util.Log;
 import android.widget.ListView;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -11,29 +12,35 @@ import com.unina.natour.models.ChatMessageModel;
 import com.unina.natour.models.RicercaPuntoModel;
 import com.unina.natour.models.dao.implementation.AddressDAOImpl;
 import com.unina.natour.models.dao.interfaces.AddressDAO;
+import com.unina.natour.models.socketHandler.ChatWebSocketHandler;
 import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.listAdapters.ChatListAdapter;
 import com.unina.natour.views.listAdapters.RisultatiRicercaPuntoListAdapter;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ChatController {
 
+    private static final String TAG = "ChatController";
     FragmentActivity activity;
     MessageDialog messageDialog;
 
     ChatListAdapter chatListAdapter;
 
-    //TODO
+    ChatWebSocketHandler chatWebSocketHandler;
+
+
     List<ChatMessageModel> messages;
+    //TODO
     //MessageDAO messageDAO;
 
     public ChatController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
 
-        this.messages = new ArrayList<ChatMessageModel>();
+        this.messages = new LinkedList<ChatMessageModel>();
 
         ChatMessageModel message1 = new ChatMessageModel("hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello",true);
         ChatMessageModel message2 = new ChatMessageModel("hi",false);
@@ -42,6 +49,8 @@ public class ChatController {
         messages.add(message2);
 
         this.chatListAdapter = new ChatListAdapter(activity, messages);
+
+        this.chatWebSocketHandler = new ChatWebSocketHandler(activity);
 
     }
 
@@ -59,6 +68,56 @@ public class ChatController {
 
     public void sendMessage(){
         //TODO socket
+
     }
 
+    public void addMessage(ChatMessageModel message3){
+        //Log.i(TAG, message.getMessage());
+
+        chatListAdapter.add(message3);
+
+        for(ChatMessageModel messageModel: messages){
+            Log.i(TAG, messageModel.getMessage());
+        }
+
+        //chatListAdapter.notifyDataSetChanged();
+    }
+
+    public void receiveMessage(String message){
+        ChatMessageModel receivedMessage = new ChatMessageModel(message,false);
+        chatListAdapter.add(receivedMessage);
+
+        for(ChatMessageModel messageModel: messages){
+            Log.i(TAG, messageModel.getMessage());
+        }
+    }
+
+    public List<ChatMessageModel> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<ChatMessageModel> messages) {
+        this.messages = messages;
+    }
+
+
+//TESTING
+
+    public void testOpen(){
+        chatWebSocketHandler.openWebSocket();
+    }
+
+    public void testClose(){
+        chatWebSocketHandler.closeWebSocket();
+    }
+
+    public void testSend(){
+        String text = "testing";
+        boolean result = chatWebSocketHandler.sendToWebSocket(text);
+        if(result) {
+            ChatMessageModel message = new ChatMessageModel(text,true);
+            chatListAdapter.add(message);
+        }
+
+    }
 }

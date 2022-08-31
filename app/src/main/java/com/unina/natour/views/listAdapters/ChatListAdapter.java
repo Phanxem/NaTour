@@ -33,26 +33,22 @@ public class ChatListAdapter extends ArrayAdapter<ChatMessageModel> {
 
         TextView textView_message = null;
 
-        if (convertView == null) {
-            if (message.didISendIt()) {
-                convertView = LayoutInflater
-                        .from(getContext())
-                        .inflate(R.layout.list_element_chat_message_sent, parent, false);
+        if (message.didISendIt()) {
+            convertView = LayoutInflater
+                    .from(getContext())
+                    .inflate(R.layout.list_element_chat_message_sent, parent, false);
 
-                textView_message = convertView.findViewById(R.id.MessageSent_textView_message);
-            }
-            else {
-                convertView = LayoutInflater
-                        .from(getContext())
-                        .inflate(R.layout.list_element_chat_message_received, parent, false);
+            textView_message = convertView.findViewById(R.id.MessageSent_textView_message);
+        }
+        else {
+            convertView = LayoutInflater
+                    .from(getContext())
+                    .inflate(R.layout.list_element_chat_message_received, parent, false);
 
-                textView_message = convertView.findViewById(R.id.MessageReceived_textView_message);
-            }
+            textView_message = convertView.findViewById(R.id.MessageReceived_textView_message);
         }
 
-
         if(textView_message != null) textView_message.setText(message.getMessage());
-
 
 
         return convertView;

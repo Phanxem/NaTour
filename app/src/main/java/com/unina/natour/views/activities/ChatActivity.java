@@ -3,9 +3,17 @@ package com.unina.natour.views.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.unina.natour.R;
+import com.unina.natour.amplify.ApplicationConfig;
 import com.unina.natour.controllers.ChatController;
 import com.unina.natour.views.dialogs.MessageDialog;
 
@@ -36,22 +44,65 @@ public class ChatActivity extends AppCompatActivity {
         chatController.initListViewChat(listView_messages);
 
 
+        pressBackIcon();
+        pressMenuIcon();
+        pressUserAccount();
+
+
+
+    }
+
+    public ChatController getChatController() {
+        return chatController;
     }
 
     public void pressBackIcon(){
-
+        ImageView imageView_back = findViewById(R.id.Chat_imageView_indietro);
+        imageView_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+                chatController.testClose();
+            }
+        });
     }
 
     public void pressMenuIcon(){
-
+        ImageView imageView_menu = findViewById(R.id.Chat_imageView_menu);
+        imageView_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+                chatController.testOpen();
+            }
+        });
     }
 
     public void pressUserAccount(){
+        RelativeLayout relativeLayout_user = findViewById(R.id.Chat_relativeLayout_user);
+        relativeLayout_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+                chatController.testSend();
+            }
+        });
+
         //profiloController.openProfiloActivity(long idUser);
     }
 
-    public void sendMessage(){
-
+    public void pressSendKey(){
+        EditText editText_messageField = findViewById(R.id.Chat_textField_messageField);
+        editText_messageField.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                    //TODO
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
 }
