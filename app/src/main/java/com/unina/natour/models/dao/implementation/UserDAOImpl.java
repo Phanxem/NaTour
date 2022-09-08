@@ -3,6 +3,7 @@ package com.unina.natour.models.dao.implementation;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -28,10 +29,12 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.MultipartReader;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class UserDAOImpl implements UserDAO {
@@ -96,6 +99,7 @@ public class UserDAOImpl implements UserDAO {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+
                 String jsonStringResult = response.body().string();
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
@@ -150,7 +154,6 @@ public class UserDAOImpl implements UserDAO {
                     jsonObject[0] = jsonElementResult.getAsJsonObject();
                     completableFuture.complete(null);
                 }
-
                 completableFuture.complete(response.body().bytes());
             }
         });

@@ -11,14 +11,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.AutenticazioneController;
 import com.unina.natour.controllers.DisconnessioneController;
+import com.unina.natour.controllers.ListaItinerariController;
 import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.ProfiloPersonaleController;
 import com.unina.natour.models.ProfiloPersonaleModel;
@@ -31,8 +35,10 @@ public class ProfiloPersonaleFragment extends Fragment {
     MessageDialog messageDialog;
 
     ProfiloPersonaleController profiloPersonaleController;
+    ListaItinerariController listaItinerariController;
     DisconnessioneController disconnessioneController;
     AutenticazioneController autenticazioneController;
+
 
     ProfiloPersonaleModel profiloPersonaleModel;
 
@@ -68,7 +74,16 @@ public class ProfiloPersonaleFragment extends Fragment {
         this.disconnessioneController = new DisconnessioneController(getActivity(), messageDialog);
         this.autenticazioneController = new AutenticazioneController(getActivity(), messageDialog);
 
+        this.listaItinerariController = profiloPersonaleController.getListaItinerariController();
+
         this.profiloPersonaleModel = profiloPersonaleController.getProfiloPersonaleModel();
+
+
+        RecyclerView recyclerView_itineraries = view.findViewById(R.id.ProfiloPersonaleF_recycleView_itinerari);
+        NestedScrollView nestedScrollView_itineraries = view.findViewById(R.id.ProfiloPersonaleF_nestedScrollView_itinerari);
+        ProgressBar progressBar_itinearies = view.findViewById(R.id.ProfiloPersonaleF_progressBar_itinerari);
+
+        listaItinerariController.initItineraryList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
 
         update();
 

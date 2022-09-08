@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.R;
+import com.unina.natour.controllers.DisconnessioneController;
 import com.unina.natour.controllers.SplashScreenController;
 import com.unina.natour.views.dialogs.MessageDialog;
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -29,6 +30,9 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         MessageDialog messageDialog = new MessageDialog();
         messageDialog.setFragmentActivity(this);
+
+        //DisconnessioneController disconnessioneController = new DisconnessioneController(this,null);
+        //disconnessioneController.signOut();
 
         splashScreenController = new SplashScreenController(this, messageDialog);
         splashScreenController.redirectToRightActivity();

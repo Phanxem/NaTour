@@ -5,15 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.unina.natour.R;
-import com.unina.natour.amplify.ApplicationConfig;
 import com.unina.natour.controllers.ChatController;
 import com.unina.natour.views.dialogs.MessageDialog;
 
@@ -79,7 +76,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void pressUserAccount(){
-        RelativeLayout relativeLayout_user = findViewById(R.id.Chat_relativeLayout_user);
+        RelativeLayout relativeLayout_user = findViewById(R.id.ListElementItinerary_relativeLayout_user);
         relativeLayout_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

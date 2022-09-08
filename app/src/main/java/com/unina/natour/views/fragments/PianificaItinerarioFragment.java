@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
-import android.os.Message;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -488,7 +487,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
 
     private void updateOptionsSaveItinerary(){
         Button button_save = view.findViewById(R.id.InsertItinerary_button_salva);
-        ConstraintLayout constraintLayout_durationLenght = view.findViewById(R.id.InsertItinerary_constraintLayout_durationAndDistance);
+        ConstraintLayout constraintLayout_durationLenght = view.findViewById(R.id.ListElementItinerary_constraintLayout_durationDistanceDifficulty);
 
         if(pianificaItinerarioModel.hasStartingPoint() && pianificaItinerarioModel.hasDestinationPoint()){
             button_save.setVisibility(View.VISIBLE);
@@ -502,8 +501,8 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
                 distance = distance + routeLeg.getDistance();
             }
 
-            TextView textView_duration = view.findViewById(R.id.InsertItinerary_textView_duration);
-            TextView textView_distance = view.findViewById(R.id.InsertItinerary_textView_distance);
+            TextView textView_duration = view.findViewById(R.id.ListElementItinerary_textView_duration);
+            TextView textView_distance = view.findViewById(R.id.ListElementItinerary_textView_distance);
 
             textView_duration.setText(TimeUtils.toDurationString(duration));
 

@@ -31,10 +31,13 @@ public class ProfiloPersonaleController implements Parcelable {
 
     private final static String TAG ="ProfiloPersonaleController";
 
-    private final static String USERNAME = "user";
+
 
     FragmentActivity activity;
     MessageDialog messageDialog;
+    String username = "user";
+
+    ListaItinerariController listaItinerariController;
 
     ProfiloPersonaleModel profiloPersonaleModel;
 
@@ -43,10 +46,14 @@ public class ProfiloPersonaleController implements Parcelable {
     public ProfiloPersonaleController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
+        //this.username = Amplify.Auth.getCurrentUser().getUsername();
 
         this.userDAO = new UserDAOImpl(activity);
 
-        this.profiloPersonaleModel = initModel();
+        this.listaItinerariController = new ListaItinerariController(activity,messageDialog, username);
+
+        //this.profiloPersonaleModel = initModel();
+        this.profiloPersonaleModel = new ProfiloPersonaleModel();
     }
 
     public MessageDialog getMessageDialog() {
@@ -86,7 +93,7 @@ public class ProfiloPersonaleController implements Parcelable {
         UserDTO userDTO = null;
 
         try {
-            userDTO = userDAO.getUser(USERNAME);
+            userDTO = userDAO.getUser(username);
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedGetUserException exception = new NotCompletedGetUserException(e);
@@ -106,7 +113,7 @@ public class ProfiloPersonaleController implements Parcelable {
 
         Bitmap profileImage = null;
         try {
-            profileImage = userDAO.getUserProfileImage(USERNAME);
+            profileImage = userDAO.getUserProfileImage(username);
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedGetUserProfileImageException exception = new NotCompletedGetUserProfileImageException(e);
@@ -147,6 +154,13 @@ public class ProfiloPersonaleController implements Parcelable {
         this.profiloPersonaleModel = profiloPersonaleModel;
     }
 
+    public ListaItinerariController getListaItinerariController(){
+        return listaItinerariController;
+    }
+
+    public void setListaItinerariController ( ListaItinerariController listaItinerariController){
+        this.listaItinerariController = listaItinerariController;
+    }
 
 
 

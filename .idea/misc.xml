@@ -43,7 +43,7 @@
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/dialog_select_duration.xml" value="0.264" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/dialog_select_string.xml" value="0.264" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_community.xml" value="0.20425724637681159" />
-        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_home.xml" value="0.16799999999999998" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_home.xml" value="0.264" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_pianifica.xml" value="0.3696060037523452" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_pianifica_itinerario.xml" value="0.2" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_profilo.xml" value="0.27898550724637683" />
@@ -52,6 +52,7 @@
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/list_element_chat_message_received.xml" value="0.2028985507246377" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/list_element_chat_message_sent.xml" value="0.264" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/list_element_file.xml" value="0.4" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/list_element_itinerary.xml" value="0.4" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/list_element_punto_intermedio.xml" value="0.4" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/list_element_risultato_ricerca_punto.xml" value="0.14447463768115942" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/menu/bottom_menu.xml" value="0.27447916666666666" />

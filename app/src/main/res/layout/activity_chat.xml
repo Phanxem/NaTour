@@ -7,7 +7,7 @@
     tools:context=".views.activities.ChatActivity">
 
     <RelativeLayout
-        android:id="@+id/Chat_relativeLayout_user"
+        android:id="@+id/ListElementItinerary_relativeLayout_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/Chat_imageView_immagineProfilo"
+            android:id="@+id/ListElementItinerary_imageView_immagineProfilo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -28,14 +28,14 @@
             app:srcCompat="@drawable/ic_generic_account_minor" />
 
         <TextView
-            android:id="@+id/Chat_textView_username"
+            android:id="@+id/ListElementItinerary_textView_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/Chat_imageView_immagineProfilo"
-            android:layout_alignBottom="@id/Chat_imageView_immagineProfilo"
+            android:layout_alignTop="@id/ListElementItinerary_imageView_immagineProfilo"
+            android:layout_alignBottom="@id/ListElementItinerary_imageView_immagineProfilo"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_toEndOf="@+id/Chat_imageView_immagineProfilo"
+            android:layout_toEndOf="@+id/ListElementItinerary_imageView_immagineProfilo"
             android:text="Username"
             android:textSize="16sp" />
 
@@ -50,9 +50,9 @@
         android:clickable="true"
         android:focusable="true"
         android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/Chat_relativeLayout_user"
+        app:layout_constraintBottom_toBottomOf="@+id/ListElementItinerary_relativeLayout_user"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/Chat_relativeLayout_user"
+        app:layout_constraintTop_toTopOf="@+id/ListElementItinerary_relativeLayout_user"
         app:srcCompat="@drawable/ic_back" />
 
     <ImageView
@@ -63,9 +63,9 @@
         android:clickable="true"
         android:focusable="true"
         android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/Chat_relativeLayout_user"
+        app:layout_constraintBottom_toBottomOf="@+id/ListElementItinerary_relativeLayout_user"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/Chat_relativeLayout_user"
+        app:layout_constraintTop_toTopOf="@+id/ListElementItinerary_relativeLayout_user"
         app:srcCompat="@drawable/ic_menu" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -122,6 +122,6 @@
         app:layout_constraintBottom_toTopOf="@+id/Chat_constraintLayout_messageField"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Chat_relativeLayout_user" />
+        app:layout_constraintTop_toBottomOf="@+id/ListElementItinerary_relativeLayout_user" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
