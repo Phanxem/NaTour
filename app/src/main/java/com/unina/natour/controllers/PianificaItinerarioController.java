@@ -80,6 +80,7 @@ public class PianificaItinerarioController implements Parcelable {
     MessageDialog messageDialog;
 
 
+
     RicercaPuntoController ricercaPuntoController;
 
     ActivityResultLauncher<Intent> activityResultLauncherRicercaPunto;

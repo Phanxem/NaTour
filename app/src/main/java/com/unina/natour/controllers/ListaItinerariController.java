@@ -64,7 +64,7 @@ public class ListaItinerariController {
         }
 
         for(ElementItineraryResponseDTO element: itinerariesDTO){
-            ElementItineraryModel modelElement = toElementItineraryModel(element);
+            ElementItineraryModel modelElement = toModel(element);
             elementsItineraryModel.add(modelElement);
         }
 
@@ -99,7 +99,7 @@ public class ListaItinerariController {
 
                     ArrayList<ElementItineraryModel> nextPageElements = new ArrayList<ElementItineraryModel>();
                     for(ElementItineraryResponseDTO element: itinerariesDTO){
-                        ElementItineraryModel modelElement = toElementItineraryModel(element);
+                        ElementItineraryModel modelElement = toModel(element);
                         nextPageElements.add(modelElement);
                     }
 
@@ -129,7 +129,7 @@ public class ListaItinerariController {
 
 
 
-    public ElementItineraryModel toElementItineraryModel(ElementItineraryResponseDTO dto){
+    public ElementItineraryModel toModel(ElementItineraryResponseDTO dto){
         ElementItineraryModel model = new ElementItineraryModel();
 
         model.setItineraryId(dto.getItineraryId());

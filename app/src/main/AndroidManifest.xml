@@ -20,6 +20,9 @@
         android:theme="@style/Theme.NaTour"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".views.activities.SplashScreenActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.activities.ChatActivity"
             android:exported="false" />
         <activity
@@ -65,8 +68,7 @@
             android:name=".views.activities.AttivaAccountActivity"
             android:exported="false" />
         <activity
-            android:name=".views.activities.SplashScreenActivity"
-
+            android:name=".views.activities.DettagliItinerarioActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

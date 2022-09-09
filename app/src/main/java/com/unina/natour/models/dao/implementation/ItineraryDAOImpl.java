@@ -13,6 +13,7 @@ import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.dto.MessageDTO;
 import com.unina.natour.dto.request.ItineraryRequestDTO;
 import com.unina.natour.dto.response.ElementItineraryResponseDTO;
+import com.unina.natour.dto.response.ItineraryResponseDTO;
 import com.unina.natour.models.ElementItineraryModel;
 import com.unina.natour.models.dao.converters.FileConverter;
 import com.unina.natour.models.dao.converters.JsonConverter;
@@ -26,6 +27,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import io.jenetics.jpx.GPX;
+import io.jenetics.jpx.WayPoint;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -208,5 +210,46 @@ public class ItineraryDAOImpl implements ItineraryDAO {
         response.add(test2);
 
         return response;
+    }
+
+    @Override
+    public ItineraryResponseDTO findById(long itineraryId) {
+
+        ItineraryResponseDTO dto = new ItineraryResponseDTO();
+
+        dto.setName("TEST342");
+        dto.setDescription("genosgenosgenos");
+        dto.setDifficulty(1);
+        dto.setId(44);
+        dto.setHasBeenReported(false);
+        dto.setLenght(6666f);
+        dto.setDuration(77777f);
+
+        WayPoint wayPoint1 = WayPoint.builder().build(48.20100,16.31651);
+        WayPoint wayPoint2 = WayPoint.builder().build(48.20133,16.31610);
+        WayPoint wayPoint3 = WayPoint.builder().build(48.20188,16.31569);
+
+        GPX gpx = GPX.builder()
+                .addWayPoint(wayPoint1)
+                .addWayPoint(wayPoint2)
+                .addWayPoint(wayPoint3)
+                .addTrack(track -> track
+                        .addSegment(segment -> segment
+                                .addPoint(p -> p.lat(48.20100).lon(16.31651))
+                                .addPoint(p -> p.lat(48.20112).lon(16.31639))
+                                .addPoint(p -> p.lat(48.20126).lon(16.31622))
+                                .addPoint(p -> p.lat(48.20133).lon(16.31610))
+                                .addPoint(p -> p.lat(48.20144).lon(16.31609))
+                                .addPoint(p -> p.lat(48.20155).lon(16.31589))
+                                .addPoint(p -> p.lat(48.20166).lon(16.31578))
+                                .addPoint(p -> p.lat(48.20177).lon(16.31572))
+                                .addPoint(p -> p.lat(48.20188).lon(16.31569))
+                        )
+                )
+                .build();
+
+        dto.setGpx(gpx);
+
+        return dto;
     }
 }
