@@ -2,11 +2,15 @@ package com.unina.natour.models;
 
 import android.graphics.Bitmap;
 
+import com.unina.natour.views.observers.Observable;
+import com.unina.natour.views.observers.Observer;
+
 import org.osmdroid.util.GeoPoint;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class DettagliItinerarioModel {
+public class DettagliItinerarioModel implements Observable {
 
     private long itineraryId;
     private String name;
@@ -15,10 +19,24 @@ public class DettagliItinerarioModel {
     private String lenght;
     private String difficulty;
 
+    private long idUser;
+
     private boolean hasBeenReported;
 
     private List<GeoPoint> wayPoints;
     private List<GeoPoint> routePoints;
+
+    private boolean isNavigationActive;
+    private GeoPoint currentLocation;
+
+
+    private List<Observer> observers;
+
+    public DettagliItinerarioModel(){
+        this.wayPoints = new ArrayList<GeoPoint>();
+        this.routePoints = new ArrayList<GeoPoint>();
+        this.observers = new ArrayList<Observer>();
+    }
 
     public long getItineraryId() {
         return itineraryId;
@@ -90,5 +108,57 @@ public class DettagliItinerarioModel {
 
     public void setHasBeenReported(boolean hasBeenReported) {
         this.hasBeenReported = hasBeenReported;
+    }
+
+    public boolean isNavigationActive() {
+        return isNavigationActive;
+    }
+
+    public void setNavigationActive(boolean navigationActive) {
+        isNavigationActive = navigationActive;
+        notifyObservers();
+    }
+
+    public GeoPoint getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public void setCurrentLocation(GeoPoint currentLocation) {
+        this.currentLocation = currentLocation;
+        notifyObservers();
+    }
+
+    public long getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(long idUser) {
+        this.idUser = idUser;
+    }
+
+    public List<Observer> getObservers() {
+        return observers;
+    }
+
+    public void setObservers(List<Observer> observers) {
+        this.observers = observers;
+    }
+
+
+    @Override
+    public void registerObserver(Observer observer) {
+        if(!observers.contains(observer)) observers.add(observer);
+    }
+
+    @Override
+    public void undergisterObserver(Observer observer) {
+        if(observers.contains(observer)) observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for(Observer observer : observers){
+            observer.update();
+        }
     }
 }

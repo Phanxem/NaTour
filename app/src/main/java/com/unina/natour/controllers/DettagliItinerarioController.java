@@ -1,20 +1,39 @@
 package com.unina.natour.controllers;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
+import com.amplifyframework.core.Amplify;
+import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSFeatureNotPresentException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSNotEnabledException;
+import com.unina.natour.controllers.utils.GPSUtils;
 import com.unina.natour.controllers.utils.TimeUtils;
+import com.unina.natour.dto.UserDTO;
 import com.unina.natour.dto.response.ItineraryResponseDTO;
 import com.unina.natour.models.DettagliItinerarioModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
+import com.unina.natour.models.dao.interfaces.UserDAO;
+import com.unina.natour.views.activities.DettagliItinerarioActivity;
+import com.unina.natour.views.activities.PersonalizzaAccountImmagineActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import org.osmdroid.api.IMapController;
@@ -43,6 +62,10 @@ public class DettagliItinerarioController {
     FragmentActivity activity;
     MessageDialog messageDialog;
 
+    ActivityResultLauncher<String> activityResultLauncherPermissions;
+
+    private LocationListener locationListener;
+
     private DettagliItinerarioModel dettagliItinerarioModel;
 
     private ItineraryDAO itineraryDAO;
@@ -55,6 +78,26 @@ public class DettagliItinerarioController {
         this.itineraryDAO = new ItineraryDAOImpl(activity);
 
 
+        this.locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                GeoPoint geoPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
+                dettagliItinerarioModel.setCurrentLocation(geoPoint);
+                Log.i(TAG,"lat: " + geoPoint.getLatitude() + " | lon: " + geoPoint.getLongitude());
+            }
+
+            public void onProviderDisabled(String provider) {
+
+            }
+
+
+            public void onProviderEnabled(String provider) {
+
+            }
+        };
+
+
+
         Intent intent = activity.getIntent();
         long itineraryId = intent.getLongExtra(EXTRA_ITINERARY_ID,-1);
 /*
@@ -65,6 +108,18 @@ public class DettagliItinerarioController {
 */
         ItineraryResponseDTO itineraryResponseDTO = itineraryDAO.findById(itineraryId);
         this.dettagliItinerarioModel = toModel(itineraryResponseDTO);
+
+
+        this.activityResultLauncherPermissions = activity.registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                new ActivityResultCallback<Boolean>() {
+                    @Override
+                    public void onActivityResult(Boolean result) {
+                        if (result) activeNavigation();
+                    }
+                }
+        );
+
     }
 
 
@@ -101,6 +156,88 @@ public class DettagliItinerarioController {
     }
 
 
+    public boolean isMyItinerary() {
+        //TODO
+        /*
+        String username = Amplify.Auth.getCurrentUser().getUsername();
+        UserDTO userDTO = userDAO.getUser(username);
+        long idUserItinerary = dettagliItinerarioModel.getIdUser();
+        long myIdUser = userDTO.getIdUser();
+
+        if(idUserItinerary == myIdUser) return true
+        return false;
+        */
+        return true;
+    }
+
+    //---
+
+    public void activeNavigation(){
+        if(!GPSUtils.hasGPSFeature(activity)){
+            Log.i(TAG, "gps1");
+            GPSFeatureNotPresentException exception = new GPSFeatureNotPresentException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        }
+
+        if(!GPSUtils.isGPSEnabled(activity)){
+            Log.i(TAG, "gps2");
+            GPSNotEnabledException exception = new GPSNotEnabledException();
+            ExceptionHandler.handleMessageError(messageDialog,exception);
+            return;
+        }
+
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.i(TAG, "gps3");
+            activityResultLauncherPermissions.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            return;
+        }
+
+
+        Log.i(TAG, "gps4");
+        LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, (LocationListener) locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, locationListener);
+
+        if(dettagliItinerarioModel.getCurrentLocation() == null){
+            Log.i(TAG, "gps5");
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(location != null){
+                dettagliItinerarioModel.setCurrentLocation(new GeoPoint(location.getLatitude(), location.getLongitude()));
+            }
+
+            Log.i(TAG, "gps6");
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if(location != null){
+                dettagliItinerarioModel.setCurrentLocation(new GeoPoint(location.getLatitude(), location.getLongitude()));
+            }
+            else{Log.i(TAG, "gps7");
+                dettagliItinerarioModel.setCurrentLocation(new GeoPoint(0d,0d));
+            }
+        }
+
+        Log.i(TAG, "gps8");
+        dettagliItinerarioModel.setNavigationActive(true);
+    }
+
+
+    public void deactivateNavigation(){
+        dettagliItinerarioModel.setNavigationActive(false);
+        dettagliItinerarioModel.setCurrentLocation(null);
+        LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        locationManager.removeUpdates(locationListener);
+    }
+
+
+
+    public void openDettagliItinerarioActivity(long itineraryId){
+        Intent intent = new Intent(activity, DettagliItinerarioActivity.class);
+        intent.putExtra(EXTRA_ITINERARY_ID,itineraryId);
+        activity.startActivity(intent);
+    }
+
+
+    //---
 
     private DettagliItinerarioModel toModel(ItineraryResponseDTO dto) {
 
@@ -156,4 +293,6 @@ public class DettagliItinerarioController {
        model.setHasBeenReported(dto.getHasBeenReported());
        return model;
     }
+
+
 }

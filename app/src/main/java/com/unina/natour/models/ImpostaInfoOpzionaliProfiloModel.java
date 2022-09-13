@@ -27,6 +27,7 @@ public class ImpostaInfoOpzionaliProfiloModel implements Observable {
 
     private String country;
     private String city;
+    private String address;
 
     private List<Observer> observers;
 
@@ -65,6 +66,14 @@ public class ImpostaInfoOpzionaliProfiloModel implements Observable {
     public void setCity(String city) {
         this.city = city;
         notifyObservers();
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
 

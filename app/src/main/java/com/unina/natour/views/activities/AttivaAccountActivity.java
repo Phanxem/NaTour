@@ -3,7 +3,6 @@ package com.unina.natour.views.activities;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,9 +13,7 @@ import android.widget.TextView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.AttivaAccountController;
-import com.unina.natour.controllers.AutenticazioneController;
-import com.unina.natour.controllers.ImpostaImmagineProfiloController;
-import com.unina.natour.controllers.RegistrazioneController;
+import com.unina.natour.controllers.ImmagineProfiloController;
 import com.unina.natour.views.dialogs.MessageDialog;
 @RequiresApi(api = Build.VERSION_CODES.P)
 public class AttivaAccountActivity extends AppCompatActivity {
@@ -24,7 +21,7 @@ public class AttivaAccountActivity extends AppCompatActivity {
     private final static String TAG ="AttivaAcountActivity";
 
     private AttivaAccountController attivaAccountController;
-    private ImpostaImmagineProfiloController impostaImmagineProfiloController;
+    private ImmagineProfiloController immagineProfiloController;
 
 
     @Override
@@ -36,7 +33,7 @@ public class AttivaAccountActivity extends AppCompatActivity {
         messageDialog.setFragmentActivity(this);
 
         attivaAccountController = new AttivaAccountController(this, messageDialog);
-        impostaImmagineProfiloController = new ImpostaImmagineProfiloController(this, messageDialog);
+        immagineProfiloController = new ImmagineProfiloController(this, messageDialog);
 
         attivaAccountController.initAccountActivation();
 
@@ -57,7 +54,7 @@ public class AttivaAccountActivity extends AppCompatActivity {
 
                 Log.i(TAG, "IS: " + result);
 
-                if(result) impostaImmagineProfiloController.openPersonalizzaAccountImmagineActivity(true);
+                if(result) immagineProfiloController.openPersonalizzaAccountImmagineActivity(true);
             }
         });
     }

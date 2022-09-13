@@ -24,7 +24,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,6 +57,7 @@
                 android:layout_marginEnd="8dp"
                 android:background="@android:color/transparent"
                 android:ems="10"
+                android:hint="Inserisci il tuo Indirizzo di Residenza"
                 android:inputType="textPersonName"
                 android:minHeight="48dp" />
         </RelativeLayout>
@@ -92,20 +93,30 @@
             app:layout_constraintTop_toBottomOf="@+id/PersonalizzaAccount_textView_dataDiNascita">
 
             <TextView
-                android:id="@+id/PersonalizzaAccount_textView_data"
+                android:id="@+id/PersonalizzaAccount_textView_date"
                 style="?android:spinnerStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_toStartOf="@+id/PersonalizzaAccount_imageView_cancelDate"
                 android:hint="Seleziona data di nascita"
                 android:minHeight="48dp"
                 android:textColor="@color/black"
                 android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/PersonalizzaAccount_imageView_cancelDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                app:srcCompat="@drawable/ic_close" />
         </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -155,18 +166,28 @@
 
             <TextView
                 android:id="@+id/PersonalizzaAccount_textView_nazione"
-                android:layout_width="match_parent"
+                android:layout_width="309dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_toStartOf="@+id/PersonalizzaAccount_imageView_cancelCountry"
                 android:background="@android:color/transparent"
                 android:ems="10"
                 android:gravity="center_vertical"
+                android:layout_centerVertical="true"
                 android:hint="Seleziona la tua Nazione di Residenza"
                 android:minHeight="48dp"
                 android:textSize="17sp" />
+
+            <ImageView
+                android:id="@+id/PersonalizzaAccount_imageView_cancelCountry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                app:srcCompat="@drawable/ic_close" />
         </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -177,7 +198,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -202,18 +223,28 @@
 
             <TextView
                 android:id="@+id/PersonalizzaAccount_textView_città"
-                android:layout_width="match_parent"
+                android:layout_width="216dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_toStartOf="@+id/PersonalizzaAccount_imageView_cancelCity"
                 android:background="@android:color/transparent"
                 android:ems="10"
                 android:gravity="center_vertical"
                 android:hint="Seleziona la tua Città di Residenza"
                 android:minHeight="48dp"
                 android:textSize="17sp" />
+
+            <ImageView
+                android:id="@+id/PersonalizzaAccount_imageView_cancelCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                app:srcCompat="@drawable/ic_close" />
         </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

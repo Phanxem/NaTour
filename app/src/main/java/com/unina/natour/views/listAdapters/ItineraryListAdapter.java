@@ -1,5 +1,6 @@
 package com.unina.natour.views.listAdapters;
 
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,24 +10,37 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
+import com.unina.natour.controllers.DettagliItinerarioController;
 import com.unina.natour.models.ElementItineraryModel;
+import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.util.ArrayList;
-
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class ItineraryListAdapter extends RecyclerView.Adapter<ItineraryListAdapter.ViewHolder>{
 
     private FragmentActivity activity;
+    MessageDialog messageDialog;
+
     private ArrayList<ElementItineraryModel> elementsItineraryModel;
     private boolean doBelongToSameUser;
 
-    public ItineraryListAdapter(FragmentActivity activity, ArrayList<ElementItineraryModel> model, boolean doBelongToSameUser){
+    private DettagliItinerarioController dettagliItinerarioController;
+
+
+    public ItineraryListAdapter(FragmentActivity activity, MessageDialog messageDialog, ArrayList<ElementItineraryModel> model, boolean doBelongToSameUser){
         this.elementsItineraryModel = model;
         this.activity = activity;
+        this.messageDialog = messageDialog;
+
+
         this.doBelongToSameUser = doBelongToSameUser;
+
+        this.dettagliItinerarioController = new DettagliItinerarioController(activity,messageDialog);
 
     }
 
@@ -65,8 +79,8 @@ public class ItineraryListAdapter extends RecyclerView.Adapter<ItineraryListAdap
         holder.linearLayout_itinerary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO controller Dettagli itinerario. open(id itinerario)
-                //DettagliItinerarioController.open(idItinerario);
+                //TODO TEST
+                dettagliItinerarioController.openDettagliItinerarioActivity(itinerary.getItineraryId());
             }
         });
     }

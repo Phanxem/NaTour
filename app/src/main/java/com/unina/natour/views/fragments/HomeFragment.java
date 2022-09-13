@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.unina.natour.R;
+import com.unina.natour.controllers.DettagliItinerarioController;
 import com.unina.natour.controllers.HomeController;
 import com.unina.natour.controllers.ListaItinerariController;
 import com.unina.natour.controllers.MainController;
@@ -56,6 +57,7 @@ public class HomeFragment extends Fragment {
         }
 
         this.listaItinerariController = new ListaItinerariController(getActivity(),messageDialog,null);
+
 
         //ListView listView_itineraries = view.findViewById(R.id.HomeF_listView_itineraries);
         //listaItinerariController.initItineraryList(listView_itineraries);

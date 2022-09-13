@@ -1,28 +1,20 @@
 package com.unina.natour.views.activities;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.unina.natour.R;
-import com.unina.natour.controllers.ImpostaImmagineProfiloController;
-import com.unina.natour.controllers.*;
+import com.unina.natour.controllers.ImmagineProfiloController;
+import com.unina.natour.controllers.InfoOpzionaliProfiloController;
 import com.unina.natour.models.ImpostaImmagineProfiloModel;
 import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.observers.Observer;
@@ -33,8 +25,8 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity imple
 
     private final static String TAG ="PersonalizzaAccountImmagineActivity";
 
-    private ImpostaImmagineProfiloController impostaImmagineProfiloController;
-    private ImpostaInfoOpzionaliProfiloController impostaInfoOpzionaliProfiloController;
+    private ImmagineProfiloController immagineProfiloController;
+    private InfoOpzionaliProfiloController impostaInfoOpzionaliProfiloController;
 
     private ImpostaImmagineProfiloModel impostaImmagineProfiloModel;
 
@@ -48,11 +40,11 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity imple
         MessageDialog messageDialog = new MessageDialog();
         messageDialog.setFragmentActivity(this);
 
-        impostaImmagineProfiloController = new ImpostaImmagineProfiloController(this, messageDialog);
-        impostaImmagineProfiloModel = impostaImmagineProfiloController.getImpostaImmagineProfiloModel();
+        immagineProfiloController = new ImmagineProfiloController(this, messageDialog);
+        impostaImmagineProfiloModel = immagineProfiloController.getImpostaImmagineProfiloModel();
         impostaImmagineProfiloModel.registerObserver(this);
 
-        impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(this, messageDialog);
+        impostaInfoOpzionaliProfiloController = new InfoOpzionaliProfiloController(this, messageDialog);
 
         pressTextSetProfileImage();
         pressButtonNext();
@@ -63,7 +55,7 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity imple
         textView_setProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                impostaImmagineProfiloController.openGallery();
+                immagineProfiloController.openGallery();
             }
         });
     }
@@ -73,7 +65,7 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity imple
         button_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Boolean result = impostaImmagineProfiloController.modificaImmagineProfilo();
+                Boolean result = immagineProfiloController.modificaImmagineProfilo();
 
                 if(result) impostaInfoOpzionaliProfiloController.openPersonalizzaAccountInfoOpzionaliActivity(true);
             }

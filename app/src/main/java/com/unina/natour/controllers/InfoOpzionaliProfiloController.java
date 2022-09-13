@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressLint("LongLogTag")
-public class ImpostaInfoOpzionaliProfiloController {
+public class InfoOpzionaliProfiloController {
 
     private final static String TAG ="ImpostaInfoOpzionaliProfiloController";
 
@@ -45,7 +45,7 @@ public class ImpostaInfoOpzionaliProfiloController {
     UserDAO userDAO;
 
 
-    public ImpostaInfoOpzionaliProfiloController(FragmentActivity activity, MessageDialog messageDialog){
+    public InfoOpzionaliProfiloController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
 
@@ -82,6 +82,7 @@ public class ImpostaInfoOpzionaliProfiloController {
     public String getCity(){
         return impostaInfoOpzionaliProfiloModel.getCity();
     }
+
 
 
 

@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -41,7 +42,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity
 
     public final static String PREV_ACTIVITY = "PrevActivity";
 
-    private ImpostaInfoOpzionaliProfiloController impostaInfoOpzionaliProfiloController;
+    private InfoOpzionaliProfiloController infoOpzionaliProfiloController;
     //private HomeController homeController;
 
     private MainController mainController;
@@ -57,11 +58,11 @@ public class PersonalizzaAccountInfoOpzionaliActivity
         MessageDialog messageDialog = new MessageDialog();
         messageDialog.setFragmentActivity(this);
 
-        impostaInfoOpzionaliProfiloController = new ImpostaInfoOpzionaliProfiloController(this, messageDialog);
+        infoOpzionaliProfiloController = new InfoOpzionaliProfiloController(this, messageDialog);
         //homeController = new HomeController(this);
         mainController = new MainController(this, messageDialog);
 
-        impostaInfoOpzionaliProfiloModel = impostaInfoOpzionaliProfiloController.getImpostaInfoOpzionaliProfiloModel();
+        impostaInfoOpzionaliProfiloModel = infoOpzionaliProfiloController.getImpostaInfoOpzionaliProfiloModel();
         impostaInfoOpzionaliProfiloModel.registerObserver(this);
 
         DatePickerDialog datePickerDialog = initDatePicker();
@@ -85,7 +86,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity
                 cal.set(Calendar.MONTH, month);
                 cal.set(Calendar.DAY_OF_MONTH, day);
 
-                impostaInfoOpzionaliProfiloController.setDateOfBirth(cal);
+                infoOpzionaliProfiloController.setDateOfBirth(cal);
             }
         };
 
@@ -107,7 +108,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity
     }
 
     public void pressButtonDate(DatePickerDialog datePickerDialog){
-        TextView textView_date = findViewById(R.id.PersonalizzaAccount_textView_data);
+        TextView textView_date = findViewById(R.id.PersonalizzaAccount_textView_date);
         textView_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,7 +137,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity
             @Override
             public void onClick(View v) {
 
-                String country = impostaInfoOpzionaliProfiloController.getCountry();
+                String country = infoOpzionaliProfiloController.getCountry();
 
                 SelectCityDialog selectCityDialog = SelectCityDialog.newInstance(country);
                 selectCityDialog.show(getSupportFragmentManager(),TAG);
@@ -153,7 +154,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity
                 EditText editText_indirizzoDiResidenza = findViewById(R.id.PersonalizzaAccount_editText_indirizzo);
                 String indirizzoDiResidenza = String.valueOf(editText_indirizzoDiResidenza.getText());
 
-                Boolean result = impostaInfoOpzionaliProfiloController.modificaInfoOpzionali(indirizzoDiResidenza);
+                Boolean result = infoOpzionaliProfiloController.modificaInfoOpzionali(indirizzoDiResidenza);
 
                 Intent intent = getIntent();
                 Boolean isFirstUpdate = intent.getBooleanExtra(PREV_ACTIVITY,false);
@@ -167,6 +168,36 @@ public class PersonalizzaAccountInfoOpzionaliActivity
     }
 
 
+    public void pressIconCancelDate(){
+        ImageView imageView_cancelDate= findViewById(R.id.PersonalizzaAccount_imageView_cancelDate);
+        imageView_cancelDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                infoOpzionaliProfiloController.setDateOfBirth(null);
+            }
+        });
+    }
+
+    public void pressIconCancelCountry(){
+        ImageView imageView_cancelCountry= findViewById(R.id.PersonalizzaAccount_imageView_cancelCountry);
+        imageView_cancelCountry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                infoOpzionaliProfiloController.setCountry(null);
+                infoOpzionaliProfiloController.setCity(null);
+            }
+        });
+    }
+
+    public void pressIconCancelCity(){
+        ImageView imageView_cancelCity= findViewById(R.id.PersonalizzaAccount_imageView_cancelCity);
+        imageView_cancelCity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                infoOpzionaliProfiloController.setCity(null);
+            }
+        });
+    }
 
 
 
@@ -178,7 +209,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity
 
                 //DATE OF BIRTH
                 Calendar date = impostaInfoOpzionaliProfiloModel.getDateOfBirth();
-                TextView textView_date = findViewById(R.id.PersonalizzaAccount_textView_data);
+                TextView textView_date = findViewById(R.id.PersonalizzaAccount_textView_date);
                 if(date == null){
                     textView_date.setText(null);
                 }
@@ -264,7 +295,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity
         Log.i(TAG, country);
 
         //Controller update model
-        impostaInfoOpzionaliProfiloController.setCountry(country);
+        infoOpzionaliProfiloController.setCountry(country);
     }
 
     @Override
@@ -272,6 +303,6 @@ public class PersonalizzaAccountInfoOpzionaliActivity
         Log.i(TAG, city);
 
         //Controller update model
-        impostaInfoOpzionaliProfiloController.setCity(city);
+        infoOpzionaliProfiloController.setCity(city);
     }
 }

@@ -39,7 +39,7 @@ import java.util.concurrent.ExecutionException;
 
 @RequiresApi(api = Build.VERSION_CODES.P)
 @SuppressLint("LongLogTag")
-public class ImpostaImmagineProfiloController {
+public class ImmagineProfiloController {
 
     private final static String TAG ="ImpostaImmagineProfiloController";
 
@@ -59,7 +59,7 @@ public class ImpostaImmagineProfiloController {
     private UserDAO userDAO;
 
     @RequiresApi(api = Build.VERSION_CODES.P)
-    public ImpostaImmagineProfiloController(FragmentActivity activity, MessageDialog messageDialog){
+    public ImmagineProfiloController(FragmentActivity activity, MessageDialog messageDialog){
         this.activity = activity;
         this.messageDialog = messageDialog;
 

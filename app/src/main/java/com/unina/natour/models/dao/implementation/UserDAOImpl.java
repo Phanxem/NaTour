@@ -176,6 +176,10 @@ public class UserDAOImpl implements UserDAO {
     }
 
 
+
+
+
+
     @Override
     public MessageDTO updateProfileImage(Bitmap profileImage) throws IOException, ExecutionException, InterruptedException, ServerException {
 

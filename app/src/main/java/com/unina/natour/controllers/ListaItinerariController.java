@@ -68,7 +68,7 @@ public class ListaItinerariController {
             elementsItineraryModel.add(modelElement);
         }
 
-        this.itineraryListAdapter = new ItineraryListAdapter(activity,elementsItineraryModel, doBelongToSameUser);
+        this.itineraryListAdapter = new ItineraryListAdapter(activity,messageDialog,elementsItineraryModel, doBelongToSameUser);
     }
 
     public void initItineraryList(NestedScrollView nestedScrollView_itineraries,

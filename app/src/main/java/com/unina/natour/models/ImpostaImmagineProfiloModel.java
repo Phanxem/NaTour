@@ -2,7 +2,6 @@ package com.unina.natour.models;
 
 import android.graphics.Bitmap;
 
-import com.unina.natour.controllers.ImpostaImmagineProfiloController;
 import com.unina.natour.views.observers.Observable;
 import com.unina.natour.views.observers.Observer;
 

@@ -62,6 +62,8 @@ public class ProfiloPersonaleController implements Parcelable {
 
     private ProfiloPersonaleModel initModel(){
 
+
+
         CompletableFuture<String> completableFuture = new CompletableFuture<String>();
 
         Amplify.Auth.fetchUserAttributes(
