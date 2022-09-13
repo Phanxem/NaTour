@@ -17,30 +17,30 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.unina.natour.R;
 import com.unina.natour.controllers.DettagliItinerarioController;
 import com.unina.natour.models.ElementItineraryModel;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.util.ArrayList;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class ItineraryListAdapter extends RecyclerView.Adapter<ItineraryListAdapter.ViewHolder>{
 
-    private FragmentActivity activity;
-    MessageDialog messageDialog;
+    private NaTourActivity activity;
+
 
     private ArrayList<ElementItineraryModel> elementsItineraryModel;
     private boolean doBelongToSameUser;
 
-    private DettagliItinerarioController dettagliItinerarioController;
+    //private DettagliItinerarioController dettagliItinerarioController;
 
 
-    public ItineraryListAdapter(FragmentActivity activity, MessageDialog messageDialog, ArrayList<ElementItineraryModel> model, boolean doBelongToSameUser){
+    public ItineraryListAdapter(NaTourActivity activity, ArrayList<ElementItineraryModel> model, boolean doBelongToSameUser){
         this.elementsItineraryModel = model;
         this.activity = activity;
-        this.messageDialog = messageDialog;
 
 
         this.doBelongToSameUser = doBelongToSameUser;
 
-        this.dettagliItinerarioController = new DettagliItinerarioController(activity,messageDialog);
+        //this.dettagliItinerarioController = new DettagliItinerarioController(activity);
 
     }
 
@@ -80,7 +80,7 @@ public class ItineraryListAdapter extends RecyclerView.Adapter<ItineraryListAdap
             @Override
             public void onClick(View v) {
                 //TODO TEST
-                dettagliItinerarioController.openDettagliItinerarioActivity(itinerary.getItineraryId());
+                DettagliItinerarioController.openDettagliItinerarioActivity2(activity,itinerary.getItineraryId());
             }
         });
     }

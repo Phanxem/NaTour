@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class ModificaProfiloModel implements Observable {
+public class ModificaProfiloModel extends NaTourModel {
 
     private ImpostaImmagineProfiloModel immagineProfiloModel;
     private ImpostaInfoOpzionaliProfiloModel optionalInfoModel;
@@ -19,14 +19,14 @@ public class ModificaProfiloModel implements Observable {
     private boolean isFacebookAccountLinked;
     private boolean isGoogleAccountLinked;
 
-    private List<Observer> observers;
+
 
 
     public ModificaProfiloModel(ImpostaInfoOpzionaliProfiloModel optionalInfoModel, ImpostaImmagineProfiloModel imageModel){
+        super();
+
         this.immagineProfiloModel = imageModel;
         this.optionalInfoModel = optionalInfoModel;
-
-        this.observers = new ArrayList<Observer>();
     }
 
 
@@ -96,38 +96,12 @@ public class ModificaProfiloModel implements Observable {
 
         //TODO userDTO facebook and google
 
-        this.email
-
-
-
-
     }
 
 
 
 
 
-
-    @Override
-    public void registerObserver(Observer observer) {
-        if(!observers.contains(observer)) observers.add(observer);
-        optionalInfoModel.registerObserver(observer);
-        immagineProfiloModel.registerObserver(observer);
-    }
-
-    @Override
-    public void undergisterObserver(Observer observer) {
-        if(observers.contains(observer)) observers.remove(observer);
-        optionalInfoModel.undergisterObserver(observer);
-        immagineProfiloModel.undergisterObserver(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for(Observer observer : observers){
-            observer.update();
-        }
-    }
 
 
 }

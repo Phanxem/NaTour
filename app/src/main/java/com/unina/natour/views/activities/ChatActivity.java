@@ -19,7 +19,7 @@ import com.unina.natour.views.dialogs.MessageDialog;
 //tutti i messaggi che arrivano vengono visualizzati come mandati da altri
 
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends NaTourActivity {
 
 
     //TODO
@@ -32,10 +32,7 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setFragmentActivity(this);
-
-        this.chatController = new ChatController(this, messageDialog);
+        this.chatController = new ChatController(this);
 
         ListView listView_messages = findViewById(R.id.Chat_listView_messages);
         chatController.initListViewChat(listView_messages);

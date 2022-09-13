@@ -8,16 +8,15 @@ import com.unina.natour.views.observers.Observer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RicercaPuntoModel implements Observable {
+public class RicercaPuntoModel extends  NaTourModel {
     private List<AddressModel> resultPoints;
 
-    private List<Observer> observers;
 
 
     public RicercaPuntoModel(){
-        this.resultPoints = new ArrayList<AddressModel>();
+        super();
 
-        this.observers = new ArrayList<Observer>();
+        this.resultPoints = new ArrayList<AddressModel>();
     }
 
 
@@ -50,23 +49,5 @@ public class RicercaPuntoModel implements Observable {
             strings.add(addressModel.getAddressName());
         }
         return strings;
-    }
-
-
-    @Override
-    public void registerObserver(Observer observer) {
-        if(!observers.contains(observer)) observers.add(observer);
-    }
-
-    @Override
-    public void undergisterObserver(Observer observer) {
-        if(observers.contains(observer)) observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for(Observer observer : observers){
-            observer.update();
-        }
     }
 }

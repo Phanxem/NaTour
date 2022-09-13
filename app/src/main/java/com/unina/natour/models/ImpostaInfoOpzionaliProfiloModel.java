@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ImpostaInfoOpzionaliProfiloModel implements Observable {
+public class ImpostaInfoOpzionaliProfiloModel extends NaTourModel {
 
     private Calendar dateOfBirth;
 
@@ -29,11 +29,8 @@ public class ImpostaInfoOpzionaliProfiloModel implements Observable {
     private String city;
     private String address;
 
-    private List<Observer> observers;
-
-
     public ImpostaInfoOpzionaliProfiloModel(){
-        this.observers = new ArrayList<Observer>();
+        super();
     }
 
     public Calendar getDateOfBirth() {
@@ -76,22 +73,4 @@ public class ImpostaInfoOpzionaliProfiloModel implements Observable {
         this.address = address;
     }
 
-
-
-    @Override
-    public void registerObserver(Observer observer) {
-        if(!observers.contains(observer)) observers.add(observer);
-    }
-
-    @Override
-    public void undergisterObserver(Observer observer) {
-        if(observers.contains(observer)) observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for(Observer observer : observers){
-            observer.update();
-        }
-    }
 }

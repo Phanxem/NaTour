@@ -30,6 +30,7 @@ import com.unina.natour.dto.MessageDTO;
 import com.unina.natour.models.ImpostaImmagineProfiloModel;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.PersonalizzaAccountImmagineActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
@@ -39,17 +40,13 @@ import java.util.concurrent.ExecutionException;
 
 @RequiresApi(api = Build.VERSION_CODES.P)
 @SuppressLint("LongLogTag")
-public class ImmagineProfiloController {
-
-    private final static String TAG ="ImpostaImmagineProfiloController";
+public class ImmagineProfiloController extends NaTourController{
 
     public final static int REQUEST_CODE = 01;
 
     public final static int MIN_HEIGHT = 300;
     public final static int MIN_WIDTH = 300;
 
-    FragmentActivity activity;
-    MessageDialog messageDialog;
 
     private ActivityResultLauncher<Intent> activityResultLauncherGallery;
     private ActivityResultLauncher<String> activityResultLauncherPermissions;
@@ -58,13 +55,11 @@ public class ImmagineProfiloController {
 
     private UserDAO userDAO;
 
-    @RequiresApi(api = Build.VERSION_CODES.P)
-    public ImmagineProfiloController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+
+    public ImmagineProfiloController(NaTourActivity activity){
+        super(activity);
 
         this.impostaImmagineProfiloModel = new ImpostaImmagineProfiloModel();
-
 
         this.activityResultLauncherGallery = activity.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -75,7 +70,7 @@ public class ImmagineProfiloController {
                                 result.getResultCode() != Activity.RESULT_OK )
                         {
                             FailureReadProfileImageException exception = new FailureReadProfileImageException();
-                            ExceptionHandler.handleMessageError(messageDialog,exception);
+                            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
                             return;
                         }
                         if(result.getData() == null){
@@ -85,7 +80,7 @@ public class ImmagineProfiloController {
                         Uri uri = result.getData().getData();
                         if(uri == null){
                             FailureReadProfileImageException exception = new FailureReadProfileImageException();
-                            ExceptionHandler.handleMessageError(messageDialog,exception);
+                            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
                             return;
                         }
 
@@ -109,10 +104,6 @@ public class ImmagineProfiloController {
         this.userDAO = new UserDAOImpl(activity);
     }
 
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
-    }
-
     public ImpostaImmagineProfiloModel getImpostaImmagineProfiloModel() {
         return impostaImmagineProfiloModel;
     }
@@ -123,7 +114,7 @@ public class ImmagineProfiloController {
 
         if(!isValidBitmap(profileImage)){
             InvalidProfileImageException exception = new InvalidProfileImageException();
-            ExceptionHandler.handleMessageError(messageDialog, exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
             return false;
         }
 
@@ -142,21 +133,21 @@ public class ImmagineProfiloController {
         }
         catch (IOException e) {
             FailureUpdateProfileImageException exception = new FailureUpdateProfileImageException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedUpdateProfileImageException exception = new NotCompletedUpdateProfileImageException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
         catch (ServerException e) {
-            ExceptionHandler.handleMessageError(messageDialog,e);
+            ExceptionHandler.handleMessageError(getMessageDialog(),e);
             return false;
         }
         if(result == null){
             FailureUpdateProfileImageException exception = new FailureUpdateProfileImageException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
 
@@ -167,14 +158,14 @@ public class ImmagineProfiloController {
     public Bitmap getBitmap(Uri uri){
         Bitmap bitmap = null;
 
-        ImageDecoder.Source source = ImageDecoder.createSource(activity.getContentResolver(), uri);
+        ImageDecoder.Source source = ImageDecoder.createSource(getActivity().getContentResolver(), uri);
 
         try {
             bitmap = ImageDecoder.decodeBitmap(source);
         }
         catch (IOException e) {
             FailureReadProfileImageException exception = new FailureReadProfileImageException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return null;
         }
 
@@ -200,7 +191,7 @@ public class ImmagineProfiloController {
 
 
     public void openGallery(){
-        if(ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             activityResultLauncherPermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
             return;
         }
@@ -211,16 +202,16 @@ public class ImmagineProfiloController {
     }
 
     public void openPersonalizzaAccountImmagineActivity(){
-        Intent intent = new Intent(activity, PersonalizzaAccountImmagineActivity.class);
-        activity.startActivity(intent);
-        activity.finish();
+        Intent intent = new Intent(getActivity(), PersonalizzaAccountImmagineActivity.class);
+        getActivity().startActivity(intent);
+        getActivity().finish();
     }
 
     public void openPersonalizzaAccountImmagineActivity(boolean isFirstUpdate){
-        Intent intent = new Intent(activity, PersonalizzaAccountImmagineActivity.class);
+        Intent intent = new Intent(getActivity(), PersonalizzaAccountImmagineActivity.class);
         if(isFirstUpdate) intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        activity.startActivity(intent);
-        activity.finish();
+        getActivity().startActivity(intent);
+        getActivity().finish();
     }
 
 

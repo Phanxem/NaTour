@@ -29,19 +29,15 @@ import com.unina.natour.models.ProfiloPersonaleModel;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class ProfiloPersonaleFragment extends Fragment {
-
-    View view;
-    MessageDialog messageDialog;
+public class ProfiloPersonaleFragment extends NaTourFragment {
 
     ProfiloPersonaleController profiloPersonaleController;
+
     ListaItinerariController listaItinerariController;
     DisconnessioneController disconnessioneController;
     AutenticazioneController autenticazioneController;
 
-
     ProfiloPersonaleModel profiloPersonaleModel;
-
 
 
     public static ProfiloPersonaleFragment newInstance(Parcelable controller){
@@ -57,22 +53,22 @@ public class ProfiloPersonaleFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_profilo_personale, container, false);
+        View view = inflater.inflate(R.layout.fragment_profilo_personale, container, false);
+        setFragmentView(view);
 
         Bundle args = getArguments();
         if(args != null){
             this.profiloPersonaleController = (ProfiloPersonaleController) args.getParcelable(MainController.KEY_CONTROLLER);
-            this.messageDialog = profiloPersonaleController.getMessageDialog();
+
 
         }
         else{
-            messageDialog = new MessageDialog();
-            this.messageDialog.setFragmentActivity(getActivity());
-            this.profiloPersonaleController = new ProfiloPersonaleController(getActivity(),messageDialog);
+
+            this.profiloPersonaleController = new ProfiloPersonaleController(getNaTourActivity());
         }
 
-        this.disconnessioneController = new DisconnessioneController(getActivity(), messageDialog);
-        this.autenticazioneController = new AutenticazioneController(getActivity(), messageDialog);
+        this.disconnessioneController = new DisconnessioneController(getNaTourActivity());
+        this.autenticazioneController = new AutenticazioneController(getNaTourActivity());
 
         this.listaItinerariController = profiloPersonaleController.getListaItinerariController();
 
@@ -97,6 +93,7 @@ public class ProfiloPersonaleFragment extends Fragment {
 
 
     public void pressMenuIcon() {
+        View view = getFragmentView();
         ImageView imageView_iconMenu = view.findViewById(R.id.ProfiloPersonaleF_imageView_iconaMenu);
 
         PopupMenu popupMenu = new PopupMenu(view.getContext(),imageView_iconMenu);
@@ -131,6 +128,7 @@ public class ProfiloPersonaleFragment extends Fragment {
 
 
     public void update(){
+        View view = getFragmentView();
 
         TextView textView_username = view.findViewById(R.id.ProfiloPersonaleF_textView_username);
         textView_username.setText(profiloPersonaleModel.getUsername());

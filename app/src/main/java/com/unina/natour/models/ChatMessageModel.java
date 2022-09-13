@@ -2,7 +2,7 @@ package com.unina.natour.models;
 
 import java.util.Calendar;
 
-public class ChatMessageModel {
+public class ChatMessageModel extends NaTourModel{
 
     private final static int CODE_MESSAGE_SENT = 0;
     private final static int CODE_MESSAGE_RECEIVED = 1;
@@ -13,12 +13,16 @@ public class ChatMessageModel {
 
 
     public ChatMessageModel(){
+        super();
+
         this.message = "";
         this.type = -1;
         this.time = Calendar.getInstance();
     }
 
     public ChatMessageModel(String message, boolean didISendIt){
+        super();
+
         this.message = message;
         if(didISendIt) this.type = CODE_MESSAGE_SENT;
         else this.type = CODE_MESSAGE_RECEIVED;

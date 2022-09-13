@@ -2,19 +2,15 @@ package com.unina.natour.controllers;
 
 import androidx.fragment.app.FragmentActivity;
 
+import com.unina.natour.views.activities.NaTourActivity;
+
 import java.util.Arrays;
 import java.util.Locale;
 
-public class SelezionaDurataController {
+public class SelezionaDurataController extends NaTourController{
 
-    FragmentActivity activity;
-
-
-    public SelezionaDurataController(FragmentActivity activity){
-
-        this.activity = activity;
-
-
+    public SelezionaDurataController(NaTourActivity activity){
+        super(activity);
     }
 
     public float toSeconds(float hours, float minutes){

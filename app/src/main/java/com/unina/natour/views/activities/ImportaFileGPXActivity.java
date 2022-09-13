@@ -22,7 +22,7 @@ import com.unina.natour.views.observers.Observer;
 import java.io.File;
 import java.util.List;
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class ImportaFileGPXActivity extends AppCompatActivity implements Observer {
+public class ImportaFileGPXActivity extends NaTourActivity {
 
 
     ImportaFileGPXController importaFileGPXController;
@@ -35,10 +35,7 @@ public class ImportaFileGPXActivity extends AppCompatActivity implements Observe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_importa_file_gpx);
 
-        MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setFragmentActivity(this);
-
-        importaFileGPXController = new ImportaFileGPXController(this, messageDialog);
+        importaFileGPXController = new ImportaFileGPXController(this);
 
         importaFileGPXModel = importaFileGPXController.getImportaFileGPXModel();
         importaFileGPXModel.registerObserver(this);

@@ -18,35 +18,26 @@ import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.UnmatchedPasswordException;
 import com.unina.natour.views.activities.CompletaRecuperoPasswordActivity;
 import com.unina.natour.views.activities.IniziaRecuperoPasswordActivity;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 @RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressLint("LongLogTag")
-public class RecuperoPasswordController {
+public class RecuperoPasswordController extends NaTourController{
 
-    private final static String TAG ="RecuperoPasswordController";
 
-    FragmentActivity activity;
-    MessageDialog messageDialog;
 
-    public RecuperoPasswordController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public RecuperoPasswordController(NaTourActivity activity){
+        super(activity);
     }
-
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
-    }
-
-
 
     public Boolean startPasswordRecovery(String username) {
 
         if(!ExceptionHandler.areAllFieldsFull(username)){
             EmptyFieldUsernameEmailException exception = new EmptyFieldUsernameEmailException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
 
@@ -58,7 +49,7 @@ public class RecuperoPasswordController {
                     completableFuture.complete(true);
                 },
                 error -> {
-                    ExceptionHandler.handleMessageError(messageDialog, error);
+                    ExceptionHandler.handleMessageError(getMessageDialog(), error);
                     completableFuture.complete(false);
                 }
         );
@@ -70,7 +61,7 @@ public class RecuperoPasswordController {
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedStartPasswordRecoveryException exception = new NotCompletedStartPasswordRecoveryException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
 
@@ -82,13 +73,13 @@ public class RecuperoPasswordController {
 
         if(!ExceptionHandler.areAllFieldsFull(code,password1,password2)){
             EmptyFieldPasswordRecoveryException exception = new EmptyFieldPasswordRecoveryException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
 
         if(!ExceptionHandler.doPasswordMatch(password1,password2)){
             UnmatchedPasswordException exception = new UnmatchedPasswordException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
 
@@ -101,7 +92,7 @@ public class RecuperoPasswordController {
                     completableFuture.complete(true);
                 },
                 error ->{
-                    ExceptionHandler.handleMessageError(messageDialog, error);
+                    ExceptionHandler.handleMessageError(getMessageDialog(), error);
                     completableFuture.complete(false);
                 }
         );
@@ -112,25 +103,25 @@ public class RecuperoPasswordController {
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedConfirmResetPasswordException exception = new NotCompletedConfirmResetPasswordException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
         return result;
     }
 
     public void back() {
-        activity.onBackPressed();
+        getActivity().onBackPressed();
     }
 
     public void openIniziaRecuperoPasswordActivity(){
-        Intent intent = new Intent(activity, IniziaRecuperoPasswordActivity.class);
-        activity.startActivity(intent);
+        Intent intent = new Intent(getActivity(), IniziaRecuperoPasswordActivity.class);
+        getActivity().startActivity(intent);
     }
 
     public void openCompletaRecuperoPasswordActivity(){
-        Intent intent = new Intent(activity, CompletaRecuperoPasswordActivity.class);
-        activity.startActivity(intent);
-        activity.finish();
+        Intent intent = new Intent(getActivity(), CompletaRecuperoPasswordActivity.class);
+        getActivity().startActivity(intent);
+        getActivity().finish();
     }
 
 

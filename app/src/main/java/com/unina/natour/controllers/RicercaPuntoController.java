@@ -30,6 +30,7 @@ import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.RicercaPuntoModel;
 import com.unina.natour.models.dao.implementation.AddressDAOImpl;
 import com.unina.natour.models.dao.interfaces.AddressDAO;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.listAdapters.RisultatiRicercaPuntoListAdapter;
 
@@ -40,7 +41,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class RicercaPuntoController {
+public class RicercaPuntoController extends NaTourController{
     public static final int REQUEST_CODE = 100;
 
     public static final int RESULT_CODE_RETURN_POINT = 100;
@@ -49,8 +50,6 @@ public class RicercaPuntoController {
     public final static String EXTRA_ADDRESS = "ADDRESS";
 
 
-    FragmentActivity activity;
-    MessageDialog messageDialog;
     RisultatiRicercaPuntoListAdapter risultatiRicercaPuntoListAdapter;
 
     ActivityResultLauncher<String> activityResultLauncherPermissions;
@@ -62,9 +61,8 @@ public class RicercaPuntoController {
 
 
 
-    public RicercaPuntoController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public RicercaPuntoController(NaTourActivity activity){
+        super(activity);
 
         this.ricercaPuntoModel = new RicercaPuntoModel();
 
@@ -87,10 +85,6 @@ public class RicercaPuntoController {
         this.addressDAO = new AddressDAOImpl();
     }
 
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
-    }
-
     public void initListViewResultPoints(ListView listView_risultatiPunti) {
         listView_risultatiPunti.setAdapter(risultatiRicercaPuntoListAdapter);
     }
@@ -100,31 +94,31 @@ public class RicercaPuntoController {
     }
 
     public void selectCurrentPosition() {
-        if(!GPSUtils.hasGPSFeature(activity)){
+        if(!GPSUtils.hasGPSFeature(getActivity())){
             GPSFeatureNotPresentException exception = new GPSFeatureNotPresentException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return;
         }
 
-        if(!GPSUtils.isGPSEnabled(activity)){
+        if(!GPSUtils.isGPSEnabled(getActivity())){
             GPSNotEnabledException exception = new GPSNotEnabledException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return;
         }
 
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             activityResultLauncherPermissions.launch(Manifest.permission.ACCESS_FINE_LOCATION);
             return;
         }
 
-        LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         if(location == null) location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         if(location == null){
             CurrentLocationNotFoundException exception = new CurrentLocationNotFoundException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return;
         }
 
@@ -135,37 +129,37 @@ public class RicercaPuntoController {
             address = addressDAO.findAddressByGeoPoint(geoPoint);
         }
         catch (ServerException e) {
-            ExceptionHandler.handleMessageError(messageDialog,e);
+            ExceptionHandler.handleMessageError(getMessageDialog(),e);
             return;
         }
         catch (IOException e) {
             FailureFindAddressException exception = new FailureFindAddressException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return;
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return;
         }
         if(address == null){
             FailureFindAddressException exception = new FailureFindAddressException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return;
         }
 
 
         Intent intent = new Intent();
         intent.putExtra(EXTRA_ADDRESS, address);
-        activity.setResult(RESULT_CODE_RETURN_POINT, intent);
-        activity.finish();
+        getActivity().setResult(RESULT_CODE_RETURN_POINT, intent);
+        getActivity().finish();
         return;
     }
 
     public void selectFromMap() {
         Intent intent = new Intent();
-        activity.setResult(RESULT_CODE_GET_FROM_MAP, intent);
-        activity.finish();
+        getActivity().setResult(RESULT_CODE_GET_FROM_MAP, intent);
+        getActivity().finish();
     }
 
     public void searchInterestPoint(String searchString) {
@@ -180,22 +174,22 @@ public class RicercaPuntoController {
             resultAddresses = addressDAO.findAddressesByQuery(searchString);
         }
         catch (ServerException e) {
-            ExceptionHandler.handleMessageError(messageDialog,e);
+            ExceptionHandler.handleMessageError(getMessageDialog(),e);
             return;
         }
         catch (IOException e) {
             FailureFindAddressException exception = new FailureFindAddressException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return;
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return;
         }
         if(resultAddresses == null){
             FailureFindAddressException exception = new FailureFindAddressException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return;
         }
         ricercaPuntoModel.setResultPoints(resultAddresses);
@@ -205,8 +199,8 @@ public class RicercaPuntoController {
     public void selectResultPoint(AddressModel resultAddress){
         Intent intent = new Intent();
         intent.putExtra(EXTRA_ADDRESS, resultAddress);
-        activity.setResult(RESULT_CODE_RETURN_POINT, intent);
-        activity.finish();
+        getActivity().setResult(RESULT_CODE_RETURN_POINT, intent);
+        getActivity().finish();
 
     }
 }

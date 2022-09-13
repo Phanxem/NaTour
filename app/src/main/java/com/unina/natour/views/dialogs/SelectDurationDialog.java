@@ -19,7 +19,7 @@ import com.unina.natour.R;
 import com.unina.natour.controllers.SelezionaDurataController;
 import com.unina.natour.controllers.SelezionaNazioneController;
 
-public class SelectDurationDialog extends DialogFragment {
+public class SelectDurationDialog extends NaTourDialog {
 
     SelezionaDurataController selezionaDurataController;
 
@@ -35,7 +35,7 @@ public class SelectDurationDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_select_duration, container, false);
 
-        selezionaDurataController = new SelezionaDurataController(getActivity());
+        selezionaDurataController = new SelezionaDurataController(getNaTourActivity());
 
         Button button_ok = view.findViewById(R.id.SelectDuration_button_ok);
         button_ok.setOnClickListener(new View.OnClickListener() {

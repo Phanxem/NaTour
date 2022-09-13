@@ -12,31 +12,25 @@ import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedSignInException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedSignOutException;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 @RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressLint("LongLogTag")
-public class DisconnessioneController {
+public class DisconnessioneController extends NaTourController{
 
-    private final static String TAG ="DisconnessioneController";
 
-    FragmentActivity activity;
-    MessageDialog messageDialog;
 
     AutenticazioneController autenticazioneController;
 
-    public DisconnessioneController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public DisconnessioneController(NaTourActivity activity){
+        super(activity);
 
-        this.autenticazioneController = new AutenticazioneController(activity, messageDialog);
+        this.autenticazioneController = new AutenticazioneController(activity);
     }
 
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
-    }
 
     public Boolean signOut(){
 
@@ -48,7 +42,7 @@ public class DisconnessioneController {
                     completableFuture.complete(true);
                 },
                 error -> {
-                    ExceptionHandler.handleMessageError(messageDialog, error);
+                    ExceptionHandler.handleMessageError(getMessageDialog(), error);
                     completableFuture.complete(false);
                 }
         );
@@ -59,7 +53,7 @@ public class DisconnessioneController {
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedSignOutException exception = new NotCompletedSignOutException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             result = false;
         }
 

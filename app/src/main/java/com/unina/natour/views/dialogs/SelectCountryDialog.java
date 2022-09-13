@@ -16,7 +16,7 @@ import androidx.fragment.app.DialogFragment;
 import com.unina.natour.R;
 import com.unina.natour.controllers.SelezionaNazioneController;
 
-public class SelectCountryDialog extends DialogFragment {
+public class SelectCountryDialog extends NaTourDialog {
 
     SelezionaNazioneController selezionaNazioneController;
 
@@ -32,7 +32,7 @@ public class SelectCountryDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_select_string, container, false);
 
-        selezionaNazioneController = new SelezionaNazioneController(getActivity());
+        selezionaNazioneController = new SelezionaNazioneController(getNaTourActivity());
 
         String[] countries = selezionaNazioneController.getCountries();
 

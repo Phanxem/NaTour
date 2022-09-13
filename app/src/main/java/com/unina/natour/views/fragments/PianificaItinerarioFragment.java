@@ -44,12 +44,7 @@ import org.osmdroid.views.overlay.Polyline;
 import java.util.ArrayList;
 import java.util.List;
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class PianificaItinerarioFragment extends Fragment implements Observer {
-
-    private static final String TAG = "salada";
-
-    View view;
-    MessageDialog messageDialog;
+public class PianificaItinerarioFragment extends NaTourFragment {
 
     MapView mapView;
     Marker selectionMarker;
@@ -74,20 +69,19 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_pianifica_itinerario, container, false);
+        View view = inflater.inflate(R.layout.fragment_pianifica_itinerario, container, false);
+        setFragmentView(view);
 
         Bundle args = getArguments();
         if(args != null){
             this.pianificaItinerarioController = (PianificaItinerarioController) args.getParcelable(MainController.KEY_CONTROLLER);
-            this.messageDialog = pianificaItinerarioController.getMessageDialog();
         }
         else{
-            this.messageDialog = new MessageDialog();
-            this.messageDialog.setFragmentActivity(getActivity());
-            this.pianificaItinerarioController = new PianificaItinerarioController(getActivity(),messageDialog);
+
+            this.pianificaItinerarioController = new PianificaItinerarioController(getNaTourActivity());
         }
 
-        salvaItinerarioController = new SalvaItinerarioController(getActivity(),messageDialog);
+        salvaItinerarioController = new SalvaItinerarioController(getNaTourActivity());
 
         pianificaItinerarioModel = pianificaItinerarioController.getModel();
         pianificaItinerarioModel.registerObserver(this);
@@ -146,6 +140,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
 
 
     public void pressMenuIcon(){
+        View view = getFragmentView();
         ImageView imageView_iconMenu = view.findViewById(R.id.InsertItinerary_imageView_iconMenu);
 
         PopupMenu popupMenu = new PopupMenu(view.getContext(),imageView_iconMenu);
@@ -171,6 +166,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
 
 
     public void pressStartingPointField() {
+        View view = getFragmentView();
         RelativeLayout relativeLayout_puntoPartenza = view.findViewById(R.id.InsertItinerary_relativeLayout_puntoPartenza);
         relativeLayout_puntoPartenza.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,6 +177,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
     }
 
     public void pressIconCancelStartingPoint() {
+        View view = getFragmentView();
         ImageView imageView_annullaPuntoPartenza = view.findViewById(R.id.InsertItinerary_imageView_iconClosePuntoPartenza);
         imageView_annullaPuntoPartenza.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,6 +189,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
 
 
     public void pressDestinationPointField() {
+        View view = getFragmentView();
         RelativeLayout relativeLayout_puntoDestinazione = view.findViewById(R.id.InsertItinerary_relativeLayout_puntoDestinazione);
         relativeLayout_puntoDestinazione.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,6 +200,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
     }
 
     public void pressIconCancelDestinationPoint() {
+        View view = getFragmentView();
         ImageView imageView_annullaPuntoDestinazione = view.findViewById(R.id.InsertItinerary_imageView_iconClosePuntoDestinzione);
         imageView_annullaPuntoDestinazione.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,6 +212,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
 
 
     public void pressAddIntermediatePoint() {
+        View view = getFragmentView();
         RelativeLayout relativeLayout_aggiungiPuntoIntermedio = view.findViewById(R.id.InsertItinerary_relativeLayout_aggiungiPuntoIntermedio);
         relativeLayout_aggiungiPuntoIntermedio.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,6 +224,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
     }
 
     public void pressShowIntermediatePoints() {
+        View view = getFragmentView();
         RelativeLayout relativeLayout_mostraPuntiIntermedi = view.findViewById(R.id.InsertItinerary_relativeLayout_mostraPuntiIntermedi);
         relativeLayout_mostraPuntiIntermedi.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,7 +235,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
     }
 
     public void pressHideIntermediatePoints() {
-
+        View view = getFragmentView();
         RelativeLayout relativeLayout_nascondiPuntiIntermedi = view.findViewById(R.id.InsertItinerary_relativeLayout_nascondiPuntiIntermedi);
         relativeLayout_nascondiPuntiIntermedi.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -246,6 +247,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
 
 
     public void pressIconCancelPointSelectedOnMap() {
+        View view = getFragmentView();
         ImageView imageView_annullaPuntoSelezionatoDaMappa = view.findViewById(R.id.InsertItinerary_imageView_iconCloseSelectedPoint);
         imageView_annullaPuntoSelezionatoDaMappa.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -256,6 +258,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
     }
 
     public void pressButtonSetAsStartingPoint() {
+        View view = getFragmentView();
         Button button_impostaPuntoPartenza = view.findViewById(R.id.InsertItinerary_button_impostaPuntoPartenza);
         button_impostaPuntoPartenza.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -266,6 +269,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
     }
 
     public void pressButtonSetAsDestinationPoint() {
+        View view = getFragmentView();
         Button button_impostaPuntoDestinazione = view.findViewById(R.id.InsertItinerary_button_impostaPuntoDestinazione);
         button_impostaPuntoDestinazione.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -276,6 +280,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
     }
 
     public void pressButtonSetAsIntermediatePoint() {
+        View view = getFragmentView();
         Button button_impostaPuntoIntermedio = view.findViewById(R.id.InsertItinerary_button_impostaPuntoIntermedio);
         button_impostaPuntoIntermedio.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -287,6 +292,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
 
 
     public void pressButtonSave() {
+        View view = getFragmentView();
         Button button_save = view.findViewById(R.id.InsertItinerary_button_salva);
         button_save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -302,6 +308,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
 //---
 
     private void showItermediatePoints(){
+        View view = getFragmentView();
         ConstraintLayout constraintLayout_puntiIntermedi = view.findViewById(R.id.InsertItinerary_constraintLayout_puntiIntermedi);
         if(constraintLayout_puntiIntermedi.getVisibility() == View.VISIBLE) return;
 
@@ -311,6 +318,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
     }
 
     private void hideIntermediatePoints(){
+        View view = getFragmentView();
         ConstraintLayout constraintLayout_puntiIntermedi = view.findViewById(R.id.InsertItinerary_constraintLayout_puntiIntermedi);
         if(constraintLayout_puntiIntermedi.getVisibility() != View.VISIBLE) return;
 
@@ -348,6 +356,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
 
 
     private void updateStartingPoint(){
+        View view = getFragmentView();
         TextView textView_puntoPartenza = view.findViewById(R.id.InsertItinerary_textView_nomePuntoPartenza);
         ImageView imageView_annullaPuntoPartenza = view.findViewById(R.id.InsertItinerary_imageView_iconClosePuntoPartenza);
         if (pianificaItinerarioModel.hasStartingPoint()){
@@ -361,6 +370,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
     }
 
     private void updateDestinationPoint(){
+        View view = getFragmentView();
         TextView textView_puntoDestinazione = view.findViewById(R.id.InsertItinerary_textView_nomePuntoDestinazione);
         ImageView imageView_annullaPuntoDestinazione = view.findViewById(R.id.InsertItinerary_imageView_iconClosePuntoDestinzione);
         if (pianificaItinerarioModel.hasDestinationPoint()){
@@ -375,6 +385,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
 
 
     private void updateOptionsIntermediatePoints(){
+        View view = getFragmentView();
         RelativeLayout relativeLayout_aggiungiPuntiIntermedi = view.findViewById(R.id.InsertItinerary_relativeLayout_aggiungiPuntoIntermedio);
         RelativeLayout relativeLayout_mostraPuntiIntermedi = view.findViewById(R.id.InsertItinerary_relativeLayout_mostraPuntiIntermedi);
         ConstraintLayout constraintLayout_puntiIntermedi = view.findViewById(R.id.InsertItinerary_constraintLayout_puntiIntermedi);
@@ -401,6 +412,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
 
 
     private void updateOptionsSelectFromMap(){
+        View view = getFragmentView();
         Integer indexPointSelectedOnList = pianificaItinerarioModel.getIndexPointSelected();
         AddressModel pointSelectedOnMap = pianificaItinerarioModel.getPointSelectedOnMap();
 
@@ -486,6 +498,7 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
 
 
     private void updateOptionsSaveItinerary(){
+        View view = getFragmentView();
         Button button_save = view.findViewById(R.id.InsertItinerary_button_salva);
         ConstraintLayout constraintLayout_durationLenght = view.findViewById(R.id.ListElementItinerary_constraintLayout_durationDistanceDifficulty);
 
@@ -644,16 +657,6 @@ public class PianificaItinerarioFragment extends Fragment implements Observer {
             BoundingBox boundingBox = new BoundingBox();
             return boundingBox;
         }
-/*
-        for(Overlay item : items){
-
-            if(item instanceof Marker) {
-                Log.i(TAG, "overlay: " + item.toString());
-                Marker marker = (Marker) item;
-                geoPoints.add(marker.getPosition());
-            }
-        }
-*/
 
         List<AddressModel> addresses = pianificaItinerarioModel.getInterestPoints();
         for(AddressModel address: addresses) geoPoints.add(address.getPoint());

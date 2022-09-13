@@ -36,9 +36,7 @@ import java.util.List;
 
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class DettagliItinerarioActivity extends AppCompatActivity implements Observer {
-
-    private final static String TAG ="DettagliItinerarioActivity";
+public class DettagliItinerarioActivity extends NaTourActivity {
 
     private DettagliItinerarioController dettagliItinerarioController;
 
@@ -54,10 +52,7 @@ public class DettagliItinerarioActivity extends AppCompatActivity implements Obs
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_itinerario);
 
-        MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setFragmentActivity(this);
-
-        dettagliItinerarioController = new DettagliItinerarioController(this, messageDialog);
+        dettagliItinerarioController = new DettagliItinerarioController(this);
         dettagliItinerarioModel = dettagliItinerarioController.getModel();
         dettagliItinerarioModel.registerObserver(this);
 

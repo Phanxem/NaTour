@@ -16,11 +16,7 @@ import com.unina.natour.controllers.HomeController;
 import com.unina.natour.controllers.MainController;
 import com.unina.natour.views.dialogs.MessageDialog;
 
-public class CommunityFragment extends Fragment {
-
-    View view;
-    MessageDialog messageDialog;
-
+public class CommunityFragment extends NaTourFragment {
     CommunityController communityController;
 
     public static CommunityFragment newInstance(Parcelable controller){
@@ -35,20 +31,18 @@ public class CommunityFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_community, container, false);
+        View view = inflater.inflate(R.layout.fragment_community, container, false);
+        setFragmentView(view);
+
 
         Bundle args = getArguments();
         if(args != null){
             this.communityController = (CommunityController) args.getParcelable(MainController.KEY_CONTROLLER);
-            this.messageDialog = communityController.getMessageDialog();
         }
         else{
-            this.messageDialog = new MessageDialog();
-            this.messageDialog.setFragmentActivity(getActivity());
-            this.communityController = new CommunityController(getActivity(),messageDialog);
+            this.communityController = new CommunityController(getNaTourActivity());
         }
 
-        // Inflate the layout for this fragment
         return view;
     }
 }

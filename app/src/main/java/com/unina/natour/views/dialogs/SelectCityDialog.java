@@ -17,9 +17,8 @@ import com.unina.natour.R;
 import com.unina.natour.controllers.SelezionaCittàController;
 import com.unina.natour.controllers.SelezionaNazioneController;
 
-public class SelectCityDialog extends DialogFragment {
+public class SelectCityDialog extends NaTourDialog {
 
-    private static final String TAG = "sdadsdfs";
     SelezionaCittàController selezionaCittàController;
 
     public SelectCityDialog(){ }
@@ -49,7 +48,7 @@ public class SelectCityDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_select_string, container, false);
 
         String country = getArguments().getString("country");
-        selezionaCittàController = new SelezionaCittàController(getActivity());
+        selezionaCittàController = new SelezionaCittàController(getNaTourActivity());
         selezionaCittàController.setCountry(country);
 
         String[] cities = selezionaCittàController.getCities();

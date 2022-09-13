@@ -33,6 +33,7 @@ import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.DettagliItinerarioActivity;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.PersonalizzaAccountImmagineActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
@@ -53,14 +54,9 @@ import io.jenetics.jpx.WayPoint;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressLint("LongLogTag")
-public class DettagliItinerarioController {
-
-    private final static String TAG ="DettagliItinerarioController";
+public class DettagliItinerarioController extends NaTourController{
 
     public final static String EXTRA_ITINERARY_ID = "itineraryId";
-
-    FragmentActivity activity;
-    MessageDialog messageDialog;
 
     ActivityResultLauncher<String> activityResultLauncherPermissions;
 
@@ -71,12 +67,10 @@ public class DettagliItinerarioController {
     private ItineraryDAO itineraryDAO;
 
 
-    public DettagliItinerarioController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public DettagliItinerarioController(NaTourActivity activity){
+        super(activity);
 
         this.itineraryDAO = new ItineraryDAOImpl(activity);
-
 
         this.locationListener = new LocationListener() {
             @Override
@@ -122,14 +116,6 @@ public class DettagliItinerarioController {
 
     }
 
-
-
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
-    }
-
-
-
     public void initMap(MapView mapView) {
         mapView.setTileSource(TileSourceFactory.MAPNIK);
 
@@ -146,7 +132,7 @@ public class DettagliItinerarioController {
     }
 
     public void initOsmdroidConfiguration(){
-        Context appContext = activity.getApplicationContext();
+        Context appContext = getActivity().getApplicationContext();
         Configuration.getInstance().load(appContext, PreferenceManager.getDefaultSharedPreferences(appContext));
     }
 
@@ -173,21 +159,21 @@ public class DettagliItinerarioController {
     //---
 
     public void activeNavigation(){
-        if(!GPSUtils.hasGPSFeature(activity)){
+        if(!GPSUtils.hasGPSFeature(getActivity())){
             Log.i(TAG, "gps1");
             GPSFeatureNotPresentException exception = new GPSFeatureNotPresentException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return;
         }
 
-        if(!GPSUtils.isGPSEnabled(activity)){
+        if(!GPSUtils.isGPSEnabled(getActivity())){
             Log.i(TAG, "gps2");
             GPSNotEnabledException exception = new GPSNotEnabledException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return;
         }
 
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.i(TAG, "gps3");
             activityResultLauncherPermissions.launch(Manifest.permission.ACCESS_FINE_LOCATION);
             return;
@@ -195,7 +181,7 @@ public class DettagliItinerarioController {
 
 
         Log.i(TAG, "gps4");
-        LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, (LocationListener) locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, locationListener);
 
@@ -224,16 +210,22 @@ public class DettagliItinerarioController {
     public void deactivateNavigation(){
         dettagliItinerarioModel.setNavigationActive(false);
         dettagliItinerarioModel.setCurrentLocation(null);
-        LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         locationManager.removeUpdates(locationListener);
     }
 
 
 
     public void openDettagliItinerarioActivity(long itineraryId){
-        Intent intent = new Intent(activity, DettagliItinerarioActivity.class);
+        Intent intent = new Intent(getActivity(), DettagliItinerarioActivity.class);
         intent.putExtra(EXTRA_ITINERARY_ID,itineraryId);
-        activity.startActivity(intent);
+        getActivity().startActivity(intent);
+    }
+
+    public static void openDettagliItinerarioActivity2(NaTourActivity fromActivity, long itineraryId){
+        Intent intent = new Intent(fromActivity, DettagliItinerarioActivity.class);
+        intent.putExtra(EXTRA_ITINERARY_ID, itineraryId);
+        fromActivity.startActivity(intent);
     }
 
 

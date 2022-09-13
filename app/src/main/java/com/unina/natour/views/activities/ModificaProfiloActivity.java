@@ -16,9 +16,7 @@ import com.unina.natour.controllers.*;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 @RequiresApi(api = Build.VERSION_CODES.P)
-public class ModificaProfiloActivity extends AppCompatActivity {
-
-    private final static String TAG ="ModificaProfiloActivity";
+public class ModificaProfiloActivity extends NaTourActivity {
 
     public ModificaProfiloController modificaProfiloController;
 
@@ -31,13 +29,9 @@ public class ModificaProfiloActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modifica_profilo);
 
-        MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setFragmentActivity(this);
+        modificaProfiloController = new ModificaProfiloController(this);
 
-
-        modificaProfiloController = new ModificaProfiloController(this,messageDialog);
-
-        modificaProfiloController.initModel(username);
+        //modificaProfiloController.initModel(username);
 
 
     }

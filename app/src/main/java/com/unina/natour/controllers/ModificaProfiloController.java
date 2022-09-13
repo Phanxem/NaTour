@@ -13,19 +13,14 @@ import com.unina.natour.models.ImpostaInfoOpzionaliProfiloModel;
 import com.unina.natour.models.ModificaProfiloModel;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 @RequiresApi(api = Build.VERSION_CODES.P)
-public class ModificaProfiloController {
-
-    private final String TAG = this.getClass().getSimpleName();
-
-    FragmentActivity activity;
-    MessageDialog messageDialog;
-
+public class ModificaProfiloController extends NaTourController{
 
     InfoOpzionaliProfiloController infoOpzionaliProfiloController;
     ImmagineProfiloController immagineProfiloController;
@@ -36,9 +31,8 @@ public class ModificaProfiloController {
 
 
 
-    public ModificaProfiloController(FragmentActivity activity, MessageDialog messageDialog) {
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public ModificaProfiloController(NaTourActivity activity) {
+        super(activity);
 /*
         this.infoOpzionaliProfiloController = new InfoOpzionaliProfiloController(activity,messageDialog);
         this.immagineProfiloController = new ImmagineProfiloController(activity,messageDialog);

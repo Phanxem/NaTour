@@ -16,6 +16,7 @@ import com.unina.natour.dto.response.ElementItineraryResponseDTO;
 import com.unina.natour.models.ElementItineraryModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.listAdapters.ItineraryListAdapter;
 
@@ -23,12 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class ListaItinerariController {
+public class ListaItinerariController extends NaTourController{
 
-    private final static String TAG ="HomeController";
-
-    FragmentActivity activity;
-    MessageDialog messageDialog;
     String username;
 
     DettagliItinerarioController dettagliItinerarioController;
@@ -41,12 +38,12 @@ public class ListaItinerariController {
     ItineraryDAO itinearyDAO;
 
 
-    public ListaItinerariController(FragmentActivity activity, MessageDialog messageDialog, String username){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public ListaItinerariController(NaTourActivity activity, String username){
+        super(activity);
+
         this.username = username;
 
-        this.dettagliItinerarioController = new DettagliItinerarioController(activity, messageDialog);
+        //this.dettagliItinerarioController = new DettagliItinerarioController(activity);
 
         this.elementsItineraryModel = new ArrayList<ElementItineraryModel>();
 
@@ -68,14 +65,14 @@ public class ListaItinerariController {
             elementsItineraryModel.add(modelElement);
         }
 
-        this.itineraryListAdapter = new ItineraryListAdapter(activity,messageDialog,elementsItineraryModel, doBelongToSameUser);
+        this.itineraryListAdapter = new ItineraryListAdapter(activity,elementsItineraryModel, doBelongToSameUser);
     }
 
     public void initItineraryList(NestedScrollView nestedScrollView_itineraries,
                                   RecyclerView recyclerView_itineraries,
                                   ProgressBar progressBar_itineraries)
     {
-        recyclerView_itineraries.setLayoutManager(new LinearLayoutManager(activity));
+        recyclerView_itineraries.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView_itineraries.setAdapter(itineraryListAdapter);
 
         nestedScrollView_itineraries.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
@@ -115,13 +112,6 @@ public class ListaItinerariController {
         });
 
     }
-
-
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
-    }
-
-
 
 
 

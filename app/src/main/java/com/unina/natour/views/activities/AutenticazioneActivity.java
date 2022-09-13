@@ -20,9 +20,7 @@ import com.unina.natour.controllers.SplashScreenController;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class AutenticazioneActivity extends AppCompatActivity {
-
-    private final static String TAG ="AutenticazioneActivity";
+public class AutenticazioneActivity extends NaTourActivity {
 
     private AutenticazioneController autenticazioneController;
     private RegistrazioneController registrazioneController;
@@ -34,13 +32,10 @@ public class AutenticazioneActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autenticazione);
 
-        MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setFragmentActivity(this);
-
-        autenticazioneController = new AutenticazioneController(this, messageDialog);
-        registrazioneController = new RegistrazioneController(this, messageDialog);
-        recuperoPasswordController = new RecuperoPasswordController(this, messageDialog);
-        mainController = new MainController(this, messageDialog);
+        autenticazioneController = new AutenticazioneController(this);
+        registrazioneController = new RegistrazioneController(this);
+        recuperoPasswordController = new RecuperoPasswordController(this);
+        mainController = new MainController(this);
 
         pressButtonSignIn();
         pressTextSignUp();

@@ -19,6 +19,7 @@ import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.SalvaItinerarioModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.SalvaItinerarioActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
@@ -35,9 +36,7 @@ import io.jenetics.jpx.WayPoint;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressLint("LongLogTag")
-public class SalvaItinerarioController {
-
-    private final static String TAG ="SalvaItinerarioController";
+public class SalvaItinerarioController extends NaTourController{
 
     public final static int CODE_DIFFICULTY_EASY = 0;
     public final static int CODE_DIFFICULTY_MEDIUM = 1;
@@ -46,18 +45,15 @@ public class SalvaItinerarioController {
     public final static String EXTRA_DURATION = "duration";
     public final static String EXTRA_DISTANCE = "distance";
     public final static String EXTRA_WAYPOINTS = "waypoints";
-
-    FragmentActivity activity;
-    MessageDialog messageDialog;
+    ;
 
     SalvaItinerarioModel salvaItinerarioModel;
 
     ItineraryDAO itineraryDAO;
 
 
-    public SalvaItinerarioController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public SalvaItinerarioController(NaTourActivity activity){
+        super(activity);
 
         Intent intent = activity.getIntent();
         float duration = intent.getFloatExtra(EXTRA_DURATION, -1);
@@ -80,16 +76,12 @@ public class SalvaItinerarioController {
 
     }
 
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
-    }
-
     public SalvaItinerarioModel getModel(){ return salvaItinerarioModel; }
 
     public void setDifficulty(Integer difficulty){
         if(difficulty != null && (difficulty < CODE_DIFFICULTY_EASY || difficulty > CODE_DIFFICULTY_HARD)) {
             InvalidDifficultyException exception = new InvalidDifficultyException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return;
         }
 
@@ -118,9 +110,9 @@ public class SalvaItinerarioController {
            salvaItinerarioModel.getWayPoints() == null ||
            salvaItinerarioModel.getWayPoints().isEmpty())
         {
-            this.messageDialog.setGoBackOnClose(true);
+            this.getMessageDialog().setGoBackOnClose(true);
             FailureInitSaveItineraryException exception = new FailureInitSaveItineraryException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
 
@@ -167,16 +159,16 @@ public class SalvaItinerarioController {
         }
         catch (IOException e) {
             FailureAddItineraryException exception = new FailureAddItineraryException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedAddItineraryException exception = new NotCompletedAddItineraryException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
         catch (ServerException e) {
-            ExceptionHandler.handleMessageError(messageDialog,e);
+            ExceptionHandler.handleMessageError(getMessageDialog(),e);
             return false;
         }
 
@@ -185,15 +177,15 @@ public class SalvaItinerarioController {
 
 
     public void openSalvaItinerarioActivity(float duration, float distance, ArrayList<AddressModel> wayPoints){
-        Intent intent = new Intent(activity, SalvaItinerarioActivity.class);
+        Intent intent = new Intent(getActivity(), SalvaItinerarioActivity.class);
         intent.putExtra(EXTRA_DURATION,duration);
         intent.putExtra(EXTRA_DISTANCE,distance);
         intent.putParcelableArrayListExtra(EXTRA_WAYPOINTS,wayPoints);
-        activity.startActivity(intent);
+        getActivity().startActivity(intent);
     }
 
     public void back(){
-        activity.onBackPressed();
+        getActivity().onBackPressed();
     }
 
 

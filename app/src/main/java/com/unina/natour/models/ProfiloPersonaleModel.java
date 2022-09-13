@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 import java.util.Date;
 
-public class ProfiloPersonaleModel {
+public class ProfiloPersonaleModel extends NaTourModel{
 
     private Long id;
     private String username;
@@ -12,6 +12,10 @@ public class ProfiloPersonaleModel {
     private Bitmap profileImage;
     private String placeOfResidence;
     private String dateOfBirth;
+
+    public ProfiloPersonaleModel(){
+        super();
+    }
 
     public Long getId() {
         return id;

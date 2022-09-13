@@ -20,6 +20,7 @@ import com.unina.natour.dto.OptionalInfoDTO;
 import com.unina.natour.models.ImpostaInfoOpzionaliProfiloModel;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.PersonalizzaAccountInfoOpzionaliActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
@@ -29,33 +30,26 @@ import java.util.concurrent.ExecutionException;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressLint("LongLogTag")
-public class InfoOpzionaliProfiloController {
+public class InfoOpzionaliProfiloController extends NaTourController {
 
-    private final static String TAG ="ImpostaInfoOpzionaliProfiloController";
 
     public final static int REQUEST_CODE = 01;
 
     private final static long SUCCESS_CODE = 0;
 
-    FragmentActivity activity;
-    MessageDialog messageDialog;
+
 
     ImpostaInfoOpzionaliProfiloModel impostaInfoOpzionaliProfiloModel;
 
     UserDAO userDAO;
 
 
-    public InfoOpzionaliProfiloController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public InfoOpzionaliProfiloController(NaTourActivity activity){
+        super(activity);
 
         this.impostaInfoOpzionaliProfiloModel = new ImpostaInfoOpzionaliProfiloModel();
 
         this.userDAO = new UserDAOImpl(activity);
-    }
-
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
     }
 
     public ImpostaInfoOpzionaliProfiloModel getImpostaInfoOpzionaliProfiloModel() {
@@ -96,7 +90,7 @@ public class InfoOpzionaliProfiloController {
 
         if(!isValidDate(dateOfBirth)){
             InvalidBirthDateException exception = new InvalidBirthDateException();
-            ExceptionHandler.handleMessageError(messageDialog, exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
             return false;
         }
 
@@ -130,21 +124,21 @@ public class InfoOpzionaliProfiloController {
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
         catch (IOException e) {
             FailureUpdateOptionalInfoException exception = new FailureUpdateOptionalInfoException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
         catch (ServerException e) {
-            ExceptionHandler.handleMessageError(messageDialog,e);
+            ExceptionHandler.handleMessageError(getMessageDialog(),e);
             return false;
         }
         if(result == null || result.getCode() != SUCCESS_CODE){
             FailureUpdateOptionalInfoException exception = new FailureUpdateOptionalInfoException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
 
@@ -155,16 +149,16 @@ public class InfoOpzionaliProfiloController {
 
 
     public void openPersonalizzaAccountInfoOpzionaliActivity(){
-        Intent intent = new Intent(activity, PersonalizzaAccountInfoOpzionaliActivity.class);
-        activity.startActivity(intent);
-        activity.finish();
+        Intent intent = new Intent(getActivity(), PersonalizzaAccountInfoOpzionaliActivity.class);
+        getActivity().startActivity(intent);
+        getActivity().finish();
     }
 
     public void openPersonalizzaAccountInfoOpzionaliActivity(boolean isFirstUpdate){
-        Intent intent = new Intent(activity, PersonalizzaAccountInfoOpzionaliActivity.class);
+        Intent intent = new Intent(getActivity(), PersonalizzaAccountInfoOpzionaliActivity.class);
         if(isFirstUpdate) intent.putExtra(PersonalizzaAccountInfoOpzionaliActivity.PREV_ACTIVITY,true);
-        activity.startActivity(intent);
-        activity.finish();
+        getActivity().startActivity(intent);
+        getActivity().finish();
     }
 
 

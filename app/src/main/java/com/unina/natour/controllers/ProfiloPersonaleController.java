@@ -21,20 +21,15 @@ import com.unina.natour.dto.UserDTO;
 import com.unina.natour.models.ProfiloPersonaleModel;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class ProfiloPersonaleController implements Parcelable {
+public class ProfiloPersonaleController extends NaTourController {
 
-    private final static String TAG ="ProfiloPersonaleController";
-
-
-
-    FragmentActivity activity;
-    MessageDialog messageDialog;
     String username = "user";
 
     ListaItinerariController listaItinerariController;
@@ -43,39 +38,33 @@ public class ProfiloPersonaleController implements Parcelable {
 
     UserDAO userDAO;
 
-    public ProfiloPersonaleController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public ProfiloPersonaleController(NaTourActivity activity) {
+        super(activity);
         //this.username = Amplify.Auth.getCurrentUser().getUsername();
 
         this.userDAO = new UserDAOImpl(activity);
 
-        this.listaItinerariController = new ListaItinerariController(activity,messageDialog, username);
+        this.listaItinerariController = new ListaItinerariController(activity, username);
 
         //this.profiloPersonaleModel = initModel();
         this.profiloPersonaleModel = new ProfiloPersonaleModel();
     }
 
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
-    }
-
-    private ProfiloPersonaleModel initModel(){
-
+    private ProfiloPersonaleModel initModel() {
 
 
         CompletableFuture<String> completableFuture = new CompletableFuture<String>();
 
         Amplify.Auth.fetchUserAttributes(
                 attributes -> {
-                    for(AuthUserAttribute attribute : attributes){
-                        if(attribute.getKey().getKeyString().equals("email")){
+                    for (AuthUserAttribute attribute : attributes) {
+                        if (attribute.getKey().getKeyString().equals("email")) {
                             completableFuture.complete(attribute.getValue());
                         }
                     }
                 },
                 error -> {
-                    ExceptionHandler.handleMessageError(messageDialog,error);
+                    ExceptionHandler.handleMessageError(getMessageDialog(), error);
                     completableFuture.complete(null);
                 }
         );
@@ -83,32 +72,28 @@ public class ProfiloPersonaleController implements Parcelable {
         String email = null;
         try {
             email = completableFuture.get();
-        }
-        catch (ExecutionException | InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
             return new ProfiloPersonaleModel();
         }
-        if(email == null) return new ProfiloPersonaleModel();
+        if (email == null) return new ProfiloPersonaleModel();
 
 
         UserDTO userDTO = null;
 
         try {
             userDTO = userDAO.getUser(username);
-        }
-        catch (ExecutionException | InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             NotCompletedGetUserException exception = new NotCompletedGetUserException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
             return new ProfiloPersonaleModel();
-        }
-        catch (ServerException e) {
-            ExceptionHandler.handleMessageError(messageDialog,e);
+        } catch (ServerException e) {
+            ExceptionHandler.handleMessageError(getMessageDialog(), e);
             return new ProfiloPersonaleModel();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             FailureGetUserException exception = new FailureGetUserException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
             return new ProfiloPersonaleModel();
         }
 
@@ -116,19 +101,16 @@ public class ProfiloPersonaleController implements Parcelable {
         Bitmap profileImage = null;
         try {
             profileImage = userDAO.getUserProfileImage(username);
-        }
-        catch (ExecutionException | InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             NotCompletedGetUserProfileImageException exception = new NotCompletedGetUserProfileImageException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
             return new ProfiloPersonaleModel();
-        }
-        catch (ServerException e) {
-            ExceptionHandler.handleMessageError(messageDialog,e);
+        } catch (ServerException e) {
+            ExceptionHandler.handleMessageError(getMessageDialog(), e);
             return new ProfiloPersonaleModel();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             FailureGetUserProfileImageException exception = new FailureGetUserProfileImageException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
             return new ProfiloPersonaleModel();
         }
 
@@ -156,36 +138,12 @@ public class ProfiloPersonaleController implements Parcelable {
         this.profiloPersonaleModel = profiloPersonaleModel;
     }
 
-    public ListaItinerariController getListaItinerariController(){
+    public ListaItinerariController getListaItinerariController() {
         return listaItinerariController;
     }
 
-    public void setListaItinerariController ( ListaItinerariController listaItinerariController){
+    public void setListaItinerariController(ListaItinerariController listaItinerariController) {
         this.listaItinerariController = listaItinerariController;
     }
 
-
-
-
-
-
-    protected ProfiloPersonaleController(Parcel in) { }
-
-    public static final Creator<ProfiloPersonaleController> CREATOR = new Creator<ProfiloPersonaleController>() {
-        @Override
-        public ProfiloPersonaleController createFromParcel(Parcel in) {
-            return new ProfiloPersonaleController(in);
-        }
-
-        @Override
-        public ProfiloPersonaleController[] newArray(int size) {
-            return new ProfiloPersonaleController[size];
-        }
-    };
-
-    @Override
-    public int describeContents() { return 0; }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) { }
 }

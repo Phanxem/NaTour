@@ -16,11 +16,9 @@ import com.unina.natour.controllers.DisconnessioneController;
 import com.unina.natour.controllers.SplashScreenController;
 import com.unina.natour.views.dialogs.MessageDialog;
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class SplashScreenActivity extends AppCompatActivity {
+public class SplashScreenActivity extends NaTourActivity{
 
-    private final static String TAG ="SplashScreenActivity";
     private SplashScreenController splashScreenController;
-
 
 
     @Override
@@ -28,13 +26,10 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setFragmentActivity(this);
-
         //DisconnessioneController disconnessioneController = new DisconnessioneController(this,null);
         //disconnessioneController.signOut();
 
-        splashScreenController = new SplashScreenController(this, messageDialog);
+        splashScreenController = new SplashScreenController(this);
         splashScreenController.redirectToRightActivity();
     }
 }

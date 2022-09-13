@@ -16,9 +16,7 @@ import com.unina.natour.controllers.RegistrazioneController;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class RegistrazioneActivity extends AppCompatActivity {
-
-    private final static String TAG ="RegistrazioneActivity";
+public class RegistrazioneActivity extends NaTourActivity {
 
     private RegistrazioneController registrazioneController;
     private AttivaAccountController attivaAccountController;
@@ -28,11 +26,8 @@ public class RegistrazioneActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registrazione);
 
-        MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setFragmentActivity(this);
-
-        registrazioneController = new RegistrazioneController(this, messageDialog);
-        attivaAccountController = new AttivaAccountController(this, messageDialog);
+        registrazioneController = new RegistrazioneController(this);
+        attivaAccountController = new AttivaAccountController(this);
 
         pressButtonSignUp();
         pressIconBack();

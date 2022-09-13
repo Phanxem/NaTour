@@ -14,27 +14,18 @@ import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.EmptyFieldUsernameEmailException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedSignInException;
 import com.unina.natour.views.activities.AutenticazioneActivity;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 @RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressLint("LongLogTag")
-public class AutenticazioneController {
-
-    private final static String TAG ="AutenticazioneController";
-
-    FragmentActivity activity;
-    MessageDialog messageDialog;
+public class AutenticazioneController extends NaTourController{
 
 
-    public AutenticazioneController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
-    }
-
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
+    public AutenticazioneController(NaTourActivity activity){
+        super(activity);
     }
 
 
@@ -42,7 +33,7 @@ public class AutenticazioneController {
 
         if(!ExceptionHandler.areAllFieldsFull(usernameEmail,password)){
             EmptyFieldUsernameEmailException exception = new EmptyFieldUsernameEmailException();
-            ExceptionHandler.handleMessageError(messageDialog, exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
             return false;
         }
 
@@ -62,7 +53,7 @@ public class AutenticazioneController {
                     completableFuture.complete(true);
                 },
                 error -> {
-                    ExceptionHandler.handleMessageError(messageDialog, error);
+                    ExceptionHandler.handleMessageError(getMessageDialog(), error);
                     completableFuture.complete(false);
                 }
         );
@@ -73,7 +64,7 @@ public class AutenticazioneController {
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedSignInException exception = new NotCompletedSignInException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             result = false;
         }
 
@@ -82,8 +73,8 @@ public class AutenticazioneController {
     }
 
     public void openAutenticazioneActivity(){
-        Intent intent = new Intent(activity, AutenticazioneActivity.class);
+        Intent intent = new Intent(getActivity(), AutenticazioneActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        activity.startActivity(intent);
+        getActivity().startActivity(intent);
     }
 }

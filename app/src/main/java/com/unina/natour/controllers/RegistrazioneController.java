@@ -14,6 +14,7 @@ import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.EmptyFieldSignUpException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedSignUpException;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.RegistrazioneActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
@@ -21,38 +22,24 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class RegistrazioneController {
-
-    private final static String TAG ="RegistrazioneController";
-
-
-
-    FragmentActivity activity;
-    MessageDialog messageDialog;
+public class RegistrazioneController extends NaTourController{
 
     AutenticazioneController autenticazioneController;
 
     
-    public RegistrazioneController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public RegistrazioneController(NaTourActivity activity){
+        super(activity);
 
-        this.autenticazioneController = new AutenticazioneController(activity, messageDialog);
+        this.autenticazioneController = new AutenticazioneController(activity);
 
     }
-
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
-    }
-
-    
 
 
     public Boolean signUp(String username, String email, String password){
 
         if(!ExceptionHandler.areAllFieldsFull(username,email,password)){
             EmptyFieldSignUpException exception = new EmptyFieldSignUpException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
 
@@ -71,7 +58,7 @@ public class RegistrazioneController {
                     completableFuture.complete(true);
                 },
                 error -> {
-                    ExceptionHandler.handleMessageError(messageDialog, error);
+                    ExceptionHandler.handleMessageError(getMessageDialog(), error);
                     completableFuture.complete(false);
                 }
         );
@@ -82,7 +69,7 @@ public class RegistrazioneController {
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedSignUpException exception = new NotCompletedSignUpException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
 
@@ -91,11 +78,11 @@ public class RegistrazioneController {
     }
 
     public void openRegistrazioneActivity(){
-        Intent intent = new Intent(activity, RegistrazioneActivity.class);
-        activity.startActivity(intent);
+        Intent intent = new Intent(getActivity(), RegistrazioneActivity.class);
+        getActivity().startActivity(intent);
     }
 
     public void back() {
-        activity.onBackPressed();
+        getActivity().onBackPressed();
     }
 }

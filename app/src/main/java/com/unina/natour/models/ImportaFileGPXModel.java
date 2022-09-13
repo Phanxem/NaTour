@@ -9,17 +9,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImportaFileGPXModel implements Observable {
+public class ImportaFileGPXModel extends NaTourModel {
 
     private File currentDirectory;
     private List<File> files;
 
-    private List<Observer> observers;
-
 
     public ImportaFileGPXModel(){
+        super();
+
         this.files = new ArrayList<File>();
-        this.observers = new ArrayList<Observer>();
     }
 
 
@@ -57,24 +56,6 @@ public class ImportaFileGPXModel implements Observable {
 
     public List<File> getFiles() {
         return files;
-    }
-
-
-    @Override
-    public void registerObserver(Observer observer) {
-        if(!observers.contains(observer)) observers.add(observer);
-    }
-
-    @Override
-    public void undergisterObserver(Observer observer) {
-        if(observers.contains(observer)) observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for(Observer observer : observers){
-            observer.update();
-        }
     }
 
 }

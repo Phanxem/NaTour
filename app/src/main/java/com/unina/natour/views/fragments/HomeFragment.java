@@ -21,11 +21,7 @@ import com.unina.natour.controllers.ListaItinerariController;
 import com.unina.natour.controllers.MainController;
 import com.unina.natour.views.dialogs.MessageDialog;
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class HomeFragment extends Fragment {
-
-    View view;
-    MessageDialog messageDialog;
-
+public class HomeFragment extends NaTourFragment {
     HomeController homeController;
 
     ListaItinerariController listaItinerariController;
@@ -43,20 +39,19 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view =  inflater.inflate(R.layout.fragment_home, container, false);
+        View view =  inflater.inflate(R.layout.fragment_home, container, false);
+        setFragmentView(view);
 
         Bundle args = getArguments();
         if(args != null){
             this.homeController = (HomeController) args.getParcelable(MainController.KEY_CONTROLLER);
-            this.messageDialog = homeController.getMessageDialog();
         }
         else{
-            this.messageDialog = new MessageDialog();
-            this.messageDialog.setFragmentActivity(getActivity());
-            this.homeController = new HomeController(getActivity(),messageDialog);
+
+            this.homeController = new HomeController(getNaTourActivity());
         }
 
-        this.listaItinerariController = new ListaItinerariController(getActivity(),messageDialog,null);
+        this.listaItinerariController = new ListaItinerariController(getNaTourActivity(),null);
 
 
         //ListView listView_itineraries = view.findViewById(R.id.HomeF_listView_itineraries);

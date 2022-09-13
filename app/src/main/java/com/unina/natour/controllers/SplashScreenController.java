@@ -15,35 +15,26 @@ import com.amplifyframework.auth.result.AuthSessionResult;
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFetchAuthSessionException;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class SplashScreenController {
-
-    private final static String TAG ="SplashScreenController";
-
-    FragmentActivity activity;
-    MessageDialog messageDialog;
+public class SplashScreenController extends NaTourController{
 
     MainController mainController;
     AttivaAccountController attivaAccountController;
     AutenticazioneController autenticazioneController;
 
 
-    public SplashScreenController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public SplashScreenController(NaTourActivity activity){
+        super(activity);
 
-        this.mainController = new MainController(activity, messageDialog);
-        this.attivaAccountController = new AttivaAccountController(activity, messageDialog);
-        this.autenticazioneController = new AutenticazioneController(activity, messageDialog);
-    }
-
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
+        this.mainController = new MainController(activity);
+        this.attivaAccountController = new AttivaAccountController(activity);
+        this.autenticazioneController = new AutenticazioneController(activity);
     }
 
     public void redirectToRightActivity(){
@@ -56,7 +47,7 @@ public class SplashScreenController {
                     completableFuture.complete(cognitoAuthSession);
                 },
                 error -> {
-                    ExceptionHandler.handleMessageError(messageDialog,error);
+                    ExceptionHandler.handleMessageError(getMessageDialog(),error);
                     completableFuture.complete(null);
                 }
         );
@@ -68,7 +59,7 @@ public class SplashScreenController {
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedFetchAuthSessionException exception = new NotCompletedFetchAuthSessionException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
 
         }
 
@@ -76,8 +67,8 @@ public class SplashScreenController {
             mainController.openMainActivity();
         }
         else {
-            String packageName = activity.getApplicationContext().getPackageName();
-            SharedPreferences sharedPreferences = activity.getSharedPreferences(packageName, Context.MODE_PRIVATE);
+            String packageName = getActivity().getApplicationContext().getPackageName();
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(packageName, Context.MODE_PRIVATE);
 
             boolean mustActivateAccount = sharedPreferences.getBoolean(AttivaAccountController.SHARED_PREFERENCES_ACCOUNT_ACTIVATION, false);
 
@@ -90,7 +81,7 @@ public class SplashScreenController {
             else autenticazioneController.openAutenticazioneActivity();
         }
 
-        activity.finish();
+        getActivity().finish();
     }
 
 }

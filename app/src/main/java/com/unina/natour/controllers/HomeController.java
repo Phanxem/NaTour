@@ -10,35 +10,26 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.unina.natour.R;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class HomeController {
+public class HomeController extends NaTourController{
 
-    private final static String TAG ="HomeController";
 
-    FragmentActivity activity;
-    MessageDialog messageDialog;
 
     String searchString;
 
-    public HomeController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public HomeController(NaTourActivity activity) {
+        super(activity);
 
         this.searchString = null;
     }
 
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
-    }
-
-
-
     public void openAwsConfigurationFile(){
-        Resources resources = activity.getResources();
+        Resources resources = getActivity().getResources();
 
         InputStream inputStream = resources.openRawResource(R.raw.awsconfiguration);
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);

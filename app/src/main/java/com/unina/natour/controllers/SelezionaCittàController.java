@@ -11,6 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.unina.natour.views.activities.NaTourActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,16 +21,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-public class SelezionaCittàController {
-
-    private static final String TAG = "SEDANO";
-    FragmentActivity activity;
+public class SelezionaCittàController extends NaTourController{
 
     private String country;
     private String[] cities;
 
-    public SelezionaCittàController(FragmentActivity activity){
-        this.activity = activity;
+    public SelezionaCittàController(NaTourActivity activity){
+        super(activity);
     }
 
 
@@ -40,7 +38,7 @@ public class SelezionaCittàController {
         //RETRIVE JSON FROM ASSETS
         String jsonStringResult = null;
         try {
-            InputStream inputStream = activity.getAssets().open("countries_cities.json");
+            InputStream inputStream = getActivity().getAssets().open("countries_cities.json");
             int size = inputStream.available();
             byte[] buffer = new byte[size];
             inputStream.read(buffer);

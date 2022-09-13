@@ -9,13 +9,12 @@ import java.util.List;
 
 import kotlin.collections.ArrayDeque;
 
-public class ImpostaImmagineProfiloModel implements Observable {
+public class ImpostaImmagineProfiloModel extends NaTourModel {
     private Bitmap profileImage;
 
-    private List<Observer> observers;
 
     public ImpostaImmagineProfiloModel(){
-        this.observers = new ArrayDeque<Observer>();
+        super();
     }
 
 
@@ -28,25 +27,4 @@ public class ImpostaImmagineProfiloModel implements Observable {
         notifyObservers();
     }
 
-
-
-
-
-
-    @Override
-    public void registerObserver(Observer observer) {
-        if(!observers.contains(observer)) observers.add(observer);
-    }
-
-    @Override
-    public void undergisterObserver(Observer observer) {
-        if(observers.contains(observer)) observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for(Observer observer : observers){
-            observer.update();
-        }
-    }
 }

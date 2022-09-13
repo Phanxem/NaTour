@@ -18,6 +18,7 @@ import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.EmptyFieldActivationAccountCodeException;
 import com.unina.natour.views.activities.AttivaAccountActivity;
 import com.unina.natour.views.activities.AutenticazioneActivity;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.RegistrazioneActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
@@ -25,7 +26,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class AttivaAccountController {
+public class AttivaAccountController extends NaTourController{
 
     private final static String TAG ="AttivaAcountController";
 
@@ -36,20 +37,16 @@ public class AttivaAccountController {
     public static final String EXTRA_USERNAME = "USERNAME";
     public static final String EXTRA_PASSWORD = "PASSWORD";
 
-    FragmentActivity activity;
-    MessageDialog messageDialog;
-
     AutenticazioneController autenticazioneController;
 
     String username;
     String password;
 
 
-    public AttivaAccountController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public AttivaAccountController(NaTourActivity activity){
+        super(activity);
 
-        this.autenticazioneController = new AutenticazioneController(activity, messageDialog);
+        this.autenticazioneController = new AutenticazioneController(activity);
 
         Intent intent = activity.getIntent();
         this.username = intent.getStringExtra(EXTRA_USERNAME);
@@ -57,13 +54,9 @@ public class AttivaAccountController {
 
     }
 
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
-    }
-
     public void initAccountActivation(){
-        String packageName = activity.getApplicationContext().getPackageName();
-        SharedPreferences sharedPreferences = activity.getSharedPreferences(packageName,Context.MODE_PRIVATE);
+        String packageName = getActivity().getApplicationContext().getPackageName();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(packageName,Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
 
         sharedPreferencesEditor.putBoolean(SHARED_PREFERENCES_ACCOUNT_ACTIVATION,true);
@@ -76,7 +69,7 @@ public class AttivaAccountController {
 
         if(!ExceptionHandler.areAllFieldsFull(code)) {
             EmptyFieldActivationAccountCodeException exception = new EmptyFieldActivationAccountCodeException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
 
@@ -88,8 +81,8 @@ public class AttivaAccountController {
                 confirmSignUpResult -> {
                     Log.i(TAG, "Confirm signUp succeeded");
 
-                    String packageName = activity.getApplicationContext().getPackageName();
-                    SharedPreferences sharedPreferences = activity.getSharedPreferences(packageName,Context.MODE_PRIVATE);
+                    String packageName = getActivity().getApplicationContext().getPackageName();
+                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences(packageName,Context.MODE_PRIVATE);
                     SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
 
                     sharedPreferencesEditor.remove(SHARED_PREFERENCES_ACCOUNT_ACTIVATION);
@@ -101,7 +94,7 @@ public class AttivaAccountController {
                     completableFuture.complete(result);
                 },
                 error -> {
-                    ExceptionHandler.handleMessageError(messageDialog, error);
+                    ExceptionHandler.handleMessageError(getMessageDialog(), error);
                     completableFuture.complete(false);
                 }
         );
@@ -112,7 +105,7 @@ public class AttivaAccountController {
         }
         catch (ExecutionException | InterruptedException e) {
             NotCompletedConfirmSignUpException exception = new NotCompletedConfirmSignUpException(e);
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             result = false;
         }
 
@@ -148,8 +141,8 @@ public class AttivaAccountController {
 
         //---
 
-        String packageName = activity.getApplicationContext().getPackageName();
-        SharedPreferences sharedPreferences = activity.getSharedPreferences(packageName,Context.MODE_PRIVATE);
+        String packageName = getActivity().getApplicationContext().getPackageName();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(packageName,Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
 
         sharedPreferencesEditor.remove(SHARED_PREFERENCES_ACCOUNT_ACTIVATION);
@@ -157,7 +150,7 @@ public class AttivaAccountController {
         sharedPreferencesEditor.remove(SHARED_PREFERENCES_PASSWORD);
         sharedPreferencesEditor.commit();
 
-        activity.finish();
+        getActivity().finish();
 
     }
 
@@ -165,7 +158,7 @@ public class AttivaAccountController {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        activity.startActivity(intent);
+        getActivity().startActivity(intent);
     }
 
     public void resendCode(){
@@ -173,11 +166,11 @@ public class AttivaAccountController {
                 username,
                 result -> {
                     Log.i(TAG, "resend Code Success");
-                    Toast.makeText(activity, "Codice Inviato", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Codice Inviato", Toast.LENGTH_SHORT).show();
                 },
                 error -> {
                     Log.e(TAG, "resend Code Failure");
-                    ExceptionHandler.handleMessageError(messageDialog, error);
+                    ExceptionHandler.handleMessageError(getMessageDialog(), error);
                 }
         );
     }
@@ -187,21 +180,21 @@ public class AttivaAccountController {
 
 
     public void openAttivaAccountActivity(String username, String password){
-        if( !(activity instanceof RegistrazioneActivity) ){
+        if( !(getActivity() instanceof RegistrazioneActivity) ){
             Log.i(TAG, "open not from RegistrazioneActivity");
-            Intent intentAutenticazioneActivity = new Intent(activity, AutenticazioneActivity.class);
+            Intent intentAutenticazioneActivity = new Intent(getActivity(), AutenticazioneActivity.class);
             intentAutenticazioneActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            activity.startActivity(intentAutenticazioneActivity);
+            getActivity().startActivity(intentAutenticazioneActivity);
 
-            Intent intentRegistrazioneActivity = new Intent(activity, RegistrazioneActivity.class);
+            Intent intentRegistrazioneActivity = new Intent(getActivity(), RegistrazioneActivity.class);
             intentRegistrazioneActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            activity.startActivity(intentRegistrazioneActivity);
+            getActivity().startActivity(intentRegistrazioneActivity);
         }
 
-        Intent intent = new Intent(activity, AttivaAccountActivity.class);
+        Intent intent = new Intent(getActivity(), AttivaAccountActivity.class);
         intent.putExtra(EXTRA_USERNAME,username);
         intent.putExtra(EXTRA_PASSWORD,password);
-        activity.startActivity(intent);
+        getActivity().startActivity(intent);
 
 
     }

@@ -34,7 +34,7 @@ import com.unina.natour.views.observers.Observer;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class RicercaPuntoActivity extends AppCompatActivity implements Observer {
+public class RicercaPuntoActivity extends NaTourActivity {
 
     RicercaPuntoController ricercaPuntoController;
 
@@ -46,10 +46,7 @@ public class RicercaPuntoActivity extends AppCompatActivity implements Observer 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ricerca_punto);
 
-        MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setFragmentActivity(this);
-
-        ricercaPuntoController = new RicercaPuntoController(this, messageDialog);
+        ricercaPuntoController = new RicercaPuntoController(this);
 
         ricercaPuntoModel = ricercaPuntoController.getModel();
         ricercaPuntoModel.registerObserver(this);

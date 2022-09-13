@@ -6,7 +6,7 @@ import com.unina.natour.views.observers.Observer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SalvaItinerarioModel implements Observable {
+public class SalvaItinerarioModel extends NaTourModel {
 
     private List<AddressModel> wayPoints;
     private float defaultDuration;
@@ -15,15 +15,14 @@ public class SalvaItinerarioModel implements Observable {
 
     private Integer difficulty;
 
-    private List<Observer> observers;
-
 
     public SalvaItinerarioModel(){
+        super();
+
         this.wayPoints = new ArrayList<AddressModel>();
         this.defaultDuration = -1;
         this.duration = -1;
         this.distance = -1;
-        this.observers = new ArrayList<Observer>();
     }
 
     public List<AddressModel> getWayPoints() {
@@ -66,23 +65,5 @@ public class SalvaItinerarioModel implements Observable {
     public void setDifficulty(Integer difficulty) {
         this.difficulty = difficulty;
         notifyObservers();
-    }
-
-
-    @Override
-    public void registerObserver(Observer observer) {
-        if(!observers.contains(observer)) observers.add(observer);
-    }
-
-    @Override
-    public void undergisterObserver(Observer observer) {
-        if(observers.contains(observer)) observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for(Observer observer : observers){
-            observer.update();
-        }
     }
 }

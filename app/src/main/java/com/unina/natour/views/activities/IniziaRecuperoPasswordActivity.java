@@ -15,9 +15,7 @@ import com.unina.natour.controllers.RecuperoPasswordController;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class IniziaRecuperoPasswordActivity extends AppCompatActivity {
-
-    private final static String TAG ="IniziaRecuperoPasswordActivity";
+public class IniziaRecuperoPasswordActivity extends NaTourActivity {
 
     private RecuperoPasswordController recuperoPasswordController;
 
@@ -27,10 +25,7 @@ public class IniziaRecuperoPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inizia_recupero_password);
 
-        MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setFragmentActivity(this);
-
-        recuperoPasswordController = new RecuperoPasswordController(this, messageDialog);
+        recuperoPasswordController = new RecuperoPasswordController(this);
 
         pressButtonNext();
         pressIconBack();

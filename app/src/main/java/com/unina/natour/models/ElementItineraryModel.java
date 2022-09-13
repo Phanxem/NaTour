@@ -2,7 +2,7 @@ package com.unina.natour.models;
 
 import android.graphics.Bitmap;
 
-public class ElementItineraryModel {
+public class ElementItineraryModel extends NaTourModel{
 
     private long itineraryId;
     private String name;
@@ -12,6 +12,10 @@ public class ElementItineraryModel {
     private String duration;
     private String lenght;
     private String difficulty;
+
+    public ElementItineraryModel(){
+        super();
+    }
 
     public long getItineraryId() {
         return itineraryId;

@@ -19,9 +19,7 @@ import com.unina.natour.controllers.ProfiloPersonaleController;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class TESTActivity extends AppCompatActivity {
-
-    private final static String TAG ="ProfiloPersonaleActivity";
+public class TESTActivity extends NaTourActivity {
 
     private ProfiloPersonaleController profiloPersonaleController;
 

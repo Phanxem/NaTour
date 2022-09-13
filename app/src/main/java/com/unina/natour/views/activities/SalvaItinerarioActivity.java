@@ -22,10 +22,8 @@ import com.unina.natour.views.dialogs.SelectCountryDialog;
 import com.unina.natour.views.dialogs.SelectDurationDialog;
 import com.unina.natour.views.observers.Observer;
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class SalvaItinerarioActivity extends AppCompatActivity
-                                     implements Observer , SelectDurationDialog.OnDurationListener{
-
-    private final static String TAG ="AutenticazioneActivity";
+public class SalvaItinerarioActivity extends NaTourActivity
+                                     implements SelectDurationDialog.OnDurationListener{
 
     private SalvaItinerarioController salvaItinerarioController;
 
@@ -36,10 +34,7 @@ public class SalvaItinerarioActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_salva_itinerario);
 
-        MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setFragmentActivity(this);
-
-        salvaItinerarioController = new SalvaItinerarioController(this, messageDialog);
+        salvaItinerarioController = new SalvaItinerarioController(this);
         salvaItinerarioModel = salvaItinerarioController.getModel();
         salvaItinerarioModel.registerObserver(this);
 
@@ -95,11 +90,14 @@ public class SalvaItinerarioActivity extends AppCompatActivity
     }
 
     public void pressTextUpdateDuration(){
+        NaTourActivity activity = this;
+
         TextView textView_updateDuration = findViewById(R.id.SaveItinerary_textView_cambiaDurata);
         textView_updateDuration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SelectDurationDialog selectDurationDialog = new SelectDurationDialog();
+                selectDurationDialog.setNaTourActivity(activity);
                 selectDurationDialog.show(getSupportFragmentManager(),TAG);
             }
         });

@@ -24,6 +24,7 @@ import com.unina.natour.models.ImportaFileGPXModel;
 import com.unina.natour.models.RouteLegModel;
 import com.unina.natour.models.dao.implementation.AddressDAOImpl;
 import com.unina.natour.models.dao.interfaces.AddressDAO;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.listAdapters.FileGpxListAdapter;
 
@@ -45,15 +46,12 @@ import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class ImportaFileGPXController {
+public class ImportaFileGPXController extends NaTourController{
+
     public static final int REQUEST_CODE = 98;
-
     public static final int RESULT_CODE_RETURN_ALL_ADDRESSES = 0;
-
     public static final String EXTRA_ADDRESSES = "Addresses";
 
-    FragmentActivity activity;
-    MessageDialog messageDialog;
 
     private FileGpxListAdapter fileGpxListAdapter;
 
@@ -62,9 +60,8 @@ public class ImportaFileGPXController {
     private AddressDAO addressDAO;
 
 
-    public ImportaFileGPXController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public ImportaFileGPXController(NaTourActivity activity){
+        super(activity);
 
         this.importaFileGPXModel = new ImportaFileGPXModel();
 
@@ -75,10 +72,6 @@ public class ImportaFileGPXController {
         );
         this.addressDAO = new AddressDAOImpl();
 
-    }
-
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
     }
 
     public void initListViewFiles(ListView listView_files) {
@@ -98,13 +91,13 @@ public class ImportaFileGPXController {
             return;
         }
         NotExistParentDirectoryException exception = new NotExistParentDirectoryException();
-        ExceptionHandler.handleMessageError(messageDialog,exception);
+        ExceptionHandler.handleMessageError(getMessageDialog(),exception);
     }
 
     public void openDirectory(File directory) {
         if(directory == null || !directory.isDirectory()){
             NotExistDirectoryException exception = new NotExistDirectoryException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return;
         }
 
@@ -122,12 +115,12 @@ public class ImportaFileGPXController {
         }
         catch (IOException e) {
             FailureReadGPXFileException exception = new FailureReadGPXFileException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
         if(gpx == null){
             FailureReadGPXFileException exception = new FailureReadGPXFileException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
 
@@ -173,7 +166,7 @@ public class ImportaFileGPXController {
         }
         else {
             FailureReadGPXFileException exception = new FailureReadGPXFileException();
-            ExceptionHandler.handleMessageError(messageDialog,exception);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
             return false;
         }
 
@@ -185,22 +178,22 @@ public class ImportaFileGPXController {
                 address = addressDAO.findAddressByGeoPoint(geoPoint);
             }
             catch (ServerException e) {
-                ExceptionHandler.handleMessageError(messageDialog,e);
+                ExceptionHandler.handleMessageError(getMessageDialog(),e);
             }
             catch (IOException e) {
                 if(e instanceof UnsupportedEncodingException){
                     InvalidURLFormatException exception = new InvalidURLFormatException(e);
-                    ExceptionHandler.handleMessageError(messageDialog,exception);
+                    ExceptionHandler.handleMessageError(getMessageDialog(),exception);
                     return false;
                 }
                 FailureFindAddressException exception = new FailureFindAddressException(e);
-                ExceptionHandler.handleMessageError(messageDialog,exception);
+                ExceptionHandler.handleMessageError(getMessageDialog(),exception);
                 return false;
 
             }
             catch (ExecutionException | InterruptedException e) {
                 NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
-                ExceptionHandler.handleMessageError(messageDialog,exception);
+                ExceptionHandler.handleMessageError(getMessageDialog(),exception);
                 return false;
             }
 
@@ -209,8 +202,8 @@ public class ImportaFileGPXController {
 
         Intent intent = new Intent();
         intent.putParcelableArrayListExtra(EXTRA_ADDRESSES, addresses);
-        activity.setResult(RESULT_CODE_RETURN_ALL_ADDRESSES, intent);
-        activity.finish();
+        getActivity().setResult(RESULT_CODE_RETURN_ALL_ADDRESSES, intent);
+        getActivity().finish();
         return true;
 
     }

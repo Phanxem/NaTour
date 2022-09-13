@@ -33,13 +33,9 @@ import java.util.Locale;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressLint("LongLogTag")
-public class PersonalizzaAccountInfoOpzionaliActivity
-        extends AppCompatActivity
-        implements Observer, SelectCountryDialog.OnCountryListener, SelectCityDialog.OnCityListener
+public class PersonalizzaAccountInfoOpzionaliActivity extends NaTourActivity
+        implements SelectCountryDialog.OnCountryListener, SelectCityDialog.OnCityListener
 {
-
-    private final static String TAG ="PersonalizzaAccountActivity";
-
     public final static String PREV_ACTIVITY = "PrevActivity";
 
     private InfoOpzionaliProfiloController infoOpzionaliProfiloController;
@@ -55,12 +51,10 @@ public class PersonalizzaAccountInfoOpzionaliActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personalizza_account_info_opzionali);
 
-        MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setFragmentActivity(this);
-
-        infoOpzionaliProfiloController = new InfoOpzionaliProfiloController(this, messageDialog);
+        infoOpzionaliProfiloController = new InfoOpzionaliProfiloController(this);
+        mainController = new MainController(this);
         //homeController = new HomeController(this);
-        mainController = new MainController(this, messageDialog);
+
 
         impostaInfoOpzionaliProfiloModel = infoOpzionaliProfiloController.getImpostaInfoOpzionaliProfiloModel();
         impostaInfoOpzionaliProfiloModel.registerObserver(this);
@@ -119,11 +113,14 @@ public class PersonalizzaAccountInfoOpzionaliActivity
     }
 
     public void pressCountryField(){
+        NaTourActivity activity = this;
+
         TextView textView_country = findViewById(R.id.PersonalizzaAccount_textView_nazione);
         textView_country.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SelectCountryDialog selectCountryDialog = new SelectCountryDialog();
+                selectCountryDialog.setNaTourActivity(activity);
                 selectCountryDialog.show(getSupportFragmentManager(),TAG);
             }
         });
@@ -131,6 +128,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity
 
     public void pressCityField(){
 
+        NaTourActivity activity = this;
 
         TextView textView_city = findViewById(R.id.PersonalizzaAccount_textView_città);
         textView_city.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +138,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity
                 String country = infoOpzionaliProfiloController.getCountry();
 
                 SelectCityDialog selectCityDialog = SelectCityDialog.newInstance(country);
+                selectCityDialog.setNaTourActivity(activity);
                 selectCityDialog.show(getSupportFragmentManager(),TAG);
             }
         });

@@ -21,9 +21,8 @@ import com.unina.natour.views.observers.Observer;
 
 @RequiresApi(api = Build.VERSION_CODES.P)
 @SuppressLint("LongLogTag")
-public class PersonalizzaAccountImmagineActivity extends AppCompatActivity implements Observer {
+public class PersonalizzaAccountImmagineActivity extends NaTourActivity {
 
-    private final static String TAG ="PersonalizzaAccountImmagineActivity";
 
     private ImmagineProfiloController immagineProfiloController;
     private InfoOpzionaliProfiloController impostaInfoOpzionaliProfiloController;
@@ -37,14 +36,11 @@ public class PersonalizzaAccountImmagineActivity extends AppCompatActivity imple
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personalizza_account_immagine);
 
-        MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setFragmentActivity(this);
+        immagineProfiloController = new ImmagineProfiloController(this);
+        impostaInfoOpzionaliProfiloController = new InfoOpzionaliProfiloController(this);
 
-        immagineProfiloController = new ImmagineProfiloController(this, messageDialog);
         impostaImmagineProfiloModel = immagineProfiloController.getImpostaImmagineProfiloModel();
         impostaImmagineProfiloModel.registerObserver(this);
-
-        impostaInfoOpzionaliProfiloController = new InfoOpzionaliProfiloController(this, messageDialog);
 
         pressTextSetProfileImage();
         pressButtonNext();

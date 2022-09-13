@@ -10,7 +10,7 @@ import org.osmdroid.util.GeoPoint;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DettagliItinerarioModel implements Observable {
+public class DettagliItinerarioModel extends NaTourModel {
 
     private long itineraryId;
     private String name;
@@ -30,12 +30,12 @@ public class DettagliItinerarioModel implements Observable {
     private GeoPoint currentLocation;
 
 
-    private List<Observer> observers;
 
     public DettagliItinerarioModel(){
+        super();
+
         this.wayPoints = new ArrayList<GeoPoint>();
         this.routePoints = new ArrayList<GeoPoint>();
-        this.observers = new ArrayList<Observer>();
     }
 
     public long getItineraryId() {
@@ -136,29 +136,5 @@ public class DettagliItinerarioModel implements Observable {
         this.idUser = idUser;
     }
 
-    public List<Observer> getObservers() {
-        return observers;
-    }
 
-    public void setObservers(List<Observer> observers) {
-        this.observers = observers;
-    }
-
-
-    @Override
-    public void registerObserver(Observer observer) {
-        if(!observers.contains(observer)) observers.add(observer);
-    }
-
-    @Override
-    public void undergisterObserver(Observer observer) {
-        if(observers.contains(observer)) observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for(Observer observer : observers){
-            observer.update();
-        }
-    }
 }

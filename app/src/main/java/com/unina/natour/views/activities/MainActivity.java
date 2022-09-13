@@ -30,7 +30,7 @@ import com.unina.natour.views.fragments.PianificaItinerarioFragment;
 import com.unina.natour.views.fragments.ProfiloPersonaleFragment;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends NaTourActivity {
 
 
 
@@ -46,19 +46,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MessageDialog messageDialog = new MessageDialog();
-        messageDialog.setFragmentActivity(this);
-
-        mainController = new MainController(this, messageDialog);
-
-        profiloPersonaleController = new ProfiloPersonaleController(this, messageDialog);
-        pianificaItinerarioController = new PianificaItinerarioController(this, messageDialog);
+        mainController = new MainController(this);
+        profiloPersonaleController = new ProfiloPersonaleController(this);
+        pianificaItinerarioController = new PianificaItinerarioController(this);
 
 
         HomeFragment homeFragment = new HomeFragment();
+        homeFragment.setNaTourActivity(this);
+
         ProfiloPersonaleFragment profiloFragment = ProfiloPersonaleFragment.newInstance(profiloPersonaleController);
+        profiloFragment.setNaTourActivity(this);
+
         PianificaItinerarioFragment pianificaFragment = PianificaItinerarioFragment.newInstance(pianificaItinerarioController);
+        pianificaFragment.setNaTourActivity(this);
+
         CommunityFragment communityFragment = new CommunityFragment();
+        communityFragment.setNaTourActivity(this);
 
 
 

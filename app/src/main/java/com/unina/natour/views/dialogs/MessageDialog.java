@@ -24,17 +24,16 @@ import androidx.fragment.app.FragmentManager;
 import com.unina.natour.R;
 import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.SelezionaCittàController;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.fragments.PianificaItinerarioFragment;
 
-public class MessageDialog extends DialogFragment {
+public class MessageDialog extends NaTourDialog {
 
-    private static final String TAG = "MessageDialog";
     private String message = "";
     private boolean goBackOnClose = false;
 
     private View view;
 
-    private FragmentActivity fragmentActivity;
 
     public MessageDialog() { }
 
@@ -48,7 +47,7 @@ public class MessageDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 getDialog().dismiss();
-                if(goBackOnClose) fragmentActivity.finish();
+                if(goBackOnClose) getNaTourActivity().finish();
             }
         });
 
@@ -71,16 +70,9 @@ public class MessageDialog extends DialogFragment {
         this.goBackOnClose = goBackOnClose;
     }
 
-    public FragmentActivity getFragmentActivity() {
-        return fragmentActivity;
-    }
-
-    public void setFragmentActivity(FragmentActivity fragmentActivity) {
-        this.fragmentActivity = fragmentActivity;
-    }
 
     public void showOverUi(){
-        this.show(fragmentActivity.getSupportFragmentManager(), "");
+        this.show(getNaTourActivity().getSupportFragmentManager(), "");
     }
 
 

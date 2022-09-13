@@ -10,7 +10,7 @@ import org.osmdroid.views.overlay.Polyline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RouteLegModel implements Parcelable {
+public class RouteLegModel extends NaTourModel {
 
     private GeoPoint startingPoint;
     private GeoPoint destinationPoint;
@@ -20,7 +20,9 @@ public class RouteLegModel implements Parcelable {
     private float distance;
     private float duration;
 
-    public RouteLegModel(){
+    public RouteLegModel() {
+        super();
+
         this.track = new ArrayList<GeoPoint>();
     }
 
@@ -66,42 +68,4 @@ public class RouteLegModel implements Parcelable {
     }
 
 
-
-
-
-
-
-    protected RouteLegModel(Parcel in) {
-        startingPoint = in.readParcelable(GeoPoint.class.getClassLoader());
-        destinationPoint = in.readParcelable(GeoPoint.class.getClassLoader());
-        track = in.createTypedArrayList(GeoPoint.CREATOR);
-        distance = in.readFloat();
-        duration = in.readFloat();
-    }
-
-    public static final Creator<RouteLegModel> CREATOR = new Creator<RouteLegModel>() {
-        @Override
-        public RouteLegModel createFromParcel(Parcel in) {
-            return new RouteLegModel(in);
-        }
-
-        @Override
-        public RouteLegModel[] newArray(int size) {
-            return new RouteLegModel[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(startingPoint, flags);
-        dest.writeParcelable(destinationPoint, flags);
-        dest.writeTypedList(track);
-        dest.writeFloat(distance);
-        dest.writeFloat(duration);
-    }
 }

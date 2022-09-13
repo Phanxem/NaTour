@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.unina.natour.R;
 
-public class ModificaPasswordActivity extends AppCompatActivity {
+public class ModificaPasswordActivity extends NaTourActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

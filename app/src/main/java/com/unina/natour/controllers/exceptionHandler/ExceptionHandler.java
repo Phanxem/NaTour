@@ -11,6 +11,7 @@ import com.unina.natour.R;
 import com.unina.natour.amplify.ApplicationConfig;
 import com.unina.natour.controllers.exceptionHandler.exceptions.AppException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 public class ExceptionHandler {
@@ -20,7 +21,7 @@ public class ExceptionHandler {
     //Eccezioni di Amplify
     //l'errore viene identificato secondo il messaggio
     public static void handleMessageError(MessageDialog messageDialog, AmplifyException exception){
-        FragmentActivity activity = messageDialog.getFragmentActivity();
+        NaTourActivity activity = messageDialog.getNaTourActivity();
 
         String amplifyMessage = exception.getCause().getMessage();
         String message = findMessageFromAmplifyMessage(activity, amplifyMessage);
@@ -31,7 +32,7 @@ public class ExceptionHandler {
 
     //Eccezioni del server
     public static void handleMessageError(MessageDialog messageDialog, ServerException exception){
-        FragmentActivity activity = messageDialog.getFragmentActivity();
+        NaTourActivity activity = messageDialog.getNaTourActivity();
         String errorMessage = exception.getMessage();
 
         long serverCode = exception.getCode();
@@ -45,7 +46,7 @@ public class ExceptionHandler {
 
     //Eccezioni del app
     public static void handleMessageError(MessageDialog messageDialog, AppException exception){
-        FragmentActivity activity = messageDialog.getFragmentActivity();
+        NaTourActivity activity = messageDialog.getNaTourActivity();
 
         String message = findMessageFromExceptionType(activity, exception);
         messageDialog.setMessage(message);

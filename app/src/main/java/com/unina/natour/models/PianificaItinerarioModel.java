@@ -15,7 +15,7 @@ import java.util.List;
 import okhttp3.Route;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class PianificaItinerarioModel implements Observable {
+public class PianificaItinerarioModel extends NaTourModel {
 
     private AddressModel startingPoint;
     private AddressModel destinationPoint;
@@ -26,13 +26,12 @@ public class PianificaItinerarioModel implements Observable {
 
     private List<RouteLegModel> routeLegs;
 
-    private List<Observer> observers;
-
 
     public PianificaItinerarioModel(){
+        super();
+
         this.intermediatePoints = new ArrayList<AddressModel>();
         this.routeLegs = new ArrayList<RouteLegModel>();
-        this.observers = new ArrayList<Observer>();
     }
 
     public AddressModel getStartingPoint() {
@@ -256,31 +255,5 @@ public class PianificaItinerarioModel implements Observable {
         if(i >= 0 && i < routeLegs.size()) return true;
         return false;
     }
-
-
-
-
-
-
-
-
-    @Override
-    public void registerObserver(Observer observer) {
-        if(!observers.contains(observer)) observers.add(observer);
-    }
-
-    @Override
-    public void undergisterObserver(Observer observer) {
-        if(observers.contains(observer)) observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for(Observer observer : observers){
-            observer.update();
-        }
-    }
-
-
 
 }

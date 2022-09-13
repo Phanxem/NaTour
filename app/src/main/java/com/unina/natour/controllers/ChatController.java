@@ -13,6 +13,7 @@ import com.unina.natour.models.RicercaPuntoModel;
 import com.unina.natour.models.dao.implementation.AddressDAOImpl;
 import com.unina.natour.models.dao.interfaces.AddressDAO;
 import com.unina.natour.models.socketHandler.ChatWebSocketHandler;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.listAdapters.ChatListAdapter;
 import com.unina.natour.views.listAdapters.RisultatiRicercaPuntoListAdapter;
@@ -21,11 +22,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ChatController {
+public class ChatController extends NaTourController{
 
-    private static final String TAG = "ChatController";
-    FragmentActivity activity;
-    MessageDialog messageDialog;
 
     ChatListAdapter chatListAdapter;
 
@@ -36,9 +34,8 @@ public class ChatController {
     //TODO
     //MessageDAO messageDAO;
 
-    public ChatController(FragmentActivity activity, MessageDialog messageDialog){
-        this.activity = activity;
-        this.messageDialog = messageDialog;
+    public ChatController(NaTourActivity activity){
+        super(activity);
 
         this.messages = new LinkedList<ChatMessageModel>();
 
