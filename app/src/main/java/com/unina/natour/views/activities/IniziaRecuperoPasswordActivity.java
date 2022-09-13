@@ -32,6 +32,8 @@ public class IniziaRecuperoPasswordActivity extends NaTourActivity {
     }
 
     public void pressButtonNext(){
+        NaTourActivity activity = this;
+
         Button button_next = findViewById(R.id.StartPasswordRecovery_button_avanti);
         button_next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,7 +43,7 @@ public class IniziaRecuperoPasswordActivity extends NaTourActivity {
 
                 Boolean result = recuperoPasswordController.startPasswordRecovery(username);
 
-                if(result) recuperoPasswordController.openCompletaRecuperoPasswordActivity();
+                if(result) RecuperoPasswordController.openCompletaRecuperoPasswordActivity(activity);
             }
         });
     }

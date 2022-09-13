@@ -23,9 +23,6 @@ import com.unina.natour.views.dialogs.MessageDialog;
 public class AutenticazioneActivity extends NaTourActivity {
 
     private AutenticazioneController autenticazioneController;
-    private RegistrazioneController registrazioneController;
-    private RecuperoPasswordController recuperoPasswordController;
-    private MainController mainController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +30,7 @@ public class AutenticazioneActivity extends NaTourActivity {
         setContentView(R.layout.activity_autenticazione);
 
         autenticazioneController = new AutenticazioneController(this);
-        registrazioneController = new RegistrazioneController(this);
-        recuperoPasswordController = new RecuperoPasswordController(this);
-        mainController = new MainController(this);
+
 
         pressButtonSignIn();
         pressTextSignUp();
@@ -43,6 +38,8 @@ public class AutenticazioneActivity extends NaTourActivity {
     }
 
     public void pressButtonSignIn() {
+        NaTourActivity activity = this;
+
         Button button_signIn = findViewById(R.id.SignIn_button_signIn);
         button_signIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,28 +52,32 @@ public class AutenticazioneActivity extends NaTourActivity {
 
                 Boolean result = autenticazioneController.signIn(usernameEmail, password);
 
-                if(result) mainController.openMainActivity();
+                if(result) MainController.openMainActivity(activity);
             }
         });
     }
 
     public void pressTextSignUp() {
+        NaTourActivity activity = this;
+
         TextView textView_signUp = findViewById(R.id.SignIn_textView_registrati);
         textView_signUp.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                registrazioneController.openRegistrazioneActivity();
+                RegistrazioneController.openRegistrazioneActivity(activity);
             }
         });
     }
 
     public void pressTextPasswordRecovery() {
+        NaTourActivity activity = this;
+
         TextView textView_passwordRecovery = findViewById(R.id.SignIn_textView_recuperaPassword);
         textView_passwordRecovery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recuperoPasswordController.openIniziaRecuperoPasswordActivity();
+                RecuperoPasswordController.openIniziaRecuperoPasswordActivity(activity);
             }
         });
     }

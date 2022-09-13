@@ -19,7 +19,7 @@ import com.unina.natour.views.dialogs.MessageDialog;
 public class AttivaAccountActivity extends NaTourActivity {
 
     private AttivaAccountController attivaAccountController;
-    private ImmagineProfiloController immagineProfiloController;
+
 
 
     @Override
@@ -28,7 +28,7 @@ public class AttivaAccountActivity extends NaTourActivity {
         setContentView(R.layout.activity_attiva_account);
 
         attivaAccountController = new AttivaAccountController(this);
-        immagineProfiloController = new ImmagineProfiloController(this);
+
 
         attivaAccountController.initAccountActivation();
 
@@ -38,6 +38,8 @@ public class AttivaAccountActivity extends NaTourActivity {
     }
 
     public void pressButtonConfirm(){
+        NaTourActivity activity = this;
+
         Button button_confirm = findViewById(R.id.AccountActivation_button_conferma);
         button_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,7 +51,7 @@ public class AttivaAccountActivity extends NaTourActivity {
 
                 Log.i(TAG, "IS: " + result);
 
-                if(result) immagineProfiloController.openPersonalizzaAccountImmagineActivity(true);
+                if(result) ImmagineProfiloController.openPersonalizzaAccountImmagineActivity(activity,true);
             }
         });
     }

@@ -25,7 +25,6 @@ public class PersonalizzaAccountImmagineActivity extends NaTourActivity {
 
 
     private ImmagineProfiloController immagineProfiloController;
-    private InfoOpzionaliProfiloController impostaInfoOpzionaliProfiloController;
 
     private ImpostaImmagineProfiloModel impostaImmagineProfiloModel;
 
@@ -37,7 +36,6 @@ public class PersonalizzaAccountImmagineActivity extends NaTourActivity {
         setContentView(R.layout.activity_personalizza_account_immagine);
 
         immagineProfiloController = new ImmagineProfiloController(this);
-        impostaInfoOpzionaliProfiloController = new InfoOpzionaliProfiloController(this);
 
         impostaImmagineProfiloModel = immagineProfiloController.getImpostaImmagineProfiloModel();
         impostaImmagineProfiloModel.registerObserver(this);
@@ -57,13 +55,15 @@ public class PersonalizzaAccountImmagineActivity extends NaTourActivity {
     }
 
     public void pressButtonNext(){
+        NaTourActivity activity = this;
+
         Button button_next = findViewById(R.id.PersonalizzaAccount_button_avanti);
         button_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Boolean result = immagineProfiloController.modificaImmagineProfilo();
 
-                if(result) impostaInfoOpzionaliProfiloController.openPersonalizzaAccountInfoOpzionaliActivity(true);
+                if(result) InfoOpzionaliProfiloController.openPersonalizzaAccountInfoOpzionaliActivity(activity, true);
             }
         });
     }

@@ -18,10 +18,10 @@ public class MainController extends NaTourController{
         super(activity);
     }
 
-    public void openMainActivity(){
-        Intent intent = new Intent(getActivity(), MainActivity.class);
+    public static void openMainActivity(NaTourActivity fromActivity){
+        Intent intent = new Intent(fromActivity, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        getActivity().startActivity(intent);
+        fromActivity.startActivity(intent);
     }
 
 }

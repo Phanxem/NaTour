@@ -216,17 +216,7 @@ public class DettagliItinerarioController extends NaTourController{
 
 
 
-    public void openDettagliItinerarioActivity(long itineraryId){
-        Intent intent = new Intent(getActivity(), DettagliItinerarioActivity.class);
-        intent.putExtra(EXTRA_ITINERARY_ID,itineraryId);
-        getActivity().startActivity(intent);
-    }
 
-    public static void openDettagliItinerarioActivity2(NaTourActivity fromActivity, long itineraryId){
-        Intent intent = new Intent(fromActivity, DettagliItinerarioActivity.class);
-        intent.putExtra(EXTRA_ITINERARY_ID, itineraryId);
-        fromActivity.startActivity(intent);
-    }
 
 
     //---
@@ -286,5 +276,10 @@ public class DettagliItinerarioController extends NaTourController{
        return model;
     }
 
+    public static void openDettagliItinerarioActivity(NaTourActivity fromActivity, long itineraryId){
+        Intent intent = new Intent(fromActivity, DettagliItinerarioActivity.class);
+        intent.putExtra(EXTRA_ITINERARY_ID, itineraryId);
+        fromActivity.startActivity(intent);
+    }
 
 }

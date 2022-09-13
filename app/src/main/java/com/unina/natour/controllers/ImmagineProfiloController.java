@@ -190,6 +190,18 @@ public class ImmagineProfiloController extends NaTourController{
     }
 
 
+
+//VALIDATORs---------------
+
+    public boolean isValidBitmap(Bitmap bitmap){
+
+        if(bitmap == null) return true;
+
+        if((bitmap.getWidth() < MIN_WIDTH || bitmap.getHeight() < MIN_HEIGHT) ) return false;
+
+        return true;
+    }
+
     public void openGallery(){
         if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             activityResultLauncherPermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -201,30 +213,25 @@ public class ImmagineProfiloController extends NaTourController{
         activityResultLauncherGallery.launch(intent);
     }
 
-    public void openPersonalizzaAccountImmagineActivity(){
-        Intent intent = new Intent(getActivity(), PersonalizzaAccountImmagineActivity.class);
-        getActivity().startActivity(intent);
-        getActivity().finish();
+
+
+
+
+    public static void openPersonalizzaAccountImmagineActivity(NaTourActivity fromActivity){
+        Intent intent = new Intent(fromActivity, PersonalizzaAccountImmagineActivity.class);
+        fromActivity.startActivity(intent);
+        fromActivity.finish();
     }
 
-    public void openPersonalizzaAccountImmagineActivity(boolean isFirstUpdate){
-        Intent intent = new Intent(getActivity(), PersonalizzaAccountImmagineActivity.class);
+    public static void openPersonalizzaAccountImmagineActivity(NaTourActivity fromActivity, boolean isFirstUpdate){
+        Intent intent = new Intent(fromActivity, PersonalizzaAccountImmagineActivity.class);
         if(isFirstUpdate) intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        getActivity().startActivity(intent);
-        getActivity().finish();
+        fromActivity.startActivity(intent);
+        fromActivity.finish();
     }
 
 
-    //VALIDATORs---------------
 
-    public boolean isValidBitmap(Bitmap bitmap){
-
-        if(bitmap == null) return true;
-
-        if((bitmap.getWidth() < MIN_WIDTH || bitmap.getHeight() < MIN_HEIGHT) ) return false;
-
-        return true;
-    }
 
 
 

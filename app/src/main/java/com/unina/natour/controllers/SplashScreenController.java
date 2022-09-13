@@ -64,7 +64,7 @@ public class SplashScreenController extends NaTourController{
         }
 
         if(result != null && result.isSignedIn()){
-            mainController.openMainActivity();
+            MainController.openMainActivity(getActivity());
         }
         else {
             String packageName = getActivity().getApplicationContext().getPackageName();
@@ -76,9 +76,9 @@ public class SplashScreenController extends NaTourController{
                 String username = sharedPreferences.getString(AttivaAccountController.SHARED_PREFERENCES_USERNAME, null);
                 String password = sharedPreferences.getString(AttivaAccountController.SHARED_PREFERENCES_PASSWORD, null);
 
-                attivaAccountController.openAttivaAccountActivity(username,password);
+                attivaAccountController.openAttivaAccountActivity(getActivity(),username,password);
             }
-            else autenticazioneController.openAutenticazioneActivity();
+            else autenticazioneController.openAutenticazioneActivity(getActivity());
         }
 
         getActivity().finish();

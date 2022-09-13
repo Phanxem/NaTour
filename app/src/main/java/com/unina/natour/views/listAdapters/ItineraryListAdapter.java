@@ -80,7 +80,7 @@ public class ItineraryListAdapter extends RecyclerView.Adapter<ItineraryListAdap
             @Override
             public void onClick(View v) {
                 //TODO TEST
-                DettagliItinerarioController.openDettagliItinerarioActivity2(activity,itinerary.getItineraryId());
+                DettagliItinerarioController.openDettagliItinerarioActivity(activity,itinerary.getItineraryId());
             }
         });
     }

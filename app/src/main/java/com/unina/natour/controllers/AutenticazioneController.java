@@ -72,9 +72,12 @@ public class AutenticazioneController extends NaTourController{
         return result;
     }
 
-    public void openAutenticazioneActivity(){
-        Intent intent = new Intent(getActivity(), AutenticazioneActivity.class);
+
+
+
+    public static void openAutenticazioneActivity(NaTourActivity fromActivity){
+        Intent intent = new Intent(fromActivity, AutenticazioneActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        getActivity().startActivity(intent);
+        fromActivity.startActivity(intent);
     }
 }

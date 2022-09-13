@@ -113,15 +113,15 @@ public class RecuperoPasswordController extends NaTourController{
         getActivity().onBackPressed();
     }
 
-    public void openIniziaRecuperoPasswordActivity(){
-        Intent intent = new Intent(getActivity(), IniziaRecuperoPasswordActivity.class);
-        getActivity().startActivity(intent);
+    public static void openIniziaRecuperoPasswordActivity(NaTourActivity fromActivity){
+        Intent intent = new Intent(fromActivity, IniziaRecuperoPasswordActivity.class);
+        fromActivity.startActivity(intent);
     }
 
-    public void openCompletaRecuperoPasswordActivity(){
-        Intent intent = new Intent(getActivity(), CompletaRecuperoPasswordActivity.class);
-        getActivity().startActivity(intent);
-        getActivity().finish();
+    public static void openCompletaRecuperoPasswordActivity(NaTourActivity fromActivity){
+        Intent intent = new Intent(fromActivity, CompletaRecuperoPasswordActivity.class);
+        fromActivity.startActivity(intent);
+        fromActivity.finish();
     }
 
 

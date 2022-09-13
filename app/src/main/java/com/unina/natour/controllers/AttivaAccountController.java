@@ -179,22 +179,22 @@ public class AttivaAccountController extends NaTourController{
 
 
 
-    public void openAttivaAccountActivity(String username, String password){
-        if( !(getActivity() instanceof RegistrazioneActivity) ){
+    public static void openAttivaAccountActivity(NaTourActivity fromActivity, String username, String password){
+        if( !(fromActivity instanceof RegistrazioneActivity) ){
             Log.i(TAG, "open not from RegistrazioneActivity");
-            Intent intentAutenticazioneActivity = new Intent(getActivity(), AutenticazioneActivity.class);
+            Intent intentAutenticazioneActivity = new Intent(fromActivity, AutenticazioneActivity.class);
             intentAutenticazioneActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            getActivity().startActivity(intentAutenticazioneActivity);
+            fromActivity.startActivity(intentAutenticazioneActivity);
 
-            Intent intentRegistrazioneActivity = new Intent(getActivity(), RegistrazioneActivity.class);
+            Intent intentRegistrazioneActivity = new Intent(fromActivity, RegistrazioneActivity.class);
             intentRegistrazioneActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            getActivity().startActivity(intentRegistrazioneActivity);
+            fromActivity.startActivity(intentRegistrazioneActivity);
         }
 
-        Intent intent = new Intent(getActivity(), AttivaAccountActivity.class);
+        Intent intent = new Intent(fromActivity, AttivaAccountActivity.class);
         intent.putExtra(EXTRA_USERNAME,username);
         intent.putExtra(EXTRA_PASSWORD,password);
-        getActivity().startActivity(intent);
+        fromActivity.startActivity(intent);
 
 
     }

@@ -18,7 +18,7 @@ import com.unina.natour.views.dialogs.MessageDialog;
 public class CompletaRecuperoPasswordActivity extends NaTourActivity {
 
     private RecuperoPasswordController recuperoPasswordController;
-    private AutenticazioneController autenticazioneController;
+
 
 
     @Override
@@ -27,7 +27,7 @@ public class CompletaRecuperoPasswordActivity extends NaTourActivity {
         setContentView(R.layout.activity_completa_recupero_password);
 
         recuperoPasswordController = new RecuperoPasswordController(this);
-        autenticazioneController = new AutenticazioneController(this);
+
 
         pressButtonComplete();
         pressIconBack();
@@ -35,6 +35,8 @@ public class CompletaRecuperoPasswordActivity extends NaTourActivity {
 
 
     public void pressButtonComplete(){
+        NaTourActivity activity = this;
+
         Button button_complete = findViewById(R.id.CompletaRecuperoPassword_button_conferma);
         button_complete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,7 +52,7 @@ public class CompletaRecuperoPasswordActivity extends NaTourActivity {
 
                 Boolean result = recuperoPasswordController.completePasswordRecovery(code,password1,password2);
 
-                if(result) autenticazioneController.openAutenticazioneActivity();
+                if(result) AutenticazioneController.openAutenticazioneActivity(activity);
             }
         });
     }

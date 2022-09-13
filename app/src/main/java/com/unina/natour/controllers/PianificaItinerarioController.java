@@ -664,6 +664,7 @@ public class PianificaItinerarioController extends NaTourController {
 
     //---
 
+    //TODO da modificare
 
     public void openRicercaPuntoActivity(){
         Intent intent = new Intent(getActivity(), RicercaPuntoActivity.class);

@@ -19,7 +19,6 @@ import com.unina.natour.views.dialogs.MessageDialog;
 public class RegistrazioneActivity extends NaTourActivity {
 
     private RegistrazioneController registrazioneController;
-    private AttivaAccountController attivaAccountController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,13 +26,14 @@ public class RegistrazioneActivity extends NaTourActivity {
         setContentView(R.layout.activity_registrazione);
 
         registrazioneController = new RegistrazioneController(this);
-        attivaAccountController = new AttivaAccountController(this);
 
         pressButtonSignUp();
         pressIconBack();
     }
 
     public void pressButtonSignUp() {
+        NaTourActivity activity = this;
+
         Button button_signUp = findViewById(R.id.SignUp_button_signUp);
         button_signUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,7 +50,7 @@ public class RegistrazioneActivity extends NaTourActivity {
 
                 Boolean result = registrazioneController.signUp(username,email,password);
 
-                if(result) attivaAccountController.openAttivaAccountActivity(username, password);
+                if(result) AttivaAccountController.openAttivaAccountActivity(activity, username, password);
             }
         });
     }

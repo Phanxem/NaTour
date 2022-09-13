@@ -145,6 +145,8 @@ public class PersonalizzaAccountInfoOpzionaliActivity extends NaTourActivity
     }
 
     public void pressButtonNext(){
+        NaTourActivity activity = this;
+
         Button button_next = findViewById(R.id.PersonalizzaAccount2_button_avanti);
         button_next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,7 +161,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity extends NaTourActivity
                 Boolean isFirstUpdate = intent.getBooleanExtra(PREV_ACTIVITY,false);
 
                 if(result){
-                    if(isFirstUpdate) mainController.openMainActivity();
+                    if(isFirstUpdate) MainController.openMainActivity(activity);
                     else finish();
                 }
             }

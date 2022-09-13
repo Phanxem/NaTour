@@ -148,17 +148,17 @@ public class InfoOpzionaliProfiloController extends NaTourController {
 
 
 
-    public void openPersonalizzaAccountInfoOpzionaliActivity(){
-        Intent intent = new Intent(getActivity(), PersonalizzaAccountInfoOpzionaliActivity.class);
-        getActivity().startActivity(intent);
-        getActivity().finish();
+    public static void openPersonalizzaAccountInfoOpzionaliActivity(NaTourActivity fromActivity){
+        Intent intent = new Intent(fromActivity, PersonalizzaAccountInfoOpzionaliActivity.class);
+        fromActivity.startActivity(intent);
+        fromActivity.finish();
     }
 
-    public void openPersonalizzaAccountInfoOpzionaliActivity(boolean isFirstUpdate){
-        Intent intent = new Intent(getActivity(), PersonalizzaAccountInfoOpzionaliActivity.class);
+    public static void openPersonalizzaAccountInfoOpzionaliActivity(NaTourActivity fromActivity, boolean isFirstUpdate){
+        Intent intent = new Intent(fromActivity, PersonalizzaAccountInfoOpzionaliActivity.class);
         if(isFirstUpdate) intent.putExtra(PersonalizzaAccountInfoOpzionaliActivity.PREV_ACTIVITY,true);
-        getActivity().startActivity(intent);
-        getActivity().finish();
+        fromActivity.startActivity(intent);
+        fromActivity.finish();
     }
 
 

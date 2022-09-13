@@ -176,12 +176,12 @@ public class SalvaItinerarioController extends NaTourController{
     }
 
 
-    public void openSalvaItinerarioActivity(float duration, float distance, ArrayList<AddressModel> wayPoints){
-        Intent intent = new Intent(getActivity(), SalvaItinerarioActivity.class);
+    public static void openSalvaItinerarioActivity(NaTourActivity fromActivity, float duration, float distance, ArrayList<AddressModel> wayPoints){
+        Intent intent = new Intent(fromActivity, SalvaItinerarioActivity.class);
         intent.putExtra(EXTRA_DURATION,duration);
         intent.putExtra(EXTRA_DISTANCE,distance);
         intent.putParcelableArrayListExtra(EXTRA_WAYPOINTS,wayPoints);
-        getActivity().startActivity(intent);
+        fromActivity.startActivity(intent);
     }
 
     public void back(){

@@ -77,9 +77,9 @@ public class RegistrazioneController extends NaTourController{
 
     }
 
-    public void openRegistrazioneActivity(){
-        Intent intent = new Intent(getActivity(), RegistrazioneActivity.class);
-        getActivity().startActivity(intent);
+    public static void openRegistrazioneActivity(NaTourActivity fromActivity){
+        Intent intent = new Intent(fromActivity, RegistrazioneActivity.class);
+        fromActivity.startActivity(intent);
     }
 
     public void back() {
