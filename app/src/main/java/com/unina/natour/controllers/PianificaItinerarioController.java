@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
+import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -77,16 +78,11 @@ public class PianificaItinerarioController extends NaTourController implements P
 
     public final static GeoPoint DEFAULT_CENTER_POINT = new GeoPoint((double) 0, (double) 0);
 
-    public static final int REQUEST_CODE = 0;
     private static final String EXTRA_ID_ITINERARY = "NEW_ITINERARY";
-
-
-    RicercaPuntoController ricercaPuntoController;
 
     ActivityResultLauncher<Intent> activityResultLauncherRicercaPunto;
     ActivityResultLauncher<Intent> activityResultLauncherImportaFileGPX;
     ActivityResultLauncher<String> activityResultLauncherPermissions;
-
 
     PuntiIntermediListAdapter puntiIntermediListAdapter;
     PianificaItinerarioModel pianificaItinerarioModel;
@@ -200,41 +196,77 @@ public class PianificaItinerarioController extends NaTourController implements P
         if(itineraryId > 0) initModel(itineraryId);
     }
 
-    public void initModel(long itineraryId){
+    public boolean initModel(long itineraryId){
+        //TODO TESTING
+        itineraryId = 8;
+
         ItineraryResponseDTO itineraryDTO = itineraryDAO.findById(itineraryId);
 
         GPX gpx = itineraryDTO.getGpx();
 
-
         List<WayPoint> wayPoints = gpx.getWayPoints();
-        WayPoint startingWayPoint = wayPoints.get(0);
-        GeoPoint startingGeoPoint = new GeoPoint(startingWayPoint.getLatitude().doubleValue(),startingWayPoint.getLongitude().doubleValue());
-        try {
-            AddressModel startingPoint = addressDAO.findAddressByGeoPoint(startingGeoPoint);
-        }
-        catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(),e);
-        }
-        catch (IOException e) {
-            if(e instanceof UnsupportedEncodingException){
-                InvalidURLFormatException exception = new InvalidURLFormatException(e);
+        List<AddressModel> addressModels = new ArrayList<AddressModel>();
+        List<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
+        for(WayPoint wayPoint : wayPoints){
+            double lon = wayPoint.getLongitude().doubleValue();
+            double lat = wayPoint.getLatitude().doubleValue();
+
+            GeoPoint geoPoint = new GeoPoint(lat, lon);
+            AddressModel addressModel = null;
+
+            try {
+                addressModel = addressDAO.findAddressByGeoPoint(geoPoint);
+            }
+            catch (ServerException e) {
+                ExceptionHandler.handleMessageError(getMessageDialog(),e);
+            }
+            catch (IOException e) {
+                if(e instanceof UnsupportedEncodingException){
+                    InvalidURLFormatException exception = new InvalidURLFormatException(e);
+                    ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+                    return false;
+                }
+                FailureFindAddressException exception = new FailureFindAddressException(e);
+                ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+                return false;
+
+            }
+            catch (ExecutionException | InterruptedException e) {
+                NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
                 ExceptionHandler.handleMessageError(getMessageDialog(),exception);
                 return false;
             }
-            FailureFindAddressException exception = new FailureFindAddressException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return false;
 
-        }
-        catch (ExecutionException | InterruptedException e) {
-            NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return false;
+            addressModels.add(addressModel);
+            geoPoints.add(geoPoint);
         }
 
+        RouteDTO routeDTO = null;
+        try {
+            routeDTO = routeDAO.findRouteByGeoPoints(geoPoints);
+        }
+        catch (ServerException e) {
+            ExceptionHandler.handleMessageError(getMessageDialog(),e);
+            return false;
+        }
+        catch (InterruptedException | ExecutionException e) {
+            NotCompletedFindRouteException exception = new NotCompletedFindRouteException(e);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            return false;
+        }
+        catch (IOException e) {
+            FailureFindRouteException exception = new FailureFindRouteException(e);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            return false;
+        }
 
-        WayPoint destinationWayPoint = wayPoints.get(wayPoints.size()-1);
+        pianificaItinerarioModel.updateInterestPoints(addressModels);
+        pianificaItinerarioModel.updateRoutes(routeDTO.getRouteLegs());
+        pianificaItinerarioModel.setIndexPointSelected(null);
+        pianificaItinerarioModel.setPointSelectedOnMap(null);
+        puntiIntermediListAdapter.notifyDataSetChanged();
 
+        return true;
     }
 
     public PianificaItinerarioModel getModel() {

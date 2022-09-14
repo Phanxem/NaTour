@@ -119,7 +119,7 @@ public class ImmagineProfiloController extends NaTourController{
         String username = "user";
 
         Bitmap profileImage = null;
-        //TODO implementare la gestione dell'errore nel dao
+
         try {
             profileImage = userDAO.getUserProfileImage(username);
         } catch (ExecutionException | InterruptedException e) {

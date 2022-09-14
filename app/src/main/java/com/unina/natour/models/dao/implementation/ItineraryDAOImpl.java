@@ -255,4 +255,9 @@ public class ItineraryDAOImpl implements ItineraryDAO {
 
         return dto;
     }
+
+    @Override
+    public MessageDTO deleteById(long itinerayId) {
+        return null;
+    }
 }

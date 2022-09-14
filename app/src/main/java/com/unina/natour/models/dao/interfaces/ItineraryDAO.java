@@ -20,4 +20,6 @@ public interface ItineraryDAO extends ServerDAO{
     List<ElementItineraryResponseDTO> getUserItinearyList(String username);
 
     ItineraryResponseDTO findById(long itineraryId);
+
+    MessageDTO deleteById(long itinerayId);
 }

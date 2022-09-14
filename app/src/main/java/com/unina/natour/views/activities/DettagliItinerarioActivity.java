@@ -18,8 +18,10 @@ import android.widget.TextView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.DettagliItinerarioController;
+import com.unina.natour.controllers.PianificaItinerarioController;
 import com.unina.natour.controllers.utils.DrawableUtils;
 import com.unina.natour.models.DettagliItinerarioModel;
+import com.unina.natour.views.dialogs.EliminaItinerarioDialog;
 import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.observers.Observer;
 
@@ -76,8 +78,11 @@ public class DettagliItinerarioActivity extends NaTourActivity {
 
         initUI();
 
+        pressIconBack();
         pressButtonNavigation();
         pressButtonClose();
+        pressIconMenu();
+        pressWarning();
     }
 
     public void pressIconBack(){
@@ -91,6 +96,8 @@ public class DettagliItinerarioActivity extends NaTourActivity {
     }
 
     public void pressIconMenu(){
+        NaTourActivity activity = this;
+
         ImageView imageView_menu = findViewById(R.id.ItineraryDetails_imageView_iconaMenu);
 
         PopupMenu popupMenu = new PopupMenu(this,imageView_menu);
@@ -102,6 +109,13 @@ public class DettagliItinerarioActivity extends NaTourActivity {
                 public boolean onMenuItemClick(MenuItem item) {
                     if(item.getItemId() == R.id.DettagliItinerario_popupMenu_elimina){
 
+                        EliminaItinerarioDialog eliminaItinerarioDialog = new EliminaItinerarioDialog(dettagliItinerarioModel.getItineraryId());
+                        eliminaItinerarioDialog.setNaTourActivity(activity);
+                        eliminaItinerarioDialog.showOverUi();
+                        return true;
+                    }
+                    if(item.getItemId() == R.id.DettagliItinerario_popupMenu_modifica){
+                        //PianificaItinerarioController.openModificaItinerarioActivity(activity, dettagliItinerarioModel.getItineraryId());
                         return true;
                     }
                     else return false;
@@ -127,7 +141,7 @@ public class DettagliItinerarioActivity extends NaTourActivity {
         imageView_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
+                popupMenu.show();
             }
         });
     }

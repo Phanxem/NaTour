@@ -58,6 +58,7 @@ public class ExceptionHandler {
 
 
 
+
     private static String findMessageFromAmplifyMessage(Context context, String message){
         //Context context = ApplicationConfig.getAppContext();
         String amplifyMessage = null;
