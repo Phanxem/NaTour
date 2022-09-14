@@ -55,6 +55,7 @@ public class DettagliItinerarioActivity extends NaTourActivity {
         dettagliItinerarioController = new DettagliItinerarioController(this);
         dettagliItinerarioModel = dettagliItinerarioController.getModel();
         dettagliItinerarioModel.registerObserver(this);
+        addModel(dettagliItinerarioModel);
 
         mapView = findViewById(R.id.ItineraryDetails_mapView_mappa);
         dettagliItinerarioController.initMap(mapView);

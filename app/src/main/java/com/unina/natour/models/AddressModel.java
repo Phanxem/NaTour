@@ -5,10 +5,9 @@ import android.os.Parcelable;
 
 import org.osmdroid.util.GeoPoint;
 
-public class AddressModel extends NaTourModel {
+public class AddressModel extends NaTourModel implements Parcelable{
     private GeoPoint point;
     private String addressName;
-
 
     public AddressModel(){
         super();
@@ -30,4 +29,33 @@ public class AddressModel extends NaTourModel {
         this.addressName = addressName;
     }
 
+    //---
+
+    protected AddressModel(Parcel in) {
+        point = in.readParcelable(GeoPoint.class.getClassLoader());
+        addressName = in.readString();
+    }
+
+    public static final Creator<AddressModel> CREATOR = new Creator<AddressModel>() {
+        @Override
+        public AddressModel createFromParcel(Parcel in) {
+            return new AddressModel(in);
+        }
+
+        @Override
+        public AddressModel[] newArray(int size) {
+            return new AddressModel[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(point, flags);
+        dest.writeString(addressName);
+    }
 }

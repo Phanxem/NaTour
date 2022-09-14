@@ -25,7 +25,7 @@ public class HomeFragment extends NaTourFragment {
     HomeController homeController;
 
     ListaItinerariController listaItinerariController;
-
+/*
     public static HomeFragment newInstance(Parcelable controller){
         HomeFragment homeFragment = new HomeFragment();
 
@@ -35,22 +35,22 @@ public class HomeFragment extends NaTourFragment {
 
         return homeFragment;
     }
-
+*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
         setFragmentView(view);
-
+/*
         Bundle args = getArguments();
         if(args != null){
             this.homeController = (HomeController) args.getParcelable(MainController.KEY_CONTROLLER);
         }
         else{
 
-            this.homeController = new HomeController(getNaTourActivity());
         }
-
+ */
+        this.homeController = new HomeController(getNaTourActivity());
         this.listaItinerariController = new ListaItinerariController(getNaTourActivity(),null);
 
 

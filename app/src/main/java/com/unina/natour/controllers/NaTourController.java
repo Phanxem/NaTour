@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
-public class NaTourController implements Parcelable {
+public class NaTourController {
 
     public final String TAG = this.getClass().getSimpleName();
 
@@ -18,6 +18,8 @@ public class NaTourController implements Parcelable {
         this.messageDialog = new MessageDialog();
         this.messageDialog.setNaTourActivity(activity);
     }
+
+    public NaTourController(){}
 
     public NaTourActivity getActivity() {
         return activity;
@@ -38,27 +40,4 @@ public class NaTourController implements Parcelable {
 
 //---
 
-    protected NaTourController(Parcel in) {
-    }
-
-    public static final Creator<NaTourController> CREATOR = new Creator<NaTourController>() {
-        @Override
-        public NaTourController createFromParcel(Parcel in) {
-            return new NaTourController(in);
-        }
-
-        @Override
-        public NaTourController[] newArray(int size) {
-            return new NaTourController[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-    }
 }

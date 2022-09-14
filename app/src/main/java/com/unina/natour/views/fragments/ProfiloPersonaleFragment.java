@@ -26,20 +26,21 @@ import com.unina.natour.controllers.ListaItinerariController;
 import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.ProfiloPersonaleController;
 import com.unina.natour.models.ProfiloPersonaleModel;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class ProfiloPersonaleFragment extends NaTourFragment {
+public class ProfiloPersonaleFragment extends NaTourFragment{
 
     ProfiloPersonaleController profiloPersonaleController;
 
     ListaItinerariController listaItinerariController;
     DisconnessioneController disconnessioneController;
-    AutenticazioneController autenticazioneController;
+
 
     ProfiloPersonaleModel profiloPersonaleModel;
 
-
+/*
     public static ProfiloPersonaleFragment newInstance(Parcelable controller){
         ProfiloPersonaleFragment profiloPersonaleFragment = new ProfiloPersonaleFragment();
 
@@ -49,27 +50,25 @@ public class ProfiloPersonaleFragment extends NaTourFragment {
 
         return profiloPersonaleFragment;
     }
-
+*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profilo_personale, container, false);
         setFragmentView(view);
-
+/*
         Bundle args = getArguments();
         if(args != null){
             this.profiloPersonaleController = (ProfiloPersonaleController) args.getParcelable(MainController.KEY_CONTROLLER);
 
 
         }
-        else{
+        else {
 
-            this.profiloPersonaleController = new ProfiloPersonaleController(getNaTourActivity());
         }
-
+*/
+        this.profiloPersonaleController = new ProfiloPersonaleController(getNaTourActivity());
         this.disconnessioneController = new DisconnessioneController(getNaTourActivity());
-        this.autenticazioneController = new AutenticazioneController(getNaTourActivity());
-
         this.listaItinerariController = profiloPersonaleController.getListaItinerariController();
 
         this.profiloPersonaleModel = profiloPersonaleController.getProfiloPersonaleModel();
@@ -94,6 +93,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment {
 
     public void pressMenuIcon() {
         View view = getFragmentView();
+        NaTourActivity activity = getNaTourActivity();
         ImageView imageView_iconMenu = view.findViewById(R.id.ProfiloPersonaleF_imageView_iconaMenu);
 
         PopupMenu popupMenu = new PopupMenu(view.getContext(),imageView_iconMenu);
@@ -108,7 +108,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment {
                 if(item.getItemId() == R.id.ProfiloPersonaleF_popupMenu_esci){
                     Boolean result = disconnessioneController.signOut();
 
-                    if(result) autenticazioneController.openAutenticazioneActivity();
+                    if(result) AutenticazioneController.openAutenticazioneActivity(activity);
 
                     return true;
                 }

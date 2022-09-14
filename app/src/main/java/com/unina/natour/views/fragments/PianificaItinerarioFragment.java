@@ -30,6 +30,7 @@ import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.RouteLegModel;
 import com.unina.natour.models.PianificaItinerarioModel;
+import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.observers.Observer;
 
@@ -52,7 +53,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
     ArrayList<Polyline> routeTracks;
 
     PianificaItinerarioController pianificaItinerarioController;
-    SalvaItinerarioController salvaItinerarioController;
+
 
     PianificaItinerarioModel pianificaItinerarioModel;
 
@@ -74,14 +75,15 @@ public class PianificaItinerarioFragment extends NaTourFragment {
 
         Bundle args = getArguments();
         if(args != null){
-            this.pianificaItinerarioController = (PianificaItinerarioController) args.getParcelable(MainController.KEY_CONTROLLER);
+            Parcelable parcelable = args.getParcelable(MainController.KEY_CONTROLLER);
+            if(parcelable instanceof PianificaItinerarioController) {
+                this.pianificaItinerarioController = (PianificaItinerarioController) parcelable;
+            }
         }
         else{
-
             this.pianificaItinerarioController = new PianificaItinerarioController(getNaTourActivity());
         }
 
-        salvaItinerarioController = new SalvaItinerarioController(getNaTourActivity());
 
         pianificaItinerarioModel = pianificaItinerarioController.getModel();
         pianificaItinerarioModel.registerObserver(this);
@@ -149,7 +151,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if(item.getItemId() == R.id.PianificaItinerarioF_popupMenu_importaGPX){
-                    pianificaItinerarioController.openImportaFileGPXActivity();
+                    pianificaItinerarioController.goToImportGPX();
                     return true;
                 }
                 else return false;
@@ -293,11 +295,12 @@ public class PianificaItinerarioFragment extends NaTourFragment {
 
     public void pressButtonSave() {
         View view = getFragmentView();
+        NaTourActivity activity = getNaTourActivity();
         Button button_save = view.findViewById(R.id.InsertItinerary_button_salva);
         button_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                salvaItinerarioController.openSalvaItinerarioActivity(pianificaItinerarioModel.getDuration(), pianificaItinerarioModel.getDistance(), (ArrayList<AddressModel>) pianificaItinerarioModel.getInterestPoints());
+                SalvaItinerarioController.openSalvaItinerarioActivity(activity,pianificaItinerarioModel.getDuration(), pianificaItinerarioModel.getDistance(), (ArrayList<AddressModel>) pianificaItinerarioModel.getInterestPoints());
             }
         });
     }

@@ -67,7 +67,7 @@ import java.util.concurrent.ExecutionException;
 
 @SuppressLint("LongLogTag")
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class PianificaItinerarioController extends NaTourController {
+public class PianificaItinerarioController extends NaTourController implements Parcelable{
 
     public final static Integer STARTING_POINT_CODE = -2;
     public final static Integer DESTINATION_POINT_CODE = -1;
@@ -95,8 +95,6 @@ public class PianificaItinerarioController extends NaTourController {
 
     public PianificaItinerarioController(NaTourActivity activity){
         super(activity);
-
-        this.ricercaPuntoController = new RicercaPuntoController(activity);
 
         this.activityResultLauncherRicercaPunto = activity.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -176,7 +174,7 @@ public class PianificaItinerarioController extends NaTourController {
                 new ActivityResultCallback<Boolean>() {
                     @Override
                     public void onActivityResult(Boolean result) {
-                        if (result) openImportaFileGPXActivity();
+                        //if (result) openImportaFileGPXActivity();
                     }
                 }
         );
@@ -191,6 +189,12 @@ public class PianificaItinerarioController extends NaTourController {
 
         this.routeDAO = new RouteDAOImpl();
         this.addressDAO = new AddressDAOImpl();
+    }
+
+
+
+    public PianificaItinerarioModel getModel() {
+        return pianificaItinerarioModel;
     }
 
     public void initMap(MapView mapView){
@@ -258,29 +262,33 @@ public class PianificaItinerarioController extends NaTourController {
 
 
 
+    public void goToImportGPX(){
+        ImportaFileGPXController.openImportaFileGPXActivity(getActivity(),activityResultLauncherImportaFileGPX,activityResultLauncherPermissions);
+    }
+
 
     public void selectStartingPoint() {
         pianificaItinerarioModel.setIndexPointSelected(STARTING_POINT_CODE);
-        openRicercaPuntoActivity();
+        RicercaPuntoController.openRicercaPuntoActivity(getActivity(),activityResultLauncherRicercaPunto);
     }
 
     public void selectDestinationPoint() {
         pianificaItinerarioModel.setIndexPointSelected(DESTINATION_POINT_CODE);
-        openRicercaPuntoActivity();
+        RicercaPuntoController.openRicercaPuntoActivity(getActivity(),activityResultLauncherRicercaPunto);
     }
 
     public void addIntermediatePoint() {
         int indexIntermediatePoint = pianificaItinerarioModel.getIntermediatePointsSize();
 
         pianificaItinerarioModel.setIndexPointSelected(indexIntermediatePoint);
-        openRicercaPuntoActivity();
+        RicercaPuntoController.openRicercaPuntoActivity(getActivity(),activityResultLauncherRicercaPunto);
     }
 
     public void selectIntermediatePoint(int index) {
         if(!pianificaItinerarioModel.isValidIndexPoint(index)) return;
 
         pianificaItinerarioModel.setIndexPointSelected(index);
-        openRicercaPuntoActivity();
+        RicercaPuntoController.openRicercaPuntoActivity(getActivity(),activityResultLauncherRicercaPunto);
     }
 
     public void cancelStartingPoint() {
@@ -615,12 +623,6 @@ public class PianificaItinerarioController extends NaTourController {
     }
 
 
-
-
-    public PianificaItinerarioModel getModel() {
-        return pianificaItinerarioModel;
-    }
-
     private void setPointSelectedOnMap(GeoPoint geoPoint) {
         if(geoPoint == null) return;
 
@@ -660,25 +662,42 @@ public class PianificaItinerarioController extends NaTourController {
 
 
 
+    protected PianificaItinerarioController(Parcel in) {
+        super();
+    }
+
+    public static final Creator<PianificaItinerarioController> CREATOR = new Creator<PianificaItinerarioController>() {
+        @Override
+        public PianificaItinerarioController createFromParcel(Parcel in) {
+            return new PianificaItinerarioController(in);
+        }
+
+        @Override
+        public PianificaItinerarioController[] newArray(int size) {
+            return new PianificaItinerarioController[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+    }
 
 
     //---
 
     //TODO da modificare
-
+/*
     public void openRicercaPuntoActivity(){
         Intent intent = new Intent(getActivity(), RicercaPuntoActivity.class);
         activityResultLauncherRicercaPunto.launch(intent);
     }
+*/
 
-    public void openImportaFileGPXActivity(){
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            activityResultLauncherPermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
-            return;
-        }
 
-        Intent intent = new Intent(getActivity(), ImportaFileGPXActivity.class);
-        activityResultLauncherImportaFileGPX.launch(intent);
-    }
 
 }

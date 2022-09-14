@@ -39,6 +39,7 @@ public class PersonalizzaAccountImmagineActivity extends NaTourActivity {
 
         impostaImmagineProfiloModel = immagineProfiloController.getImpostaImmagineProfiloModel();
         impostaImmagineProfiloModel.registerObserver(this);
+        addModel(impostaImmagineProfiloModel);
 
         pressTextSetProfileImage();
         pressButtonNext();

@@ -50,6 +50,8 @@ public class ProfiloPersonaleController extends NaTourController {
         this.profiloPersonaleModel = new ProfiloPersonaleModel();
     }
 
+
+
     private ProfiloPersonaleModel initModel() {
 
 
@@ -145,5 +147,4 @@ public class ProfiloPersonaleController extends NaTourController {
     public void setListaItinerariController(ListaItinerariController listaItinerariController) {
         this.listaItinerariController = listaItinerariController;
     }
-
 }

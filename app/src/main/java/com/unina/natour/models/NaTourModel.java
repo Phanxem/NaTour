@@ -9,7 +9,7 @@ import com.unina.natour.views.observers.Observer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NaTourModel implements Observable, Parcelable {
+public class NaTourModel implements Observable {
 
     public final String TAG = this.getClass().getSimpleName();
 
@@ -46,32 +46,5 @@ public class NaTourModel implements Observable, Parcelable {
             observer.update();
         }
     }
-
-    //---
-
-    protected NaTourModel(Parcel in) {
-    }
-
-    public static final Creator<NaTourModel> CREATOR = new Creator<NaTourModel>() {
-        @Override
-        public NaTourModel createFromParcel(Parcel in) {
-            return new NaTourModel(in);
-        }
-
-        @Override
-        public NaTourModel[] newArray(int size) {
-            return new NaTourModel[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-    }
-
 }
 

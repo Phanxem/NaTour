@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Parcelable;
 import android.util.Log;
 import android.widget.ListView;
 
@@ -27,10 +28,12 @@ import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindAddressException;
 import com.unina.natour.controllers.utils.GPSUtils;
 import com.unina.natour.models.AddressModel;
+import com.unina.natour.models.PianificaItinerarioModel;
 import com.unina.natour.models.RicercaPuntoModel;
 import com.unina.natour.models.dao.implementation.AddressDAOImpl;
 import com.unina.natour.models.dao.interfaces.AddressDAO;
 import com.unina.natour.views.activities.NaTourActivity;
+import com.unina.natour.views.activities.RicercaPuntoActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.listAdapters.RisultatiRicercaPuntoListAdapter;
 
@@ -48,7 +51,6 @@ public class RicercaPuntoController extends NaTourController{
     public static final int RESULT_CODE_GET_FROM_MAP = 101;
 
     public final static String EXTRA_ADDRESS = "ADDRESS";
-
 
     RisultatiRicercaPuntoListAdapter risultatiRicercaPuntoListAdapter;
 
@@ -148,12 +150,10 @@ public class RicercaPuntoController extends NaTourController{
             return;
         }
 
-
         Intent intent = new Intent();
         intent.putExtra(EXTRA_ADDRESS, address);
         getActivity().setResult(RESULT_CODE_RETURN_POINT, intent);
         getActivity().finish();
-        return;
     }
 
     public void selectFromMap() {
@@ -202,5 +202,12 @@ public class RicercaPuntoController extends NaTourController{
         getActivity().setResult(RESULT_CODE_RETURN_POINT, intent);
         getActivity().finish();
 
+    }
+
+
+    public static void openRicercaPuntoActivity(NaTourActivity fromActivity, ActivityResultLauncher<Intent> activityResultLauncher){
+        Intent intent = new Intent(fromActivity, RicercaPuntoActivity.class);
+        activityResultLauncher.launch(intent);
+        //fromActivity.startActivity(intent);
     }
 }

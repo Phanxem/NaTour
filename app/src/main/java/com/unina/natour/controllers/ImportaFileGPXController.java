@@ -1,13 +1,17 @@
 package com.unina.natour.controllers;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.ListView;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
@@ -24,6 +28,7 @@ import com.unina.natour.models.ImportaFileGPXModel;
 import com.unina.natour.models.RouteLegModel;
 import com.unina.natour.models.dao.implementation.AddressDAOImpl;
 import com.unina.natour.models.dao.interfaces.AddressDAO;
+import com.unina.natour.views.activities.ImportaFileGPXActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.listAdapters.FileGpxListAdapter;
@@ -210,5 +215,15 @@ public class ImportaFileGPXController extends NaTourController{
 
     public ImportaFileGPXModel getImportaFileGPXModel(){
         return this.importaFileGPXModel;
+    }
+
+    public static void openImportaFileGPXActivity(NaTourActivity fromActivity, ActivityResultLauncher<Intent> activityResultLauncherImportaFileGPX, ActivityResultLauncher<String> activityResultLauncherPermissions){
+        if (ActivityCompat.checkSelfPermission(fromActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            activityResultLauncherPermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+            return;
+        }
+
+        Intent intent = new Intent(fromActivity, ImportaFileGPXActivity.class);
+        activityResultLauncherImportaFileGPX.launch(intent);
     }
 }

@@ -58,6 +58,7 @@ public class PersonalizzaAccountInfoOpzionaliActivity extends NaTourActivity
 
         impostaInfoOpzionaliProfiloModel = infoOpzionaliProfiloController.getImpostaInfoOpzionaliProfiloModel();
         impostaInfoOpzionaliProfiloModel.registerObserver(this);
+        addModel(impostaInfoOpzionaliProfiloModel);
 
         DatePickerDialog datePickerDialog = initDatePicker();
         pressButtonDate(datePickerDialog);

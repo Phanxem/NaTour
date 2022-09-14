@@ -39,6 +39,7 @@ public class ImportaFileGPXActivity extends NaTourActivity {
 
         importaFileGPXModel = importaFileGPXController.getImportaFileGPXModel();
         importaFileGPXModel.registerObserver(this);
+        addModel(importaFileGPXModel);
 
         ListView listView = findViewById(R.id.ImportaFileGPX_listView_listaFiles);
         importaFileGPXController.initListViewFiles(listView);

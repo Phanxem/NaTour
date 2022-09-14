@@ -37,6 +37,7 @@ public class SalvaItinerarioActivity extends NaTourActivity
         salvaItinerarioController = new SalvaItinerarioController(this);
         salvaItinerarioModel = salvaItinerarioController.getModel();
         salvaItinerarioModel.registerObserver(this);
+        addModel(salvaItinerarioModel);
 
 
         TextView textView_duration = findViewById(R.id.SaveItinerary_textView_duration);

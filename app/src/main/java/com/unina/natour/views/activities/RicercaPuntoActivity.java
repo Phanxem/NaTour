@@ -50,6 +50,7 @@ public class RicercaPuntoActivity extends NaTourActivity {
 
         ricercaPuntoModel = ricercaPuntoController.getModel();
         ricercaPuntoModel.registerObserver(this);
+        addModel(ricercaPuntoModel);
 
         ListView listView = findViewById(R.id.PointSearch_listView_risultati);
         ricercaPuntoController.initListViewResultPoints(listView);
