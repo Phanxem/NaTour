@@ -1,7 +1,6 @@
 package com.unina.natour.views.activities;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -13,13 +12,17 @@ import android.widget.TextView;
 import com.unina.natour.R;
 //TODO da aggiustare (capire perché da errore se si importa solo la classe interessata)
 import com.unina.natour.controllers.*;
-import com.unina.natour.views.dialogs.MessageDialog;
+import com.unina.natour.models.ProfiloPersonaleModel;
+
+import org.w3c.dom.Text;
 
 @RequiresApi(api = Build.VERSION_CODES.P)
 public class ModificaProfiloActivity extends NaTourActivity {
 
     public ModificaProfiloController modificaProfiloController;
+    public ProfiloPersonaleController profiloPersonaleController;
 
+    public ProfiloPersonaleModel profiloPersonaleModel;
 
 
     // username
@@ -31,9 +34,14 @@ public class ModificaProfiloActivity extends NaTourActivity {
 
         modificaProfiloController = new ModificaProfiloController(this);
 
-        //modificaProfiloController.initModel(username);
+        profiloPersonaleController = new ProfiloPersonaleController(this);
+        profiloPersonaleModel = profiloPersonaleController.getModel();
+        addModel(profiloPersonaleModel);
+        profiloPersonaleModel.registerObserver(this);
 
+        profiloPersonaleController.initModel();
 
+        update();
     }
 
     public void pressIconBack(){
@@ -41,17 +49,19 @@ public class ModificaProfiloActivity extends NaTourActivity {
         imageView_iconBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo back
+                onBackPressed();
             }
         });
     }
 
     public void pressTextUpdateImage(){
+        NaTourActivity activity = this;
+
         TextView textView_updateImage = findViewById(R.id.ModificaProfilo_textView_modificaImmagineProfilo);
         textView_updateImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                ImmagineProfiloController.openPersonalizzaAccountImmagineActivity(activity);
             }
         });
     }
@@ -94,6 +104,41 @@ public class ModificaProfiloActivity extends NaTourActivity {
 
             }
         });
+    }
+
+    public void update(){
+
+        if(profiloPersonaleModel.getProfileImage() != null) {
+            ImageView imageView_profileImage = findViewById(R.id.ModificaProfilo_imageView_immagineProfilo);
+            imageView_profileImage.setImageBitmap(profiloPersonaleModel.getProfileImage());
+        }
+
+        TextView textView_dateOfBirth = findViewById(R.id.ModificaProfilo_textView_dataNascita);
+        String dateOfBirth = profiloPersonaleModel.getDateOfBirth();
+        if(dateOfBirth != null || dateOfBirth.isEmpty()) textView_dateOfBirth.setText(profiloPersonaleModel.getDateOfBirth());
+        else textView_dateOfBirth.setText(getString(R.string.ModificaProfilo_textView_dataNascita_null));
+
+        TextView textView_placeOfResidence = findViewById(R.id.ModificaProfilo_textView_luogoResidenza);
+        String placeOfResidence = profiloPersonaleModel.getPlaceOfResidence();
+        if(placeOfResidence != null || placeOfResidence.isEmpty()) textView_placeOfResidence.setText(profiloPersonaleModel.getPlaceOfResidence());
+        else textView_placeOfResidence.setText(getString(R.string.ModificaProfilo_textView_luogoResidenza_null));
+
+        TextView textView_email = findViewById(R.id.ModificaProfilo_textView_email);
+        textView_email.setText(profiloPersonaleModel.getEmail());
+
+        //TODO definire una funzione nel controller che verifica se l'utente si è registrato via
+        //facebook o google, in questi casi entrambi i tasti vengono disabilitati
+
+        Button button_linkFacebook = findViewById(R.id.ModificaProfilo_button_facebook);
+        if(profiloPersonaleModel.isFacebookLinked()) button_linkFacebook.setEnabled(false);
+        else button_linkFacebook.setEnabled(true);
+
+        Button button_linkGoogle = findViewById(R.id.ModificaProfilo_button_google);
+        if(profiloPersonaleModel.isGoogleLinked()) button_linkGoogle.setEnabled(false);
+        else button_linkGoogle.setEnabled(true);
+
+
+
     }
 
 }

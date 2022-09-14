@@ -34,6 +34,10 @@ public class TimeUtils {
         return calendar;
     }
 
+    public static String getDateWithoutHours(String date){
+        String result = date.substring(0,8);
+        return result;
+    }
 
     public static String toSimpleString(Calendar calendar){
         Date date = new Date(calendar.getTimeInMillis());

@@ -30,8 +30,6 @@ import java.util.concurrent.ExecutionException;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class ProfiloPersonaleController extends NaTourController {
 
-    String username = "user";
-
     ListaItinerariController listaItinerariController;
 
     ProfiloPersonaleModel profiloPersonaleModel;
@@ -40,21 +38,21 @@ public class ProfiloPersonaleController extends NaTourController {
 
     public ProfiloPersonaleController(NaTourActivity activity) {
         super(activity);
-        //this.username = Amplify.Auth.getCurrentUser().getUsername();
+
+        //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
+        String username = "user";
 
         this.userDAO = new UserDAOImpl(activity);
 
         this.listaItinerariController = new ListaItinerariController(activity, username);
 
-        //this.profiloPersonaleModel = initModel();
         this.profiloPersonaleModel = new ProfiloPersonaleModel();
+        //initModel();
     }
 
 
 
-    private ProfiloPersonaleModel initModel() {
-
-
+    public void initModel() {
         CompletableFuture<String> completableFuture = new CompletableFuture<String>();
 
         Amplify.Auth.fetchUserAttributes(
@@ -77,26 +75,29 @@ public class ProfiloPersonaleController extends NaTourController {
         } catch (ExecutionException | InterruptedException e) {
             NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
             ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return new ProfiloPersonaleModel();
+            return;
         }
-        if (email == null) return new ProfiloPersonaleModel();
+        if (email == null) return;
 
 
         UserDTO userDTO = null;
+
+        //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
+        String username = "user";
 
         try {
             userDTO = userDAO.getUser(username);
         } catch (ExecutionException | InterruptedException e) {
             NotCompletedGetUserException exception = new NotCompletedGetUserException(e);
             ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return new ProfiloPersonaleModel();
+            return;
         } catch (ServerException e) {
             ExceptionHandler.handleMessageError(getMessageDialog(), e);
-            return new ProfiloPersonaleModel();
+            return;
         } catch (IOException e) {
             FailureGetUserException exception = new FailureGetUserException(e);
             ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return new ProfiloPersonaleModel();
+            return;
         }
 
 
@@ -106,17 +107,15 @@ public class ProfiloPersonaleController extends NaTourController {
         } catch (ExecutionException | InterruptedException e) {
             NotCompletedGetUserProfileImageException exception = new NotCompletedGetUserProfileImageException(e);
             ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return new ProfiloPersonaleModel();
+            return;
         } catch (ServerException e) {
             ExceptionHandler.handleMessageError(getMessageDialog(), e);
-            return new ProfiloPersonaleModel();
+            return;
         } catch (IOException e) {
             FailureGetUserProfileImageException exception = new FailureGetUserProfileImageException(e);
             ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return new ProfiloPersonaleModel();
+            return;
         }
-
-        ProfiloPersonaleModel profiloPersonaleModel = new ProfiloPersonaleModel();
 
 
         profiloPersonaleModel.setEmail(email);
@@ -127,12 +126,14 @@ public class ProfiloPersonaleController extends NaTourController {
         profiloPersonaleModel.setPlaceOfResidence(userDTO.getPlaceOfResidence());
         profiloPersonaleModel.setDateOfBirth(userDTO.getDateOfBirth());
 
+        profiloPersonaleModel.setFacebookLinked(userDTO.isFacebookLinked());
+        profiloPersonaleModel.setGoogleLinked(userDTO.isGoogleLinked());
+
         profiloPersonaleModel.setProfileImage(profileImage);
 
-        return profiloPersonaleModel;
     }
 
-    public ProfiloPersonaleModel getProfiloPersonaleModel() {
+    public ProfiloPersonaleModel getModel() {
         return profiloPersonaleModel;
     }
 

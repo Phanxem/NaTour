@@ -13,6 +13,9 @@ public class ProfiloPersonaleModel extends NaTourModel{
     private String placeOfResidence;
     private String dateOfBirth;
 
+    private boolean isFacebookLinked;
+    private boolean isGoogleLinked;
+
     public ProfiloPersonaleModel(){
         super();
     }
@@ -63,5 +66,21 @@ public class ProfiloPersonaleModel extends NaTourModel{
 
     public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public boolean isFacebookLinked() {
+        return isFacebookLinked;
+    }
+
+    public void setFacebookLinked(boolean facebookLinked) {
+        isFacebookLinked = facebookLinked;
+    }
+
+    public boolean isGoogleLinked() {
+        return isGoogleLinked;
+    }
+
+    public void setGoogleLinked(boolean googleLinked) {
+        isGoogleLinked = googleLinked;
     }
 }

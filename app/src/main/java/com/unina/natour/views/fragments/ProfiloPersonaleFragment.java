@@ -2,8 +2,6 @@ package com.unina.natour.views.fragments;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,20 +14,19 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.widget.NestedScrollView;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.AutenticazioneController;
 import com.unina.natour.controllers.DisconnessioneController;
 import com.unina.natour.controllers.ListaItinerariController;
-import com.unina.natour.controllers.MainController;
+import com.unina.natour.controllers.ModificaProfiloController;
 import com.unina.natour.controllers.ProfiloPersonaleController;
+import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.models.ProfiloPersonaleModel;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
+@RequiresApi(api = Build.VERSION_CODES.P)
 public class ProfiloPersonaleFragment extends NaTourFragment{
 
     ProfiloPersonaleController profiloPersonaleController;
@@ -71,7 +68,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
         this.disconnessioneController = new DisconnessioneController(getNaTourActivity());
         this.listaItinerariController = profiloPersonaleController.getListaItinerariController();
 
-        this.profiloPersonaleModel = profiloPersonaleController.getProfiloPersonaleModel();
+        this.profiloPersonaleModel = profiloPersonaleController.getModel();
 
 
         RecyclerView recyclerView_itineraries = view.findViewById(R.id.ProfiloPersonaleF_recycleView_itinerari);
@@ -80,15 +77,20 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
 
         listaItinerariController.initItineraryList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
 
-        update();
-
         pressMenuIcon();
+
+        
 
         return view;
     }
 
 
-
+    @Override
+    public void onStart() {
+        profiloPersonaleController.initModel();
+        update();
+        super.onStart();
+    }
 
 
     public void pressMenuIcon() {
@@ -102,7 +104,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if(item.getItemId() == R.id.ProfiloPersonaleF_popupMenu_modifica){
-                    //open modifica Profilo Activity
+                    ModificaProfiloController.openModificaProfiloActivity(activity);
                     return true;
                 }
                 if(item.getItemId() == R.id.ProfiloPersonaleF_popupMenu_esci){
@@ -145,9 +147,11 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
         else linearLayout_residence.setVisibility(View.GONE);
 
         LinearLayout linearLayout_birth = view.findViewById(R.id.ProfiloPersonale_linearLayout_birth);
-        if(profiloPersonaleModel.getDateOfBirth() != null) {
+        String dateOfBirth = profiloPersonaleModel.getDateOfBirth();
+        if(dateOfBirth != null && !dateOfBirth.isEmpty()) {
             TextView textView_birth = view.findViewById(R.id.ProfiloPersonaleF_textView_birth);
-            textView_birth.setText(profiloPersonaleModel.getDateOfBirth());
+            String date = TimeUtils.getDateWithoutHours(dateOfBirth);
+            textView_birth.setText(date);
             linearLayout_birth.setVisibility(View.VISIBLE);
         }
         else linearLayout_birth.setVisibility(View.GONE);

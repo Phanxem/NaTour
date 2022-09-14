@@ -115,10 +115,4 @@ public class MainActivity extends NaTourActivity {
             }
         });
     }
-
-
-
-
-
-
 }

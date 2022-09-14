@@ -47,9 +47,6 @@
             android:name=".views.activities.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".views.activities.TESTActivity"
-            android:exported="false" />
-        <activity
             android:name=".views.activities.PersonalizzaAccountInfoOpzionaliActivity"
             android:exported="false" />
         <activity

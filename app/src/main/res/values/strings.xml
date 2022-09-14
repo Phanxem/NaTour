@@ -43,6 +43,15 @@
     <string name="SelezionaCittà_titolo">Seleziona Città</string>
 
 
+    <string name="ModificaProfilo_textView_dataNascita_null">Non specificata</string>
+    <string name="ModificaProfilo_textView_luogoResidenza_null">Non specificato</string>
+
+
+
+
+
+
+
     <!-- TODO: Exception Messages -->
 
     <!-- AMPLIFY ERROR MESSAGES -->

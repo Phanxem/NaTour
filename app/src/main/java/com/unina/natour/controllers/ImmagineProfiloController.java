@@ -22,9 +22,11 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureGetUserProfileImageException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureReadProfileImageException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureUpdateProfileImageException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.InvalidProfileImageException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedGetUserProfileImageException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedUpdateProfileImageException;
 import com.unina.natour.dto.MessageDTO;
 import com.unina.natour.models.ImpostaImmagineProfiloModel;
@@ -102,6 +104,32 @@ public class ImmagineProfiloController extends NaTourController{
         );
 
         this.userDAO = new UserDAOImpl(activity);
+
+
+        initModel();
+    }
+
+    public void initModel(){
+        //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
+        String username = "user";
+
+        Bitmap profileImage = null;
+        try {
+            profileImage = userDAO.getUserProfileImage(username);
+        } catch (ExecutionException | InterruptedException e) {
+            NotCompletedGetUserProfileImageException exception = new NotCompletedGetUserProfileImageException(e);
+            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
+            return;
+        } catch (ServerException e) {
+            ExceptionHandler.handleMessageError(getMessageDialog(), e);
+            return;
+        } catch (IOException e) {
+            FailureGetUserProfileImageException exception = new FailureGetUserProfileImageException(e);
+            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
+            return;
+        }
+
+        impostaImmagineProfiloModel.setProfileImage(profileImage);
     }
 
     public ImpostaImmagineProfiloModel getImpostaImmagineProfiloModel() {
@@ -220,12 +248,15 @@ public class ImmagineProfiloController extends NaTourController{
     public static void openPersonalizzaAccountImmagineActivity(NaTourActivity fromActivity){
         Intent intent = new Intent(fromActivity, PersonalizzaAccountImmagineActivity.class);
         fromActivity.startActivity(intent);
-        fromActivity.finish();
     }
 
     public static void openPersonalizzaAccountImmagineActivity(NaTourActivity fromActivity, boolean isFirstUpdate){
+        if(!isFirstUpdate){
+            openPersonalizzaAccountImmagineActivity(fromActivity);
+            return;
+        }
         Intent intent = new Intent(fromActivity, PersonalizzaAccountImmagineActivity.class);
-        if(isFirstUpdate) intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         fromActivity.startActivity(intent);
         fromActivity.finish();
     }

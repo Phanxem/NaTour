@@ -32,7 +32,7 @@
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_inizia_recupero_password.xml" value="0.264" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_modifica_password.xml" value="0.2" />
-        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_modifica_profilo.xml" value="0.4" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_modifica_profilo.xml" value="0.6" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_personalizza_account_immagine.xml" value="0.264" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_personalizza_account_immagine_profilo.xml" value="0.264" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/activity_personalizza_account_info_opzionali.xml" value="0.536" />
@@ -49,7 +49,7 @@
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_pianifica.xml" value="0.3696060037523452" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_pianifica_itinerario.xml" value="0.2" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_profilo.xml" value="0.27898550724637683" />
-        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_profilo_personale.xml" value="0.223731884057971" />
+        <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/fragment_profilo_personale.xml" value="0.4" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/list_element_chat_message.xml" value="0.2" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/list_element_chat_message_received.xml" value="0.2028985507246377" />
         <entry key="..\:/Users/franc/Documents/GitKraken/Android Studio/public/NaTour/app/src/main/res/layout/list_element_chat_message_sent.xml" value="0.264" />

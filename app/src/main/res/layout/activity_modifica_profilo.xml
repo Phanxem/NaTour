@@ -49,17 +49,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ModificaProfilo_imageView_immagineProfilo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_generic_account"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ModificaProfilo_textView_titoloImmagineProfilo"
-            app:srcCompat="@drawable/ic_generic_account" />
+            app:layout_constraintTop_toBottomOf="@+id/ModificaProfilo_textView_titoloImmagineProfilo" />
 
         <TextView
             android:id="@+id/ModificaProfilo_textView_modificaImmagineProfilo"
@@ -107,26 +107,44 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/ModificaProfilo_textView_dataNascita"
+            android:id="@+id/ModificaProfilo_textView_titoloDataNascita"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:text="Data di Nascita: "
+            android:text="Data di Nascita"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ModificaProfilo_textView_titoloOptionalInfo" />
+
+        <TextView
+            android:id="@+id/ModificaProfilo_textView_titoloLuogoResidenza"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Luogo di Residenza"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ModificaProfilo_textView_dataNascita" />
+
+        <TextView
+            android:id="@+id/ModificaProfilo_textView_dataNascita"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/ModificaProfilo_textView_dataNascita_null"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ModificaProfilo_textView_titoloDataNascita" />
 
         <TextView
             android:id="@+id/ModificaProfilo_textView_luogoResidenza"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:text="Luogo di Residenza: "
+            android:text="@string/ModificaProfilo_textView_luogoResidenza_null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ModificaProfilo_textView_dataNascita" />
+            app:layout_constraintTop_toBottomOf="@+id/ModificaProfilo_textView_titoloLuogoResidenza" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -152,7 +170,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/ModificaProfilo_textView_email"
+            android:id="@+id/ModificaProfilo_textView_titoloEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -170,7 +188,7 @@
             android:text="Modifica Password"
             android:textColor="@color/blue"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ModificaProfilo_textView_email" />
+            app:layout_constraintTop_toBottomOf="@+id/ModificaProfilo_textView_titoloEmail" />
 
         <TextView
             android:id="@+id/ModificaProfilo_textView_providerIdentità"
@@ -209,5 +227,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ModificaProfilo_button_facebook" />
+
+        <TextView
+            android:id="@+id/ModificaProfilo_textView_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ModificaProfilo_textView_titoloEmail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ModificaProfilo_textView_titoloEmail"
+            app:layout_constraintTop_toTopOf="@+id/ModificaProfilo_textView_titoloEmail" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
