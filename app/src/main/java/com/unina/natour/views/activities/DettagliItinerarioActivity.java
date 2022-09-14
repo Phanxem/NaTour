@@ -114,10 +114,6 @@ public class DettagliItinerarioActivity extends NaTourActivity {
                         eliminaItinerarioDialog.showOverUi();
                         return true;
                     }
-                    if(item.getItemId() == R.id.DettagliItinerario_popupMenu_modifica){
-                        //PianificaItinerarioController.openModificaItinerarioActivity(activity, dettagliItinerarioModel.getItineraryId());
-                        return true;
-                    }
                     else return false;
                 }
             });

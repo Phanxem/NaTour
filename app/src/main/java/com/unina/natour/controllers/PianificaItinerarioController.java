@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
-import android.location.Address;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -47,7 +46,6 @@ import com.unina.natour.models.dao.implementation.RouteDAOImpl;
 import com.unina.natour.models.dao.interfaces.AddressDAO;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 import com.unina.natour.models.dao.interfaces.RouteDAO;
-import com.unina.natour.views.activities.ModificaItinerarioActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.listAdapters.PuntiIntermediListAdapter;
 
@@ -87,11 +85,8 @@ public class PianificaItinerarioController extends NaTourController implements P
     PuntiIntermediListAdapter puntiIntermediListAdapter;
     PianificaItinerarioModel pianificaItinerarioModel;
 
-    ItineraryDAO itineraryDAO;
     RouteDAO routeDAO;
     AddressDAO addressDAO;
-
-
 
     public PianificaItinerarioController(NaTourActivity activity){
         super(activity);
@@ -187,86 +182,8 @@ public class PianificaItinerarioController extends NaTourController implements P
                 this
         );
 
-        this.itineraryDAO = new ItineraryDAOImpl(getActivity());
         this.routeDAO = new RouteDAOImpl();
         this.addressDAO = new AddressDAOImpl();
-
-        long itineraryId = getActivity().getIntent().getLongExtra(EXTRA_ID_ITINERARY,-1);
-
-        if(itineraryId > 0) initModel(itineraryId);
-    }
-
-    public boolean initModel(long itineraryId){
-        //TODO TESTING
-        itineraryId = 8;
-
-        ItineraryResponseDTO itineraryDTO = itineraryDAO.findById(itineraryId);
-
-        GPX gpx = itineraryDTO.getGpx();
-
-        List<WayPoint> wayPoints = gpx.getWayPoints();
-        List<AddressModel> addressModels = new ArrayList<AddressModel>();
-        List<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
-        for(WayPoint wayPoint : wayPoints){
-            double lon = wayPoint.getLongitude().doubleValue();
-            double lat = wayPoint.getLatitude().doubleValue();
-
-            GeoPoint geoPoint = new GeoPoint(lat, lon);
-            AddressModel addressModel = null;
-
-            try {
-                addressModel = addressDAO.findAddressByGeoPoint(geoPoint);
-            }
-            catch (ServerException e) {
-                ExceptionHandler.handleMessageError(getMessageDialog(),e);
-            }
-            catch (IOException e) {
-                if(e instanceof UnsupportedEncodingException){
-                    InvalidURLFormatException exception = new InvalidURLFormatException(e);
-                    ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-                    return false;
-                }
-                FailureFindAddressException exception = new FailureFindAddressException(e);
-                ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-                return false;
-
-            }
-            catch (ExecutionException | InterruptedException e) {
-                NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
-                ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-                return false;
-            }
-
-            addressModels.add(addressModel);
-            geoPoints.add(geoPoint);
-        }
-
-        RouteDTO routeDTO = null;
-        try {
-            routeDTO = routeDAO.findRouteByGeoPoints(geoPoints);
-        }
-        catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(),e);
-            return false;
-        }
-        catch (InterruptedException | ExecutionException e) {
-            NotCompletedFindRouteException exception = new NotCompletedFindRouteException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return false;
-        }
-        catch (IOException e) {
-            FailureFindRouteException exception = new FailureFindRouteException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return false;
-        }
-
-        pianificaItinerarioModel.updateInterestPoints(addressModels);
-        pianificaItinerarioModel.updateRoutes(routeDTO.getRouteLegs());
-        pianificaItinerarioModel.setIndexPointSelected(null);
-        pianificaItinerarioModel.setPointSelectedOnMap(null);
-        puntiIntermediListAdapter.notifyDataSetChanged();
-
-        return true;
     }
 
     public PianificaItinerarioModel getModel() {
@@ -736,11 +653,8 @@ public class PianificaItinerarioController extends NaTourController implements P
     }
 
 
-    public static void openModificaItinerarioActivity(NaTourActivity fromActivity, long idItinerary){
-        Intent intent = new Intent(fromActivity, ModificaItinerarioActivity.class);
-        intent.putExtra(EXTRA_ID_ITINERARY, idItinerary);
-        fromActivity.startActivity(intent);
-    }
+
+
 
 
     protected PianificaItinerarioController(Parcel in) {
@@ -767,20 +681,5 @@ public class PianificaItinerarioController extends NaTourController implements P
     @Override
     public void writeToParcel(Parcel dest, int flags) {
     }
-
-
-    //---
-
-
-
-    //TODO da modificare
-/*
-    public void openRicercaPuntoActivity(){
-        Intent intent = new Intent(getActivity(), RicercaPuntoActivity.class);
-        activityResultLauncherRicercaPunto.launch(intent);
-    }
-*/
-
-
 
 }

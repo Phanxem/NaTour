@@ -20,9 +20,6 @@
         android:theme="@style/Theme.NaTour"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".views.activities.ModificaItinerarioActivity"
-            android:exported="false" />
-        <activity
             android:name=".views.activities.DettagliItinerarioActivity"
             android:exported="false" />
         <activity
