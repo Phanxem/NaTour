@@ -29,7 +29,6 @@ public class PersonalizzaAccountImmagineActivity extends NaTourActivity {
     private ImpostaImmagineProfiloModel impostaImmagineProfiloModel;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +42,8 @@ public class PersonalizzaAccountImmagineActivity extends NaTourActivity {
 
         pressTextSetProfileImage();
         pressButtonNext();
+
+        update();
     }
 
     public void pressTextSetProfileImage(){
@@ -64,7 +65,15 @@ public class PersonalizzaAccountImmagineActivity extends NaTourActivity {
             public void onClick(View v) {
                 Boolean result = immagineProfiloController.modificaImmagineProfilo();
 
-                if(result) InfoOpzionaliProfiloController.openPersonalizzaAccountInfoOpzionaliActivity(activity, true);
+                if(result){
+                    if(immagineProfiloController.isFirstUpdate()){
+                        InfoOpzionaliProfiloController.openPersonalizzaAccountInfoOpzionaliActivity(activity, true);
+                        return;
+                    }
+                    activity.finish();
+                }
+
+
             }
         });
     }

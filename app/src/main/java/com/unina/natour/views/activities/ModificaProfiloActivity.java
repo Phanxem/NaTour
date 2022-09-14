@@ -41,6 +41,8 @@ public class ModificaProfiloActivity extends NaTourActivity {
 
         profiloPersonaleController.initModel();
 
+        pressTextUpdateImage();
+
         update();
     }
 
@@ -136,9 +138,12 @@ public class ModificaProfiloActivity extends NaTourActivity {
         Button button_linkGoogle = findViewById(R.id.ModificaProfilo_button_google);
         if(profiloPersonaleModel.isGoogleLinked()) button_linkGoogle.setEnabled(false);
         else button_linkGoogle.setEnabled(true);
+    }
 
-
-
+    @Override
+    protected void onResume() {
+        profiloPersonaleController.initModel();
+        super.onResume();
     }
 
 }

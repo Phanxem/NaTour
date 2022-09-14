@@ -39,6 +39,7 @@ public class NaTourActivity extends AppCompatActivity implements Observer {
     protected void onResume() {
         for(NaTourModel model : models){
             model.registerObserver(this);
+            model.notifyObservers();
         }
         super.onResume();
     }

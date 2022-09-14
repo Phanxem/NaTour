@@ -48,12 +48,15 @@ public class ImmagineProfiloController extends NaTourController{
 
     public final static int MIN_HEIGHT = 300;
     public final static int MIN_WIDTH = 300;
+    private static final String EXTRA_FIRST_UPDATE = "FIRST_UPDATE";
 
 
     private ActivityResultLauncher<Intent> activityResultLauncherGallery;
     private ActivityResultLauncher<String> activityResultLauncherPermissions;
 
     private ImpostaImmagineProfiloModel impostaImmagineProfiloModel;
+
+    private boolean isFirstUpdate;
 
     private UserDAO userDAO;
 
@@ -102,6 +105,8 @@ public class ImmagineProfiloController extends NaTourController{
                     }
                 }
         );
+
+        this.isFirstUpdate = getActivity().getIntent().getBooleanExtra(EXTRA_FIRST_UPDATE,false);
 
         this.userDAO = new UserDAOImpl(activity);
 
@@ -217,6 +222,9 @@ public class ImmagineProfiloController extends NaTourController{
         return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
+    public boolean isFirstUpdate(){
+        return isFirstUpdate;
+    }
 
 
 //VALIDATORs---------------
@@ -257,6 +265,7 @@ public class ImmagineProfiloController extends NaTourController{
         }
         Intent intent = new Intent(fromActivity, PersonalizzaAccountImmagineActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(EXTRA_FIRST_UPDATE,true);
         fromActivity.startActivity(intent);
         fromActivity.finish();
     }

@@ -1,7 +1,10 @@
 package com.unina.natour.views.fragments;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +28,9 @@ import com.unina.natour.controllers.ProfiloPersonaleController;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.models.ProfiloPersonaleModel;
 import com.unina.natour.views.activities.NaTourActivity;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @RequiresApi(api = Build.VERSION_CODES.P)
 public class ProfiloPersonaleFragment extends NaTourFragment{
@@ -69,6 +75,8 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
         this.listaItinerariController = profiloPersonaleController.getListaItinerariController();
 
         this.profiloPersonaleModel = profiloPersonaleController.getModel();
+        //addModel(profiloPersonaleModel);
+        //profiloPersonaleModel.registerObserver(this);
 
 
         RecyclerView recyclerView_itineraries = view.findViewById(R.id.ProfiloPersonaleF_recycleView_itinerari);
@@ -79,7 +87,26 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
 
         pressMenuIcon();
 
-        
+        update();
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+
+                profiloPersonaleController.initModel();
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        update();
+                    }
+                });
+            }
+        });
+
 
         return view;
     }
@@ -87,8 +114,8 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
 
     @Override
     public void onStart() {
-        profiloPersonaleController.initModel();
-        update();
+
+        //update();
         super.onStart();
     }
 
@@ -132,11 +159,29 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
     public void update(){
         View view = getFragmentView();
 
+        String username = profiloPersonaleModel.getUsername();
         TextView textView_username = view.findViewById(R.id.ProfiloPersonaleF_textView_username);
-        textView_username.setText(profiloPersonaleModel.getUsername());
+        if(username != null && !username.isEmpty()) {
+            textView_username.setBackgroundColor(Color.TRANSPARENT);
+            textView_username.setText(username);
+        }
+        else {
+            textView_username.setBackgroundColor(getResources().getColor(R.color.gray_blue));
+            textView_username.setText("");
+        }
 
+
+        String email = profiloPersonaleModel.getEmail();
         TextView textView_email = view.findViewById(R.id.ProfiloPersonaleF_textView_email);
-        textView_email.setText(profiloPersonaleModel.getEmail());
+        textView_email.setText(email);
+        if(email != null && !email.isEmpty()) {
+            textView_email.setBackgroundColor(Color.TRANSPARENT);
+            textView_email.setText(email);
+        }
+        else {
+            textView_email.setBackgroundColor(getResources().getColor(R.color.gray_blue));
+            textView_email.setText("");
+        }
 
         LinearLayout linearLayout_residence = view.findViewById(R.id.ProfiloPersonale_linearLayout_residence);
         if(profiloPersonaleModel.getPlaceOfResidence() != null) {
@@ -162,4 +207,27 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
         }
 
     }
+
+    @Override
+    public void onResume() {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+
+                profiloPersonaleController.initModel();
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        update();
+                    }
+                });
+            }
+        });
+        super.onResume();
+    }
+
 }
