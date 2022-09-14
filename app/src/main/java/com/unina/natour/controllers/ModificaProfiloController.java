@@ -35,16 +35,12 @@ public class ModificaProfiloController extends NaTourController{
         fromActivity.startActivity(intent);
     }
 
-    public static void openModificaPasswordActivity(NaTourActivity fromActivity){
-        Intent intent = new Intent(fromActivity, ModificaPasswordActivity.class);
-        fromActivity.startActivity(intent);
-    }
 
-    public static void linkFacebookAccount(){
+    public void linkFacebookAccount(){
         //TODO
     }
 
-    public static void linkGoogleAccount(){
+    public void linkGoogleAccount(){
         //TODO
     }
 

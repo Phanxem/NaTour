@@ -181,7 +181,6 @@ public class AttivaAccountController extends NaTourController{
 
     public static void openAttivaAccountActivity(NaTourActivity fromActivity, String username, String password){
         if( !(fromActivity instanceof RegistrazioneActivity) ){
-            Log.i(TAG, "open not from RegistrazioneActivity");
             Intent intentAutenticazioneActivity = new Intent(fromActivity, AutenticazioneActivity.class);
             intentAutenticazioneActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             fromActivity.startActivity(intentAutenticazioneActivity);

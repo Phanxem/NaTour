@@ -22,7 +22,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
 import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
@@ -37,17 +36,18 @@ import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindRouteException;
 import com.unina.natour.controllers.utils.GPSUtils;
 import com.unina.natour.dto.RouteDTO;
+import com.unina.natour.dto.response.ItineraryResponseDTO;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.PianificaItinerarioModel;
 import com.unina.natour.models.RouteLegModel;
 import com.unina.natour.models.dao.implementation.AddressDAOImpl;
+import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.implementation.RouteDAOImpl;
 import com.unina.natour.models.dao.interfaces.AddressDAO;
+import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 import com.unina.natour.models.dao.interfaces.RouteDAO;
-import com.unina.natour.views.activities.ImportaFileGPXActivity;
+import com.unina.natour.views.activities.ModificaItinerarioActivity;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.activities.RicercaPuntoActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.listAdapters.PuntiIntermediListAdapter;
 
 import org.osmdroid.api.IMapController;
@@ -65,6 +65,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import io.jenetics.jpx.GPX;
+import io.jenetics.jpx.WayPoint;
+
 @SuppressLint("LongLogTag")
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class PianificaItinerarioController extends NaTourController implements Parcelable{
@@ -75,6 +78,7 @@ public class PianificaItinerarioController extends NaTourController implements P
     public final static GeoPoint DEFAULT_CENTER_POINT = new GeoPoint((double) 0, (double) 0);
 
     public static final int REQUEST_CODE = 0;
+    private static final String EXTRA_ID_ITINERARY = "NEW_ITINERARY";
 
 
     RicercaPuntoController ricercaPuntoController;
@@ -87,7 +91,7 @@ public class PianificaItinerarioController extends NaTourController implements P
     PuntiIntermediListAdapter puntiIntermediListAdapter;
     PianificaItinerarioModel pianificaItinerarioModel;
 
-
+    ItineraryDAO itineraryDAO;
     RouteDAO routeDAO;
     AddressDAO addressDAO;
 
@@ -187,11 +191,51 @@ public class PianificaItinerarioController extends NaTourController implements P
                 this
         );
 
+        this.itineraryDAO = new ItineraryDAOImpl(getActivity());
         this.routeDAO = new RouteDAOImpl();
         this.addressDAO = new AddressDAOImpl();
+
+        long itineraryId = getActivity().getIntent().getLongExtra(EXTRA_ID_ITINERARY,-1);
+
+        if(itineraryId > 0) initModel(itineraryId);
     }
 
+    public void initModel(long itineraryId){
+        ItineraryResponseDTO itineraryDTO = itineraryDAO.findById(itineraryId);
 
+        GPX gpx = itineraryDTO.getGpx();
+
+
+        List<WayPoint> wayPoints = gpx.getWayPoints();
+        WayPoint startingWayPoint = wayPoints.get(0);
+        GeoPoint startingGeoPoint = new GeoPoint(startingWayPoint.getLatitude().doubleValue(),startingWayPoint.getLongitude().doubleValue());
+        try {
+            AddressModel startingPoint = addressDAO.findAddressByGeoPoint(startingGeoPoint);
+        }
+        catch (ServerException e) {
+            ExceptionHandler.handleMessageError(getMessageDialog(),e);
+        }
+        catch (IOException e) {
+            if(e instanceof UnsupportedEncodingException){
+                InvalidURLFormatException exception = new InvalidURLFormatException(e);
+                ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+                return false;
+            }
+            FailureFindAddressException exception = new FailureFindAddressException(e);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            return false;
+
+        }
+        catch (ExecutionException | InterruptedException e) {
+            NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
+            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            return false;
+        }
+
+
+        WayPoint destinationWayPoint = wayPoints.get(wayPoints.size()-1);
+
+    }
 
     public PianificaItinerarioModel getModel() {
         return pianificaItinerarioModel;
@@ -660,6 +704,11 @@ public class PianificaItinerarioController extends NaTourController implements P
     }
 
 
+    public static void openModificaItinerarioActivity(NaTourActivity fromActivity, long idItinerary){
+        Intent intent = new Intent(fromActivity, ModificaItinerarioActivity.class);
+        intent.putExtra(EXTRA_ID_ITINERARY, idItinerary);
+        fromActivity.startActivity(intent);
+    }
 
 
     protected PianificaItinerarioController(Parcel in) {
@@ -689,6 +738,8 @@ public class PianificaItinerarioController extends NaTourController implements P
 
 
     //---
+
+
 
     //TODO da modificare
 /*

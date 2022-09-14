@@ -129,6 +129,8 @@ public class ItineraryDAOImpl implements ItineraryDAO {
         return result;
     }
 
+    //TODO da implementare
+
     @Override
     public List<ElementItineraryResponseDTO> getRandomItineraryList() {
 

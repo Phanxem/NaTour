@@ -36,12 +36,7 @@ import java.util.Locale;
 public class PersonalizzaAccountInfoOpzionaliActivity extends NaTourActivity
         implements SelectCountryDialog.OnCountryListener, SelectCityDialog.OnCityListener
 {
-    public final static String PREV_ACTIVITY = "PrevActivity";
-
     private InfoOpzionaliProfiloController infoOpzionaliProfiloController;
-    //private HomeController homeController;
-
-    private MainController mainController;
 
     private ImpostaInfoOpzionaliProfiloModel impostaInfoOpzionaliProfiloModel;
 
@@ -52,9 +47,6 @@ public class PersonalizzaAccountInfoOpzionaliActivity extends NaTourActivity
         setContentView(R.layout.activity_personalizza_account_info_opzionali);
 
         infoOpzionaliProfiloController = new InfoOpzionaliProfiloController(this);
-        mainController = new MainController(this);
-        //homeController = new HomeController(this);
-
 
         impostaInfoOpzionaliProfiloModel = infoOpzionaliProfiloController.getImpostaInfoOpzionaliProfiloModel();
         impostaInfoOpzionaliProfiloModel.registerObserver(this);
@@ -69,6 +61,9 @@ public class PersonalizzaAccountInfoOpzionaliActivity extends NaTourActivity
 
 
         pressButtonNext();
+
+        infoOpzionaliProfiloController.initModel();
+        update();
     }
 
     private DatePickerDialog initDatePicker() {
@@ -158,12 +153,13 @@ public class PersonalizzaAccountInfoOpzionaliActivity extends NaTourActivity
 
                 Boolean result = infoOpzionaliProfiloController.modificaInfoOpzionali(indirizzoDiResidenza);
 
-                Intent intent = getIntent();
-                Boolean isFirstUpdate = intent.getBooleanExtra(PREV_ACTIVITY,false);
-
                 if(result){
-                    if(isFirstUpdate) MainController.openMainActivity(activity);
-                    else finish();
+                    if(infoOpzionaliProfiloController.isFirstUpdate()){
+                        MainController.openMainActivity(activity);
+                        return;
+                    }
+
+                    activity.finish();
                 }
             }
         });

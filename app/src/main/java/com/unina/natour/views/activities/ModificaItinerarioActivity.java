@@ -1,19 +1,15 @@
-package com.unina.natour.views.fragments;
+package com.unina.natour.views.activities;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.RequiresApi;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-
-import android.os.Parcelable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -22,17 +18,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.unina.natour.R;
-import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.PianificaItinerarioController;
 import com.unina.natour.controllers.SalvaItinerarioController;
 import com.unina.natour.controllers.utils.DrawableUtils;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.models.AddressModel;
-import com.unina.natour.models.RouteLegModel;
 import com.unina.natour.models.PianificaItinerarioModel;
-import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
-import com.unina.natour.views.observers.Observer;
+import com.unina.natour.models.RouteLegModel;
 
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
@@ -45,7 +37,7 @@ import org.osmdroid.views.overlay.Polyline;
 import java.util.ArrayList;
 import java.util.List;
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class PianificaItinerarioFragment extends NaTourFragment {
+public class ModificaItinerarioActivity extends NaTourActivity {
 
     MapView mapView;
     Marker selectionMarker;
@@ -57,46 +49,25 @@ public class PianificaItinerarioFragment extends NaTourFragment {
 
     PianificaItinerarioModel pianificaItinerarioModel;
 
-    public static PianificaItinerarioFragment newInstance(Parcelable controller){
-        PianificaItinerarioFragment pianificaFragment = new PianificaItinerarioFragment();
-
-        Bundle args = new Bundle();
-        args.putParcelable(MainController.KEY_CONTROLLER, controller);
-        pianificaFragment.setArguments(args);
-
-        return pianificaFragment;
-    }
-
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_pianifica_itinerario, container, false);
-        setFragmentView(view);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_pianifica_itinerario);
 
-        Bundle args = getArguments();
-        if(args != null){
-            Parcelable parcelable = args.getParcelable(MainController.KEY_CONTROLLER);
-            if(parcelable instanceof PianificaItinerarioController) {
-                this.pianificaItinerarioController = (PianificaItinerarioController) parcelable;
-            }
-        }
-        else{
-            this.pianificaItinerarioController = new PianificaItinerarioController(getNaTourActivity());
-        }
+        this.pianificaItinerarioController = new PianificaItinerarioController(this);
 
+        this.pianificaItinerarioModel = pianificaItinerarioController.getModel();
+        this.pianificaItinerarioModel.registerObserver(this);
 
-        pianificaItinerarioModel = pianificaItinerarioController.getModel();
-        pianificaItinerarioModel.registerObserver(this);
-
-        mapView = view.findViewById(R.id.InsertItinerary_mapView_mappa);
+        mapView = findViewById(R.id.InsertItinerary_mapView_mappa);
         pianificaItinerarioController.initMap(mapView);
 
 
         List<Overlay> overlays = mapView.getOverlays();
 
         selectionMarker = new Marker(mapView);
-        //selectionMarker.setIcon(getContext().getDrawable(R.drawable.ic_selected_point));
-        selectionMarker.setIcon(DrawableUtils.getBitmapWithText(getContext(), R.drawable.ic_selected_point,null));
+        selectionMarker.setIcon(DrawableUtils.getBitmapWithText(this, R.drawable.ic_selected_point, null));
         overlays.add(selectionMarker);
 
         wayPointMarkers = new FolderOverlay();
@@ -104,50 +75,25 @@ public class PianificaItinerarioFragment extends NaTourFragment {
 
         routeTracks = null;
 
-        ListView listView_puntiIntermedi = view.findViewById(R.id.InsertItinerary_listView_puntiIntermedi);
+        ListView listView_puntiIntermedi = findViewById(R.id.InsertItinerary_listView_puntiIntermedi);
         pianificaItinerarioController.initItermediatePointsList(listView_puntiIntermedi);
 
         pianificaItinerarioController.initOsmdroidConfiguration();
-
-
-
-        pressMenuIcon();
-        pressStartingPointField();
-        pressIconCancelStartingPoint();
-        pressDestinationPointField();
-        pressIconCancelDestinationPoint();
-        pressAddIntermediatePoint();
-        pressShowIntermediatePoints();
-        pressHideIntermediatePoints();
-
-        pressIconCancelPointSelectedOnMap();
-        pressButtonSetAsStartingPoint();
-        pressButtonSetAsDestinationPoint();
-        pressButtonSetAsIntermediatePoint();
-        pressButtonSave();
-
-        update();
-
-        return view;
     }
 
 
+    public void pressMenuIcon() {
+        ImageView imageView_iconMenu = findViewById(R.id.InsertItinerary_imageView_iconMenu);
 
-
-    public void pressMenuIcon(){
-        View view = getFragmentView();
-        ImageView imageView_iconMenu = view.findViewById(R.id.InsertItinerary_imageView_iconMenu);
-
-        PopupMenu popupMenu = new PopupMenu(view.getContext(),imageView_iconMenu);
+        PopupMenu popupMenu = new PopupMenu(this, imageView_iconMenu);
         popupMenu.getMenuInflater().inflate(R.menu.popup_menu_pianifica_itinerario, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                if(item.getItemId() == R.id.PianificaItinerarioF_popupMenu_importaGPX){
+                if (item.getItemId() == R.id.PianificaItinerarioF_popupMenu_importaGPX) {
                     pianificaItinerarioController.goToImportGPX();
                     return true;
-                }
-                else return false;
+                } else return false;
             }
         });
 
@@ -161,8 +107,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
 
 
     public void pressStartingPointField() {
-        View view = getFragmentView();
-        RelativeLayout relativeLayout_puntoPartenza = view.findViewById(R.id.InsertItinerary_relativeLayout_puntoPartenza);
+        RelativeLayout relativeLayout_puntoPartenza = findViewById(R.id.InsertItinerary_relativeLayout_puntoPartenza);
         relativeLayout_puntoPartenza.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,8 +117,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
     }
 
     public void pressIconCancelStartingPoint() {
-        View view = getFragmentView();
-        ImageView imageView_annullaPuntoPartenza = view.findViewById(R.id.InsertItinerary_imageView_iconClosePuntoPartenza);
+        ImageView imageView_annullaPuntoPartenza = findViewById(R.id.InsertItinerary_imageView_iconClosePuntoPartenza);
         imageView_annullaPuntoPartenza.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -184,8 +128,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
 
 
     public void pressDestinationPointField() {
-        View view = getFragmentView();
-        RelativeLayout relativeLayout_puntoDestinazione = view.findViewById(R.id.InsertItinerary_relativeLayout_puntoDestinazione);
+        RelativeLayout relativeLayout_puntoDestinazione = findViewById(R.id.InsertItinerary_relativeLayout_puntoDestinazione);
         relativeLayout_puntoDestinazione.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -195,8 +138,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
     }
 
     public void pressIconCancelDestinationPoint() {
-        View view = getFragmentView();
-        ImageView imageView_annullaPuntoDestinazione = view.findViewById(R.id.InsertItinerary_imageView_iconClosePuntoDestinzione);
+        ImageView imageView_annullaPuntoDestinazione = findViewById(R.id.InsertItinerary_imageView_iconClosePuntoDestinzione);
         imageView_annullaPuntoDestinazione.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -207,8 +149,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
 
 
     public void pressAddIntermediatePoint() {
-        View view = getFragmentView();
-        RelativeLayout relativeLayout_aggiungiPuntoIntermedio = view.findViewById(R.id.InsertItinerary_relativeLayout_aggiungiPuntoIntermedio);
+        RelativeLayout relativeLayout_aggiungiPuntoIntermedio = findViewById(R.id.InsertItinerary_relativeLayout_aggiungiPuntoIntermedio);
         relativeLayout_aggiungiPuntoIntermedio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,8 +160,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
     }
 
     public void pressShowIntermediatePoints() {
-        View view = getFragmentView();
-        RelativeLayout relativeLayout_mostraPuntiIntermedi = view.findViewById(R.id.InsertItinerary_relativeLayout_mostraPuntiIntermedi);
+        RelativeLayout relativeLayout_mostraPuntiIntermedi = findViewById(R.id.InsertItinerary_relativeLayout_mostraPuntiIntermedi);
         relativeLayout_mostraPuntiIntermedi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -230,8 +170,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
     }
 
     public void pressHideIntermediatePoints() {
-        View view = getFragmentView();
-        RelativeLayout relativeLayout_nascondiPuntiIntermedi = view.findViewById(R.id.InsertItinerary_relativeLayout_nascondiPuntiIntermedi);
+        RelativeLayout relativeLayout_nascondiPuntiIntermedi = findViewById(R.id.InsertItinerary_relativeLayout_nascondiPuntiIntermedi);
         relativeLayout_nascondiPuntiIntermedi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -242,8 +181,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
 
 
     public void pressIconCancelPointSelectedOnMap() {
-        View view = getFragmentView();
-        ImageView imageView_annullaPuntoSelezionatoDaMappa = view.findViewById(R.id.InsertItinerary_imageView_iconCloseSelectedPoint);
+        ImageView imageView_annullaPuntoSelezionatoDaMappa = findViewById(R.id.InsertItinerary_imageView_iconCloseSelectedPoint);
         imageView_annullaPuntoSelezionatoDaMappa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,8 +191,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
     }
 
     public void pressButtonSetAsStartingPoint() {
-        View view = getFragmentView();
-        Button button_impostaPuntoPartenza = view.findViewById(R.id.InsertItinerary_button_impostaPuntoPartenza);
+        Button button_impostaPuntoPartenza = findViewById(R.id.InsertItinerary_button_impostaPuntoPartenza);
         button_impostaPuntoPartenza.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -264,8 +201,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
     }
 
     public void pressButtonSetAsDestinationPoint() {
-        View view = getFragmentView();
-        Button button_impostaPuntoDestinazione = view.findViewById(R.id.InsertItinerary_button_impostaPuntoDestinazione);
+        Button button_impostaPuntoDestinazione = findViewById(R.id.InsertItinerary_button_impostaPuntoDestinazione);
         button_impostaPuntoDestinazione.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -275,8 +211,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
     }
 
     public void pressButtonSetAsIntermediatePoint() {
-        View view = getFragmentView();
-        Button button_impostaPuntoIntermedio = view.findViewById(R.id.InsertItinerary_button_impostaPuntoIntermedio);
+        Button button_impostaPuntoIntermedio = findViewById(R.id.InsertItinerary_button_impostaPuntoIntermedio);
         button_impostaPuntoIntermedio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -287,47 +222,44 @@ public class PianificaItinerarioFragment extends NaTourFragment {
 
 
     public void pressButtonSave() {
-        View view = getFragmentView();
-        NaTourActivity activity = getNaTourActivity();
-        Button button_save = view.findViewById(R.id.InsertItinerary_button_salva);
+
+        NaTourActivity activity = this;
+        Button button_save = findViewById(R.id.InsertItinerary_button_salva);
         button_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SalvaItinerarioController.openSalvaItinerarioActivity(activity,pianificaItinerarioModel.getDuration(), pianificaItinerarioModel.getDistance(), (ArrayList<AddressModel>) pianificaItinerarioModel.getInterestPoints());
+                SalvaItinerarioController.openSalvaItinerarioActivity(activity, pianificaItinerarioModel.getDuration(), pianificaItinerarioModel.getDistance(), (ArrayList<AddressModel>) pianificaItinerarioModel.getInterestPoints());
             }
         });
     }
 
 
-
-
 //---
 
-    private void showItermediatePoints(){
-        View view = getFragmentView();
-        ConstraintLayout constraintLayout_puntiIntermedi = view.findViewById(R.id.InsertItinerary_constraintLayout_puntiIntermedi);
-        if(constraintLayout_puntiIntermedi.getVisibility() == View.VISIBLE) return;
+    private void showItermediatePoints() {
 
-        RelativeLayout relativeLayout_mostraPuntiIntermedi = view.findViewById(R.id.InsertItinerary_relativeLayout_mostraPuntiIntermedi);
+        ConstraintLayout constraintLayout_puntiIntermedi = findViewById(R.id.InsertItinerary_constraintLayout_puntiIntermedi);
+        if (constraintLayout_puntiIntermedi.getVisibility() == View.VISIBLE) return;
+
+        RelativeLayout relativeLayout_mostraPuntiIntermedi = findViewById(R.id.InsertItinerary_relativeLayout_mostraPuntiIntermedi);
         relativeLayout_mostraPuntiIntermedi.setVisibility(View.GONE);
         constraintLayout_puntiIntermedi.setVisibility(View.VISIBLE);
     }
 
-    private void hideIntermediatePoints(){
-        View view = getFragmentView();
-        ConstraintLayout constraintLayout_puntiIntermedi = view.findViewById(R.id.InsertItinerary_constraintLayout_puntiIntermedi);
-        if(constraintLayout_puntiIntermedi.getVisibility() != View.VISIBLE) return;
+    private void hideIntermediatePoints() {
 
-        RelativeLayout relativeLayout_mostraPuntiIntermedi = view.findViewById(R.id.InsertItinerary_relativeLayout_mostraPuntiIntermedi);
+        ConstraintLayout constraintLayout_puntiIntermedi = findViewById(R.id.InsertItinerary_constraintLayout_puntiIntermedi);
+        if (constraintLayout_puntiIntermedi.getVisibility() != View.VISIBLE) return;
+
+        RelativeLayout relativeLayout_mostraPuntiIntermedi = findViewById(R.id.InsertItinerary_relativeLayout_mostraPuntiIntermedi);
         relativeLayout_mostraPuntiIntermedi.setVisibility(View.VISIBLE);
         constraintLayout_puntiIntermedi.setVisibility(View.GONE);
     }
 
 
-
     @Override
     public void update() {
-        getActivity().runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
@@ -351,11 +283,10 @@ public class PianificaItinerarioFragment extends NaTourFragment {
     }
 
 
-    private void updateStartingPoint(){
-        View view = getFragmentView();
-        TextView textView_puntoPartenza = view.findViewById(R.id.InsertItinerary_textView_nomePuntoPartenza);
-        ImageView imageView_annullaPuntoPartenza = view.findViewById(R.id.InsertItinerary_imageView_iconClosePuntoPartenza);
-        if (pianificaItinerarioModel.hasStartingPoint()){
+    private void updateStartingPoint() {
+        TextView textView_puntoPartenza = findViewById(R.id.InsertItinerary_textView_nomePuntoPartenza);
+        ImageView imageView_annullaPuntoPartenza = findViewById(R.id.InsertItinerary_imageView_iconClosePuntoPartenza);
+        if (pianificaItinerarioModel.hasStartingPoint()) {
             AddressModel startingPoint = pianificaItinerarioModel.getStartingPoint();
             textView_puntoPartenza.setText(startingPoint.getAddressName());
             imageView_annullaPuntoPartenza.setVisibility(View.VISIBLE);
@@ -365,11 +296,10 @@ public class PianificaItinerarioFragment extends NaTourFragment {
         imageView_annullaPuntoPartenza.setVisibility(View.GONE);
     }
 
-    private void updateDestinationPoint(){
-        View view = getFragmentView();
-        TextView textView_puntoDestinazione = view.findViewById(R.id.InsertItinerary_textView_nomePuntoDestinazione);
-        ImageView imageView_annullaPuntoDestinazione = view.findViewById(R.id.InsertItinerary_imageView_iconClosePuntoDestinzione);
-        if (pianificaItinerarioModel.hasDestinationPoint()){
+    private void updateDestinationPoint() {
+        TextView textView_puntoDestinazione = findViewById(R.id.InsertItinerary_textView_nomePuntoDestinazione);
+        ImageView imageView_annullaPuntoDestinazione = findViewById(R.id.InsertItinerary_imageView_iconClosePuntoDestinzione);
+        if (pianificaItinerarioModel.hasDestinationPoint()) {
             AddressModel destinationPoint = pianificaItinerarioModel.getDestinationPoint();
             textView_puntoDestinazione.setText(destinationPoint.getAddressName());
             imageView_annullaPuntoDestinazione.setVisibility(View.VISIBLE);
@@ -380,13 +310,12 @@ public class PianificaItinerarioFragment extends NaTourFragment {
     }
 
 
-    private void updateOptionsIntermediatePoints(){
-        View view = getFragmentView();
-        RelativeLayout relativeLayout_aggiungiPuntiIntermedi = view.findViewById(R.id.InsertItinerary_relativeLayout_aggiungiPuntoIntermedio);
-        RelativeLayout relativeLayout_mostraPuntiIntermedi = view.findViewById(R.id.InsertItinerary_relativeLayout_mostraPuntiIntermedi);
-        ConstraintLayout constraintLayout_puntiIntermedi = view.findViewById(R.id.InsertItinerary_constraintLayout_puntiIntermedi);
+    private void updateOptionsIntermediatePoints() {
+        RelativeLayout relativeLayout_aggiungiPuntiIntermedi = findViewById(R.id.InsertItinerary_relativeLayout_aggiungiPuntoIntermedio);
+        RelativeLayout relativeLayout_mostraPuntiIntermedi = findViewById(R.id.InsertItinerary_relativeLayout_mostraPuntiIntermedi);
+        ConstraintLayout constraintLayout_puntiIntermedi = findViewById(R.id.InsertItinerary_constraintLayout_puntiIntermedi);
 
-        if(!pianificaItinerarioModel.hasStartingPoint() || !pianificaItinerarioModel.hasDestinationPoint()){
+        if (!pianificaItinerarioModel.hasStartingPoint() || !pianificaItinerarioModel.hasDestinationPoint()) {
             relativeLayout_aggiungiPuntiIntermedi.setVisibility(View.GONE);
             relativeLayout_mostraPuntiIntermedi.setVisibility(View.GONE);
             constraintLayout_puntiIntermedi.setVisibility(View.GONE);
@@ -395,42 +324,42 @@ public class PianificaItinerarioFragment extends NaTourFragment {
 
         relativeLayout_aggiungiPuntiIntermedi.setVisibility(View.VISIBLE);
 
-        if(!pianificaItinerarioModel.hasIntermediatePoints()){
+        if (!pianificaItinerarioModel.hasIntermediatePoints()) {
             relativeLayout_mostraPuntiIntermedi.setVisibility(View.GONE);
             constraintLayout_puntiIntermedi.setVisibility(View.GONE);
             return;
         }
 
-        if(relativeLayout_mostraPuntiIntermedi.getVisibility() == View.GONE && constraintLayout_puntiIntermedi.getVisibility() == View.GONE){
+        if (relativeLayout_mostraPuntiIntermedi.getVisibility() == View.GONE && constraintLayout_puntiIntermedi.getVisibility() == View.GONE) {
             relativeLayout_mostraPuntiIntermedi.setVisibility(View.VISIBLE);
         }
     }
 
 
-    private void updateOptionsSelectFromMap(){
-        View view = getFragmentView();
+    private void updateOptionsSelectFromMap() {
+
         Integer indexPointSelectedOnList = pianificaItinerarioModel.getIndexPointSelected();
         AddressModel pointSelectedOnMap = pianificaItinerarioModel.getPointSelectedOnMap();
 
 
-        ConstraintLayout constraintLayout_puntiInteresse = view.findViewById(R.id.InsertItinerary_constraintLayout_puntiInteresse);
-        TextView textView_pointSelectedFromMap = view.findViewById(R.id.InsertItinerary_textView_selezionaPuntoInteressatoDaMappa);
-        ConstraintLayout constraintLayout_optionsSelectFromMap = view.findViewById(R.id.InsertItinerary_constraintLayout_opzioniSelezioneDaMappa);
-        TextView textView_namePointSelectedFromMap = view.findViewById(R.id.InsertItinerary_textView_nomeIndirizzoSelezionatoDaMappa);
+        ConstraintLayout constraintLayout_puntiInteresse = findViewById(R.id.InsertItinerary_constraintLayout_puntiInteresse);
+        TextView textView_pointSelectedFromMap = findViewById(R.id.InsertItinerary_textView_selezionaPuntoInteressatoDaMappa);
+        ConstraintLayout constraintLayout_optionsSelectFromMap = findViewById(R.id.InsertItinerary_constraintLayout_opzioniSelezioneDaMappa);
+        TextView textView_namePointSelectedFromMap = findViewById(R.id.InsertItinerary_textView_nomeIndirizzoSelezionatoDaMappa);
 
-        Button button_setAsStartingPoint = view.findViewById(R.id.InsertItinerary_button_impostaPuntoPartenza);
-        Button button_setAsDestinationPoint = view.findViewById(R.id.InsertItinerary_button_impostaPuntoDestinazione);
-        Button button_setAsIntermediatePoint = view.findViewById(R.id.InsertItinerary_button_impostaPuntoIntermedio);
+        Button button_setAsStartingPoint = findViewById(R.id.InsertItinerary_button_impostaPuntoPartenza);
+        Button button_setAsDestinationPoint = findViewById(R.id.InsertItinerary_button_impostaPuntoDestinazione);
+        Button button_setAsIntermediatePoint = findViewById(R.id.InsertItinerary_button_impostaPuntoIntermedio);
 
         //NO RETURN FROM SEARCH POINT
-        if(indexPointSelectedOnList == null){
+        if (indexPointSelectedOnList == null) {
 
             constraintLayout_puntiInteresse.setVisibility(View.VISIBLE);
             textView_pointSelectedFromMap.setVisibility(View.GONE);
 
 
             //NO ADDRESS SELECTED ON MAP
-            if(pointSelectedOnMap == null){
+            if (pointSelectedOnMap == null) {
                 constraintLayout_optionsSelectFromMap.setVisibility(View.GONE);
                 return;
             }
@@ -441,10 +370,9 @@ public class PianificaItinerarioFragment extends NaTourFragment {
 
             button_setAsStartingPoint.setVisibility(View.VISIBLE);
             button_setAsDestinationPoint.setVisibility(View.VISIBLE);
-            if(pianificaItinerarioModel.hasStartingPoint() && pianificaItinerarioModel.hasDestinationPoint()) {
+            if (pianificaItinerarioModel.hasStartingPoint() && pianificaItinerarioModel.hasDestinationPoint()) {
                 button_setAsIntermediatePoint.setVisibility(View.VISIBLE);
-            }
-            else button_setAsIntermediatePoint.setVisibility(View.GONE);
+            } else button_setAsIntermediatePoint.setVisibility(View.GONE);
             return;
         }
 
@@ -453,7 +381,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
         textView_pointSelectedFromMap.setVisibility(View.VISIBLE);
 
         //NO ADDRESS SELECTED ON MAP
-        if(pointSelectedOnMap == null){
+        if (pointSelectedOnMap == null) {
             constraintLayout_optionsSelectFromMap.setVisibility(View.GONE);
             return;
         }
@@ -462,30 +390,29 @@ public class PianificaItinerarioFragment extends NaTourFragment {
         constraintLayout_optionsSelectFromMap.setVisibility(View.VISIBLE);
         textView_namePointSelectedFromMap.setText(pointSelectedOnMap.getAddressName());
 
-        Log.d("safdfdsfsdfds",": " + indexPointSelectedOnList);
+        Log.d("safdfdsfsdfds", ": " + indexPointSelectedOnList);
 
         //IL PUNTO SELEZIONATO E' IL PUNTO INIZIALE
-        if(indexPointSelectedOnList == PianificaItinerarioController.STARTING_POINT_CODE){
+        if (indexPointSelectedOnList == PianificaItinerarioController.STARTING_POINT_CODE) {
             Log.d("testGSDFDFSD", "STARTING POINT");
             button_setAsStartingPoint.setVisibility(View.VISIBLE);
             button_setAsDestinationPoint.setVisibility(View.GONE);
             button_setAsIntermediatePoint.setVisibility(View.GONE);
         }
         //IL PUNTO SELEZIONATO E' IL PUNTO DI DESTINAZIONE
-        else if(indexPointSelectedOnList == PianificaItinerarioController.DESTINATION_POINT_CODE){
+        else if (indexPointSelectedOnList == PianificaItinerarioController.DESTINATION_POINT_CODE) {
             Log.d("testGSDFDFSD", "DESTINATION POINT");
             button_setAsStartingPoint.setVisibility(View.GONE);
             button_setAsDestinationPoint.setVisibility(View.VISIBLE);
             button_setAsIntermediatePoint.setVisibility(View.GONE);
         }
         //IL PUNTO SELEZIONATO E' UN PUNTO INTERMEDIO (GIA' ESISTENTE OPPURE NUOVO)
-        else if(pianificaItinerarioModel.isValidIndexPoint(indexPointSelectedOnList)){
+        else if (pianificaItinerarioModel.isValidIndexPoint(indexPointSelectedOnList)) {
             Log.d("testGSDFDFSD", "INTERMEDIATE POINT");
             button_setAsStartingPoint.setVisibility(View.GONE);
             button_setAsDestinationPoint.setVisibility(View.GONE);
             button_setAsIntermediatePoint.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             Log.d("testGSDFDFSD", "error");
             //todo errore
             return;
@@ -493,25 +420,25 @@ public class PianificaItinerarioFragment extends NaTourFragment {
     }
 
 
-    private void updateOptionsSaveItinerary(){
-        View view = getFragmentView();
-        Button button_save = view.findViewById(R.id.InsertItinerary_button_salva);
-        ConstraintLayout constraintLayout_durationLenght = view.findViewById(R.id.ListElementItinerary_constraintLayout_durationDistanceDifficulty);
+    private void updateOptionsSaveItinerary() {
 
-        if(pianificaItinerarioModel.hasStartingPoint() && pianificaItinerarioModel.hasDestinationPoint()){
+        Button button_save = findViewById(R.id.InsertItinerary_button_salva);
+        ConstraintLayout constraintLayout_durationLenght = findViewById(R.id.ListElementItinerary_constraintLayout_durationDistanceDifficulty);
+
+        if (pianificaItinerarioModel.hasStartingPoint() && pianificaItinerarioModel.hasDestinationPoint()) {
             button_save.setVisibility(View.VISIBLE);
 
             float duration = 0;
             float distance = 0;
 
             List<RouteLegModel> routeLegs = pianificaItinerarioModel.getRouteLegs();
-            for(RouteLegModel routeLeg : routeLegs){
+            for (RouteLegModel routeLeg : routeLegs) {
                 duration = duration + routeLeg.getDuration();
                 distance = distance + routeLeg.getDistance();
             }
 
-            TextView textView_duration = view.findViewById(R.id.ListElementItinerary_textView_duration);
-            TextView textView_distance = view.findViewById(R.id.ListElementItinerary_textView_distance);
+            TextView textView_duration = findViewById(R.id.ListElementItinerary_textView_duration);
+            TextView textView_distance = findViewById(R.id.ListElementItinerary_textView_distance);
 
             textView_duration.setText(TimeUtils.toDurationString(duration));
 
@@ -525,10 +452,10 @@ public class PianificaItinerarioFragment extends NaTourFragment {
         constraintLayout_durationLenght.setVisibility(View.GONE);
     }
 
-    private void updateMapWithPointSelectedOnMapMarker(){
+    private void updateMapWithPointSelectedOnMapMarker() {
         AddressModel pointSelectedOnMap = pianificaItinerarioModel.getPointSelectedOnMap();
 
-        if(pointSelectedOnMap == null) {
+        if (pointSelectedOnMap == null) {
             selectionMarker.setVisible(false);
             return;
         }
@@ -539,30 +466,30 @@ public class PianificaItinerarioFragment extends NaTourFragment {
         selectionMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
     }
 
-    private void updateMapWithWaypointMarkers(){
+    private void updateMapWithWaypointMarkers() {
         wayPointMarkers.getItems().clear();
 
-        if(pianificaItinerarioModel.hasStartingPoint()){
+        if (pianificaItinerarioModel.hasStartingPoint()) {
             Marker markerStartingPoint = generateInterestPointMarker(PianificaItinerarioController.STARTING_POINT_CODE);
             wayPointMarkers.add(markerStartingPoint);
         }
-        if(pianificaItinerarioModel.hasIntermediatePoints()){
+        if (pianificaItinerarioModel.hasIntermediatePoints()) {
 
             List<AddressModel> intermediatePoints = pianificaItinerarioModel.getIntermediatePoints();
 
-            for(int i = 0; i < intermediatePoints.size(); i++){
+            for (int i = 0; i < intermediatePoints.size(); i++) {
                 Marker markerIntermediatePoint = generateInterestPointMarker(i);
                 wayPointMarkers.add(markerIntermediatePoint);
             }
         }
-        if(pianificaItinerarioModel.hasDestinationPoint()){
+        if (pianificaItinerarioModel.hasDestinationPoint()) {
             Marker markerDestinationPoint = generateInterestPointMarker(PianificaItinerarioController.DESTINATION_POINT_CODE);
             wayPointMarkers.add(markerDestinationPoint);
         }
 
     }
 
-    private void updateMapWithRoutes(){
+    private void updateMapWithRoutes() {
 
         List<Overlay> mapOverlays = mapView.getOverlays();
         if (routeTracks != null) {
@@ -574,7 +501,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
         if (route == null || route.isEmpty()) return;
 
         routeTracks = new ArrayList<Polyline>();
-        for(RouteLegModel routeLeg: route){
+        for (RouteLegModel routeLeg : route) {
             List<GeoPoint> geoPoints = routeLeg.getTrack();
             Polyline polyline = new Polyline();
             polyline.setPoints(geoPoints);
@@ -582,7 +509,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
             mapOverlays.add(1, polyline);
         }
 
-        for(int i = 0; i < routeTracks.size(); i++){
+        for (int i = 0; i < routeTracks.size(); i++) {
             Paint paint = routeTracks.get(i).getOutlinePaint();
             paint.setColor(0x800000FF);//blue
             paint.setStrokeWidth(10.0F);
@@ -590,25 +517,23 @@ public class PianificaItinerarioFragment extends NaTourFragment {
     }
 
 
+    private void centerMapToSeeMarkers() {
 
-    private void centerMapToSeeMarkers(){
-
-        if(pianificaItinerarioModel.getPointSelectedOnMap() != null){
+        if (pianificaItinerarioModel.getPointSelectedOnMap() != null) {
             return;
         }
 
-        if(pianificaItinerarioModel.hasStartingPoint() && pianificaItinerarioModel.hasDestinationPoint()){
+        if (pianificaItinerarioModel.hasStartingPoint() && pianificaItinerarioModel.hasDestinationPoint()) {
             BoundingBox boundingBox = generateBoundingBoxWithAllMarkers();
 
             Log.i(TAG, "north: " + boundingBox.getLatNorth() + "\nest: " + boundingBox.getLonEast() + "\nsud: " + boundingBox.getLatSouth() + "\nwest: " + boundingBox.getLonWest());
 
             mapView.zoomToBoundingBox(boundingBox, true);
-        }
-
-        else if (pianificaItinerarioModel.hasStartingPoint() || pianificaItinerarioModel.hasDestinationPoint()) {
+        } else if (pianificaItinerarioModel.hasStartingPoint() || pianificaItinerarioModel.hasDestinationPoint()) {
             AddressModel address;
 
-            if (pianificaItinerarioModel.hasStartingPoint()) address = pianificaItinerarioModel.getStartingPoint();
+            if (pianificaItinerarioModel.hasStartingPoint())
+                address = pianificaItinerarioModel.getStartingPoint();
             else address = pianificaItinerarioModel.getDestinationPoint();
 
             GeoPoint geoPoint = address.getPoint();
@@ -618,26 +543,24 @@ public class PianificaItinerarioFragment extends NaTourFragment {
     }
 
 
-    private Marker generateInterestPointMarker(int index){
+    private Marker generateInterestPointMarker(int index) {
         Marker marker = new Marker(mapView);
 
         String stringIndex;
         AddressModel address;
 
-        if(index == PianificaItinerarioController.STARTING_POINT_CODE){
+        if (index == PianificaItinerarioController.STARTING_POINT_CODE) {
             stringIndex = "S";
             address = pianificaItinerarioModel.getStartingPoint();
-        }
-        else if(index == PianificaItinerarioController.DESTINATION_POINT_CODE){
+        } else if (index == PianificaItinerarioController.DESTINATION_POINT_CODE) {
             stringIndex = "D";
             address = pianificaItinerarioModel.getDestinationPoint();
-        }
-        else{
-            stringIndex = String.valueOf(index+1);
+        } else {
+            stringIndex = String.valueOf(index + 1);
             address = pianificaItinerarioModel.getIntermediatePoint(index);
         }
 
-        marker.setIcon(DrawableUtils.getBitmapWithText(getContext(), R.drawable.ic_waypoint,stringIndex));
+        marker.setIcon(DrawableUtils.getBitmapWithText(this, R.drawable.ic_waypoint, stringIndex));
         marker.setVisible(true);
         marker.setPosition(address.getPoint());
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
@@ -645,17 +568,17 @@ public class PianificaItinerarioFragment extends NaTourFragment {
         return marker;
     }
 
-    public BoundingBox generateBoundingBoxWithAllMarkers(){
+    public BoundingBox generateBoundingBoxWithAllMarkers() {
         List<Overlay> items = wayPointMarkers.getItems();
         List<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
 
-        if(items == null || items.isEmpty()){
+        if (items == null || items.isEmpty()) {
             BoundingBox boundingBox = new BoundingBox();
             return boundingBox;
         }
 
         List<AddressModel> addresses = pianificaItinerarioModel.getInterestPoints();
-        for(AddressModel address: addresses) geoPoints.add(address.getPoint());
+        for (AddressModel address : addresses) geoPoints.add(address.getPoint());
 
 
         BoundingBox boundingBox = BoundingBox.fromGeoPoints(geoPoints);

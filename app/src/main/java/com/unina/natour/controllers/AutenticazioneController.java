@@ -30,7 +30,6 @@ public class AutenticazioneController extends NaTourController{
 
 
     public Boolean signIn(String usernameEmail, String password) {
-
         if(!ExceptionHandler.areAllFieldsFull(usernameEmail,password)){
             EmptyFieldUsernameEmailException exception = new EmptyFieldUsernameEmailException();
             ExceptionHandler.handleMessageError(getMessageDialog(), exception);

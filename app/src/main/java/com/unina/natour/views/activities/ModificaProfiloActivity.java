@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.unina.natour.R;
 //TODO da aggiustare (capire perché da errore se si importa solo la classe interessata)
 import com.unina.natour.controllers.*;
+import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.models.ProfiloPersonaleModel;
 
 import org.w3c.dom.Text;
@@ -41,7 +42,10 @@ public class ModificaProfiloActivity extends NaTourActivity {
 
         profiloPersonaleController.initModel();
 
+        pressIconBack();
         pressTextUpdateImage();
+        pressTextUpdateOptionalInfo();
+        pressTextUpdatePassword();
 
         update();
     }
@@ -69,21 +73,25 @@ public class ModificaProfiloActivity extends NaTourActivity {
     }
 
     public void pressTextUpdateOptionalInfo(){
+        NaTourActivity activity = this;
+
         TextView textView_updateOptionalInfo = findViewById(R.id.ModificaProfilo_textView_modificaOptionalInfo);
         textView_updateOptionalInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                InfoOpzionaliProfiloController.openPersonalizzaAccountInfoOpzionaliActivity(activity);
             }
         });
     }
 
     public void pressTextUpdatePassword(){
+        NaTourActivity activity = this;
+
         TextView textView_updatePassword = findViewById(R.id.ModificaProfilo_textView_modificaPassword);
         textView_updatePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                ModificaPasswordController.openModificaPasswordActivity(activity);
             }
         });
     }
@@ -93,7 +101,7 @@ public class ModificaProfiloActivity extends NaTourActivity {
         button_facebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                modificaProfiloController.linkFacebookAccount();
             }
         });
     }
@@ -103,7 +111,7 @@ public class ModificaProfiloActivity extends NaTourActivity {
         button_google.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                modificaProfiloController.linkGoogleAccount();
             }
         });
     }
@@ -117,7 +125,7 @@ public class ModificaProfiloActivity extends NaTourActivity {
 
         TextView textView_dateOfBirth = findViewById(R.id.ModificaProfilo_textView_dataNascita);
         String dateOfBirth = profiloPersonaleModel.getDateOfBirth();
-        if(dateOfBirth != null || dateOfBirth.isEmpty()) textView_dateOfBirth.setText(profiloPersonaleModel.getDateOfBirth());
+        if(dateOfBirth != null || dateOfBirth.isEmpty()) textView_dateOfBirth.setText(TimeUtils.getDateWithoutHours(dateOfBirth));
         else textView_dateOfBirth.setText(getString(R.string.ModificaProfilo_textView_dataNascita_null));
 
         TextView textView_placeOfResidence = findViewById(R.id.ModificaProfilo_textView_luogoResidenza);
