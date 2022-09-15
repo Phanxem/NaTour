@@ -133,6 +133,7 @@ public class ProfiloPersonaleController extends NaTourController {
 
     }
 
+
     public ProfiloPersonaleModel getModel() {
         return profiloPersonaleModel;
     }

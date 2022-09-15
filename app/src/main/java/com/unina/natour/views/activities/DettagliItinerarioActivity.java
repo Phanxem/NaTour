@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.unina.natour.R;
 import com.unina.natour.controllers.DettagliItinerarioController;
 import com.unina.natour.controllers.PianificaItinerarioController;
+import com.unina.natour.controllers.SegnalaItinerarioController;
+import com.unina.natour.controllers.VisualizzaSegnalazioniController;
 import com.unina.natour.controllers.utils.DrawableUtils;
 import com.unina.natour.models.DettagliItinerarioModel;
 import com.unina.natour.views.dialogs.EliminaItinerarioDialog;
@@ -77,6 +79,7 @@ public class DettagliItinerarioActivity extends NaTourActivity {
         dettagliItinerarioController.initOsmdroidConfiguration();
 
         initUI();
+        update();
 
         pressIconBack();
         pressButtonNavigation();
@@ -124,7 +127,7 @@ public class DettagliItinerarioActivity extends NaTourActivity {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     if(item.getItemId() == R.id.DettagliItinerario_popupMenu_segnala){
-                        //TODO
+                        SegnalaItinerarioController.openSegnalaItinerarioActivity(activity,dettagliItinerarioModel.getItineraryId());
                         return true;
                     }
                     else return false;
@@ -143,11 +146,13 @@ public class DettagliItinerarioActivity extends NaTourActivity {
     }
 
     public void pressWarning(){
+        NaTourActivity activity = this;
+
         RelativeLayout relativeLayout_warning = findViewById(R.id.ItineraryDetails_relativeLayout_warning);
         relativeLayout_warning.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
+                VisualizzaSegnalazioniController.openVisualizzaSegnalazioniActivity(activity,dettagliItinerarioModel.getItineraryId());
             }
         });
     }
@@ -158,6 +163,10 @@ public class DettagliItinerarioActivity extends NaTourActivity {
             @Override
             public void onClick(View v) {
                 dettagliItinerarioController.activeNavigation();
+                mapView.getController().zoomTo(15d, 1500l);
+                mapView.getController().setCenter(dettagliItinerarioModel.getCurrentLocation());
+                mapView.getController().animateTo(dettagliItinerarioModel.getCurrentLocation());
+
             }
         });
     }
@@ -182,12 +191,33 @@ public class DettagliItinerarioActivity extends NaTourActivity {
         super.onBackPressed();
     }
 
+    public void initUI(){
+        TextView textView_name = findViewById(R.id.ItineraryDetails_textView_name);
+        textView_name.setText(dettagliItinerarioModel.getName());
+
+        TextView textView_duration = findViewById(R.id.ItineraryDetails_textView_duration);
+        textView_duration.setText(dettagliItinerarioModel.getDuration());
+
+        TextView textView_lenght = findViewById(R.id.ItineraryDetails_textView_distance);
+        textView_lenght.setText(dettagliItinerarioModel.getLenght());
+
+        TextView textView_difficulty = findViewById(R.id.ItineraryDetails_textView_difficulty);
+        textView_difficulty.setText(dettagliItinerarioModel.getDifficulty());
+
+        TextView textView_description = findViewById(R.id.ItineraryDetails_textView_descrizione);
+        textView_description.setText(dettagliItinerarioModel.getDescription());
+
+        updateMapWithRoutes();
+        updateMapWithWaypointMarkers();
+        centerMapToSeeMarkers();
+    }
+
     public void update(){
+        RelativeLayout relativeLayout_warning = findViewById(R.id.ItineraryDetails_relativeLayout_warning);
         ConstraintLayout constraintLayout_durationDistanceDifficulty = findViewById(R.id.ItineraryDetails_constraintLayout_durationDistanceDifficulty);
         ScrollView scrollView_body = findViewById(R.id.ItineraryDetails_scrollView_body);
         ImageView imageView_back = findViewById(R.id.ItineraryDetails_imageView_iconaIndietro);
         ImageView imageView_menu = findViewById(R.id.ItineraryDetails_imageView_iconaMenu);
-        RelativeLayout relativeLayout_warning = findViewById(R.id.ItineraryDetails_relativeLayout_warning);
 
         Button button_close = findViewById(R.id.ItineraryDetails_button_close);
 
@@ -212,7 +242,9 @@ public class DettagliItinerarioActivity extends NaTourActivity {
             scrollView_body.setVisibility(View.VISIBLE);
             imageView_back.setVisibility(View.VISIBLE);
             imageView_menu.setVisibility(View.VISIBLE);
-            relativeLayout_warning.setVisibility(View.VISIBLE);
+
+            if(dettagliItinerarioModel.hasBeenReported())relativeLayout_warning.setVisibility(View.VISIBLE);
+            else relativeLayout_warning.setVisibility(View.GONE);
 
             button_close.setVisibility(View.GONE);
         }
@@ -220,37 +252,6 @@ public class DettagliItinerarioActivity extends NaTourActivity {
         mapView.invalidate();
     }
 
-    public void initUI(){
-
-        RelativeLayout relativeLayout_warning = findViewById(R.id.ItineraryDetails_relativeLayout_warning);
-        if(dettagliItinerarioModel.hasBeenReported()){
-            relativeLayout_warning.setVisibility(View.VISIBLE);
-        }
-        else{
-            relativeLayout_warning.setVisibility(View.GONE);
-        }
-
-        TextView textView_name = findViewById(R.id.ItineraryDetails_textView_name);
-        textView_name.setText(dettagliItinerarioModel.getName());
-
-        TextView textView_duration = findViewById(R.id.ItineraryDetails_textView_duration);
-        textView_duration.setText(dettagliItinerarioModel.getDuration());
-
-        TextView textView_lenght = findViewById(R.id.ItineraryDetails_textView_distance);
-        textView_lenght.setText(dettagliItinerarioModel.getLenght());
-
-        TextView textView_difficulty = findViewById(R.id.ItineraryDetails_textView_difficulty);
-        textView_difficulty.setText(dettagliItinerarioModel.getDifficulty());
-
-        TextView textView_description = findViewById(R.id.ItineraryDetails_textView_descrizione);
-        textView_description.setText(dettagliItinerarioModel.getDescription());
-
-        updateMapWithRoutes();
-        updateMapWithWaypointMarkers();
-        centerMapToSeeMarkers();
-
-        mapView.invalidate();
-    }
 
     private void updateMapWithWaypointMarkers(){
 
@@ -314,6 +315,14 @@ public class DettagliItinerarioActivity extends NaTourActivity {
 
 
         return boundingBox;
+    }
+
+    @Override
+    protected void onResume() {
+        dettagliItinerarioController.initModel();
+        initUI();
+        update();
+        super.onResume();
     }
 
 }

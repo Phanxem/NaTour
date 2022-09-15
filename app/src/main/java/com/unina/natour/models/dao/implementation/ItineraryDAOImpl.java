@@ -224,7 +224,7 @@ public class ItineraryDAOImpl implements ItineraryDAO {
         //dto.setDescription("sedano armato");
         dto.setDifficulty(1);
         dto.setId(44);
-        dto.setHasBeenReported(false);
+        dto.setHasBeenReported(true);
         dto.setLenght(6666f);
         dto.setDuration(77777f);
 

@@ -46,6 +46,8 @@
     <string name="ModificaProfilo_textView_dataNascita_null">Non specificata</string>
     <string name="ModificaProfilo_textView_luogoResidenza_null">Non specificato</string>
 
+    <string name="DettagliItinerarioDialog_textView_lontanoDalPercorso">Attenzione, sei abbastanza lontando dal percorso.</string>
+
 
     <!-- TODO: Exception Messages -->
 

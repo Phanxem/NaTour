@@ -166,7 +166,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
             textView_username.setText(username);
         }
         else {
-            textView_username.setBackgroundColor(getResources().getColor(R.color.gray_blue));
+            textView_username.setBackgroundColor(Color.GRAY);
             textView_username.setText("");
         }
 
@@ -179,7 +179,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
             textView_email.setText(email);
         }
         else {
-            textView_email.setBackgroundColor(getResources().getColor(R.color.gray_blue));
+            textView_email.setBackgroundColor(Color.GRAY);
             textView_email.setText("");
         }
 

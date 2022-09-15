@@ -97,6 +97,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
         selectionMarker = new Marker(mapView);
         //selectionMarker.setIcon(getContext().getDrawable(R.drawable.ic_selected_point));
         selectionMarker.setIcon(DrawableUtils.getBitmapWithText(getContext(), R.drawable.ic_selected_point,null));
+        selectionMarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
         overlays.add(selectionMarker);
 
         wayPointMarkers = new FolderOverlay();
@@ -612,7 +613,9 @@ public class PianificaItinerarioFragment extends NaTourFragment {
             else address = pianificaItinerarioModel.getDestinationPoint();
 
             GeoPoint geoPoint = address.getPoint();
+            mapView.getController().zoomTo(15d, 1500l);
             mapView.getController().setCenter(geoPoint);
+            mapView.getController().animateTo(geoPoint);
         }
 
     }
@@ -638,9 +641,10 @@ public class PianificaItinerarioFragment extends NaTourFragment {
         }
 
         marker.setIcon(DrawableUtils.getBitmapWithText(getContext(), R.drawable.ic_waypoint,stringIndex));
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         marker.setVisible(true);
         marker.setPosition(address.getPoint());
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+
 
         return marker;
     }
