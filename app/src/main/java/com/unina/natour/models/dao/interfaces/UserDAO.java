@@ -16,7 +16,7 @@ public interface UserDAO extends ServerDAO{
     UserDTO getUser(String username) throws ExecutionException, InterruptedException, ServerException, IOException;
     //UserDTO getUser(long id);
 
-    Bitmap getUserProfileImage(String username) throws ExecutionException, InterruptedException, ServerException, IOException;
+    //Bitmap getUserProfileImage(String username) throws ExecutionException, InterruptedException, ServerException, IOException;
     //File getUserProfileImage(long id);
 
 

@@ -102,6 +102,7 @@ public class ProfiloPersonaleController extends NaTourController {
 
 
         Bitmap profileImage = null;
+        /*
         try {
             profileImage = userDAO.getUserProfileImage(username);
         } catch (ExecutionException | InterruptedException e) {
@@ -116,7 +117,7 @@ public class ProfiloPersonaleController extends NaTourController {
             ExceptionHandler.handleMessageError(getMessageDialog(), exception);
             return;
         }
-
+*/
 
         profiloPersonaleModel.setEmail(email);
 

@@ -86,9 +86,9 @@ public class ListaItinerariController extends NaTourController{
         this.itineraryListAdapter = new ItineraryListAdapter(getActivity(),elementsItineraryModel, doBelongToSameUser);
     }
 
-    public void initItineraryList(NestedScrollView nestedScrollView_itineraries,
-                                  RecyclerView recyclerView_itineraries,
-                                  ProgressBar progressBar_itineraries)
+    public void initList(NestedScrollView nestedScrollView_itineraries,
+                         RecyclerView recyclerView_itineraries,
+                         ProgressBar progressBar_itineraries)
     {
         recyclerView_itineraries.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView_itineraries.setAdapter(itineraryListAdapter);

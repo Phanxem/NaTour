@@ -27,7 +27,7 @@ public class HomeGuestActivity extends NaTourActivity{
         NestedScrollView nestedScrollView_itineraries = findViewById(R.id.HomeF_nestedScrollView_itinerari);
         ProgressBar progressBar_itinearies = findViewById(R.id.HomeF_progressBar_itinerari);
 
-        listaItinerariController.initItineraryList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
+        listaItinerariController.initList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
 
     }
 }

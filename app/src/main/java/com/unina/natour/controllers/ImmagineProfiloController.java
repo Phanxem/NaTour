@@ -29,6 +29,7 @@ import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedGetUserProfileImageException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedUpdateProfileImageException;
 import com.unina.natour.dto.MessageDTO;
+import com.unina.natour.dto.UserDTO;
 import com.unina.natour.models.ImpostaImmagineProfiloModel;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
@@ -118,6 +119,10 @@ public class ImmagineProfiloController extends NaTourController{
         //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
         String username = "user";
 
+        UserDTO userDTO = null;
+
+/*
+
         Bitmap profileImage = null;
 
         try {
@@ -136,6 +141,8 @@ public class ImmagineProfiloController extends NaTourController{
         }
 
         impostaImmagineProfiloModel.setProfileImage(profileImage);
+        */
+
     }
 
     public ImpostaImmagineProfiloModel getImpostaImmagineProfiloModel() {

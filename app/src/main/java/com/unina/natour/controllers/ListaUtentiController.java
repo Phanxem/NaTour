@@ -61,7 +61,7 @@ public class ListaUtentiController extends NaTourController{
     }
 
     public void initModel(long researchCode, String researchString){
-        List<UserDTO> usersDTO;
+        List<UserDTO> usersDTO = null;
 
         if(researchCode == CODE_USER_WITH_CONVERSATION){
             usersDTO = userDAO.getUserWithConversation();
@@ -79,7 +79,9 @@ public class ListaUtentiController extends NaTourController{
 
 
         for(UserDTO element: usersDTO){
+
             Bitmap profileImage = null;
+            /*
             try {
                 profileImage = userDAO.getUserProfileImage(element.getUsername());
             } catch (ExecutionException | InterruptedException e) {
@@ -94,7 +96,7 @@ public class ListaUtentiController extends NaTourController{
                 ExceptionHandler.handleMessageError(getMessageDialog(), exception);
                 return;
             }
-
+*/
             ElementUserModel modelElement = toModel(element, profileImage);
             elementsUserModel.add(modelElement);
         }
@@ -102,7 +104,7 @@ public class ListaUtentiController extends NaTourController{
         this.userListAdapter = new UserListAdapter(getActivity(),elementsUserModel);
     }
 
-    public void initList(RecyclerView recyclerView_users, NestedScrollView nestedScrollView_users, ProgressBar progressBar_users) {
+    public void initList(NestedScrollView nestedScrollView_users, RecyclerView recyclerView_users, ProgressBar progressBar_users) {
         recyclerView_users.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView_users.setAdapter(userListAdapter);
 
@@ -134,6 +136,7 @@ public class ListaUtentiController extends NaTourController{
                     for(UserDTO element: usersDTO){
 
                         Bitmap profileImage = null;
+                        /*
                         try {
                             profileImage = userDAO.getUserProfileImage(element.getUsername());
                         } catch (ExecutionException | InterruptedException e) {
@@ -148,7 +151,7 @@ public class ListaUtentiController extends NaTourController{
                             ExceptionHandler.handleMessageError(getMessageDialog(), exception);
                             return;
                         }
-
+*/
                         ElementUserModel modelElement = toModel(element, profileImage);
                         nextPageElements.add(modelElement);
                     }

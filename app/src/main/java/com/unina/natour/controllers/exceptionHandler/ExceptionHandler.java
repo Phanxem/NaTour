@@ -55,7 +55,13 @@ public class ExceptionHandler {
 
     }
 
+    public void handleMessageError(MessageDialog messageDialog){
+        NaTourActivity activity = messageDialog.getNaTourActivity();
 
+        String defaultMessage = activity.getString(R.string.UnknownException);
+        messageDialog.setMessage(defaultMessage);
+        messageDialog.showOverUi();
+    }
 
 
 

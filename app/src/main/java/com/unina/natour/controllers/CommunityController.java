@@ -19,9 +19,10 @@ public class CommunityController extends NaTourController {
         super(activity);
 
         this.listaUtentiController = new ListaUtentiController(activity, ListaUtentiController.CODE_USER_WITH_CONVERSATION, null);
+        throw new NullPointerException();
     }
 
-    public void searchItinerary(String searchString){
+    public void searchUser(String searchString){
         listaUtentiController.updateList(listaUtentiController.CODE_USER_BY_RESEARCH, searchString);
     }
 
@@ -36,4 +37,6 @@ public class CommunityController extends NaTourController {
     public void setListaUtentiController(ListaUtentiController listaUtentiController) {
         this.listaUtentiController = listaUtentiController;
     }
+
+
 }

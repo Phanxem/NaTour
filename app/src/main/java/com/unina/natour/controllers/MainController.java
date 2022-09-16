@@ -2,7 +2,9 @@ package com.unina.natour.controllers;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import com.unina.natour.views.activities.MainActivity;

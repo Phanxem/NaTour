@@ -5,10 +5,8 @@ import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.widget.NestedScrollView;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,15 +17,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.material.internal.VisibilityAwareImageButton;
 import com.unina.natour.R;
-import com.unina.natour.controllers.DettagliItinerarioController;
 import com.unina.natour.controllers.HomeController;
 import com.unina.natour.controllers.ListaItinerariController;
-import com.unina.natour.controllers.MainController;
-import com.unina.natour.views.dialogs.MessageDialog;
-
-import org.osmdroid.util.GeoPoint;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class HomeFragment extends NaTourFragment {
@@ -70,7 +62,7 @@ public class HomeFragment extends NaTourFragment {
         NestedScrollView nestedScrollView_itineraries = view.findViewById(R.id.HomeF_nestedScrollView_itinerari);
         ProgressBar progressBar_itinearies = view.findViewById(R.id.HomeF_progressBar_itinerari);
 
-        listaItinerariController.initItineraryList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
+        listaItinerariController.initList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
 
         searchFromSearchBar();
         pressIconCancel();
@@ -94,7 +86,7 @@ public class HomeFragment extends NaTourFragment {
                     String searchString = editText_barraRicerca.getText().toString();
                     if(searchString != null && !searchString.isEmpty()) {
                         homeController.searchItinerary(searchString);
-                        listaItinerariController.initItineraryList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
+                        listaItinerariController.initList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
 
                         editText_barraRicerca.onEditorAction(EditorInfo.IME_ACTION_DONE);
                         textView_potrebbeInteressarti.setVisibility(View.GONE);
@@ -119,7 +111,7 @@ public class HomeFragment extends NaTourFragment {
             @Override
             public void onClick(View v) {
                 homeController.cancelReseach();
-                listaItinerariController.initItineraryList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
+                listaItinerariController.initList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
 
                 editText_barraRicerca.setText("");
                 textView_potrebbeInteressarti.setVisibility(View.VISIBLE);

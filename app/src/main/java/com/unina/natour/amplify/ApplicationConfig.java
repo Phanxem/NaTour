@@ -13,12 +13,17 @@ import com.amplifyframework.AmplifyException;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.core.Amplify;
+import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.exceptionHandler.exceptions.AppException;
+import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
+import com.unina.natour.views.activities.NaTourActivity;
+import com.unina.natour.views.dialogs.MessageDialog;
 
 public class ApplicationConfig extends Application {
 
     private final static String TAG = "ApplicationConfig";
 
-    private Activity currentActivity;
+    private NaTourActivity currentActivity;
 
     public void onCreate() {
         super.onCreate();
@@ -35,13 +40,16 @@ public class ApplicationConfig extends Application {
 
         Application.ActivityLifecycleCallbacks activityLifecycleCallbacks = generateActivityLifecycleCallbacks();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
+
+        //Thread.setDefaultUncaughtExceptionHandler(generateUncaughtExcetionHandler());
+
     }
 
     public Activity getCurrentActivity() {
         return currentActivity;
     }
 
-    public void setCurrentActivity(Activity currentActivity) {
+    public void setCurrentActivity(NaTourActivity currentActivity) {
         this.currentActivity = currentActivity;
     }
 
@@ -64,7 +72,13 @@ public class ApplicationConfig extends Application {
             @Override
             public void onActivityResumed(@NonNull Activity activity) {
                 Log.i(TAG, "onActivityResumed");
-                currentActivity = activity;
+                if(activity instanceof NaTourActivity){
+                    currentActivity = (NaTourActivity) activity;
+
+                }
+
+
+                //currentActivity = activity;
             }
 
             @Override
@@ -91,4 +105,50 @@ public class ApplicationConfig extends Application {
 
         return result;
     }
+
+    /*
+    private Thread.UncaughtExceptionHandler generateUncaughtExcetionHandler(){
+        Thread.UncaughtExceptionHandler uncaughtExceptionHandler = new Thread.UncaughtExceptionHandler(){
+
+            ExceptionHandler exceptionHandler = new ExceptionHandler();
+
+            @Override
+            public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
+                //Log.e(TAG,"TestGlobalExceptionHandler", e);
+
+                Log.i(TAG,"pij o cazz mm'occ strunzz");
+
+                MessageDialog messageDialog = new MessageDialog();
+                messageDialog.setNaTourActivity(currentActivity);
+
+                if(e instanceof AmplifyException){
+                    AmplifyException ex = (AmplifyException) e;
+                    exceptionHandler.handleMessageError(messageDialog,ex);
+                    return;
+                }
+                if(e instanceof ServerException){
+                    ServerException ex = (ServerException) e;
+                    exceptionHandler.handleMessageError(messageDialog,ex);
+                    return;
+                }
+                if(e instanceof AppException){
+                    AppException ex = (AppException) e;
+                    exceptionHandler.handleMessageError(messageDialog,ex);
+                    return;
+                }
+                else{
+                    exceptionHandler.handleMessageError(messageDialog);
+                }
+
+
+
+                //exceptionHandler.handleMessageError(messageDialog);
+            }
+        };
+
+        return uncaughtExceptionHandler;
+    }
+*/
+
+
 }

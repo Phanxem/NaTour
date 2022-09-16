@@ -1,11 +1,14 @@
 package com.unina.natour.dto;
 
+import android.graphics.Bitmap;
+
 import java.util.Date;
 
 public class UserDTO {
 
     private Long id;
     private String username;
+    private Bitmap profileImage;
     private String placeOfResidence;
     private String dateOfBirth;
 
@@ -29,6 +32,14 @@ public class UserDTO {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Bitmap getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(Bitmap profileImage) {
+        this.profileImage = profileImage;
     }
 
     public String getPlaceOfResidence() {

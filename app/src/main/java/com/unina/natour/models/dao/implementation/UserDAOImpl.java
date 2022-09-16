@@ -21,6 +21,8 @@ import com.unina.natour.models.dao.interfaces.UserDAO;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -48,17 +50,9 @@ public class UserDAOImpl implements UserDAO {
     private static final String GET_USER_IMAGE = "/get/image";
 
 
-
     private static final String BODY_KEY_IMAGE = "image";
 
-
-
-
     private static final String TAG = "UserDAO";
-
-
-
-
 
 
     private static final String TEST_USER = "user";
@@ -118,12 +112,18 @@ public class UserDAOImpl implements UserDAO {
         //can throw MessageException
         UserDTO result = JsonConverter.toUserDTO(jsonObjectResult);
 
+        //GET IMAGE
+
+        Bitmap profileImage = getUserProfileImage(username);
+
+        result.setProfileImage(profileImage);
+
         return result;
     }
 
 
-    @Override
-    public Bitmap getUserProfileImage(String username) throws ExecutionException, InterruptedException, ServerException, IOException {
+
+    private Bitmap getUserProfileImage(String username) throws ExecutionException, InterruptedException, ServerException, IOException {
         String url = URL + GET_USER_IMAGE + "?username=" + username;
 
         Request request = new Request.Builder()
@@ -297,5 +297,52 @@ public class UserDAOImpl implements UserDAO {
     public MessageDTO removeProfileImage() {
         //TODO
         return null;
+    }
+
+    @Override
+    public List<UserDTO> getUserWithConversation() {
+
+        UserDTO test = new UserDTO();
+        test.setProfileImage(null);
+        test.setUsername("giacomo");
+        test.setDateOfBirth("12/03/07");
+        test.setId(43l);
+        test.setPlaceOfResidence("memdfjmdsmsfa");
+        test.setFacebookLinked(false);
+        test.setGoogleLinked(false);
+
+        List<UserDTO> result = new ArrayList<UserDTO>();
+        result.add(test);
+        result.add(test);
+        result.add(test);
+        result.add(test);
+        result.add(test);
+        result.add(test);
+        result.add(test);
+        result.add(test);
+        result.add(test);
+        result.add(test);
+        result.add(test);
+
+        return result;
+    }
+
+    @Override
+    public List<UserDTO> getUserByUsername(String researchString) {
+        UserDTO test = new UserDTO();
+        test.setProfileImage(null);
+        test.setUsername("flkgsdfs");
+        test.setDateOfBirth("13/03/07");
+        test.setId(432l);
+        test.setPlaceOfResidence("mestolo");
+        test.setFacebookLinked(false);
+        test.setGoogleLinked(false);
+
+        List<UserDTO> result = new ArrayList<UserDTO>();
+        result.add(test);
+        result.add(test);
+        result.add(test);
+
+        return result;
     }
 }

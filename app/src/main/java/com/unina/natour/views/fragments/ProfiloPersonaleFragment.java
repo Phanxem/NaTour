@@ -83,7 +83,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
         NestedScrollView nestedScrollView_itineraries = view.findViewById(R.id.ProfiloPersonaleF_nestedScrollView_itinerari);
         ProgressBar progressBar_itinearies = view.findViewById(R.id.ProfiloPersonaleF_progressBar_itinerari);
 
-        listaItinerariController.initItineraryList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
+        listaItinerariController.initList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
 
         pressMenuIcon();
 

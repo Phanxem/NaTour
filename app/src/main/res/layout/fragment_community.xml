@@ -58,18 +58,6 @@
             android:visibility="gone" />
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/Community_textView_emptyUserList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="Nessuna conversazione"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Community_relativeLayout_research" />
-
     <androidx.core.widget.NestedScrollView
         android:id="@+id/Community_nestedScrollView_utenti"
         android:layout_width="0dp"
@@ -82,7 +70,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Community_textView_emptyUserList">
+        app:layout_constraintTop_toBottomOf="@+id/Community_relativeLayout_research">
 
         <LinearLayout
             android:id="@+id/Community_linearLayout_utenti"
@@ -102,7 +90,8 @@
             <ProgressBar
                 android:id="@+id/Community_progressBar_utenti"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
 
         </LinearLayout>

@@ -32,7 +32,14 @@ import com.unina.natour.views.fragments.ProfiloPersonaleFragment;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends NaTourActivity {
 
-
+    /*
+    Thread.UncaughtExceptionHandler un = new Thread.UncaughtExceptionHandler(){
+        @Override
+        public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
+            Log.i(TAG,"pij o cazz mm'occ strunzz");
+        }
+    };
+     */
 
     MainController mainController;
 
@@ -44,12 +51,17 @@ public class MainActivity extends NaTourActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Thread.setDefaultUncaughtExceptionHandler(un);
+
         setContentView(R.layout.activity_main);
 /*
         mainController = new MainController(this);
         profiloPersonaleController = new ProfiloPersonaleController(this);
         pianificaItinerarioController = new PianificaItinerarioController(this);
 */
+
+
 
         HomeFragment homeFragment = new HomeFragment();
         homeFragment.setNaTourActivity(this);
