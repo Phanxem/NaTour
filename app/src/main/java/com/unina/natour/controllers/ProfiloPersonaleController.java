@@ -44,7 +44,7 @@ public class ProfiloPersonaleController extends NaTourController {
 
         this.userDAO = new UserDAOImpl(activity);
 
-        this.listaItinerariController = new ListaItinerariController(activity, username);
+        this.listaItinerariController = new ListaItinerariController(activity, ListaItinerariController.CODE_ITINERARY_BY_USERNAME, username);
 
         this.profiloPersonaleModel = new ProfiloPersonaleModel();
         //initModel();

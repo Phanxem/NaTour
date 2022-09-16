@@ -8,6 +8,7 @@ import com.unina.natour.dto.OptionalInfoDTO;
 import com.unina.natour.dto.UserDTO;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface UserDAO extends ServerDAO{
@@ -24,4 +25,7 @@ public interface UserDAO extends ServerDAO{
 
     MessageDTO removeProfileImage();
 
+    List<UserDTO> getUserWithConversation();
+
+    List<UserDTO> getUserByUsername(String researchString);
 }

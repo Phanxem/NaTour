@@ -21,7 +21,7 @@ public class HomeGuestActivity extends NaTourActivity{
         setContentView(R.layout.fragment_home);
 
         this.homeController = new HomeController(this);
-        this.listaItinerariController = new ListaItinerariController(this,null);
+        this.listaItinerariController = new ListaItinerariController(this,ListaItinerariController.CODE_ITINERARY_RANDOM, null);
 
         RecyclerView recyclerView_itineraries = findViewById(R.id.HomeF_recycleView_itinerari);
         NestedScrollView nestedScrollView_itineraries = findViewById(R.id.HomeF_nestedScrollView_itinerari);

@@ -22,4 +22,6 @@ public interface ItineraryDAO extends ServerDAO{
     ItineraryResponseDTO findById(long itineraryId);
 
     MessageDTO deleteById(long itinerayId);
+
+    List<ElementItineraryResponseDTO> findByName(String researchString);
 }

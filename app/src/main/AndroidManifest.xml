@@ -21,7 +21,7 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".views.activities.SplashScreenActivity"
+            android:name=".views.activities.HomeGuestActivity"
             android:exported="false" />
         <activity
             android:name=".views.activities.DettagliSegnalazioneActivity"
@@ -78,8 +78,7 @@
             android:name=".views.activities.AttivaAccountActivity"
             android:exported="false" />
         <activity
-            android:name=".views.activities.HomeGuestActivity"
-
+            android:name=".views.activities.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

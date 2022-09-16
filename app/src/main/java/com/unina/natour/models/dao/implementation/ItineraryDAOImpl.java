@@ -260,4 +260,27 @@ public class ItineraryDAOImpl implements ItineraryDAO {
     public MessageDTO deleteById(long itinerayId) {
         return null;
     }
+
+    @Override
+    public List<ElementItineraryResponseDTO> findByName(String researchString) {
+
+        ElementItineraryResponseDTO test1 = new ElementItineraryResponseDTO();
+        test1.setItineraryId(98);
+        test1.setDifficulty(2);
+        test1.setDescription("1genocide cutter per pyroikisempukiaku genocide cutter pyroinshoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku2");
+        test1.setDuration(335.3f);
+        test1.setLenght(334.3f);
+        test1.setName("test154322");
+        test1.setUserImage(null);
+        test1.setUsername("usertest1432");
+
+
+        List<ElementItineraryResponseDTO> response = new ArrayList<ElementItineraryResponseDTO>();
+        response.add(test1);
+        response.add(test1);
+        response.add(test1);
+        response.add(test1);
+
+        return response;
+    }
 }
