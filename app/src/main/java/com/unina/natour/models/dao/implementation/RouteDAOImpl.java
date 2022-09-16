@@ -64,6 +64,8 @@ public class RouteDAOImpl implements RouteDAO {
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 
                 completableFuture.complete(jsonObjectResult);
+
+
             }
         });
 

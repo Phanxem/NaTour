@@ -16,6 +16,10 @@ public class MessageDTO {
         return new MessageDTO(-100,"Errore Sconosciuto");
     }
 
+    public static MessageDTO successMessage(){
+        return new MessageDTO(200, "Operazione effettuata con successo");
+    }
+
     public long getCode() {
         return code;
     }

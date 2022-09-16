@@ -51,7 +51,6 @@ public class AttivaAccountController extends NaTourController{
         Intent intent = activity.getIntent();
         this.username = intent.getStringExtra(EXTRA_USERNAME);
         this.password = intent.getStringExtra(EXTRA_PASSWORD);
-
     }
 
     public void initAccountActivation(){

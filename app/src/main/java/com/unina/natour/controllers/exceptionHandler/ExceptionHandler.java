@@ -11,12 +11,19 @@ import com.unina.natour.R;
 import com.unina.natour.amplify.ApplicationConfig;
 import com.unina.natour.controllers.exceptionHandler.exceptions.AppException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
+import com.unina.natour.dto.MessageDTO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 public class ExceptionHandler {
 
     //TODO TESTING new context
+
+
+    public static final long ERROR_CODE_AMPLIFY = 300;
+    public static final long ERROR_CODE_NOT_COMPLETED = 400;
+    public static final String ERROR_MESSAGE_NOT_COMPLETED = "Operazione non completata";
+
 
     //Eccezioni di Amplify
     //l'errore viene identificato secondo il messaggio
@@ -64,6 +71,68 @@ public class ExceptionHandler {
     }
 
 
+/*
+    public static MessageDTO generateMessageFromAmplifyMessage(Context context, String message){
+
+        //Context context = ApplicationConfig.getAppContext();
+        String amplifyMessage = null;
+
+        amplifyMessage = context.getString(R.string.AmplifyException_UserAlreadyExists);
+        if(message.contains(amplifyMessage)){
+            return context.getString(R.string.UserAlreadyExists);
+        }
+
+        amplifyMessage = context.getString(R.string.AmplifyException_EmailAlreadyExists);
+        if(message.contains(amplifyMessage)){
+            return context.getString(R.string.EmailAlreadyExists);
+        }
+
+        amplifyMessage = context.getString(R.string.AmplifyException_PasswordNotConformPolicy);
+        if(message.contains(amplifyMessage)){
+            return context.getString(R.string.PasswordNotConformPolicy);
+        }
+
+        amplifyMessage = context.getString(R.string.AmplifyException_InvalidVerificationCode);
+        if(message.contains(amplifyMessage)){
+            return context.getString(R.string.InvalidVerificationCode);
+        }
+
+        amplifyMessage = context.getString(R.string.AmplifyException_InvalidEmailFormat);
+        if(message.contains(amplifyMessage)){
+            return context.getString(R.string.InvalidEmailFormat);
+        }
+
+
+        amplifyMessage = context.getString(R.string.AmplifyException_UserNotExist);
+        if(message.contains(amplifyMessage)){
+            return context.getString(R.string.UserNotExist);
+        }
+
+        amplifyMessage = context.getString(R.string.AmplifyException_IncorrectUserPassword);
+        if(message.contains(amplifyMessage)){
+            return context.getString(R.string.IncorrectUserPassword);
+        }
+
+        amplifyMessage = context.getString(R.string.AmplifyException_UserNotConfirmed);
+        if(message.contains(amplifyMessage)){
+            return context.getString(R.string.UserNotConfirmed);
+        }
+
+
+        amplifyMessage = context.getString(R.string.AmplifyException_AccountNotFound);
+        if(message.contains(amplifyMessage)){
+            return context.getString(R.string.AccountNotFound);
+        }
+
+        amplifyMessage = context.getString(R.string.AmplifyException_ErrorPasswordRecovery_UserNotConfirmed);
+        if(message.contains(amplifyMessage)){
+            return context.getString(R.string.ErrorPasswordRecovery_UserNotConfirmed);
+        }
+
+        return context.getString(R.string.UnknownException);
+    }
+
+    */
 
     private static String findMessageFromAmplifyMessage(Context context, String message){
         //Context context = ApplicationConfig.getAppContext();
