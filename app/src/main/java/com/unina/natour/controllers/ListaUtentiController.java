@@ -1,7 +1,8 @@
 package com.unina.natour.controllers;
 
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -9,26 +10,18 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
-import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureGetUserProfileImageException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedGetUserProfileImageException;
-import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.UserDTO;
-import com.unina.natour.dto.response.ElementItineraryResponseDTO;
+import com.unina.natour.R;
+import com.unina.natour.dto.response.UserListResponseDTO;
+import com.unina.natour.dto.response.UserResponseDTO;
 import com.unina.natour.models.ElementItineraryModel;
 import com.unina.natour.models.ElementUserModel;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
-import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.listAdapters.ItineraryListAdapter;
 import com.unina.natour.views.listAdapters.UserListAdapter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class ListaUtentiController extends NaTourController{
 
@@ -61,7 +54,7 @@ public class ListaUtentiController extends NaTourController{
     }
 
     public void initModel(long researchCode, String researchString){
-        List<UserDTO> usersDTO = null;
+        UserListResponseDTO usersDTO = null;
 
         if(researchCode == CODE_USER_WITH_CONVERSATION){
             usersDTO = userDAO.getUserWithConversation();
@@ -78,27 +71,9 @@ public class ListaUtentiController extends NaTourController{
         this.researchCode = researchCode;
 
 
-        for(UserDTO element: usersDTO){
-
-            Bitmap profileImage = null;
-            /*
-            try {
-                profileImage = userDAO.getUserProfileImage(element.getUsername());
-            } catch (ExecutionException | InterruptedException e) {
-                NotCompletedGetUserProfileImageException exception = new NotCompletedGetUserProfileImageException(e);
-                ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-                return;
-            } catch (ServerException e) {
-                ExceptionHandler.handleMessageError(getMessageDialog(), e);
-                return;
-            } catch (IOException e) {
-                FailureGetUserProfileImageException exception = new FailureGetUserProfileImageException(e);
-                ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-                return;
-            }
-*/
-            ElementUserModel modelElement = toModel(element, profileImage);
-            elementsUserModel.add(modelElement);
+        boolean result = dtoToModel(getActivity(), usersDTO, elementsUserModel);
+        if(!result){
+            //TODO ERROR
         }
 
         this.userListAdapter = new UserListAdapter(getActivity(),elementsUserModel);
@@ -119,7 +94,7 @@ public class ListaUtentiController extends NaTourController{
                     page++;
                     progressBar_users.setVisibility(View.VISIBLE);
 
-                    List<UserDTO> usersDTO;
+                    UserListResponseDTO usersDTO;
 
                     if(researchCode == CODE_USER_WITH_CONVERSATION){
                         usersDTO = userDAO.getUserWithConversation();
@@ -133,28 +108,11 @@ public class ListaUtentiController extends NaTourController{
                     }
 
                     ArrayList<ElementUserModel> nextPageElements = new ArrayList<ElementUserModel>();
-                    for(UserDTO element: usersDTO){
-
-                        Bitmap profileImage = null;
-                        /*
-                        try {
-                            profileImage = userDAO.getUserProfileImage(element.getUsername());
-                        } catch (ExecutionException | InterruptedException e) {
-                            NotCompletedGetUserProfileImageException exception = new NotCompletedGetUserProfileImageException(e);
-                            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-                            return;
-                        } catch (ServerException e) {
-                            ExceptionHandler.handleMessageError(getMessageDialog(), e);
-                            return;
-                        } catch (IOException e) {
-                            FailureGetUserProfileImageException exception = new FailureGetUserProfileImageException(e);
-                            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-                            return;
-                        }
-*/
-                        ElementUserModel modelElement = toModel(element, profileImage);
-                        nextPageElements.add(modelElement);
+                    boolean result = dtoToModel(getActivity(), usersDTO, nextPageElements);
+                    if(!result){
+                        //TODO ERROR
                     }
+
 
                     if(nextPageElements == null || nextPageElements.isEmpty()){
                         progressBar_users.setVisibility(View.GONE);
@@ -182,13 +140,32 @@ public class ListaUtentiController extends NaTourController{
         initModel(researchCode, searchString);
     }
 
-    public ElementUserModel toModel(UserDTO dto, Bitmap profileImage){
-        ElementUserModel model = new ElementUserModel();
 
+    public boolean dtoToModel(Context context, UserResponseDTO dto, ElementUserModel model){
         model.setUsername(dto.getUsername());
-        model.setProfileImage(profileImage);
+        if(dto.getProfileImage() != null) model.setProfileImage(dto.getProfileImage());
+        else {
+            Bitmap genericProfileImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_generic_account);
+            model.setProfileImage(genericProfileImage);
+        }
 
-        return model;
+        return true;
+    }
+
+    public boolean dtoToModel(Context context, UserListResponseDTO dto, List<ElementUserModel> model){
+        model.clear();
+
+        List<UserResponseDTO> usersDto = dto.getUsers();
+
+        for(UserResponseDTO elementDto : usersDto){
+            ElementUserModel elementModel = new ElementUserModel();
+            boolean result = dtoToModel(context, elementDto, elementModel);
+            if(!result){
+                //TODO ERROR
+                return false;
+            }
+        }
+        return true;
     }
 
 }

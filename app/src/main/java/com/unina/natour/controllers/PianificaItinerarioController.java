@@ -24,7 +24,8 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.utils.AddressMapper;
+import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureFindAddressException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureFindRouteException;
@@ -35,16 +36,15 @@ import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindAddressException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindRouteException;
 import com.unina.natour.controllers.utils.GPSUtils;
-import com.unina.natour.dto.RouteDTO;
-import com.unina.natour.dto.response.ItineraryResponseDTO;
+import com.unina.natour.dto.response.AddressResponseDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.RouteResponseDTO;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.PianificaItinerarioModel;
 import com.unina.natour.models.RouteLegModel;
 import com.unina.natour.models.dao.implementation.AddressDAOImpl;
-import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.implementation.RouteDAOImpl;
 import com.unina.natour.models.dao.interfaces.AddressDAO;
-import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 import com.unina.natour.models.dao.interfaces.RouteDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.listAdapters.PuntiIntermediListAdapter;
@@ -63,9 +63,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import io.jenetics.jpx.GPX;
-import io.jenetics.jpx.WayPoint;
 
 @SuppressLint("LongLogTag")
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -140,24 +137,19 @@ public class PianificaItinerarioController extends NaTourController implements P
                                 List<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
                                 for(AddressModel address: addresses) geoPoints.add(address.getPoint());
 
-                                RouteDTO routeDTO = null;
+                                RouteResponseDTO routeResponseDTO = null;
 
-                                try {
-                                    routeDTO = routeDAO.findRouteByGeoPoints(geoPoints);
-                                    pianificaItinerarioModel.updateRoutes(routeDTO.getRouteLegs());
-                                    puntiIntermediListAdapter.notifyDataSetChanged();
+
+                                routeResponseDTO = routeDAO.findRouteByGeoPoints(geoPoints);
+                                MessageResponseDTO messageResponseDTO = routeResponseDTO.getResultMessage();
+                                if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+                                    showErrorMessage(messageResponseDTO);
+                                    return;
                                 }
-                                catch (ServerException e) {
-                                    ExceptionHandler.handleMessageError(getMessageDialog(),e);
-                                }
-                                catch (InterruptedException | ExecutionException e) {
-                                    NotCompletedFindRouteException exception = new NotCompletedFindRouteException(e);
-                                    ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-                                }
-                                catch (IOException e) {
-                                    FailureFindRouteException exception = new FailureFindRouteException(e);
-                                    ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-                                }
+
+                                pianificaItinerarioModel.updateRoutes(routeResponseDTO.getRouteLegs());
+                                puntiIntermediListAdapter.notifyDataSetChanged();
+
                             }
                         }
                     }
@@ -334,9 +326,9 @@ public class PianificaItinerarioController extends NaTourController implements P
         AddressModel address = pianificaItinerarioModel.getPointSelectedOnMap();
 
         if(address == null){
-            NoPointSelectedException exception = new NoPointSelectedException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
+            //NoPointSelectedException exception = new NoPointSelectedException();
+            showErrorMessage(0);
+            return ;
         }
 
         pianificaItinerarioModel.setStartingPoint(address);
@@ -350,9 +342,9 @@ public class PianificaItinerarioController extends NaTourController implements P
         AddressModel address = pianificaItinerarioModel.getPointSelectedOnMap();
 
         if(address == null){
-            NoPointSelectedException exception = new NoPointSelectedException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
+            //NoPointSelectedException exception = new NoPointSelectedException();
+            showErrorMessage(0);
+            return ;
         }
 
         pianificaItinerarioModel.setDestinationPoint(address);
@@ -367,9 +359,9 @@ public class PianificaItinerarioController extends NaTourController implements P
         Integer index = pianificaItinerarioModel.getIndexPointSelected();
 
         if(address == null){
-            NoPointSelectedException exception = new NoPointSelectedException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
+            //NoPointSelectedException exception = new NoPointSelectedException();
+            showErrorMessage(0);
+            return ;
         }
 
         //NUOVO PUNTO INTERMEDIO
@@ -396,9 +388,9 @@ public class PianificaItinerarioController extends NaTourController implements P
     public void updateInterestPointByIndexSelected(AddressModel address){
         Integer indexPointSelected = pianificaItinerarioModel.getIndexPointSelected();
         if(indexPointSelected == null){
-            NoIndexSelectedException exception = new NoIndexSelectedException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
+            //NoIndexSelectedException exception = new NoIndexSelectedException();
+            showErrorMessage(0);
+            return ;
         }
 
         if(indexPointSelected.equals(STARTING_POINT_CODE)){
@@ -427,9 +419,9 @@ public class PianificaItinerarioController extends NaTourController implements P
 
     private void updateRouteWithRemovePoint(int index) {
         if(!getModel().isValidIndexPoint(index)){
-            InvalidIndexPointException exception = new InvalidIndexPointException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
+            //InvalidIndexPointException exception = new InvalidIndexPointException();
+            showErrorMessage(0);
+            return ;
         }
 
         if(index == STARTING_POINT_CODE){
@@ -455,27 +447,18 @@ public class PianificaItinerarioController extends NaTourController implements P
         List<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
         geoPoints.add(startingAddressRoute.getPoint());
         geoPoints.add(destinationAddressRoute.getPoint());
-        RouteDTO routeDTO = null;
 
-        try {
-            routeDTO = routeDAO.findRouteByGeoPoints(geoPoints);
-        }
-        catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(),e);
-            return;
-        }
-        catch (InterruptedException | ExecutionException e) {
-            NotCompletedFindRouteException exception = new NotCompletedFindRouteException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
-        }
-        catch (IOException e) {
-            FailureFindRouteException exception = new FailureFindRouteException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+
+
+        RouteResponseDTO routeResponseDTO = routeDAO.findRouteByGeoPoints(geoPoints);
+        MessageResponseDTO messageResponseDTO = routeResponseDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
             return;
         }
 
-        RouteLegModel routeLeg = routeDTO.getRouteLegs().get(0);
+
+        RouteLegModel routeLeg = routeResponseDTO.getRouteLegs().get(0);
         List<RouteLegModel> route = pianificaItinerarioModel.getRouteLegs();
 
         route.remove(index+1);
@@ -485,8 +468,8 @@ public class PianificaItinerarioController extends NaTourController implements P
     private void updateRouteWithSetPoint(int index) {
 
         if(!getModel().isValidIndexPoint(index)){
-            InvalidIndexPointException exception = new InvalidIndexPointException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            //TODO InvalidIndexPointException exception = new InvalidIndexPointException();
+            showErrorMessage(0);
             return;
         }
 
@@ -534,28 +517,17 @@ public class PianificaItinerarioController extends NaTourController implements P
         if(intermediateAddressRoute != null) geoPoints.add(intermediateAddressRoute.getPoint());
         geoPoints.add(destinationAddressRoute.getPoint());
 
-        RouteDTO routeDTO = null;
-        try {
-            routeDTO = routeDAO.findRouteByGeoPoints(geoPoints);
-        }
-        catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(),e);
-            return;
-        }
-        catch (InterruptedException | ExecutionException e) {
-            NotCompletedFindRouteException exception = new NotCompletedFindRouteException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
-        }
-        catch (IOException e) {
-            FailureFindRouteException exception = new FailureFindRouteException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+        RouteResponseDTO routeResponseDTO = routeDAO.findRouteByGeoPoints(geoPoints);
+        MessageResponseDTO messageResponseDTO = routeResponseDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
             return;
         }
 
-        RouteLegModel routeLeg0 = routeDTO.getRouteLegs().get(0);
+
+        RouteLegModel routeLeg0 = routeResponseDTO.getRouteLegs().get(0);
         RouteLegModel routeLeg1 = null;
-        if(intermediateAddressRoute != null) routeLeg1 = routeDTO.getRouteLegs().get(1);
+        if(intermediateAddressRoute != null) routeLeg1 = routeResponseDTO.getRouteLegs().get(1);
 
         List<RouteLegModel> route = pianificaItinerarioModel.getRouteLegs();
 
@@ -586,27 +558,10 @@ public class PianificaItinerarioController extends NaTourController implements P
         geoPoints.add(startingAddressRoute.getPoint());
         geoPoints.add(intermediateAddressRoute.getPoint());
         geoPoints.add(destinationAddressRoute.getPoint());
-        RouteDTO routeDTO = null;
-        try {
-            routeDTO = routeDAO.findRouteByGeoPoints(geoPoints);
-        }
-        catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(),e);
-            return;
-        }
-        catch (InterruptedException | ExecutionException e) {
-            NotCompletedFindRouteException exception = new NotCompletedFindRouteException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
-        }
-        catch (IOException e) {
-            FailureFindRouteException exception = new FailureFindRouteException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
-        }
+        RouteResponseDTO routeResponseDTO = routeDAO.findRouteByGeoPoints(geoPoints);
 
-        RouteLegModel routeLeg0 = routeDTO.getRouteLegs().get(0);
-        RouteLegModel routeLeg1 = routeDTO.getRouteLegs().get(1);
+        RouteLegModel routeLeg0 = routeResponseDTO.getRouteLegs().get(0);
+        RouteLegModel routeLeg1 = routeResponseDTO.getRouteLegs().get(1);
 
         List<RouteLegModel> route = pianificaItinerarioModel.getRouteLegs();
 
@@ -619,36 +574,22 @@ public class PianificaItinerarioController extends NaTourController implements P
     private void setPointSelectedOnMap(GeoPoint geoPoint) {
         if(geoPoint == null) return;
 
-        AddressModel address = null;
-        try {
-            address = addressDAO.findAddressByGeoPoint(geoPoint);
-        }
-        catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(),e);
+        AddressResponseDTO addressDTO = addressDAO.findAddressByGeoPoint(geoPoint);
+        MessageResponseDTO messageResponseDTO = addressDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
             return;
         }
-        catch (InterruptedException | ExecutionException e) {
-            NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
-        }
-        catch (IOException e) {
-            if(e instanceof UnsupportedEncodingException){
-                InvalidURLFormatException exception = new InvalidURLFormatException(e);
-                ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-                return;
-            }
-            FailureFindAddressException exception = new FailureFindAddressException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
-        }
-        if(address == null) {
-            FailureFindAddressException exception = new FailureFindAddressException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
-        };
 
-        pianificaItinerarioModel.setPointSelectedOnMap(address);
+        AddressModel addressModel = new AddressModel();
+
+        boolean result = AddressMapper.dtoToModel(addressDTO, addressModel);
+        if(!result){
+            //TODO error
+            return;
+        }
+
+        pianificaItinerarioModel.setPointSelectedOnMap(addressModel);
 
     }
 

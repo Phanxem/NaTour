@@ -66,4 +66,13 @@ public class SalvaItinerarioModel extends NaTourModel {
         this.difficulty = difficulty;
         notifyObservers();
     }
+
+    public void clear(){
+        this.wayPoints.clear();
+        this.defaultDuration = -1;
+        this.duration = -1;
+        this.distance = -1;
+
+        this.difficulty = -1;
+    }
 }

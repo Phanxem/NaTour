@@ -7,8 +7,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
-import android.os.Parcelable;
-import android.util.Log;
 import android.widget.ListView;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -16,30 +14,31 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
 
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.utils.AddressMapper;
+import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.CurrentLocationNotFoundException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureFindAddressException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSFeatureNotPresentException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSNotEnabledException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSPermissionNotGrantedException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindAddressException;
 import com.unina.natour.controllers.utils.GPSUtils;
+import com.unina.natour.dto.response.AddressListResponseDTO;
+import com.unina.natour.dto.response.AddressResponseDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.models.AddressModel;
-import com.unina.natour.models.PianificaItinerarioModel;
 import com.unina.natour.models.RicercaPuntoModel;
 import com.unina.natour.models.dao.implementation.AddressDAOImpl;
 import com.unina.natour.models.dao.interfaces.AddressDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.RicercaPuntoActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.listAdapters.RisultatiRicercaPuntoListAdapter;
 
 import org.osmdroid.util.GeoPoint;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -97,14 +96,14 @@ public class RicercaPuntoController extends NaTourController{
 
     public void selectCurrentPosition() {
         if(!GPSUtils.hasGPSFeature(getActivity())){
-            GPSFeatureNotPresentException exception = new GPSFeatureNotPresentException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            //TODO
+            showErrorMessage(0);
             return;
         }
 
         if(!GPSUtils.isGPSEnabled(getActivity())){
-            GPSNotEnabledException exception = new GPSNotEnabledException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            //TODO
+            showErrorMessage(0);
             return;
         }
 
@@ -119,39 +118,31 @@ public class RicercaPuntoController extends NaTourController{
         if(location == null) location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         if(location == null){
-            CurrentLocationNotFoundException exception = new CurrentLocationNotFoundException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            //CurrentLocationNotFoundException exception = new CurrentLocationNotFoundException();
+            //TODO
+            showErrorMessage(0);
             return;
         }
 
         GeoPoint geoPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
-        AddressModel address = null;
 
-        try {
-            address = addressDAO.findAddressByGeoPoint(geoPoint);
-        }
-        catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(),e);
+        AddressResponseDTO addressDTO = addressDAO.findAddressByGeoPoint(geoPoint);
+        MessageResponseDTO messageResponseDTO = addressDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
             return;
         }
-        catch (IOException e) {
-            FailureFindAddressException exception = new FailureFindAddressException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
-        }
-        catch (ExecutionException | InterruptedException e) {
-            NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
-        }
-        if(address == null){
-            FailureFindAddressException exception = new FailureFindAddressException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+        AddressModel addressModel = new AddressModel();
+
+        boolean result = AddressMapper.dtoToModel(addressDTO, addressModel);
+        if(!result){
+            //TODO error
+            showErrorMessage(messageResponseDTO);
             return;
         }
 
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_ADDRESS, address);
+        intent.putExtra(EXTRA_ADDRESS, addressModel);
         getActivity().setResult(RESULT_CODE_RETURN_POINT, intent);
         getActivity().finish();
     }
@@ -164,35 +155,26 @@ public class RicercaPuntoController extends NaTourController{
 
     public void searchInterestPoint(String searchString) {
         if(searchString.isEmpty()){
-            ricercaPuntoModel.clear();
+            ricercaPuntoModel.clearAndNotify();
             risultatiRicercaPuntoListAdapter.notifyDataSetChanged();
             return;
         }
-        List<AddressModel> resultAddresses = null;
+        AddressListResponseDTO resultAddressesDTO = addressDAO.findAddressesByQuery(searchString);
+        MessageResponseDTO messageResponseDTO = resultAddressesDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
+            return;
+        }
 
-        try {
-            resultAddresses = addressDAO.findAddressesByQuery(searchString);
-        }
-        catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(),e);
+        List<AddressModel> addressModels = new ArrayList<AddressModel>();
+        boolean result = AddressMapper.dtoToModel(resultAddressesDTO, addressModels);
+        if(!result){
+            //todo
+            showErrorMessage(0);
             return;
         }
-        catch (IOException e) {
-            FailureFindAddressException exception = new FailureFindAddressException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
-        }
-        catch (ExecutionException | InterruptedException e) {
-            NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
-        }
-        if(resultAddresses == null){
-            FailureFindAddressException exception = new FailureFindAddressException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return;
-        }
-        ricercaPuntoModel.setResultPoints(resultAddresses);
+
+        ricercaPuntoModel.setResultPoints(addressModels);
         risultatiRicercaPuntoListAdapter.notifyDataSetChanged();
     }
 

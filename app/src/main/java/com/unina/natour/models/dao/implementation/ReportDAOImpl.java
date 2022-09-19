@@ -2,8 +2,11 @@ package com.unina.natour.models.dao.implementation;
 
 import android.util.Log;
 
-import com.unina.natour.dto.MessageDTO;
-import com.unina.natour.dto.ReportDTO;
+import com.unina.natour.controllers.MessageController;
+import com.unina.natour.dto.request.ReportRequestDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ReportListResponseDTO;
+import com.unina.natour.dto.response.ReportResponseDTO;
 import com.unina.natour.models.dao.interfaces.ReportDAO;
 
 import java.util.ArrayList;
@@ -12,18 +15,18 @@ import java.util.List;
 public class ReportDAOImpl implements ReportDAO {
 
     @Override
-    public MessageDTO addReport(ReportDTO reportDTO) {
+    public MessageResponseDTO addReport(ReportRequestDTO reportRequestDTO) {
         Log.i("TAG","segnalazione effettuata");
         return null;
     }
 
     @Override
-    public List<ReportDTO> findByItineraryId(long itineraryId) {
+    public ReportListResponseDTO findByItineraryId(long itineraryId) {
         Log.i("TAG","itinerari recuperati");
 
-        List<ReportDTO> test = new ArrayList<ReportDTO>();
+        List<ReportResponseDTO> test = new ArrayList<ReportResponseDTO>();
 
-        ReportDTO test1 = new ReportDTO();
+        ReportResponseDTO test1 = new ReportResponseDTO();
         test1.setId(1);
         test1.setName("jennifer");
         test1.setDescription("pyro");
@@ -38,13 +41,19 @@ public class ReportDAOImpl implements ReportDAO {
         test.add(test1);
         test.add(test1);
 
-        return test;
+        ReportListResponseDTO reportListResponseDTO = new ReportListResponseDTO();
+        MessageResponseDTO messageResponseDTO = MessageController.getSuccessMessage();
+
+        reportListResponseDTO.setResultMessage(messageResponseDTO);
+        reportListResponseDTO.setReports(test);
+
+        return reportListResponseDTO;
     }
 
     @Override
-    public ReportDTO findById(long reportId) {
+    public ReportResponseDTO findById(long reportId) {
 
-        ReportDTO test = new ReportDTO();
+        ReportResponseDTO test = new ReportResponseDTO();
         test.setId(15);
         test.setName("jdfsdfsennifer");
         test.setDescription("pyrfgdfgo");
@@ -56,7 +65,7 @@ public class ReportDAOImpl implements ReportDAO {
     }
 
     @Override
-    public MessageDTO deleteById(long reportId) {
+    public MessageResponseDTO deleteById(long reportId) {
         Log.i("TAG","segnalazione rimossa");
         return null;
     }

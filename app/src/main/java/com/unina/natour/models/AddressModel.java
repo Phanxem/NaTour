@@ -29,6 +29,12 @@ public class AddressModel extends NaTourModel implements Parcelable{
         this.addressName = addressName;
     }
 
+
+    public void clear(){
+        this.point = null;
+        this.addressName = null;
+    }
+
     //---
 
     protected AddressModel(Parcel in) {

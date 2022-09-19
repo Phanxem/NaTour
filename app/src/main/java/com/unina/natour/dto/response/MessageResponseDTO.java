@@ -1,23 +1,15 @@
-package com.unina.natour.dto;
+package com.unina.natour.dto.response;
 
-public class MessageDTO {
+public class MessageResponseDTO {
 
     private long code;
     private String message;
 
-    public MessageDTO() {}
+    public MessageResponseDTO() {}
 
-    public MessageDTO(long code, String message) {
+    public MessageResponseDTO(long code, String message) {
         this.code = code;
         this.message = message;
-    }
-
-    public static MessageDTO unknownErrorMessage() {
-        return new MessageDTO(-100,"Errore Sconosciuto");
-    }
-
-    public static MessageDTO successMessage(){
-        return new MessageDTO(200, "Operazione effettuata con successo");
     }
 
     public long getCode() {

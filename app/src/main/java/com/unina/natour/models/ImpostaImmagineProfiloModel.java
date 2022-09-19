@@ -27,4 +27,8 @@ public class ImpostaImmagineProfiloModel extends NaTourModel {
         notifyObservers();
     }
 
+    public void clear(){
+        this.profileImage = null;
+    }
+
 }

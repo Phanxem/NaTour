@@ -27,4 +27,10 @@ public class ElementUserModel extends NaTourModel{
     public void setUsername(String username) {
         this.username = username;
     }
+
+
+    public void clear(){
+        this.profileImage = null;
+        this.username = null;
+    }
 }

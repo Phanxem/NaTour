@@ -32,4 +32,10 @@ public class ElementReportModel extends NaTourModel{
     public void setDateOfInput(String dateOfInput) {
         this.dateOfInput = dateOfInput;
     }
+
+    public void clear(){
+        this.id = -1;
+        this.titolo = null;
+        this.dateOfInput = null;
+    }
 }

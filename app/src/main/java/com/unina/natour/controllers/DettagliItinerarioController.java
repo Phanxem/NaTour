@@ -17,20 +17,17 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
-import com.amplifyframework.core.Amplify;
 import com.unina.natour.R;
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSFeatureNotPresentException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSNotEnabledException;
 import com.unina.natour.controllers.utils.AddressUtils;
 import com.unina.natour.controllers.utils.GPSUtils;
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.MessageDTO;
-import com.unina.natour.dto.UserDTO;
 import com.unina.natour.dto.response.ItineraryResponseDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.models.DettagliItinerarioModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
@@ -38,7 +35,6 @@ import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.DettagliItinerarioActivity;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.activities.PersonalizzaAccountImmagineActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import org.osmdroid.api.IMapController;
@@ -111,56 +107,30 @@ public class DettagliItinerarioController extends NaTourController{
 
     }
 
-    public void initModel(){
+    public boolean initModel(){
         Intent intent = getActivity().getIntent();
         long itineraryId = intent.getLongExtra(EXTRA_ITINERARY_ID,-1);
 /*TODO
         if(itineraryId < 0){
+        showError
             activity.finish()
             return;
         }
 */
         ItineraryResponseDTO itineraryDTO = itineraryDAO.findById(itineraryId);
-
-        dettagliItinerarioModel.setItineraryId(itineraryDTO.getId());
-        dettagliItinerarioModel.setDescription(itineraryDTO.getDescription());
-        int difficulty = itineraryDTO.getDifficulty();
-        if(difficulty == 0) dettagliItinerarioModel.setDifficulty("Facile");
-        else if(difficulty == 1) dettagliItinerarioModel.setDifficulty("Intermedio");
-        else if(difficulty == 2) dettagliItinerarioModel.setDifficulty("Difficile");
-
-        float duration = itineraryDTO.getDuration();
-        String stringDuration = TimeUtils.toDurationString(duration);
-        dettagliItinerarioModel.setDuration(stringDuration);
-
-        float lenght = itineraryDTO.getLenght();
-        String stringLenght = TimeUtils.toDistanceString(lenght);
-        dettagliItinerarioModel.setLenght(stringLenght);
-
-        dettagliItinerarioModel.setName(itineraryDTO.getName());
-
-        GPX gpx = itineraryDTO.getGpx();
-
-        List<GeoPoint> wayPoints = new ArrayList<GeoPoint>();
-        for(WayPoint wayPoint : gpx.getWayPoints()){
-            GeoPoint geoPoint = new GeoPoint(wayPoint.getLatitude().doubleValue(), wayPoint.getLongitude().doubleValue());
-            wayPoints.add(geoPoint);
+        MessageResponseDTO messageResponseDTO = itineraryDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
+            return false;
         }
-        dettagliItinerarioModel.setWayPoints(wayPoints);
 
-        List<GeoPoint> routePoints = new ArrayList<GeoPoint>();
-        Track track = gpx.getTracks().get(0);
-        List<TrackSegment> segments = track.getSegments();
-        for(TrackSegment segment : segments){
-            List<WayPoint> routeWayPoints = segment.getPoints();
-            for(WayPoint routeWayPoint: routeWayPoints){
-                GeoPoint geoPoint = new GeoPoint(routeWayPoint.getLatitude().doubleValue(), routeWayPoint.getLongitude().doubleValue());
-                routePoints.add(geoPoint);
-            }
+        boolean result = dtoToModel(itineraryDTO,dettagliItinerarioModel);
+        if(!result){
+            showErrorMessage(messageResponseDTO);
+            return false;
         }
-        dettagliItinerarioModel.setRoutePoints(routePoints);
 
-        dettagliItinerarioModel.setHasBeenReported(itineraryDTO.getHasBeenReported());
+        return true;
     }
 
     public void initMap(MapView mapView) {
@@ -208,14 +178,14 @@ public class DettagliItinerarioController extends NaTourController{
 
     public void activeNavigation(){
         if(!GPSUtils.hasGPSFeature(getActivity())){
-            GPSFeatureNotPresentException exception = new GPSFeatureNotPresentException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            //TODO
+            showErrorMessage(0);
             return;
         }
 
         if(!GPSUtils.isGPSEnabled(getActivity())){
-            GPSNotEnabledException exception = new GPSNotEnabledException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            //TODO
+            showErrorMessage(0);
             return;
         }
 
@@ -266,7 +236,7 @@ public class DettagliItinerarioController extends NaTourController{
     }
 
 
-
+    //---
 
     public static void openDettagliItinerarioActivity(NaTourActivity fromActivity, long itineraryId){
         Intent intent = new Intent(fromActivity, DettagliItinerarioActivity.class);
@@ -274,4 +244,51 @@ public class DettagliItinerarioController extends NaTourController{
         fromActivity.startActivity(intent);
     }
 
+    //---
+
+    public static boolean dtoToModel(ItineraryResponseDTO dto, DettagliItinerarioModel model){
+        model.clear();
+
+        model.setItineraryId(dto.getId());
+        model.setDescription(dto.getDescription());
+        int difficulty = dto.getDifficulty();
+        if(difficulty == 0) model.setDifficulty("Facile");
+        else if(difficulty == 1) model.setDifficulty("Intermedio");
+        else if(difficulty == 2) model.setDifficulty("Difficile");
+
+        float duration = dto.getDuration();
+        String stringDuration = TimeUtils.toDurationString(duration);
+        model.setDuration(stringDuration);
+
+        float lenght = dto.getLenght();
+        String stringLenght = TimeUtils.toDistanceString(lenght);
+        model.setLenght(stringLenght);
+
+        model.setName(dto.getName());
+
+        GPX gpx = dto.getGpx();
+
+        List<GeoPoint> wayPoints = new ArrayList<GeoPoint>();
+        for(WayPoint wayPoint : gpx.getWayPoints()){
+            GeoPoint geoPoint = new GeoPoint(wayPoint.getLatitude().doubleValue(), wayPoint.getLongitude().doubleValue());
+            wayPoints.add(geoPoint);
+        }
+        model.setWayPoints(wayPoints);
+
+        List<GeoPoint> routePoints = new ArrayList<GeoPoint>();
+        Track track = gpx.getTracks().get(0);
+        List<TrackSegment> segments = track.getSegments();
+        for(TrackSegment segment : segments){
+            List<WayPoint> routeWayPoints = segment.getPoints();
+            for(WayPoint routeWayPoint: routeWayPoints){
+                GeoPoint geoPoint = new GeoPoint(routeWayPoint.getLatitude().doubleValue(), routeWayPoint.getLongitude().doubleValue());
+                routePoints.add(geoPoint);
+            }
+        }
+        model.setRoutePoints(routePoints);
+
+        model.setHasBeenReported(dto.getHasBeenReported());
+
+        return true;
+    }
 }

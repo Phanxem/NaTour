@@ -1,112 +1,69 @@
 package com.unina.natour.controllers;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.FragmentActivity;
 
-import com.amplifyframework.core.Amplify;
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.EmptyFieldPasswordRecoveryException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.EmptyFieldUsernameEmailException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedConfirmResetPasswordException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedStartPasswordRecoveryException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.UnmatchedPasswordException;
+import com.unina.natour.controllers.utils.StringsUtils;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.views.activities.CompletaRecuperoPasswordActivity;
 import com.unina.natour.views.activities.IniziaRecuperoPasswordActivity;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 @RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressLint("LongLogTag")
 public class RecuperoPasswordController extends NaTourController{
 
-
+    private AmplifyDAO amplifyDAO;
 
     public RecuperoPasswordController(NaTourActivity activity){
         super(activity);
+        this.amplifyDAO = new AmplifyDAO();
     }
 
     public Boolean startPasswordRecovery(String username) {
-
-        if(!ExceptionHandler.areAllFieldsFull(username)){
-            EmptyFieldUsernameEmailException exception = new EmptyFieldUsernameEmailException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+        if(!StringsUtils.areAllFieldsFull(username)){
+            //TODO
+            showErrorMessage(0);
             return false;
         }
 
-        CompletableFuture<Boolean> completableFuture = new CompletableFuture<Boolean>();
+        MessageResponseDTO messageResponseDTO = amplifyDAO.startPasswordRecovery(username);
 
-        Amplify.Auth.resetPassword(
-                username,
-                result -> {
-                    completableFuture.complete(true);
-                },
-                error -> {
-                    ExceptionHandler.handleMessageError(getMessageDialog(), error);
-                    completableFuture.complete(false);
-                }
-        );
-
-
-        Boolean result = false;
-        try {
-            result = completableFuture.get();
-        }
-        catch (ExecutionException | InterruptedException e) {
-            NotCompletedStartPasswordRecoveryException exception = new NotCompletedStartPasswordRecoveryException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
             return false;
         }
 
-        return result;
+        return true;
     }
 
 
-    public Boolean completePasswordRecovery(String code, String password1, String password2){
+    public Boolean completePasswordRecovery(String code, String password, String password2){
 
-        if(!ExceptionHandler.areAllFieldsFull(code,password1,password2)){
-            EmptyFieldPasswordRecoveryException exception = new EmptyFieldPasswordRecoveryException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+        if(!StringsUtils.areAllFieldsFull(code,password,password2)){
+            //TODO
+            showErrorMessage(0);
             return false;
         }
 
-        if(!ExceptionHandler.doPasswordMatch(password1,password2)){
-            UnmatchedPasswordException exception = new UnmatchedPasswordException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+        if(password.equals(password2)){
+            //TODO
+            showErrorMessage(0);
             return false;
         }
 
-        CompletableFuture<Boolean> completableFuture = new CompletableFuture<Boolean>();
+        MessageResponseDTO messageResponseDTO = amplifyDAO.completePasswordRecovery(code,password);
 
-        Amplify.Auth.confirmResetPassword(
-                password1,
-                code,
-                () -> {
-                    completableFuture.complete(true);
-                },
-                error ->{
-                    ExceptionHandler.handleMessageError(getMessageDialog(), error);
-                    completableFuture.complete(false);
-                }
-        );
-
-        Boolean result = false;
-        try {
-            result = completableFuture.get();
-        }
-        catch (ExecutionException | InterruptedException e) {
-            NotCompletedConfirmResetPasswordException exception = new NotCompletedConfirmResetPasswordException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
             return false;
         }
-        return result;
+
+        return true;
     }
 
     public void back() {

@@ -1,10 +1,12 @@
-package com.unina.natour.dto;
+package com.unina.natour.dto.response;
 
 import android.graphics.Bitmap;
 
-import java.util.Date;
+import com.unina.natour.dto.response.MessageResponseDTO;
 
-public class UserDTO {
+public class UserResponseDTO {
+
+    private MessageResponseDTO resultMessage;
 
     private Long id;
     private String username;
@@ -15,7 +17,16 @@ public class UserDTO {
     private boolean isFacebookLinked;
     private boolean isGoogleLinked;
 
-    public UserDTO() {
+    public UserResponseDTO() {
+    }
+
+
+    public MessageResponseDTO getResultMessage() {
+        return resultMessage;
+    }
+
+    public void setResultMessage(MessageResponseDTO resultMessage) {
+        this.resultMessage = resultMessage;
     }
 
     public Long getId() {

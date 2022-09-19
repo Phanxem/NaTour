@@ -2,11 +2,9 @@ package com.unina.natour.views.fragments;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,13 +13,10 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.CommunityController;
 import com.unina.natour.controllers.ListaUtentiController;
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
-import com.unina.natour.views.dialogs.MessageDialog;
 
 public class CommunityFragment extends NaTourFragment {
 

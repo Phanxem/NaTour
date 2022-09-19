@@ -8,15 +8,18 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.models.AddressModel;
-import com.unina.natour.models.dao.converters.JsonConverter;
+import com.unina.natour.controllers.MessageController;
+import com.unina.natour.dto.response.AddressResponseDTO;
+import com.unina.natour.dto.response.AddressListResponseDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.models.dao.interfaces.AddressDAO;
 
 import org.osmdroid.util.GeoPoint;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -36,11 +39,19 @@ public class AddressDAOImpl implements AddressDAO {
 
 
     @Override
-    public AddressModel findAddressByGeoPoint(GeoPoint geoPoint) throws IOException, ExecutionException, InterruptedException, ServerException {
+    public AddressResponseDTO findAddressByGeoPoint(GeoPoint geoPoint) {
+        AddressResponseDTO addressResponseDTO = new AddressResponseDTO();
         String coordinates = geoPoint.getLongitude() + "," + geoPoint.getLatitude();
 
-        //can throw UnsupportedEncodingException
-        String url = URL + GET_ADDRESS + "/" + URLEncoder.encode(coordinates,"UTF-8");
+        String url = null;
+        try {
+            url = URL + GET_ADDRESS + "/" + URLEncoder.encode(coordinates,"UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+           addressResponseDTO.setResultMessage(MessageController.getFailureMessage());
+           return addressResponseDTO;
+        }
+
 
         Request request = new Request.Builder()
                 .url(url)
@@ -73,21 +84,40 @@ public class AddressDAOImpl implements AddressDAO {
         });
 
         //can throw ExecutionException, InterruptedException
-        JsonObject jsonObjectResult = completableFuture.get();
+        JsonObject jsonObjectResult = null;
+        try {
+            jsonObjectResult = completableFuture.get();
+        }
+        catch (ExecutionException | InterruptedException e) {
+            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
+            addressResponseDTO.setResultMessage(messageResponseDTO);
+            return addressResponseDTO;
+        }
 
-        //can throw IOException
-        if(jsonObjectResult == null) throw exception[0];
+        if(exception[0] != null){
+            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
+            addressResponseDTO.setResultMessage(messageResponseDTO);
+            return addressResponseDTO;
+        }
 
         //can throw MessageException
-        AddressModel result = JsonConverter.toAddressModel(jsonObjectResult);
+        AddressResponseDTO result = toAddressDTO(jsonObjectResult);
 
         return result;
     }
 
     @Override
-    public List<AddressModel> findAddressesByQuery(String query) throws  IOException, ExecutionException, InterruptedException, ServerException {
+    public AddressListResponseDTO findAddressesByQuery(String query) {
+        AddressListResponseDTO addressListDTO = new AddressListResponseDTO();
 
-        String url = URL + SEARCH_ADDRESSES + "?" + "query=" + URLEncoder.encode(query,"UTF-8");
+        String url = null;
+        try {
+            url = URL + SEARCH_ADDRESSES + "?" + "query=" + URLEncoder.encode(query,"UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            addressListDTO.setResultMessage(MessageController.getFailureMessage());
+            return addressListDTO;
+        }
 
         Request request = new Request.Builder()
                 .url(url)
@@ -119,14 +149,74 @@ public class AddressDAOImpl implements AddressDAO {
             }
         });
 
-        JsonArray jsonArrayResult =  completableFuture.get();
+        JsonArray jsonArrayResult = null;
+        try {
+            jsonArrayResult = completableFuture.get();
+        }
+        catch (ExecutionException | InterruptedException e) {
+            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
+            addressListDTO.setResultMessage(messageResponseDTO);
+            return addressListDTO;
+        }
 
-        if(jsonArrayResult == null) throw exception[0];
+        if(exception[0] != null){
+            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
+            addressListDTO.setResultMessage(messageResponseDTO);
+            return addressListDTO;
+        }
 
-        List<AddressModel> result = JsonConverter.toListAddressModel(jsonArrayResult);
+
+        AddressListResponseDTO result = toAddressListDTO(jsonArrayResult);
 
         return result;
     }
 
 
+
+    public static AddressResponseDTO toAddressDTO(JsonObject jsonObject){
+        AddressResponseDTO addressResponseDTO = new AddressResponseDTO();
+
+        if(!jsonObject.has("point")  || !jsonObject.has("addressLine") ) {
+            MessageResponseDTO messageResponseDTO = MessageDAOImpl.toMessageDTO(jsonObject);
+            addressResponseDTO.setResultMessage(messageResponseDTO);
+
+            return addressResponseDTO;
+        }
+
+        JsonObject jsonObjectPoint = jsonObject.get("point").getAsJsonObject();
+
+        double lon = jsonObjectPoint.get("lon").getAsDouble();
+        double lat = jsonObjectPoint.get("lat").getAsDouble();
+        GeoPoint geoPoint = new GeoPoint(lat,lon);
+
+        String addressName = jsonObject.get("addressLine").getAsString();
+
+        addressResponseDTO.setResultMessage(MessageController.MESSAGE_SUCCESS);
+        addressResponseDTO.setPoint(geoPoint);
+        addressResponseDTO.setAddressName(addressName);
+
+        return addressResponseDTO;
+    }
+
+    public static AddressListResponseDTO toAddressListDTO(JsonArray jsonArray){
+        AddressListResponseDTO addressListDTO = new AddressListResponseDTO();
+
+        List<AddressResponseDTO> addressList = new ArrayList<AddressResponseDTO>();
+        for(JsonElement jsonElement : jsonArray){
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+
+            AddressResponseDTO addressResponseDTO = toAddressDTO(jsonObject);
+            MessageResponseDTO resultMessage = addressResponseDTO.getResultMessage();
+
+            if(resultMessage.getCode() != MessageController.SUCCESS_CODE) {
+                addressListDTO.setResultMessage(resultMessage);
+                return addressListDTO;
+            }
+            addressList.add(addressResponseDTO);
+        }
+
+        addressListDTO.setAddresses(addressList);
+        addressListDTO.setResultMessage(MessageController.MESSAGE_SUCCESS);
+        return addressListDTO;
+    }
 }

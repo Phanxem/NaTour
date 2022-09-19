@@ -1,75 +1,45 @@
 package com.unina.natour.controllers;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.FragmentActivity;
 
-import com.amplifyframework.core.Amplify;
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.EmptyFieldUsernameEmailException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedSignInException;
+import com.unina.natour.controllers.utils.StringsUtils;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 @RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressLint("LongLogTag")
 public class AutenticazioneController extends NaTourController{
 
+    private AmplifyDAO amplifyDAO;
 
     public AutenticazioneController(NaTourActivity activity){
         super(activity);
+        this.amplifyDAO = new AmplifyDAO();
     }
 
 
     public Boolean signIn(String usernameEmail, String password) {
-        if(!ExceptionHandler.areAllFieldsFull(usernameEmail,password)){
-            EmptyFieldUsernameEmailException exception = new EmptyFieldUsernameEmailException();
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
+        if(!StringsUtils.areAllFieldsFull(usernameEmail,password)){
+            //TODO
+            showErrorMessage(0);
             return false;
         }
 
-        return effectiveSignIn(usernameEmail,password);
-    }
-
-
-    public Boolean effectiveSignIn(String usernameEmail, String password){
-
-        CompletableFuture<Boolean> completableFuture = new CompletableFuture<Boolean>();
-
-        Amplify.Auth.signIn(
-                usernameEmail,
-                password,
-                result -> {
-                    Log.i(TAG, "Confirm signIn succeeded");
-                    completableFuture.complete(true);
-                },
-                error -> {
-                    ExceptionHandler.handleMessageError(getMessageDialog(), error);
-                    completableFuture.complete(false);
-                }
-        );
-
-        Boolean result = false;
-        try {
-            result = completableFuture.get();
-        }
-        catch (ExecutionException | InterruptedException e) {
-            NotCompletedSignInException exception = new NotCompletedSignInException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            result = false;
+        MessageResponseDTO messageResponseDTO = amplifyDAO.signIn(usernameEmail,password);
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
+            return false;
         }
 
-
-        return result;
+        return true;
     }
+
 
 
 

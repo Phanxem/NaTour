@@ -39,4 +39,11 @@ public class VisualizzaSegnalazioniModel extends NaTourModel{
     public void setReports(List<ElementReportModel> reports) {
         this.reports = reports;
     }
+
+
+    public void clear(){
+        this.itineraryId = -1;
+        this.itineraryName = null;
+        this.reports.clear();
+    }
 }

@@ -67,5 +67,15 @@ public class RouteLegModel extends NaTourModel {
         this.duration = duration;
     }
 
+    public void clear(){
+        this.startingPoint = null;
+        this.destinationPoint = null;
+
+        this.track.clear();
+
+        this.distance = -1;
+        this.duration = -1;
+
+    }
 
 }

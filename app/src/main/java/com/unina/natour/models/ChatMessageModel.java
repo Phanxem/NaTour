@@ -57,4 +57,10 @@ public class ChatMessageModel extends NaTourModel{
         if (type == CODE_MESSAGE_SENT) return true;
         return false;
     }
+
+    public void clear(){
+        this.message = null;
+        this.time = null;
+        this.type = -1;
+    }
 }

@@ -58,4 +58,9 @@ public class ImportaFileGPXModel extends NaTourModel {
         return files;
     }
 
+
+    public void clear(){
+        this.currentDirectory = null;
+        this.files.clear();
+    }
 }

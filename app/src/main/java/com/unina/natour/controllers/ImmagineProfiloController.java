@@ -10,7 +10,6 @@ import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -18,31 +17,26 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
 
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.utils.FileUtils;
+import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureGetUserProfileImageException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureReadProfileImageException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureUpdateProfileImageException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.InvalidProfileImageException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedGetUserProfileImageException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedUpdateProfileImageException;
-import com.unina.natour.dto.MessageDTO;
-import com.unina.natour.dto.UserDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.UserResponseDTO;
 import com.unina.natour.models.ImpostaImmagineProfiloModel;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.PersonalizzaAccountImmagineActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-@RequiresApi(api = Build.VERSION_CODES.P)
-@SuppressLint("LongLogTag")
+
 public class ImmagineProfiloController extends NaTourController{
 
     public final static int REQUEST_CODE = 01;
@@ -72,11 +66,11 @@ public class ImmagineProfiloController extends NaTourController{
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        if (result == null ||
-                                result.getResultCode() != Activity.RESULT_OK )
+                        if (result == null || result.getResultCode() != Activity.RESULT_OK )
                         {
-                            FailureReadProfileImageException exception = new FailureReadProfileImageException();
-                            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+                            //FailureReadProfileImageException exception = new FailureReadProfileImageException();
+                            //TODO
+                            showErrorMessage(0);
                             return;
                         }
                         if(result.getData() == null){
@@ -85,12 +79,21 @@ public class ImmagineProfiloController extends NaTourController{
 
                         Uri uri = result.getData().getData();
                         if(uri == null){
-                            FailureReadProfileImageException exception = new FailureReadProfileImageException();
-                            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+                            //FailureReadProfileImageException exception = new FailureReadProfileImageException();
+                            //TODO
+                            showErrorMessage(0);
                             return;
                         }
 
-                        Bitmap bitmap = getBitmap(uri);
+                        Bitmap bitmap = null;
+                        try {
+                            bitmap = FileUtils.toBitmap(getActivity(),uri);
+                        }
+                        catch (IOException e) {
+                            //TODO
+                            showErrorMessage(0);
+                            return;
+                        }
 
                         impostaImmagineProfiloModel.setProfileImage(bitmap);
                     }
@@ -115,34 +118,24 @@ public class ImmagineProfiloController extends NaTourController{
         initModel();
     }
 
-    public void initModel(){
+    public boolean initModel(){
         //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
         String username = "user";
 
-        UserDTO userDTO = null;
-
-/*
-
-        Bitmap profileImage = null;
-
-        try {
-            profileImage = userDAO.getUserProfileImage(username);
-        } catch (ExecutionException | InterruptedException e) {
-            NotCompletedGetUserProfileImageException exception = new NotCompletedGetUserProfileImageException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return;
-        } catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(), e);
-            return;
-        } catch (IOException e) {
-            FailureGetUserProfileImageException exception = new FailureGetUserProfileImageException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return;
+        UserResponseDTO userResponseDTO = userDAO.getUser(username);
+        MessageResponseDTO messageResponseDTO = userResponseDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
+            return false;
         }
 
-        impostaImmagineProfiloModel.setProfileImage(profileImage);
-        */
-
+        boolean result = dtoToModel(userResponseDTO, impostaImmagineProfiloModel);
+        if(!result){
+            //TODO
+            showErrorMessage(0);
+            return false;
+        }
+        return true;
     }
 
     public ImpostaImmagineProfiloModel getImpostaImmagineProfiloModel() {
@@ -153,64 +146,26 @@ public class ImmagineProfiloController extends NaTourController{
     public Boolean modificaImmagineProfilo(){
         Bitmap profileImage = impostaImmagineProfiloModel.getProfileImage();
 
-        if(!isValidBitmap(profileImage)){
-            InvalidProfileImageException exception = new InvalidProfileImageException();
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return false;
-        }
-
-        MessageDTO result = null;
-
         if(profileImage == null){
-            result = userDAO.removeProfileImage();
+            MessageResponseDTO messageResponseDTO = userDAO.removeProfileImage();
+            if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+                //TODO
+                showErrorMessage(0);
+                return false;
+            }
             return true;
         }
 
-
         Bitmap resizedProfileImage = resizeBitmap(profileImage, MIN_WIDTH);
 
-        try {
-            result = userDAO.updateProfileImage(resizedProfileImage);
-        }
-        catch (IOException e) {
-            FailureUpdateProfileImageException exception = new FailureUpdateProfileImageException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return false;
-        }
-        catch (ExecutionException | InterruptedException e) {
-            NotCompletedUpdateProfileImageException exception = new NotCompletedUpdateProfileImageException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return false;
-        }
-        catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(),e);
-            return false;
-        }
-        if(result == null){
-            FailureUpdateProfileImageException exception = new FailureUpdateProfileImageException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+        MessageResponseDTO messageResponseDTO = userDAO.updateProfileImage(resizedProfileImage);
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            //TODO
+            showErrorMessage(0);
             return false;
         }
 
         return true;
-    }
-
-
-    public Bitmap getBitmap(Uri uri){
-        Bitmap bitmap = null;
-
-        ImageDecoder.Source source = ImageDecoder.createSource(getActivity().getContentResolver(), uri);
-
-        try {
-            bitmap = ImageDecoder.decodeBitmap(source);
-        }
-        catch (IOException e) {
-            FailureReadProfileImageException exception = new FailureReadProfileImageException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return null;
-        }
-
-        return bitmap;
     }
 
     public Bitmap resizeBitmap(Bitmap image, int minSize) {
@@ -246,6 +201,8 @@ public class ImmagineProfiloController extends NaTourController{
         return true;
     }
 
+
+    //---
     public void openGallery(){
         if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             activityResultLauncherPermissions.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -256,8 +213,6 @@ public class ImmagineProfiloController extends NaTourController{
         intent.setType("image/*");
         activityResultLauncherGallery.launch(intent);
     }
-
-
 
 
 
@@ -280,7 +235,15 @@ public class ImmagineProfiloController extends NaTourController{
 
 
 
+    public static boolean dtoToModel(UserResponseDTO user, ImpostaImmagineProfiloModel model){
 
+        model.clear();
+
+        model.setProfileImage(user.getProfileImage());
+
+        return true;
+
+    }
 
 
 }

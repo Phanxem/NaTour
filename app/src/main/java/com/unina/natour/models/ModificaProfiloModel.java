@@ -1,14 +1,10 @@
 package com.unina.natour.models;
 
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.UserDTO;
-import com.unina.natour.views.observers.Observable;
-import com.unina.natour.views.observers.Observer;
+import com.unina.natour.dto.response.UserResponseDTO;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class ModificaProfiloModel extends NaTourModel {
 
@@ -72,15 +68,15 @@ public class ModificaProfiloModel extends NaTourModel {
 
 
 
-    public void setByDTO(UserDTO userDTO) throws ParseException {
+    public void setByDTO(UserResponseDTO userResponseDTO) throws ParseException {
 
-        String stringDateOfBirth = userDTO.getDateOfBirth();
+        String stringDateOfBirth = userResponseDTO.getDateOfBirth();
         if(stringDateOfBirth != null && !stringDateOfBirth.isEmpty()) {
             Calendar dateOfBirth = TimeUtils.toCalendar(stringDateOfBirth);
             this.optionalInfoModel.setDateOfBirth(dateOfBirth);
         }
 
-        String completeAddress = userDTO.getPlaceOfResidence();
+        String completeAddress = userResponseDTO.getPlaceOfResidence();
         if(completeAddress != null && !completeAddress.isEmpty()){
             String[] strings = completeAddress.split(",");
             this.optionalInfoModel.setCountry(strings[0]);
@@ -100,6 +96,14 @@ public class ModificaProfiloModel extends NaTourModel {
 
 
 
+    public void clear(){
+        this.immagineProfiloModel.clear();
+        this.optionalInfoModel.clear();
+
+        this.email = null;
+        this.isFacebookAccountLinked = false;
+        this.isGoogleAccountLinked = false;
+    }
 
 
 

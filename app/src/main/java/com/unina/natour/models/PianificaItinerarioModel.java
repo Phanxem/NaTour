@@ -256,4 +256,15 @@ public class PianificaItinerarioModel extends NaTourModel {
         return false;
     }
 
+    public void clear(){
+        this.startingPoint.clear();
+        this.destinationPoint.clear();
+        this.intermediatePoints.clear();
+
+        this.pointSelectedOnMap.clear();
+        this.indexPointSelected = -1;
+
+        this.routeLegs.clear();
+    }
+
 }

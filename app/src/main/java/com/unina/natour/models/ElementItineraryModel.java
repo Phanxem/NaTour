@@ -80,4 +80,15 @@ public class ElementItineraryModel extends NaTourModel{
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }
+
+    public void clear(){
+        this.itineraryId = -1;
+        this.name = null;
+        this.userImage = null;
+        this.username = null;
+        this.description = null;
+        this.duration = null;
+        this.lenght = null;
+        this.difficulty = null;
+    }
 }

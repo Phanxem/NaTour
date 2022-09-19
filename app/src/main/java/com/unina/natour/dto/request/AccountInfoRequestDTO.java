@@ -1,18 +1,22 @@
-package com.unina.natour.dto;
+package com.unina.natour.dto.request;
 
-public class AccountInfoDTO {
+import com.unina.natour.dto.response.MessageResponseDTO;
+
+public class AccountInfoRequestDTO {
 
     private String email;
     private boolean isFacebookAccountLinked;
     private boolean isGoogleAccountLinked;
 
-    public AccountInfoDTO(){}
 
-    public AccountInfoDTO(String email, boolean isFacebookAccountLinked, boolean isGoogleAccountLinked){
+    public AccountInfoRequestDTO(){}
+
+    public AccountInfoRequestDTO(String email, boolean isFacebookAccountLinked, boolean isGoogleAccountLinked){
         this.email = email;
         this.isFacebookAccountLinked = isFacebookAccountLinked;
         this.isGoogleAccountLinked = isGoogleAccountLinked;
     }
+
 
     public String getEmail() {
         return email;

@@ -2,7 +2,6 @@ package com.unina.natour.amplify;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -13,11 +12,7 @@ import com.amplifyframework.AmplifyException;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.core.Amplify;
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
-import com.unina.natour.controllers.exceptionHandler.exceptions.AppException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 
 public class ApplicationConfig extends Application {
 

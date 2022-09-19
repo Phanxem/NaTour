@@ -1,28 +1,29 @@
 package com.unina.natour.controllers.exceptionHandler.exceptions;
 
 
-import com.unina.natour.dto.MessageDTO;
+import com.unina.natour.controllers.MessageController;
+import com.unina.natour.dto.response.MessageResponseDTO;
 
 public class ServerException extends Exception {
     private long code;
     private String message;
 
     public ServerException(){
-        this(MessageDTO.unknownErrorMessage());
+        this(MessageController.unknownErrorMessage());
     }
 
-    public ServerException(MessageDTO messageDTO){
-        setCode(messageDTO.getCode());
-        setMessage(messageDTO.getMessage());
+    public ServerException(MessageResponseDTO messageResponseDTO){
+        setCode(messageResponseDTO.getCode());
+        setMessage(messageResponseDTO.getMessage());
     }
 
-    public MessageDTO getMessageDTO() {
-        return new MessageDTO(getCode(), getMessage());
+    public MessageResponseDTO getMessageDTO() {
+        return new MessageResponseDTO(getCode(), getMessage());
     }
 
-    public void setMessageDTO(MessageDTO messageDTO) {
-        setCode(messageDTO.getCode());
-        setMessage(messageDTO.getMessage());
+    public void setMessageDTO(MessageResponseDTO messageResponseDTO) {
+        setCode(messageResponseDTO.getCode());
+        setMessage(messageResponseDTO.getMessage());
     }
 
     public long getCode() {

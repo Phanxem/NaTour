@@ -73,4 +73,11 @@ public class ImpostaInfoOpzionaliProfiloModel extends NaTourModel {
         this.address = address;
     }
 
+
+    public void clear(){
+        this.dateOfBirth = null;
+        this.country = null;
+        this.city = null;
+        this.address = null;
+    }
 }

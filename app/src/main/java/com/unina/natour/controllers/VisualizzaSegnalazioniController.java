@@ -3,19 +3,19 @@ package com.unina.natour.controllers;
 import android.content.Intent;
 import android.widget.ListView;
 
-import com.unina.natour.dto.ReportDTO;
+import com.unina.natour.dto.request.ReportRequestDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ReportListResponseDTO;
+import com.unina.natour.dto.response.ReportResponseDTO;
 import com.unina.natour.dto.response.ItineraryResponseDTO;
 import com.unina.natour.models.ElementReportModel;
-import com.unina.natour.models.ImportaFileGPXModel;
 import com.unina.natour.models.VisualizzaSegnalazioniModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.implementation.ReportDAOImpl;
-import com.unina.natour.models.dao.interfaces.AddressDAO;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 import com.unina.natour.models.dao.interfaces.ReportDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.VisualizzaSegnalazioniActivity;
-import com.unina.natour.views.listAdapters.FileGpxListAdapter;
 import com.unina.natour.views.listAdapters.ReportListAdapter;
 
 import java.util.ArrayList;
@@ -63,25 +63,29 @@ public class VisualizzaSegnalazioniController extends NaTourController{
         reportListAdapter.notifyDataSetChanged();
     }
 
-    public void initModel(long itineraryId){
+    public boolean initModel(long itineraryId){
 
         ItineraryResponseDTO itineraryDTO = itineraryDAO.findById(itineraryId);
-        visualizzaSegnalazioniModel.setItineraryName(itineraryDTO.getName());
-
-        List<ReportDTO> reportDTOs = reportDAO.findByItineraryId(itineraryId);
-
-        visualizzaSegnalazioniModel.setItineraryId(itineraryId);
-
-        List<ElementReportModel> reports = visualizzaSegnalazioniModel.getReports();
-        reports.clear();
-        for(ReportDTO reportDTO : reportDTOs){
-            ElementReportModel report = new ElementReportModel();
-            report.setId(reportDTO.getId());
-            report.setTitolo(reportDTO.getName());
-            report.setDateOfInput(reportDTO.getDateOfInput());
-
-            reports.add(report);
+        MessageResponseDTO messageResponseDTO = itineraryDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
+            return false;
         }
+
+        ReportListResponseDTO reportListResponseDTO = reportDAO.findByItineraryId(itineraryId);
+        messageResponseDTO = reportListResponseDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
+            return false;
+        }
+
+        boolean result = dtoToModel(itineraryDTO, reportListResponseDTO, visualizzaSegnalazioniModel);
+        if(!result){
+            //TODO
+            showErrorMessage(0);
+            return false;
+        }
+        return true;
     }
 
 
@@ -94,5 +98,40 @@ public class VisualizzaSegnalazioniController extends NaTourController{
     public VisualizzaSegnalazioniModel getModel() {
         return visualizzaSegnalazioniModel;
     }
+
+
+    public static boolean dtoToModel(ItineraryResponseDTO itineraryDto, ReportListResponseDTO reportListDto, VisualizzaSegnalazioniModel model){
+        model.clear();
+
+        List<ReportResponseDTO> reportDtos = reportListDto.getReports();
+
+        List<ElementReportModel> listReportModel = new ArrayList<ElementReportModel>();
+        for(ReportResponseDTO elementDto: reportDtos){
+            ElementReportModel elementModel = new ElementReportModel();
+            boolean result = dtoToModel(elementDto, elementModel);
+            if(!result){
+                //todo error
+                return false;
+            }
+            listReportModel.add(elementModel);
+        }
+
+        model.setItineraryName(itineraryDto.getName());
+        model.setItineraryId(itineraryDto.getId());
+        model.setReports(listReportModel);
+
+        return true;
+    }
+
+    public static boolean dtoToModel(ReportResponseDTO dto, ElementReportModel model){
+        model.clear();
+
+        model.setId(dto.getId());
+        model.setTitolo(dto.getName());
+        model.setDateOfInput(dto.getDateOfInput());
+
+        return true;
+    }
+
 
 }

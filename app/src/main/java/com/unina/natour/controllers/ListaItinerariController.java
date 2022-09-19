@@ -1,5 +1,8 @@
 package com.unina.natour.controllers;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
@@ -10,8 +13,10 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.unina.natour.R;
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.response.ElementItineraryResponseDTO;
+import com.unina.natour.dto.response.ItineraryElementResponseDTO;
+import com.unina.natour.dto.response.ItineraryListResponseDTO;
 import com.unina.natour.models.ElementItineraryModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
@@ -54,7 +59,7 @@ public class ListaItinerariController extends NaTourController{
     }
 
     public void initModel(long researchCode, String researchString){
-        List<ElementItineraryResponseDTO> itinerariesDTO;
+        ItineraryListResponseDTO itinerariesDTO;
         boolean doBelongToSameUser;
 
         if(researchCode == CODE_ITINERARY_RANDOM){
@@ -70,18 +75,16 @@ public class ListaItinerariController extends NaTourController{
             doBelongToSameUser = false;
         }
         else{
-            //TODO EXCEPTION
+            //TODO
+            showErrorMessage(0);
+            getActivity().finish();
             return;
         }
 
         this.researchString = researchString;
         this.researchCode = researchCode;
 
-
-        for(ElementItineraryResponseDTO element: itinerariesDTO){
-            ElementItineraryModel modelElement = toModel(element);
-            elementsItineraryModel.add(modelElement);
-        }
+        boolean result = dtoToModel(getActivity(), itinerariesDTO,elementsItineraryModel);
 
         this.itineraryListAdapter = new ItineraryListAdapter(getActivity(),elementsItineraryModel, doBelongToSameUser);
     }
@@ -104,7 +107,7 @@ public class ListaItinerariController extends NaTourController{
                     page++;
                     progressBar_itineraries.setVisibility(View.VISIBLE);
 
-                    List<ElementItineraryResponseDTO> itinerariesDTO;
+                    ItineraryListResponseDTO itinerariesDTO;
 
                     if(researchCode == CODE_ITINERARY_RANDOM){
                         itinerariesDTO = itinearyDAO.getRandomItineraryList();
@@ -121,9 +124,10 @@ public class ListaItinerariController extends NaTourController{
                     }
 
                     ArrayList<ElementItineraryModel> nextPageElements = new ArrayList<ElementItineraryModel>();
-                    for(ElementItineraryResponseDTO element: itinerariesDTO){
-                        ElementItineraryModel modelElement = toModel(element);
-                        nextPageElements.add(modelElement);
+
+                    boolean result = dtoToModel(getActivity(), itinerariesDTO, nextPageElements);
+                    if(!result){
+                        //TODO ERRORMESSAGE
                     }
 
                     if(nextPageElements == null || nextPageElements.isEmpty()){
@@ -152,8 +156,9 @@ public class ListaItinerariController extends NaTourController{
         initModel(codeItineraryByResearch, searchString);
     }
 
-    public ElementItineraryModel toModel(ElementItineraryResponseDTO dto){
-        ElementItineraryModel model = new ElementItineraryModel();
+    public static boolean dtoToModel(Context context, ItineraryElementResponseDTO dto, ElementItineraryModel model){
+
+        model.clear();
 
         model.setItineraryId(dto.getItineraryId());
         model.setDescription(dto.getDescription());
@@ -161,10 +166,7 @@ public class ListaItinerariController extends NaTourController{
         if(difficulty == 0) model.setDifficulty("Facile");
         else if(difficulty == 1) model.setDifficulty("Facile");
         else if(difficulty == 2) model.setDifficulty("Facile");
-        else{
-            Log.i(TAG, "errore conversione dto to model");
-            return null;
-        }
+        else return false;
 
         float duration = dto.getDuration();
         String stringDuration = TimeUtils.toDurationString(duration);
@@ -177,11 +179,33 @@ public class ListaItinerariController extends NaTourController{
         model.setName(dto.getName());
 
         model.setUserImage(dto.getUserImage());
+        if(dto.getUserImage() != null) model.setUserImage(dto.getUserImage());
+        else {
+            Bitmap genericProfileImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_generic_account);
+            model.setUserImage(genericProfileImage);
+        }
 
         model.setUsername(dto.getUsername());
 
-        return model;
+        return true;
     }
 
+    public static boolean dtoToModel(Context context, ItineraryListResponseDTO dto, List<ElementItineraryModel> model){
+        model.clear();
+
+        List<ItineraryElementResponseDTO> dtos = dto.getItineraries();
+
+        for(ItineraryElementResponseDTO elementDto : dtos){
+            ElementItineraryModel elementModel = new ElementItineraryModel();
+            boolean result = dtoToModel(context, elementDto, elementModel);
+            if(!result) {
+                model.clear();
+                return false;
+            }
+            model.add(elementModel);
+        }
+
+        return true;
+    }
 
 }

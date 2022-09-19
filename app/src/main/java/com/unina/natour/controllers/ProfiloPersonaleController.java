@@ -1,40 +1,37 @@
 package com.unina.natour.controllers;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.FragmentActivity;
 
-import com.amplifyframework.auth.AuthUserAttribute;
-import com.amplifyframework.core.Amplify;
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.R;
+import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureGetUserException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureGetUserProfileImageException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindAddressException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedGetUserException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedGetUserProfileImageException;
-import com.unina.natour.dto.UserDTO;
+import com.unina.natour.dto.response.EmailResponseDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.UserResponseDTO;
 import com.unina.natour.models.ProfiloPersonaleModel;
+import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class ProfiloPersonaleController extends NaTourController {
 
-    ListaItinerariController listaItinerariController;
+    private ListaItinerariController listaItinerariController;
 
-    ProfiloPersonaleModel profiloPersonaleModel;
+    private ProfiloPersonaleModel profiloPersonaleModel;
 
-    UserDAO userDAO;
+    private AmplifyDAO amplifyDAO;
+    private UserDAO userDAO;
 
     public ProfiloPersonaleController(NaTourActivity activity) {
         super(activity);
@@ -42,6 +39,7 @@ public class ProfiloPersonaleController extends NaTourController {
         //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
         String username = "user";
 
+        this.amplifyDAO = new AmplifyDAO();
         this.userDAO = new UserDAOImpl(activity);
 
         this.listaItinerariController = new ListaItinerariController(activity, ListaItinerariController.CODE_ITINERARY_BY_USERNAME, username);
@@ -53,85 +51,26 @@ public class ProfiloPersonaleController extends NaTourController {
 
 
     public void initModel() {
-        CompletableFuture<String> completableFuture = new CompletableFuture<String>();
+        EmailResponseDTO emailResponseDTO = amplifyDAO.getEmail();
 
-        Amplify.Auth.fetchUserAttributes(
-                attributes -> {
-                    for (AuthUserAttribute attribute : attributes) {
-                        if (attribute.getKey().getKeyString().equals("email")) {
-                            completableFuture.complete(attribute.getValue());
-                        }
-                    }
-                },
-                error -> {
-                    ExceptionHandler.handleMessageError(getMessageDialog(), error);
-                    completableFuture.complete(null);
-                }
-        );
-
-        String email = null;
-        try {
-            email = completableFuture.get();
-        } catch (ExecutionException | InterruptedException e) {
-            NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
+        MessageResponseDTO messageResponseDTO = emailResponseDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
             return;
         }
-        if (email == null) return;
+        String email = emailResponseDTO.getEmail();
 
-
-        UserDTO userDTO = null;
 
         //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
         String username = "user";
-
-        try {
-            userDTO = userDAO.getUser(username);
-        } catch (ExecutionException | InterruptedException e) {
-            NotCompletedGetUserException exception = new NotCompletedGetUserException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return;
-        } catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(), e);
-            return;
-        } catch (IOException e) {
-            FailureGetUserException exception = new FailureGetUserException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
+        UserResponseDTO userResponseDTO = userDAO.getUser(username);
+        messageResponseDTO = userResponseDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
             return;
         }
 
-
-        Bitmap profileImage = null;
-        /*
-        try {
-            profileImage = userDAO.getUserProfileImage(username);
-        } catch (ExecutionException | InterruptedException e) {
-            NotCompletedGetUserProfileImageException exception = new NotCompletedGetUserProfileImageException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return;
-        } catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(), e);
-            return;
-        } catch (IOException e) {
-            FailureGetUserProfileImageException exception = new FailureGetUserProfileImageException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return;
-        }
-*/
-
-        profiloPersonaleModel.setEmail(email);
-
-
-        profiloPersonaleModel.setId(userDTO.getId());
-        profiloPersonaleModel.setUsername(userDTO.getUsername());
-        profiloPersonaleModel.setPlaceOfResidence(userDTO.getPlaceOfResidence());
-        profiloPersonaleModel.setDateOfBirth(userDTO.getDateOfBirth());
-
-        profiloPersonaleModel.setFacebookLinked(userDTO.isFacebookLinked());
-        profiloPersonaleModel.setGoogleLinked(userDTO.isGoogleLinked());
-
-        profiloPersonaleModel.setProfileImage(profileImage);
-
+        boolean result = dtoToModel(getActivity(), userResponseDTO, emailResponseDTO, profiloPersonaleModel);
     }
 
 
@@ -149,5 +88,28 @@ public class ProfiloPersonaleController extends NaTourController {
 
     public void setListaItinerariController(ListaItinerariController listaItinerariController) {
         this.listaItinerariController = listaItinerariController;
+    }
+
+    public static boolean dtoToModel(Context context, UserResponseDTO userDto, EmailResponseDTO emailDto, ProfiloPersonaleModel model){
+        model.clear();
+
+        model.setEmail(emailDto.getEmail());
+
+
+        model.setId(userDto.getId());
+        model.setUsername(userDto.getUsername());
+        model.setPlaceOfResidence(userDto.getPlaceOfResidence());
+        model.setDateOfBirth(userDto.getDateOfBirth());
+
+        if(userDto.getProfileImage() != null) model.setProfileImage(userDto.getProfileImage());
+        else {
+            Bitmap genericProfileImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_generic_account);
+            model.setProfileImage(genericProfileImage);
+        }
+
+        model.setFacebookLinked(userDto.isFacebookLinked());
+        model.setGoogleLinked(userDto.isGoogleLinked());
+
+        return true;
     }
 }

@@ -1,15 +1,27 @@
-package com.unina.natour.dto;
+package com.unina.natour.dto.response;
 
+import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.models.RouteLegModel;
 
 import org.osmdroid.util.GeoPoint;
 
 import java.util.List;
 
-public class RouteDTO {
+public class RouteResponseDTO {
+
+    private MessageResponseDTO resultMessage;
 
     private List<GeoPoint> wayPoints;
     private List<RouteLegModel> routeLegs;
+
+
+    public MessageResponseDTO getResultMessage() {
+        return resultMessage;
+    }
+
+    public void setResultMessage(MessageResponseDTO resultMessage) {
+        this.resultMessage = resultMessage;
+    }
 
     public List<GeoPoint> getWayPoints() {
         return wayPoints;

@@ -1,15 +1,17 @@
-package com.unina.natour.dto;
+package com.unina.natour.dto.request;
 
-import java.util.Date;
+import com.unina.natour.dto.response.MessageResponseDTO;
 
-public class OptionalInfoDTO {
+public class OptionalInfoRequestDTO {
+
+
 
     private String placeOfResidence;
     private String dateOfBirth;
 
-    public OptionalInfoDTO(){};
+    public OptionalInfoRequestDTO(){};
 
-    public OptionalInfoDTO(String placeOfResidence, String dateOfBirth) {
+    public OptionalInfoRequestDTO(String placeOfResidence, String dateOfBirth) {
         this.placeOfResidence = placeOfResidence;
         this.dateOfBirth = dateOfBirth;
 
@@ -18,6 +20,7 @@ public class OptionalInfoDTO {
     public String getPlaceOfResidence() {
         return placeOfResidence;
     }
+
     public void setPlaceOfResidence(String placeOfResidence) {
         this.placeOfResidence = placeOfResidence;
     }

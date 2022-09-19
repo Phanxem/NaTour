@@ -2,9 +2,8 @@ package com.unina.natour.controllers;
 
 import android.content.Intent;
 
-import com.amplifyframework.core.Amplify;
-import com.unina.natour.dto.ReportDTO;
-import com.unina.natour.dto.UserDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ReportResponseDTO;
 import com.unina.natour.dto.response.ItineraryResponseDTO;
 import com.unina.natour.models.DettagliSegnalazioneModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
@@ -13,7 +12,6 @@ import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 import com.unina.natour.models.dao.interfaces.ReportDAO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
-import com.unina.natour.views.activities.DettagliItinerarioActivity;
 import com.unina.natour.views.activities.DettagliSegnalazioneActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 
@@ -39,24 +37,42 @@ public class DettagliSegnalazioneController extends NaTourController{
         initModel();
     }
 
-    public void initModel(){
+    public boolean initModel(){
         long reportId = getActivity().getIntent().getLongExtra(EXTRA_REPORT_ID, -1);
 
         if(reportId < 0){
-
+            //TODO
+            showErrorMessage(0);
+            return false;
         }
 
-        ReportDTO reportDTO = reportDAO.findById(reportId);
+        //TODO test
+        ReportResponseDTO reportDTO = reportDAO.findById(reportId);
+        MessageResponseDTO messageResponseDTO = reportDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            //TODO
+            showErrorMessage(messageResponseDTO.getCode());
+            return false;
+        }
+
         long itineraryId = reportDTO.getId_itinerary();
 
         ItineraryResponseDTO itineraryDTO = itineraryDAO.findById(itineraryId);
+        messageResponseDTO = itineraryDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            //TODO
+            showErrorMessage(messageResponseDTO.getCode());
+            return false;
+        }
 
-        dettagliSegnalazioneModel.setItineraryId(itineraryId);
-        dettagliSegnalazioneModel.setItineraryName(itineraryDTO.getName());
-        dettagliSegnalazioneModel.setReportName(reportDTO.getName());
-        dettagliSegnalazioneModel.setDescrizione(reportDTO.getDescription());
-        dettagliSegnalazioneModel.setDateOfInput(reportDTO.getDateOfInput());
-        dettagliSegnalazioneModel.setReportId(reportDTO.getId());
+        boolean result = dtoToModel(reportDTO, itineraryDTO, dettagliSegnalazioneModel);
+        if(!result){
+            //TODO
+            showErrorMessage(0);
+            return false;
+        }
+
+        return true;
     }
 
     public boolean isMyItinerary() {
@@ -86,5 +102,18 @@ public class DettagliSegnalazioneController extends NaTourController{
 
     public DettagliSegnalazioneModel getModel() {
         return dettagliSegnalazioneModel;
+    }
+
+    public static boolean dtoToModel(ReportResponseDTO dtoReport, ItineraryResponseDTO dtoItinerary, DettagliSegnalazioneModel model){
+        model.clear();
+
+        model.setItineraryId(dtoItinerary.getId());
+        model.setItineraryName(dtoItinerary.getName());
+        model.setReportName(dtoReport.getName());
+        model.setDescrizione(dtoReport.getDescription());
+        model.setDateOfInput(dtoReport.getDateOfInput());
+        model.setReportId(dtoReport.getId());
+
+        return true;
     }
 }

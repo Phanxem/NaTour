@@ -1,22 +1,20 @@
 package com.unina.natour.controllers;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
+import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 
 public class NaTourController {
 
     public final String TAG = this.getClass().getSimpleName();
 
     private NaTourActivity activity;
-    private MessageDialog messageDialog;
+    private MessageController messageController;
+
 
     public NaTourController(NaTourActivity activity){
         this.activity = activity;
-        this.messageDialog = new MessageDialog();
-        this.messageDialog.setNaTourActivity(activity);
+        this.messageController = new MessageController(activity);
+
     }
 
     public NaTourController(){}
@@ -29,14 +27,21 @@ public class NaTourController {
         this.activity = activity;
     }
 
-    public MessageDialog getMessageDialog() {
-        return messageDialog;
+    public MessageController getMessageController() {
+        return messageController;
     }
 
-    public void setMessageDialog(MessageDialog messageDialog) {
-        this.messageDialog = messageDialog;
+    public void setErrorMessageController(MessageController messageController) {
+        this.messageController = messageController;
     }
 
+    public void showErrorMessage(MessageResponseDTO messageResponseDTO){
+        this.messageController.showErrorMessage(messageResponseDTO);
+    }
+
+    public void showErrorMessage(long code){
+        this.messageController.showErrorMessage(code);
+    }
 
 //---
 

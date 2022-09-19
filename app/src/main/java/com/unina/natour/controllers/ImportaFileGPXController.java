@@ -1,20 +1,18 @@
 package com.unina.natour.controllers;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 import android.widget.ListView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
 
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.utils.AddressMapper;
+import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureFindAddressException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureReadGPXFileException;
@@ -23,14 +21,14 @@ import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotExistDirectoryException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotExistParentDirectoryException;
 import com.unina.natour.controllers.utils.FileUtils;
+import com.unina.natour.dto.response.AddressResponseDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.ImportaFileGPXModel;
-import com.unina.natour.models.RouteLegModel;
 import com.unina.natour.models.dao.implementation.AddressDAOImpl;
 import com.unina.natour.models.dao.interfaces.AddressDAO;
 import com.unina.natour.views.activities.ImportaFileGPXActivity;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.listAdapters.FileGpxListAdapter;
 
 import org.osmdroid.util.GeoPoint;
@@ -95,14 +93,15 @@ public class ImportaFileGPXController extends NaTourController{
             openDirectory(importaFileGPXModel.getParentDirectory());
             return;
         }
-        NotExistParentDirectoryException exception = new NotExistParentDirectoryException();
-        ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+        //TODO
+        showErrorMessage(0);
+        return;
     }
 
     public void openDirectory(File directory) {
         if(directory == null || !directory.isDirectory()){
-            NotExistDirectoryException exception = new NotExistDirectoryException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            //TODO
+            showErrorMessage(0);
             return;
         }
 
@@ -119,13 +118,13 @@ public class ImportaFileGPXController extends NaTourController{
             gpx = gpxReader.read(gpxFile);
         }
         catch (IOException e) {
-            FailureReadGPXFileException exception = new FailureReadGPXFileException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            //TODO
+            showErrorMessage(0);
             return false;
         }
         if(gpx == null){
-            FailureReadGPXFileException exception = new FailureReadGPXFileException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            //TODO
+            showErrorMessage(0);
             return false;
         }
 
@@ -170,39 +169,26 @@ public class ImportaFileGPXController extends NaTourController{
             geoPoints.add(destinationGeoPoint);
         }
         else {
-            FailureReadGPXFileException exception = new FailureReadGPXFileException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            //TODO
+            showErrorMessage(0);
             return false;
         }
 
 
         ArrayList<AddressModel> addresses = new ArrayList<AddressModel>();
         for(GeoPoint geoPoint: geoPoints){
-            AddressModel address = null;
-            try {
-                address = addressDAO.findAddressByGeoPoint(geoPoint);
-            }
-            catch (ServerException e) {
-                ExceptionHandler.handleMessageError(getMessageDialog(),e);
-            }
-            catch (IOException e) {
-                if(e instanceof UnsupportedEncodingException){
-                    InvalidURLFormatException exception = new InvalidURLFormatException(e);
-                    ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-                    return false;
-                }
-                FailureFindAddressException exception = new FailureFindAddressException(e);
-                ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-                return false;
+            AddressResponseDTO addressDTO = addressDAO.findAddressByGeoPoint(geoPoint);
 
-            }
-            catch (ExecutionException | InterruptedException e) {
-                NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
-                ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            MessageResponseDTO messageResponseDTO = addressDTO.getResultMessage();
+            if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+                showErrorMessage(messageResponseDTO);
                 return false;
             }
 
-            addresses.add(address);
+            AddressModel addressModel = new AddressModel();
+            AddressMapper.dtoToModel(addressDTO,addressModel);
+
+            addresses.add(addressModel);
         }
 
         Intent intent = new Intent();

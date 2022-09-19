@@ -5,10 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.models.AddressModel;
-import com.unina.natour.dto.MessageDTO;
-import com.unina.natour.dto.RouteDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.RouteResponseDTO;
 import com.unina.natour.models.RouteLegModel;
-import com.unina.natour.dto.UserDTO;
+import com.unina.natour.dto.response.UserResponseDTO;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -19,7 +19,7 @@ public class JsonConverter {
 
     private static final String TAG = "ASF";
 
-    public static MessageDTO toMessageDTO(JsonObject jsonObject) throws ServerException {
+    public static MessageResponseDTO toMessageDTO(JsonObject jsonObject) throws ServerException {
 
         if(!jsonObject.has("code")  || !jsonObject.has("message")){
             throw new ServerException();
@@ -28,46 +28,46 @@ public class JsonConverter {
         long code = jsonObject.get("code").getAsLong();
         String message = jsonObject.get("message").getAsString();
 
-        MessageDTO messageDTO = new MessageDTO(code,message);
+        MessageResponseDTO messageResponseDTO = new MessageResponseDTO(code,message);
 
-        return messageDTO;
+        return messageResponseDTO;
     }
 
-    public static UserDTO toUserDTO(JsonObject jsonObject) throws ServerException {
+    public static UserResponseDTO toUserDTO(JsonObject jsonObject) throws ServerException {
         if(!jsonObject.has("id")  ||
            !jsonObject.has("username") )
         {
-            MessageDTO messageDTO  = toMessageDTO(jsonObject);
-            throw new ServerException(messageDTO);
+            MessageResponseDTO messageResponseDTO = toMessageDTO(jsonObject);
+            throw new ServerException(messageResponseDTO);
         }
 
         long id = jsonObject.get("id").getAsLong();
         String username = jsonObject.get("username").getAsString();
 
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(id);
-        userDTO.setUsername(username);
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+        userResponseDTO.setId(id);
+        userResponseDTO.setUsername(username);
 
 
         if(jsonObject.has("placeOfResidence")){
             String placeOfResidence = jsonObject.get("placeOfResidence").getAsString();
-            userDTO.setPlaceOfResidence(placeOfResidence);
+            userResponseDTO.setPlaceOfResidence(placeOfResidence);
         }
 
         if(jsonObject.has("dateOfBirth")){
             String dateOfBirth = jsonObject.get("dateOfBirth").getAsString();
-            userDTO.setDateOfBirth(dateOfBirth);
+            userResponseDTO.setDateOfBirth(dateOfBirth);
         }
 
-        return userDTO;
+        return userResponseDTO;
     }
 
     public static AddressModel toAddressModel(JsonObject jsonObject) throws ServerException {
         if(!jsonObject.has("point")  ||
            !jsonObject.has("addressLine") )
         {
-            MessageDTO messageDTO  = toMessageDTO(jsonObject);
-            throw new ServerException(messageDTO);
+            MessageResponseDTO messageResponseDTO = toMessageDTO(jsonObject);
+            throw new ServerException(messageResponseDTO);
         }
 
         JsonObject jsonObjectPoint = jsonObject.get("point").getAsJsonObject();
@@ -99,13 +99,13 @@ public class JsonConverter {
         return listAddressModel;
     }
 
-    public static RouteDTO toRouteDTO(JsonObject jsonObject) throws ServerException {
+    public static RouteResponseDTO toRouteDTO(JsonObject jsonObject) throws ServerException {
 
         if(!jsonObject.has("wayPoints")  ||
            !jsonObject.has("tracks") )
         {
-           MessageDTO messageDTO  = toMessageDTO(jsonObject);
-           throw new ServerException(messageDTO);
+           MessageResponseDTO messageResponseDTO = toMessageDTO(jsonObject);
+           throw new ServerException(messageResponseDTO);
         }
 
         JsonArray jsonArrayWayPoints = jsonObject.get("wayPoints").getAsJsonArray();
@@ -159,7 +159,7 @@ public class JsonConverter {
             routeLegs.add(routeLegModel);
         }
 
-        RouteDTO routeModel = new RouteDTO();
+        RouteResponseDTO routeModel = new RouteResponseDTO();
         routeModel.setWayPoints(geoWayPoints);
         routeModel.setRouteLegs(routeLegs);
 

@@ -11,15 +11,10 @@ import java.util.List;
 public class RicercaPuntoModel extends  NaTourModel {
     private List<AddressModel> resultPoints;
 
-
-
     public RicercaPuntoModel(){
         super();
-
         this.resultPoints = new ArrayList<AddressModel>();
     }
-
-
 
     public List<AddressModel> getResultPoints() {
         return resultPoints;
@@ -32,7 +27,7 @@ public class RicercaPuntoModel extends  NaTourModel {
         notifyObservers();
     }
 
-    public void clear(){
+    public void clearAndNotify(){
         this.resultPoints.clear();
         notifyObservers();
     }
@@ -49,5 +44,9 @@ public class RicercaPuntoModel extends  NaTourModel {
             strings.add(addressModel.getAddressName());
         }
         return strings;
+    }
+
+    public void clear(){
+        this.resultPoints.clear();
     }
 }

@@ -83,4 +83,16 @@ public class ProfiloPersonaleModel extends NaTourModel{
     public void setGoogleLinked(boolean googleLinked) {
         isGoogleLinked = googleLinked;
     }
+
+    public void clear(){
+        this.id = -1l;
+        this.username = null;
+        this.email = null;
+        this.profileImage = null;
+        this.placeOfResidence = null;
+        this.dateOfBirth = null;
+
+        this.isFacebookLinked = false;
+        this.isGoogleLinked = false;
+    }
 }

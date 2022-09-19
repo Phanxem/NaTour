@@ -137,4 +137,23 @@ public class DettagliItinerarioModel extends NaTourModel {
     }
 
 
+    public void clear(){
+        this.itineraryId = -1;
+        this.name = null;
+        this.description = null;
+        this.duration = null;
+        this.lenght = null;
+        this.difficulty = null;
+
+        this.idUser = -1;
+
+        this.hasBeenReported = false;
+
+        this.wayPoints.clear();
+        this.routePoints.clear();
+
+        this.isNavigationActive = false;
+        this.currentLocation = null;
+    }
+
 }

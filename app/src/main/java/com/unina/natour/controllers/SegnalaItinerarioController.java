@@ -3,14 +3,15 @@ package com.unina.natour.controllers;
 import android.content.Intent;
 
 import com.amplifyframework.core.Amplify;
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.EmptyFieldActivationAccountCodeException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureGetUserException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedGetUserException;
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.ReportDTO;
-import com.unina.natour.dto.UserDTO;
+import com.unina.natour.dto.request.ReportRequestDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ReportResponseDTO;
+import com.unina.natour.dto.response.UserResponseDTO;
 import com.unina.natour.models.dao.implementation.ReportDAOImpl;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.ReportDAO;
@@ -50,7 +51,7 @@ public class SegnalaItinerarioController extends NaTourController{
 
     public boolean inviaSegnalazione(String titolo, String descrizione) {
 
-        if(ExceptionHandler.areAllFieldsFull(titolo)){
+        if(StringsUtils.areAllFieldsFull(titolo)){
             /*TODO def. exception
             EmptyFieldActivationAccountCodeException exception = new EmptyFieldActivationAccountCodeException();
             ExceptionHandler.handleMessageError(getMessageDialog(),exception);
@@ -58,37 +59,33 @@ public class SegnalaItinerarioController extends NaTourController{
             return false;
         }
 
-        ReportDTO reportDTO = new ReportDTO();
+        ReportRequestDTO reportRequestDTO = new ReportRequestDTO();
 
-        reportDTO.setName(titolo);
-        reportDTO.setDescription(descrizione);
-        reportDTO.setId_itinerary(itineraryId);
+        reportRequestDTO.setName(titolo);
+        reportRequestDTO.setDescription(descrizione);
+        reportRequestDTO.setId_itinerary(itineraryId);
 
         String username = Amplify.Auth.getCurrentUser().getUsername();
-        UserDTO userDTO;
-        try {
-            userDTO = userDAO.getUser(username);
-        } catch (ExecutionException | InterruptedException e) {
-            NotCompletedGetUserException exception = new NotCompletedGetUserException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return false;
-        } catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(), e);
-            return false;
-        } catch (IOException e) {
-            FailureGetUserException exception = new FailureGetUserException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
+        UserResponseDTO userResponseDTO = userDAO.getUser(username);
+        MessageResponseDTO messageResponseDTO = userResponseDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
             return false;
         }
 
-        reportDTO.setId_user(userDTO.getId());
+        reportRequestDTO.setId_user(userResponseDTO.getId());
 
         Calendar calendar = Calendar.getInstance();
         String stringDateOfInput = TimeUtils.toFullString(calendar);
 
-        reportDTO.setDateOfInput(stringDateOfInput);
+        reportRequestDTO.setDateOfInput(stringDateOfInput);
 
-        reportDAO.addReport(reportDTO);
+
+        messageResponseDTO = reportDAO.addReport(reportRequestDTO);
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
+            return false;
+        }
         return true;
     }
 

@@ -1,38 +1,30 @@
 package com.unina.natour.controllers;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.FragmentActivity;
 
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureGetUserException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureGetUserProfileImageException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureUpdateOptionalInfoException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.InvalidBirthDateException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindAddressException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedGetUserException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedGetUserProfileImageException;
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.MessageDTO;
-import com.unina.natour.dto.OptionalInfoDTO;
-import com.unina.natour.dto.UserDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.request.OptionalInfoRequestDTO;
+import com.unina.natour.dto.response.UserResponseDTO;
 import com.unina.natour.models.ImpostaInfoOpzionaliProfiloModel;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.PersonalizzaAccountInfoOpzionaliActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
@@ -66,57 +58,27 @@ public class InfoOpzionaliProfiloController extends NaTourController {
         initModel();
     }
 
-    public void initModel(){
+    public boolean initModel(){
         //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
         String username = "user";
 
-        UserDTO userDTO;
-        try {
-            userDTO = userDAO.getUser(username);
-        } catch (ExecutionException | InterruptedException e) {
-            NotCompletedGetUserException exception = new NotCompletedGetUserException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return;
-        } catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(), e);
-            return;
-        } catch (IOException e) {
-            FailureGetUserException exception = new FailureGetUserException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
-            return;
+        UserResponseDTO userResponseDTO = userDAO.getUser(username);
+        MessageResponseDTO messageResponseDTO = userResponseDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
+            return false;
         }
 
-        String stringDateOfBirth = userDTO.getDateOfBirth();
-        Calendar dateOfBirth = null;
-        try {
-            dateOfBirth = TimeUtils.toCalendar(stringDateOfBirth);
-        }
-        catch (ParseException e) {
-            //TODO EXCEPTION
-        }
 
-        impostaInfoOpzionaliProfiloModel.setDateOfBirth(dateOfBirth);
+        boolean result = dtoToModel(userResponseDTO,impostaInfoOpzionaliProfiloModel);
 
-        String fullPlaceOfResidence = userDTO.getPlaceOfResidence();
-        String[] placeOfResidence = fullPlaceOfResidence.split(", ");
-
-        String country = "";
-        String city = "";
-        String address = "";
-
-        if(placeOfResidence.length>0){
-            country = placeOfResidence[0];
-        }
-        if(placeOfResidence.length>1){
-            city = placeOfResidence[1];
-        }
-        for(int i = 2; i < placeOfResidence.length; i++){
-            address = address + placeOfResidence[i];
+        if(!result){
+            //todo
+            showErrorMessage(0);
+            return false;
         }
 
-        impostaInfoOpzionaliProfiloModel.setCountry(country);
-        impostaInfoOpzionaliProfiloModel.setCity(city);
-        impostaInfoOpzionaliProfiloModel.setAddress(address);
+        return true;
     }
 
     public ImpostaInfoOpzionaliProfiloModel getImpostaInfoOpzionaliProfiloModel() {
@@ -147,65 +109,19 @@ public class InfoOpzionaliProfiloController extends NaTourController {
 
 
 
-
-
-
     public Boolean modificaInfoOpzionali(String address){
-        OptionalInfoDTO optionalInfoDTO = new OptionalInfoDTO();
+        OptionalInfoRequestDTO optionalInfoRequestDTO = new OptionalInfoRequestDTO();
 
-        Calendar dateOfBirth = impostaInfoOpzionaliProfiloModel.getDateOfBirth();
-
-        if(!isValidDate(dateOfBirth)){
-            InvalidBirthDateException exception = new InvalidBirthDateException();
-            ExceptionHandler.handleMessageError(getMessageDialog(), exception);
+        boolean result = modelToDto(impostaInfoOpzionaliProfiloModel, optionalInfoRequestDTO);
+        if(!result){
+            //TODO
+            showErrorMessage(0);
             return false;
         }
 
-        String stringDate = null;
-        if(dateOfBirth != null) stringDate = TimeUtils.toSimpleString(dateOfBirth);
-
-        optionalInfoDTO.setDateOfBirth(stringDate);
-
-
-        String placeOfResidence = null;
-
-        String country = impostaInfoOpzionaliProfiloModel.getCountry();
-        if(country != null && !country.isEmpty()){
-            placeOfResidence = country;
-
-            String city = impostaInfoOpzionaliProfiloModel.getCity();
-            if(city != null && !city.isEmpty()) {
-                placeOfResidence = placeOfResidence + ", " + city;
-
-                if(address != null && !address.isEmpty()) placeOfResidence = placeOfResidence + ", " + address;
-            }
-
-            optionalInfoDTO.setPlaceOfResidence(placeOfResidence);
-        }
-
-
-        MessageDTO result = null;
-
-        try {
-            result = userDAO.updateOptionalInfo(optionalInfoDTO);
-        }
-        catch (ExecutionException | InterruptedException e) {
-            NotCompletedFindAddressException exception = new NotCompletedFindAddressException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return false;
-        }
-        catch (IOException e) {
-            FailureUpdateOptionalInfoException exception = new FailureUpdateOptionalInfoException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return false;
-        }
-        catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(),e);
-            return false;
-        }
-        if(result == null || result.getCode() != SUCCESS_CODE){
-            FailureUpdateOptionalInfoException exception = new FailureUpdateOptionalInfoException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+        MessageResponseDTO messageResponseDTO = userDAO.updateOptionalInfo(optionalInfoRequestDTO);
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
             return false;
         }
 
@@ -247,5 +163,74 @@ public class InfoOpzionaliProfiloController extends NaTourController {
     }
 
 
+    public static boolean dtoToModel(UserResponseDTO dto, ImpostaInfoOpzionaliProfiloModel model){
+        model.clear();
+
+        String stringDateOfBirth = dto.getDateOfBirth();
+        Calendar dateOfBirth = null;
+        try {
+            dateOfBirth = TimeUtils.toCalendar(stringDateOfBirth);
+        }
+        catch (ParseException e) {
+            return false;
+        }
+
+        model.setDateOfBirth(dateOfBirth);
+
+        String fullPlaceOfResidence = dto.getPlaceOfResidence();
+        String[] placeOfResidence = fullPlaceOfResidence.split(", ");
+
+        String country = "";
+        String city = "";
+        String address = "";
+
+        if(placeOfResidence.length>0){
+            country = placeOfResidence[0];
+        }
+        if(placeOfResidence.length>1){
+            city = placeOfResidence[1];
+        }
+        for(int i = 2; i < placeOfResidence.length; i++){
+            address = address + placeOfResidence[i];
+        }
+
+        model.setCountry(country);
+        model.setCity(city);
+        model.setAddress(address);
+
+        return true;
+    }
+
+    public static boolean modelToDto(ImpostaInfoOpzionaliProfiloModel model, OptionalInfoRequestDTO dto){
+        dto.setDateOfBirth(null);
+        dto.setPlaceOfResidence(null);
+
+        Calendar dateOfBirth = model.getDateOfBirth();
+
+        String stringDate = null;
+        if(dateOfBirth != null) stringDate = TimeUtils.toSimpleString(dateOfBirth);
+
+        dto.setDateOfBirth(stringDate);
+
+
+        String placeOfResidence = null;
+
+        String country = model.getCountry();
+        if(country != null && !country.isEmpty()){
+            placeOfResidence = country;
+
+            String city = model.getCity();
+            if(city != null && !city.isEmpty()) {
+                placeOfResidence = placeOfResidence + ", " + city;
+
+                String address = model.getAddress();
+                if(address != null && !address.isEmpty()) placeOfResidence = placeOfResidence + ", " + address;
+            }
+
+            dto.setPlaceOfResidence(placeOfResidence);
+        }
+
+        return true;
+    }
 
 }

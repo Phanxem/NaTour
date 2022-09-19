@@ -9,13 +9,14 @@ import androidx.annotation.RequiresApi;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.unina.natour.controllers.MessageController;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.dto.MessageDTO;
+import com.unina.natour.controllers.utils.FileUtils;
+import com.unina.natour.dto.response.ItineraryListResponseDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.dto.request.ItineraryRequestDTO;
-import com.unina.natour.dto.response.ElementItineraryResponseDTO;
+import com.unina.natour.dto.response.ItineraryElementResponseDTO;
 import com.unina.natour.dto.response.ItineraryResponseDTO;
-import com.unina.natour.models.ElementItineraryModel;
-import com.unina.natour.models.dao.converters.FileConverter;
 import com.unina.natour.models.dao.converters.JsonConverter;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 
@@ -66,7 +67,8 @@ public class ItineraryDAOImpl implements ItineraryDAO {
 
 
     @Override
-    public MessageDTO addItinerary(ItineraryRequestDTO itineraryDTO) throws IOException, ExecutionException, InterruptedException, ServerException {
+    public MessageResponseDTO addItinerary(ItineraryRequestDTO itineraryDTO) {
+        MessageResponseDTO messageResponseDTO;
 
         //String username = Amplify.Auth.getCurrentUser().getUsername();
         String username = TEST_USER;
@@ -74,7 +76,13 @@ public class ItineraryDAOImpl implements ItineraryDAO {
 
         GPX gpx = itineraryDTO.getGpx();
         //can throw IOException
-        File file = FileConverter.toFile(context, gpx);
+        File file = null;
+        try {
+            file = FileUtils.toFile(context, gpx);
+        } catch (IOException e) {
+            messageResponseDTO = MessageController.getFailureMessage();
+            return messageResponseDTO;
+        }
         RequestBody gpxRequestBody = RequestBody.create(file, MediaType.parse("application/octet-stream"));
 
         RequestBody requestBody = new MultipartBody.Builder()
@@ -120,11 +128,21 @@ public class ItineraryDAOImpl implements ItineraryDAO {
             }
         });
 
-        JsonObject jsonObjectResult = completableFuture.get();
+        JsonObject jsonObjectResult = null;
+        try {
+            jsonObjectResult = completableFuture.get();
+        }
+        catch (ExecutionException | InterruptedException e) {
+            messageResponseDTO = MessageController.getFailureMessage();
+            return messageResponseDTO;
+        }
 
-        if(jsonObjectResult == null) throw exception[0];
+        if(exception[0] != null){
+            messageResponseDTO = MessageController.getFailureMessage();
+            return messageResponseDTO;
+        }
 
-        MessageDTO result = JsonConverter.toMessageDTO(jsonObjectResult);
+        MessageResponseDTO result = MessageDAOImpl.toMessageDTO(jsonObjectResult);
 
         return result;
     }
@@ -132,9 +150,9 @@ public class ItineraryDAOImpl implements ItineraryDAO {
     //TODO da implementare
 
     @Override
-    public List<ElementItineraryResponseDTO> getRandomItineraryList() {
+    public ItineraryListResponseDTO getRandomItineraryList() {
 
-        ElementItineraryResponseDTO test1 = new ElementItineraryResponseDTO();
+        ItineraryElementResponseDTO test1 = new ItineraryElementResponseDTO();
         test1.setItineraryId(1);
         test1.setDifficulty(1);
         test1.setDescription("1genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku" +
@@ -145,7 +163,7 @@ public class ItineraryDAOImpl implements ItineraryDAO {
         test1.setUserImage(null);
         test1.setUsername("usertest1");
 
-        ElementItineraryResponseDTO test2 = new ElementItineraryResponseDTO();
+        ItineraryElementResponseDTO test2 = new ItineraryElementResponseDTO();
         test2.setItineraryId(2);
         test2.setDifficulty(0);
         test2.setDescription("dsghhjfghdgsfghgjhfgsdfghhgfa");
@@ -155,7 +173,7 @@ public class ItineraryDAOImpl implements ItineraryDAO {
         test2.setUserImage(null);
         test2.setUsername("usertest12");
 
-        ElementItineraryResponseDTO test3 = new ElementItineraryResponseDTO();
+        ItineraryElementResponseDTO test3 = new ItineraryElementResponseDTO();
         test3.setItineraryId(3);
         test3.setDifficulty(2);
         test3.setDescription("afjdfòknf asofòkaòsdmasfnaoienlk ");
@@ -165,7 +183,7 @@ public class ItineraryDAOImpl implements ItineraryDAO {
         test3.setUserImage(null);
         test3.setUsername("usertest3");
 
-        List<ElementItineraryResponseDTO> response = new ArrayList<ElementItineraryResponseDTO>();
+        List<ItineraryElementResponseDTO> response = new ArrayList<ItineraryElementResponseDTO>();
         response.add(test1);
         response.add(test2);
         response.add(test3);
@@ -176,12 +194,18 @@ public class ItineraryDAOImpl implements ItineraryDAO {
         response.add(test2);
         response.add(test3);
 
-        return response;
+        ItineraryListResponseDTO result = new ItineraryListResponseDTO();
+        MessageResponseDTO messageResponseDTO = MessageController.getSuccessMessage();
+        result.setItineraries(response);
+        result.setResultMessage(messageResponseDTO);
+
+
+        return result;
     }
 
     @Override
-    public List<ElementItineraryResponseDTO> getUserItinearyList(String username) {
-        ElementItineraryResponseDTO test1 = new ElementItineraryResponseDTO();
+    public ItineraryListResponseDTO getUserItinearyList(String username) {
+        ItineraryElementResponseDTO test1 = new ItineraryElementResponseDTO();
         test1.setItineraryId(5);
         test1.setDifficulty(2);
         test1.setDescription("sasdgsd dgsdfsdfsdfs");
@@ -190,7 +214,7 @@ public class ItineraryDAOImpl implements ItineraryDAO {
         test1.setName("test18");
 
 
-        ElementItineraryResponseDTO test2 = new ElementItineraryResponseDTO();
+        ItineraryElementResponseDTO test2 = new ItineraryElementResponseDTO();
         test2.setItineraryId(20);
         test2.setDifficulty(1);
         test2.setDescription("dfsfsdfsdfsdfsdfsdfsdfsdfsdfds");
@@ -201,7 +225,7 @@ public class ItineraryDAOImpl implements ItineraryDAO {
 
 
 
-        List<ElementItineraryResponseDTO> response = new ArrayList<ElementItineraryResponseDTO>();
+        List<ItineraryElementResponseDTO> response = new ArrayList<ItineraryElementResponseDTO>();
         response.add(test1);
         response.add(test2);
         response.add(test1);
@@ -211,7 +235,12 @@ public class ItineraryDAOImpl implements ItineraryDAO {
         response.add(test1);
         response.add(test2);
 
-        return response;
+        ItineraryListResponseDTO result = new ItineraryListResponseDTO();
+        MessageResponseDTO messageResponseDTO = MessageController.getSuccessMessage();
+        result.setItineraries(response);
+        result.setResultMessage(messageResponseDTO);
+
+        return result;
     }
 
     @Override
@@ -257,14 +286,14 @@ public class ItineraryDAOImpl implements ItineraryDAO {
     }
 
     @Override
-    public MessageDTO deleteById(long itinerayId) {
+    public MessageResponseDTO deleteById(long itinerayId) {
         return null;
     }
 
     @Override
-    public List<ElementItineraryResponseDTO> findByName(String researchString) {
+    public ItineraryListResponseDTO findByName(String researchString) {
 
-        ElementItineraryResponseDTO test1 = new ElementItineraryResponseDTO();
+        ItineraryElementResponseDTO test1 = new ItineraryElementResponseDTO();
         test1.setItineraryId(98);
         test1.setDifficulty(2);
         test1.setDescription("1genocide cutter per pyroikisempukiaku genocide cutter pyroinshoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku2");
@@ -275,12 +304,17 @@ public class ItineraryDAOImpl implements ItineraryDAO {
         test1.setUsername("usertest1432");
 
 
-        List<ElementItineraryResponseDTO> response = new ArrayList<ElementItineraryResponseDTO>();
+        List<ItineraryElementResponseDTO> response = new ArrayList<ItineraryElementResponseDTO>();
         response.add(test1);
         response.add(test1);
         response.add(test1);
         response.add(test1);
 
-        return response;
+        ItineraryListResponseDTO result = new ItineraryListResponseDTO();
+        MessageResponseDTO messageResponseDTO = MessageController.getSuccessMessage();
+        result.setItineraries(response);
+        result.setResultMessage(messageResponseDTO);
+
+        return result;
     }
 }

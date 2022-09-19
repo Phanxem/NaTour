@@ -2,7 +2,9 @@ package com.unina.natour.dto.response;
 
 import android.graphics.Bitmap;
 
-public class ElementItineraryResponseDTO {
+public class ItineraryElementResponseDTO {
+
+    private MessageResponseDTO resultMessage;
 
     private long itineraryId;
     private String name;
@@ -12,6 +14,15 @@ public class ElementItineraryResponseDTO {
     private float duration;
     private float lenght;
     private int difficulty;
+
+
+    public MessageResponseDTO getResultMessage() {
+        return resultMessage;
+    }
+
+    public void setResultMessage(MessageResponseDTO resultMessage) {
+        this.resultMessage = resultMessage;
+    }
 
     public long getItineraryId() {
         return itineraryId;

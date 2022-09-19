@@ -1,11 +1,11 @@
 package com.unina.natour.models.dao.interfaces;
 
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.dto.MessageDTO;
+import com.unina.natour.dto.response.ItineraryListResponseDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.dto.request.ItineraryRequestDTO;
-import com.unina.natour.dto.response.ElementItineraryResponseDTO;
+import com.unina.natour.dto.response.ItineraryElementResponseDTO;
 import com.unina.natour.dto.response.ItineraryResponseDTO;
-import com.unina.natour.models.ElementItineraryModel;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,15 +13,15 @@ import java.util.concurrent.ExecutionException;
 
 public interface ItineraryDAO extends ServerDAO{
 
-    MessageDTO addItinerary(ItineraryRequestDTO itineraryDTO) throws IOException, ExecutionException, InterruptedException, ServerException;
+    MessageResponseDTO addItinerary(ItineraryRequestDTO itineraryDTO);
 
-    List<ElementItineraryResponseDTO> getRandomItineraryList();
+    ItineraryListResponseDTO getRandomItineraryList();
 
-    List<ElementItineraryResponseDTO> getUserItinearyList(String username);
+    ItineraryListResponseDTO getUserItinearyList(String username);
 
     ItineraryResponseDTO findById(long itineraryId);
 
-    MessageDTO deleteById(long itinerayId);
+    MessageResponseDTO deleteById(long itinerayId);
 
-    List<ElementItineraryResponseDTO> findByName(String researchString);
+    ItineraryListResponseDTO findByName(String researchString);
 }

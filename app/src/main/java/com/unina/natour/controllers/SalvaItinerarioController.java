@@ -6,22 +6,20 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.FragmentActivity;
 
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
+import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureAddItineraryException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureInitSaveItineraryException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.InvalidDifficultyException;
 import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedAddItineraryException;
 import com.unina.natour.dto.request.ItineraryRequestDTO;
+import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.SalvaItinerarioModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.SalvaItinerarioActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -80,8 +78,8 @@ public class SalvaItinerarioController extends NaTourController{
 
     public void setDifficulty(Integer difficulty){
         if(difficulty != null && (difficulty < CODE_DIFFICULTY_EASY || difficulty > CODE_DIFFICULTY_HARD)) {
-            InvalidDifficultyException exception = new InvalidDifficultyException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            //InvalidDifficultyException exception = new InvalidDifficultyException();
+            showErrorMessage(0);
             return;
         }
 
@@ -100,19 +98,14 @@ public class SalvaItinerarioController extends NaTourController{
 
     public boolean saveItinerary(String titolo, String descrizione) {
 
-        if(salvaItinerarioModel.getDefaultDuration() < 0) Log.i(TAG, "1---------------");
-        if(salvaItinerarioModel.getDistance() < 0)Log.i(TAG, "2---------------");
-            if(salvaItinerarioModel.getWayPoints() == null) Log.i(TAG, "3---------------");
-        if(salvaItinerarioModel.getWayPoints().isEmpty()) Log.i(TAG, "4---------------");
-
         if(salvaItinerarioModel.getDefaultDuration() < 0 ||
            salvaItinerarioModel.getDistance() < 0 ||
            salvaItinerarioModel.getWayPoints() == null ||
            salvaItinerarioModel.getWayPoints().isEmpty())
         {
-            this.getMessageDialog().setGoBackOnClose(true);
-            FailureInitSaveItineraryException exception = new FailureInitSaveItineraryException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+            getMessageController().setGoBackOnClose(true);
+            //FailureInitSaveItineraryException exception = new FailureInitSaveItineraryException();
+            showErrorMessage(0);
             return false;
         }
 
@@ -154,23 +147,13 @@ public class SalvaItinerarioController extends NaTourController{
         itineraryDTO.setGpx(gpx);
 
 
-        try {
-            itineraryDAO.addItinerary(itineraryDTO);
-        }
-        catch (IOException e) {
-            FailureAddItineraryException exception = new FailureAddItineraryException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+
+        MessageResponseDTO messageResponseDTO = itineraryDAO.addItinerary(itineraryDTO);
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
             return false;
         }
-        catch (ExecutionException | InterruptedException e) {
-            NotCompletedAddItineraryException exception = new NotCompletedAddItineraryException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            return false;
-        }
-        catch (ServerException e) {
-            ExceptionHandler.handleMessageError(getMessageDialog(),e);
-            return false;
-        }
+
 
         return true;
     }

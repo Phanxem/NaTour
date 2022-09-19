@@ -1,80 +1,47 @@
 package com.unina.natour.controllers;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.FragmentActivity;
 
-import com.amplifyframework.auth.AuthUserAttributeKey;
-import com.amplifyframework.auth.options.AuthSignUpOptions;
-import com.amplifyframework.core.Amplify;
-import com.unina.natour.controllers.exceptionHandler.ExceptionHandler;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.EmptyFieldSignUpException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedSignUpException;
+import com.unina.natour.controllers.utils.StringsUtils;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.RegistrazioneActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class RegistrazioneController extends NaTourController{
 
-    AutenticazioneController autenticazioneController;
+    private AutenticazioneController autenticazioneController;
 
+    private AmplifyDAO  amplifyDAO;
     
     public RegistrazioneController(NaTourActivity activity){
         super(activity);
 
         this.autenticazioneController = new AutenticazioneController(activity);
 
+        this.amplifyDAO = new AmplifyDAO();
     }
 
 
     public Boolean signUp(String username, String email, String password){
 
-        if(!ExceptionHandler.areAllFieldsFull(username,email,password)){
-            EmptyFieldSignUpException exception = new EmptyFieldSignUpException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+        if(!StringsUtils.areAllFieldsFull(username,email,password)){
+            //TODO
+            showErrorMessage(0);
             return false;
         }
 
-        AuthSignUpOptions options = AuthSignUpOptions
-                .builder()
-                .userAttribute(AuthUserAttributeKey.email(), email)
-                .build();
+        MessageResponseDTO messageResponseDTO = amplifyDAO.signUp(username, email, password);
 
-        CompletableFuture<Boolean> completableFuture = new CompletableFuture<Boolean>();
-
-        Amplify.Auth.signUp(
-                username,
-                password,
-                options,
-                result -> {
-                    completableFuture.complete(true);
-                },
-                error -> {
-                    ExceptionHandler.handleMessageError(getMessageDialog(), error);
-                    completableFuture.complete(false);
-                }
-        );
-
-        Boolean result = false;
-        try {
-            result = completableFuture.get();
-        }
-        catch (ExecutionException | InterruptedException e) {
-            NotCompletedSignUpException exception = new NotCompletedSignUpException(e);
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
             return false;
         }
-
-        return result;
-
+        return true;
     }
 
     public static void openRegistrazioneActivity(NaTourActivity fromActivity){

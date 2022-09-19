@@ -3,7 +3,6 @@ package com.unina.natour.models.dao.implementation;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -11,11 +10,13 @@ import androidx.annotation.RequiresApi;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.unina.natour.controllers.MessageController;
 import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.dto.MessageDTO;
-import com.unina.natour.dto.OptionalInfoDTO;
-import com.unina.natour.dto.UserDTO;
-import com.unina.natour.models.dao.converters.FileConverter;
+import com.unina.natour.controllers.utils.FileUtils;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.request.OptionalInfoRequestDTO;
+import com.unina.natour.dto.response.UserListResponseDTO;
+import com.unina.natour.dto.response.UserResponseDTO;
 import com.unina.natour.models.dao.converters.JsonConverter;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 
@@ -31,12 +32,10 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.MultipartReader;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class UserDAOImpl implements UserDAO {
@@ -49,25 +48,22 @@ public class UserDAOImpl implements UserDAO {
     private static final String GET_USER = "/get";
     private static final String GET_USER_IMAGE = "/get/image";
 
-
     private static final String BODY_KEY_IMAGE = "image";
 
     private static final String TAG = "UserDAO";
 
-
     private static final String TEST_USER = "user";
 
-
-
     private Context context;
-
 
     public UserDAOImpl(Context context){
         this.context = context;
     }
 
     @Override
-    public UserDTO getUser(String username) throws ExecutionException, InterruptedException, IOException, ServerException {
+    public UserResponseDTO getUser(String username){
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+
         //String username = Amplify.Auth.getCurrentUser().getUsername();
 
         String url = URL + GET_USER + "?username=" + username;
@@ -104,44 +100,43 @@ public class UserDAOImpl implements UserDAO {
 
 
         //can throw ExecutionException, InterruptedException
-        JsonObject jsonObjectResult = completableFuture.get();
+        JsonObject jsonObjectResult = null;
+        try {
+            jsonObjectResult = completableFuture.get();
+        }
+        catch (ExecutionException | InterruptedException e) {
+            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
+            userResponseDTO.setResultMessage(messageResponseDTO);
+            return userResponseDTO;
+        }
 
-        //can throw IOException
-        if(jsonObjectResult == null) throw exception[0];
-
-        //can throw MessageException
-        UserDTO result = JsonConverter.toUserDTO(jsonObjectResult);
-
-        //GET IMAGE
-
-        Bitmap profileImage = getUserProfileImage(username);
-
-        result.setProfileImage(profileImage);
-
-        return result;
-    }
-
+        if(exception[0] != null){
+            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
+            userResponseDTO.setResultMessage(messageResponseDTO);
+            return userResponseDTO;
+        }
 
 
-    private Bitmap getUserProfileImage(String username) throws ExecutionException, InterruptedException, ServerException, IOException {
-        String url = URL + GET_USER_IMAGE + "?username=" + username;
+        //RECUPERO L'IMMAGINE---
 
-        Request request = new Request.Builder()
+        url = URL + GET_USER_IMAGE + "?username=" + username;
+
+        request = new Request.Builder()
                 .url(url)
                 .build();
 
-        OkHttpClient client = new OkHttpClient();
+        client = new OkHttpClient();
 
-        Call call = client.newCall(request);
+        call = client.newCall(request);
 
-        final IOException[] exception = {null};
+        final IOException[] exceptionImage = {null};
         final JsonObject[] jsonObject = {null};
-        CompletableFuture<byte[]> completableFuture = new CompletableFuture<byte[]>();
+        CompletableFuture<byte[]> completableFutureImage = new CompletableFuture<byte[]>();
 
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                exception[0] = e;
+                exceptionImage[0] = e;
                 completableFuture.complete(null);
                 return;
             }
@@ -152,42 +147,61 @@ public class UserDAOImpl implements UserDAO {
                     String jsonStringResult = response.body().string();
                     JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                     jsonObject[0] = jsonElementResult.getAsJsonObject();
-                    completableFuture.complete(null);
+                    completableFutureImage.complete(null);
+                    return;
                 }
-                completableFuture.complete(response.body().bytes());
+                completableFutureImage.complete(response.body().bytes());
             }
         });
 
         //can throw ExecutionException, InterruptedException
-        byte[] bytes = completableFuture.get();
-
-        //can throw IOException, MessageException
-        if(bytes == null){
-            if(exception[0] == null){
-                MessageDTO messageDTO = JsonConverter.toMessageDTO(jsonObject[0]);
-                throw new ServerException(messageDTO);
-            }
-            else throw exception[0];
+        byte[] bytes = new byte[0];
+        try {
+            bytes = completableFutureImage.get();
+        }
+        catch (ExecutionException | InterruptedException e) {
+            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
+            userResponseDTO.setResultMessage(messageResponseDTO);
+            return userResponseDTO;
         }
 
-        Bitmap result = FileConverter.toBitmap(bytes);
+        if(exception[0] != null){
+            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
+            userResponseDTO.setResultMessage(messageResponseDTO);
+            return userResponseDTO;
+        }
+
+        if(jsonObject[0] != null){
+            MessageResponseDTO messageResponseDTO = MessageDAOImpl.toMessageDTO(jsonObject[0]);
+            userResponseDTO.setResultMessage(messageResponseDTO);
+            return userResponseDTO;
+        }
+
+        Bitmap bitmap = FileUtils.toBitmap(bytes);
+
+
+        //can throw MessageException
+        UserResponseDTO result = toUserResponseDTO(jsonObjectResult, bitmap);
 
         return result;
     }
 
 
-
-
-
-
     @Override
-    public MessageDTO updateProfileImage(Bitmap profileImage) throws IOException, ExecutionException, InterruptedException, ServerException {
+    public MessageResponseDTO updateProfileImage(Bitmap profileImage) {
 
         //String username = Amplify.Auth.getCurrentUser().getUsername();
         String username = TEST_USER;
 
         //can throw IOException
-        File file = FileConverter.toPngFile(context, profileImage);
+        File file = null;
+        try {
+            file = FileUtils.toPngFile(context, profileImage);
+        }
+        catch (IOException e) {
+            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
+            return messageResponseDTO;
+        }
         RequestBody pngRequestBody = RequestBody.create(file, MediaType.parse("application/octet-stream"));
 
         RequestBody requestBody = new MultipartBody.Builder()
@@ -228,19 +242,28 @@ public class UserDAOImpl implements UserDAO {
             }
         });
 
-        JsonObject jsonObjectResult = completableFuture.get();
+        JsonObject jsonObjectResult = null;
+        try {
+            jsonObjectResult = completableFuture.get();
+        }
+        catch (ExecutionException | InterruptedException e) {
+            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
+            return messageResponseDTO;
+        }
 
-        if(jsonObjectResult == null) throw exception[0];
+        if(exception[0] != null){
+            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
+            return messageResponseDTO;
+        }
 
-        MessageDTO result = JsonConverter.toMessageDTO(jsonObjectResult);
+        MessageResponseDTO result = MessageDAOImpl.toMessageDTO(jsonObjectResult);
 
         return result;
-
     }
 
 
     @Override
-    public MessageDTO updateOptionalInfo(OptionalInfoDTO optionalInfo) throws ExecutionException, InterruptedException, IOException, ServerException {
+    public MessageResponseDTO updateOptionalInfo(OptionalInfoRequestDTO optionalInfo) {
 
         //String username = Amplify.Auth.getCurrentUser().getUsername();
         String username = TEST_USER;
@@ -284,25 +307,36 @@ public class UserDAOImpl implements UserDAO {
             }
         });
 
-        JsonObject jsonObjectResult = completableFuture.get();
+        JsonObject jsonObjectResult = null;
+        try {
+            jsonObjectResult = completableFuture.get();
+        }
+        catch (ExecutionException | InterruptedException e) {
+            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
+            return messageResponseDTO;
+        }
 
-        if(jsonObjectResult == null) throw exception[0];
+        if(exception[0] != null){
+            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
+            return messageResponseDTO;
+        }
 
-        MessageDTO result = JsonConverter.toMessageDTO(jsonObjectResult);
+
+        MessageResponseDTO result = MessageDAOImpl.toMessageDTO(jsonObjectResult);
 
         return result;
     }
 
     @Override
-    public MessageDTO removeProfileImage() {
+    public MessageResponseDTO removeProfileImage() {
         //TODO
         return null;
     }
 
     @Override
-    public List<UserDTO> getUserWithConversation() {
+    public UserListResponseDTO getUserWithConversation() {
 
-        UserDTO test = new UserDTO();
+        UserResponseDTO test = new UserResponseDTO();
         test.setProfileImage(null);
         test.setUsername("giacomo");
         test.setDateOfBirth("12/03/07");
@@ -311,7 +345,7 @@ public class UserDAOImpl implements UserDAO {
         test.setFacebookLinked(false);
         test.setGoogleLinked(false);
 
-        List<UserDTO> result = new ArrayList<UserDTO>();
+        List<UserResponseDTO> result = new ArrayList<UserResponseDTO>();
         result.add(test);
         result.add(test);
         result.add(test);
@@ -324,12 +358,17 @@ public class UserDAOImpl implements UserDAO {
         result.add(test);
         result.add(test);
 
-        return result;
+        UserListResponseDTO userListResponseDTO = new UserListResponseDTO();
+        MessageResponseDTO messageResponseDTO = MessageController.getSuccessMessage();
+        userListResponseDTO.setResultMessage(messageResponseDTO);
+        userListResponseDTO.setUsers(result);
+
+        return userListResponseDTO;
     }
 
     @Override
-    public List<UserDTO> getUserByUsername(String researchString) {
-        UserDTO test = new UserDTO();
+    public UserListResponseDTO getUserByUsername(String researchString) {
+        UserResponseDTO test = new UserResponseDTO();
         test.setProfileImage(null);
         test.setUsername("flkgsdfs");
         test.setDateOfBirth("13/03/07");
@@ -338,11 +377,46 @@ public class UserDAOImpl implements UserDAO {
         test.setFacebookLinked(false);
         test.setGoogleLinked(false);
 
-        List<UserDTO> result = new ArrayList<UserDTO>();
+        List<UserResponseDTO> result = new ArrayList<UserResponseDTO>();
         result.add(test);
         result.add(test);
         result.add(test);
 
-        return result;
+        UserListResponseDTO userListResponseDTO = new UserListResponseDTO();
+        MessageResponseDTO messageResponseDTO = MessageController.getSuccessMessage();
+        userListResponseDTO.setResultMessage(messageResponseDTO);
+        userListResponseDTO.setUsers(result);
+
+        return userListResponseDTO;
+    }
+
+
+    public UserResponseDTO toUserResponseDTO(JsonObject jsonObject, Bitmap bitmap){
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+
+        if(!jsonObject.has("id")  || !jsonObject.has("username") ) {
+            MessageResponseDTO messageResponseDTO = MessageDAOImpl.toMessageDTO(jsonObject);
+            userResponseDTO.setResultMessage(messageResponseDTO);
+        }
+
+        long id = jsonObject.get("id").getAsLong();
+        String username = jsonObject.get("username").getAsString();
+
+        userResponseDTO.setId(id);
+        userResponseDTO.setUsername(username);
+
+        if(jsonObject.has("placeOfResidence")){
+            String placeOfResidence = jsonObject.get("placeOfResidence").getAsString();
+            userResponseDTO.setPlaceOfResidence(placeOfResidence);
+        }
+
+        if(jsonObject.has("dateOfBirth")){
+            String dateOfBirth = jsonObject.get("dateOfBirth").getAsString();
+            userResponseDTO.setDateOfBirth(dateOfBirth);
+        }
+
+        userResponseDTO.setProfileImage(bitmap);
+
+        return userResponseDTO;
     }
 }

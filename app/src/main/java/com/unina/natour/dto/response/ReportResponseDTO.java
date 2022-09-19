@@ -1,6 +1,10 @@
-package com.unina.natour.dto;
+package com.unina.natour.dto.response;
 
-public class ReportDTO {
+import com.unina.natour.dto.response.MessageResponseDTO;
+
+public class ReportResponseDTO {
+
+    private MessageResponseDTO resultMessage;
 
     private long id;
     private String name;
@@ -10,6 +14,14 @@ public class ReportDTO {
     private long id_itinerary;
     private long id_user;
 
+
+    public MessageResponseDTO getResultMessage() {
+        return resultMessage;
+    }
+
+    public void setResultMessage(MessageResponseDTO resultMessage) {
+        this.resultMessage = resultMessage;
+    }
 
     public long getId() {
         return id;

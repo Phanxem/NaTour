@@ -4,6 +4,8 @@ import io.jenetics.jpx.GPX;
 
 public class ItineraryResponseDTO {
 
+    private MessageResponseDTO resultMessage;
+
     private long id;
     private String name;
     private GPX gpx;
@@ -15,6 +17,15 @@ public class ItineraryResponseDTO {
     private boolean hasBeenReported;
 
     private long id_user;
+
+
+    public MessageResponseDTO getResultMessage() {
+        return resultMessage;
+    }
+
+    public void setResultMessage(MessageResponseDTO resultMessage) {
+        this.resultMessage = resultMessage;
+    }
 
     public long getId() {
         return id;

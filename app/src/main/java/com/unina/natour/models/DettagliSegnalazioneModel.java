@@ -62,4 +62,14 @@ public class DettagliSegnalazioneModel extends NaTourModel{
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
     }
+
+
+    public void clear(){
+        this.reportId = -1;
+        this.itineraryId = -1;
+        this.itineraryName = null;
+        this.ReportName = null;
+        this.dateOfInput = null;
+        this.descrizione = null;
+    }
 }
