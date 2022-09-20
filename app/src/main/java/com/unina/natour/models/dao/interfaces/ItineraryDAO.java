@@ -17,7 +17,8 @@ public interface ItineraryDAO extends ServerDAO{
 
     ItineraryListResponseDTO getRandomItineraryList();
 
-    ItineraryListResponseDTO getUserItinearyList(String username);
+    //ItineraryListResponseDTO getUserItinearyList(String username);
+    ItineraryListResponseDTO findByUserId(long userId);
 
     ItineraryResponseDTO findById(long itineraryId);
 

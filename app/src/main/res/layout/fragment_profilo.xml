@@ -7,7 +7,7 @@
     tools:context=".views.fragments.ProfiloPersonaleFragment">
 
     <TextView
-        android:id="@+id/ProfiloPersonaleF_textView_titolo"
+        android:id="@+id/Profilo_textView_titolo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -18,20 +18,58 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/ProfiloPersonaleF_imageView_iconaMenu"
+    <RelativeLayout
+        android:id="@+id/Profilo_relativeLayout_sendMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_menu"
         android:background="@drawable/effect_ripple"
         android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="@+id/ProfiloPersonaleF_textView_titolo"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/Profilo_textView_titolo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ProfiloPersonaleF_textView_titolo" />
+        app:layout_constraintTop_toTopOf="@+id/Profilo_textView_titolo">
+
+        <ImageView
+            android:id="@+id/Profilo_imageView_sendMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            app:srcCompat="@drawable/ic_send_message" />
+
+        <TextView
+            android:id="@+id/Profilo_textView_sendMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/Profilo_imageView_sendMessage"
+            android:layout_alignBottom="@id/Profilo_imageView_sendMessage"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toEndOf="@+id/Profilo_imageView_sendMessage"
+            android:text="Invia un messaggio"
+            android:textSize="16sp" />
+
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/Profilo_imageView_iconaMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/effect_ripple"
+        android:clickable="true"
+        android:src="@drawable/ic_menu"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/Profilo_textView_titolo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/Profilo_textView_titolo" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/Profilo_constraintLayout_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -39,10 +77,10 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ProfiloPersonaleF_textView_titolo">
+        app:layout_constraintTop_toBottomOf="@+id/Profilo_textView_titolo">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ProfiloPersonaleF_imageView_immagineProfilo"
+            android:id="@+id/Profilo_imageView_immagineProfilo"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginBottom="16dp"
@@ -52,7 +90,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/ProfiloPersonaleF_textView_username"
+            android:id="@+id/Profilo_textView_username"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -60,21 +98,21 @@
             android:layout_marginEnd="8dp"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ProfiloPersonaleF_imageView_immagineProfilo"
+            app:layout_constraintStart_toEndOf="@+id/Profilo_imageView_immagineProfilo"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/ProfiloPersonaleF_textView_email"
+            android:id="@+id/Profilo_textView_email"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/ProfiloPersonaleF_textView_username"
-            app:layout_constraintTop_toBottomOf="@+id/ProfiloPersonaleF_textView_username" />
+            app:layout_constraintStart_toStartOf="@+id/Profilo_textView_username"
+            app:layout_constraintTop_toBottomOf="@+id/Profilo_textView_username" />
 
         <LinearLayout
-            android:id="@+id/ProfiloPersonale_linearLayout_residence"
+            android:id="@+id/Profilo_linearLayout_residence"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -82,24 +120,24 @@
             android:orientation="vertical"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/ProfiloPersonaleF_textView_username"
-            app:layout_constraintTop_toBottomOf="@+id/ProfiloPersonaleF_textView_email">
+            app:layout_constraintStart_toStartOf="@+id/Profilo_textView_username"
+            app:layout_constraintTop_toBottomOf="@+id/Profilo_textView_email">
 
             <TextView
-                android:id="@+id/ProfiloPersonale_textView_titoloResidence"
+                android:id="@+id/Profilo_textView_titoloResidence"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Luogo di residenza" />
 
             <TextView
-                android:id="@+id/ProfiloPersonaleF_textView_residence"
+                android:id="@+id/Profilo_textView_residence"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ProfiloPersonale_linearLayout_birth"
+            android:id="@+id/Profilo_linearLayout_birth"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -107,17 +145,17 @@
             android:orientation="vertical"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/ProfiloPersonaleF_textView_username"
-            app:layout_constraintTop_toBottomOf="@+id/ProfiloPersonale_linearLayout_residence">
+            app:layout_constraintStart_toStartOf="@+id/Profilo_textView_username"
+            app:layout_constraintTop_toBottomOf="@+id/Profilo_linearLayout_residence">
 
             <TextView
-                android:id="@+id/ProfiloPersonaleF_textView_titoloBirth"
+                android:id="@+id/Profilo_textView_titoloBirth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Data di nascita" />
 
             <TextView
-                android:id="@+id/ProfiloPersonaleF_textView_birth"
+                android:id="@+id/Profilo_textView_birth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -125,7 +163,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/ProfiloPersonaleF_nestedScrollView_itinerari"
+        android:id="@+id/Profilo_nestedScrollView_itinerari"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -136,17 +174,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ProfiloPersonaleF_textView_itinerari">
+        app:layout_constraintTop_toBottomOf="@+id/Profilo_textView_itinerari">
 
         <LinearLayout
-            android:id="@+id/ProfiloPersonaleF_linearLayout_itinerari"
+            android:id="@+id/Profilo_linearLayout_itinerari"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/ProfiloPersonaleF_recycleView_itinerari"
+                android:id="@+id/Profilo_recycleView_itinerari"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -154,7 +192,7 @@
                 tools:listitem="@layout/list_element_itinerary" />
 
             <ProgressBar
-                android:id="@+id/ProfiloPersonaleF_progressBar_itinerari"
+                android:id="@+id/Profilo_progressBar_itinerari"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -163,7 +201,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <TextView
-        android:id="@+id/ProfiloPersonaleF_textView_itinerari"
+        android:id="@+id/Profilo_textView_itinerari"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -173,6 +211,6 @@
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/Profilo_constraintLayout_info" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

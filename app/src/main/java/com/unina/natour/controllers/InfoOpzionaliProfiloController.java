@@ -55,7 +55,13 @@ public class InfoOpzionaliProfiloController extends NaTourController {
 
         this.userDAO = new UserDAOImpl(activity);
 
-        initModel();
+        boolean result = initModel();
+        if(!result){
+            //TODO
+            showErrorMessage(0);
+            getActivity().finish();
+            return;
+        }
     }
 
     public boolean initModel(){

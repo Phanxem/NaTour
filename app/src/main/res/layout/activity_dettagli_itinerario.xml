@@ -20,7 +20,7 @@
         app:srcCompat="@drawable/ic_back" />
 
     <RelativeLayout
-        android:id="@+id/ItineraryDetails_relativeLayout_warning"
+        android:id="@+id/Profilo_relativeLayout_sendMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
@@ -32,7 +32,7 @@
         app:layout_constraintTop_toTopOf="@+id/ItineraryDetails_imageView_iconaMenu">
 
         <ImageView
-            android:id="@+id/ItineraryDetails_imageView_warning"
+            android:id="@+id/Profilo_imageView_sendMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -41,14 +41,14 @@
             app:srcCompat="@drawable/ic_warning" />
 
         <TextView
-            android:id="@+id/ItineraryDetails_textView_warning"
+            android:id="@+id/Profilo_textView_sendMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/ItineraryDetails_imageView_warning"
-            android:layout_alignBottom="@id/ItineraryDetails_imageView_warning"
+            android:layout_alignTop="@id/Profilo_imageView_sendMessage"
+            android:layout_alignBottom="@id/Profilo_imageView_sendMessage"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_toEndOf="@+id/ItineraryDetails_imageView_warning"
+            android:layout_toEndOf="@+id/Profilo_imageView_sendMessage"
             android:text="Attenzione"
             android:textSize="16sp" />
 

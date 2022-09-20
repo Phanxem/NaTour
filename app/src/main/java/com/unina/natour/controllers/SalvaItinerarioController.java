@@ -32,8 +32,6 @@ import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
-@SuppressLint("LongLogTag")
 public class SalvaItinerarioController extends NaTourController{
 
     public final static int CODE_DIFFICULTY_EASY = 0;

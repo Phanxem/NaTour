@@ -15,7 +15,6 @@ import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.RegistrazioneActivity;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class AttivaAccountController extends NaTourController{
 
     public static final String SHARED_PREFERENCES_ACCOUNT_ACTIVATION = "accountActivation";
@@ -145,6 +144,7 @@ public class AttivaAccountController extends NaTourController{
 
         return true;
     }
+
 
     public static void openAttivaAccountActivity(NaTourActivity fromActivity, String username, String password){
         if( !(fromActivity instanceof RegistrazioneActivity) ){

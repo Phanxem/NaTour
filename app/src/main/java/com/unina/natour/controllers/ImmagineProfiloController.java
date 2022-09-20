@@ -95,6 +95,13 @@ public class ImmagineProfiloController extends NaTourController{
                             return;
                         }
 
+                        Bitmap resizedBitmap = resizeBitmap(bitmap,MIN_WIDTH);
+                        if(!isValidImage(resizedBitmap)){
+                            //TODO
+                            showErrorMessage(0);
+                            return;
+                        }
+
                         impostaImmagineProfiloModel.setProfileImage(bitmap);
                     }
                 }
@@ -114,8 +121,13 @@ public class ImmagineProfiloController extends NaTourController{
 
         this.userDAO = new UserDAOImpl(activity);
 
-
-        initModel();
+        boolean result = initModel();
+        if(!result){
+            //TODO
+            showErrorMessage(0);
+            getActivity().finish();
+            return;
+        }
     }
 
     public boolean initModel(){
@@ -138,7 +150,7 @@ public class ImmagineProfiloController extends NaTourController{
         return true;
     }
 
-    public ImpostaImmagineProfiloModel getImpostaImmagineProfiloModel() {
+    public ImpostaImmagineProfiloModel getModel() {
         return impostaImmagineProfiloModel;
     }
 
@@ -168,7 +180,7 @@ public class ImmagineProfiloController extends NaTourController{
         return true;
     }
 
-    public Bitmap resizeBitmap(Bitmap image, int minSize) {
+    private Bitmap resizeBitmap(Bitmap image, int minSize) {
         int width = image.getWidth();
         int height = image.getHeight();
 
@@ -190,10 +202,9 @@ public class ImmagineProfiloController extends NaTourController{
     }
 
 
-//VALIDATORs---------------
 
-    public boolean isValidBitmap(Bitmap bitmap){
 
+    public boolean isValidImage(Bitmap bitmap){
         if(bitmap == null) return true;
 
         if((bitmap.getWidth() < MIN_WIDTH || bitmap.getHeight() < MIN_HEIGHT) ) return false;

@@ -9,7 +9,7 @@ public class MessageDAOImpl implements MessageDAO {
 
     public static MessageResponseDTO toMessageDTO(JsonObject jsonObject){
         if(!jsonObject.has("code")  || !jsonObject.has("message")){
-            return MessageController.unknownErrorMessage();
+            return MessageController.getUnknownErrorMessage();
         }
 
         long code = jsonObject.get("code").getAsLong();

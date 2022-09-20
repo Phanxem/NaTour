@@ -11,13 +11,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.unina.natour.controllers.MessageController;
-import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.controllers.utils.FileUtils;
 import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.dto.request.OptionalInfoRequestDTO;
 import com.unina.natour.dto.response.UserListResponseDTO;
 import com.unina.natour.dto.response.UserResponseDTO;
-import com.unina.natour.models.dao.converters.JsonConverter;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 
 import java.io.File;
@@ -37,7 +35,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class UserDAOImpl implements UserDAO {
 
     private static final String URL = SERVER_URL + "/user";
@@ -59,7 +56,7 @@ public class UserDAOImpl implements UserDAO {
     public UserDAOImpl(Context context){
         this.context = context;
     }
-
+/*
     @Override
     public UserResponseDTO getUser(String username){
         UserResponseDTO userResponseDTO = new UserResponseDTO();
@@ -184,6 +181,38 @@ public class UserDAOImpl implements UserDAO {
         UserResponseDTO result = toUserResponseDTO(jsonObjectResult, bitmap);
 
         return result;
+    }
+*/
+
+    public UserResponseDTO getUser(String username){
+        UserResponseDTO test = new UserResponseDTO();
+        test.setProfileImage(null);
+        test.setUsername("Jennifer");
+        test.setDateOfBirth("04/04/04");
+        test.setId(482l);
+        test.setPlaceOfResidence("America, latina");
+        test.setFacebookLinked(false);
+        test.setGoogleLinked(false);
+
+        test.setResultMessage(MessageController.getSuccessMessage());
+
+        return test;
+    }
+
+    @Override
+    public UserResponseDTO getUser(long id) {
+        UserResponseDTO test = new UserResponseDTO();
+        test.setProfileImage(null);
+        test.setUsername("sdfgfgsf");
+        test.setDateOfBirth("03/03/03");
+        test.setId(48l);
+        test.setPlaceOfResidence("sedano, volato, cazzi");
+        test.setFacebookLinked(false);
+        test.setGoogleLinked(false);
+
+        test.setResultMessage(MessageController.getSuccessMessage());
+
+        return test;
     }
 
 
@@ -389,6 +418,8 @@ public class UserDAOImpl implements UserDAO {
 
         return userListResponseDTO;
     }
+
+
 
 
     public UserResponseDTO toUserResponseDTO(JsonObject jsonObject, Bitmap bitmap){

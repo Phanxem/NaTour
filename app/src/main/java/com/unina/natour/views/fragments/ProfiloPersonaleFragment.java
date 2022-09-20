@@ -24,9 +24,9 @@ import com.unina.natour.controllers.AutenticazioneController;
 import com.unina.natour.controllers.DisconnessioneController;
 import com.unina.natour.controllers.ListaItinerariController;
 import com.unina.natour.controllers.ModificaProfiloController;
-import com.unina.natour.controllers.ProfiloPersonaleController;
+import com.unina.natour.controllers.ProfiloController;
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.models.ProfiloPersonaleModel;
+import com.unina.natour.models.ProfiloModel;
 import com.unina.natour.views.activities.NaTourActivity;
 
 import java.util.concurrent.ExecutorService;
@@ -35,13 +35,13 @@ import java.util.concurrent.Executors;
 @RequiresApi(api = Build.VERSION_CODES.P)
 public class ProfiloPersonaleFragment extends NaTourFragment{
 
-    ProfiloPersonaleController profiloPersonaleController;
+    ProfiloController profiloController;
 
     ListaItinerariController listaItinerariController;
     DisconnessioneController disconnessioneController;
 
 
-    ProfiloPersonaleModel profiloPersonaleModel;
+    ProfiloModel profiloModel;
 
 /*
     public static ProfiloPersonaleFragment newInstance(Parcelable controller){
@@ -57,7 +57,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_profilo_personale, container, false);
+        View view = inflater.inflate(R.layout.fragment_profilo, container, false);
         setFragmentView(view);
 /*
         Bundle args = getArguments();
@@ -70,18 +70,18 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
 
         }
 */
-        this.profiloPersonaleController = new ProfiloPersonaleController(getNaTourActivity());
+        this.profiloController = new ProfiloController(getNaTourActivity());
         this.disconnessioneController = new DisconnessioneController(getNaTourActivity());
-        this.listaItinerariController = profiloPersonaleController.getListaItinerariController();
+        this.listaItinerariController = profiloController.getListaItinerariController();
 
-        this.profiloPersonaleModel = profiloPersonaleController.getModel();
+        this.profiloModel = profiloController.getModel();
         //addModel(profiloPersonaleModel);
         //profiloPersonaleModel.registerObserver(this);
 
 
-        RecyclerView recyclerView_itineraries = view.findViewById(R.id.ProfiloPersonaleF_recycleView_itinerari);
-        NestedScrollView nestedScrollView_itineraries = view.findViewById(R.id.ProfiloPersonaleF_nestedScrollView_itinerari);
-        ProgressBar progressBar_itinearies = view.findViewById(R.id.ProfiloPersonaleF_progressBar_itinerari);
+        RecyclerView recyclerView_itineraries = view.findViewById(R.id.Profilo_recycleView_itinerari);
+        NestedScrollView nestedScrollView_itineraries = view.findViewById(R.id.Profilo_nestedScrollView_itinerari);
+        ProgressBar progressBar_itinearies = view.findViewById(R.id.Profilo_progressBar_itinerari);
 
         listaItinerariController.initList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
 
@@ -96,7 +96,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
             @Override
             public void run() {
 
-                profiloPersonaleController.initModel();
+                profiloController.initModel();
 
                 handler.post(new Runnable() {
                     @Override
@@ -112,18 +112,11 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
     }
 
 
-    @Override
-    public void onStart() {
-
-        //update();
-        super.onStart();
-    }
-
 
     public void pressMenuIcon() {
         View view = getFragmentView();
         NaTourActivity activity = getNaTourActivity();
-        ImageView imageView_iconMenu = view.findViewById(R.id.ProfiloPersonaleF_imageView_iconaMenu);
+        ImageView imageView_iconMenu = view.findViewById(R.id.Profilo_imageView_iconaMenu);
 
         PopupMenu popupMenu = new PopupMenu(view.getContext(),imageView_iconMenu);
         popupMenu.getMenuInflater().inflate(R.menu.popup_menu_profilo_personale, popupMenu.getMenu());
@@ -159,8 +152,8 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
     public void update(){
         View view = getFragmentView();
 
-        String username = profiloPersonaleModel.getUsername();
-        TextView textView_username = view.findViewById(R.id.ProfiloPersonaleF_textView_username);
+        String username = profiloModel.getUsername();
+        TextView textView_username = view.findViewById(R.id.Profilo_textView_username);
         if(username != null && !username.isEmpty()) {
             textView_username.setBackgroundColor(Color.TRANSPARENT);
             textView_username.setText(username);
@@ -171,8 +164,8 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
         }
 
 
-        String email = profiloPersonaleModel.getEmail();
-        TextView textView_email = view.findViewById(R.id.ProfiloPersonaleF_textView_email);
+        String email = profiloModel.getEmail();
+        TextView textView_email = view.findViewById(R.id.Profilo_textView_email);
         textView_email.setText(email);
         if(email != null && !email.isEmpty()) {
             textView_email.setBackgroundColor(Color.TRANSPARENT);
@@ -183,27 +176,27 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
             textView_email.setText("");
         }
 
-        LinearLayout linearLayout_residence = view.findViewById(R.id.ProfiloPersonale_linearLayout_residence);
-        if(profiloPersonaleModel.getPlaceOfResidence() != null) {
-            TextView textView_residence = view.findViewById(R.id.ProfiloPersonaleF_textView_residence);
-            textView_residence.setText(profiloPersonaleModel.getPlaceOfResidence());
+        LinearLayout linearLayout_residence = view.findViewById(R.id.Profilo_linearLayout_residence);
+        if(profiloModel.getPlaceOfResidence() != null) {
+            TextView textView_residence = view.findViewById(R.id.Profilo_textView_residence);
+            textView_residence.setText(profiloModel.getPlaceOfResidence());
             linearLayout_residence.setVisibility(View.VISIBLE);
         }
         else linearLayout_residence.setVisibility(View.GONE);
 
-        LinearLayout linearLayout_birth = view.findViewById(R.id.ProfiloPersonale_linearLayout_birth);
-        String dateOfBirth = profiloPersonaleModel.getDateOfBirth();
+        LinearLayout linearLayout_birth = view.findViewById(R.id.Profilo_linearLayout_birth);
+        String dateOfBirth = profiloModel.getDateOfBirth();
         if(dateOfBirth != null && !dateOfBirth.isEmpty()) {
-            TextView textView_birth = view.findViewById(R.id.ProfiloPersonaleF_textView_birth);
+            TextView textView_birth = view.findViewById(R.id.Profilo_textView_birth);
             String date = TimeUtils.getDateWithoutHours(dateOfBirth);
             textView_birth.setText(date);
             linearLayout_birth.setVisibility(View.VISIBLE);
         }
         else linearLayout_birth.setVisibility(View.GONE);
 
-        if(profiloPersonaleModel.getProfileImage() != null){
-            ImageView imageView_profilePicture = view.findViewById(R.id.ProfiloPersonaleF_imageView_immagineProfilo);
-            imageView_profilePicture.setImageBitmap(profiloPersonaleModel.getProfileImage());
+        if(profiloModel.getProfileImage() != null){
+            ImageView imageView_profilePicture = view.findViewById(R.id.Profilo_imageView_immagineProfilo);
+            imageView_profilePicture.setImageBitmap(profiloModel.getProfileImage());
         }
 
     }
@@ -217,7 +210,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
             @Override
             public void run() {
 
-                profiloPersonaleController.initModel();
+                profiloController.initModel();
 
                 handler.post(new Runnable() {
                     @Override

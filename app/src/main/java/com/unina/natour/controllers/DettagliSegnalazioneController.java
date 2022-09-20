@@ -34,7 +34,13 @@ public class DettagliSegnalazioneController extends NaTourController{
         this.itineraryDAO = new ItineraryDAOImpl(activity);
         this.reportDAO = new ReportDAOImpl();
 
-        initModel();
+        boolean result = initModel();
+        if(!result){
+            //TODO
+            showErrorMessage(0);
+            getActivity().finish();
+            return;
+        }
     }
 
     public boolean initModel(){
@@ -75,6 +81,10 @@ public class DettagliSegnalazioneController extends NaTourController{
         return true;
     }
 
+    public DettagliSegnalazioneModel getModel() {
+        return dettagliSegnalazioneModel;
+    }
+
     public boolean isMyItinerary() {
 
         /*TODO
@@ -94,15 +104,15 @@ public class DettagliSegnalazioneController extends NaTourController{
         return true;
     }
 
+    //---
+
     public static void openDettagliSegnalazioneActivity(NaTourActivity fromActivity, long reportId){
         Intent intent = new Intent(fromActivity, DettagliSegnalazioneActivity.class);
         intent.putExtra(EXTRA_REPORT_ID, reportId);
         fromActivity.startActivity(intent);
     }
 
-    public DettagliSegnalazioneModel getModel() {
-        return dettagliSegnalazioneModel;
-    }
+    //---
 
     public static boolean dtoToModel(ReportResponseDTO dtoReport, ItineraryResponseDTO dtoItinerary, DettagliSegnalazioneModel model){
         model.clear();
@@ -116,4 +126,5 @@ public class DettagliSegnalazioneController extends NaTourController{
 
         return true;
     }
+
 }

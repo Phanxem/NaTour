@@ -182,7 +182,7 @@ public class PianificaItinerarioController extends NaTourController implements P
         return pianificaItinerarioModel;
     }
 
-    public void initMap(MapView mapView){
+    public boolean initMap(MapView mapView){
         mapView.setTileSource(TileSourceFactory.MAPNIK);
 
         mapView.setMultiTouchControls(true);
@@ -233,6 +233,7 @@ public class PianificaItinerarioController extends NaTourController implements P
 
         mapController.setCenter(centerPoint);
 
+        return true;
     }
 
     public void initItermediatePointsList(ListView listView_puntiIntermedi) {

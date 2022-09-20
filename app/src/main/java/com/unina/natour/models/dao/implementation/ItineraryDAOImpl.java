@@ -10,14 +10,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.unina.natour.controllers.MessageController;
-import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
 import com.unina.natour.controllers.utils.FileUtils;
 import com.unina.natour.dto.response.ItineraryListResponseDTO;
 import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.dto.request.ItineraryRequestDTO;
 import com.unina.natour.dto.response.ItineraryElementResponseDTO;
 import com.unina.natour.dto.response.ItineraryResponseDTO;
-import com.unina.natour.models.dao.converters.JsonConverter;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 
 import java.io.File;
@@ -38,7 +36,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class ItineraryDAOImpl implements ItineraryDAO {
 
     private static final String URL = SERVER_URL + "/itinerary";
@@ -204,6 +201,61 @@ public class ItineraryDAOImpl implements ItineraryDAO {
     }
 
     @Override
+    public ItineraryListResponseDTO findByUserId(long userId) {
+        ItineraryElementResponseDTO test1 = new ItineraryElementResponseDTO();
+        test1.setItineraryId(1);
+        test1.setDifficulty(1);
+        test1.setDescription("1genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku" +
+                "genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku genocide cutter pyroinesis hadoke shoryuken tatsumakisempukiaku2");
+        test1.setDuration(33.3f);
+        test1.setLenght(33.3f);
+        test1.setName("test1");
+        test1.setUserImage(null);
+        test1.setUsername("usertest1");
+
+        ItineraryElementResponseDTO test2 = new ItineraryElementResponseDTO();
+        test2.setItineraryId(2);
+        test2.setDifficulty(0);
+        test2.setDescription("dsghhjfghdgsfghgjhfgsdfghhgfa");
+        test2.setDuration(45.3f);
+        test2.setLenght(76.3f);
+        test2.setName("test12");
+        test2.setUserImage(null);
+        test2.setUsername("usertest12");
+
+        ItineraryElementResponseDTO test3 = new ItineraryElementResponseDTO();
+        test3.setItineraryId(3);
+        test3.setDifficulty(2);
+        test3.setDescription("afjdfòknf asofòkaòsdmasfnaoienlk ");
+        test3.setDuration(88.6f);
+        test3.setLenght(234.1f);
+        test3.setName("test3");
+        test3.setUserImage(null);
+        test3.setUsername("usertest3");
+
+        List<ItineraryElementResponseDTO> response = new ArrayList<ItineraryElementResponseDTO>();
+        response.add(test1);
+        response.add(test2);
+        response.add(test3);
+        response.add(test1);
+        response.add(test2);
+        response.add(test3);
+        response.add(test1);
+        response.add(test2);
+        response.add(test3);
+
+        ItineraryListResponseDTO result = new ItineraryListResponseDTO();
+        MessageResponseDTO messageResponseDTO = MessageController.getSuccessMessage();
+        result.setItineraries(response);
+        result.setResultMessage(messageResponseDTO);
+
+
+        return result;
+    }
+
+    /*
+
+    @Override
     public ItineraryListResponseDTO getUserItinearyList(String username) {
         ItineraryElementResponseDTO test1 = new ItineraryElementResponseDTO();
         test1.setItineraryId(5);
@@ -243,6 +295,8 @@ public class ItineraryDAOImpl implements ItineraryDAO {
         return result;
     }
 
+    */
+
     @Override
     public ItineraryResponseDTO findById(long itineraryId) {
 
@@ -281,6 +335,9 @@ public class ItineraryDAOImpl implements ItineraryDAO {
                 .build();
 
         dto.setGpx(gpx);
+
+        MessageResponseDTO messageResponseDTO = MessageController.getSuccessMessage();
+        dto.setResultMessage(messageResponseDTO);
 
         return dto;
     }

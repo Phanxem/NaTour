@@ -44,14 +44,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ListElementItinerary_textView_name">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/ListElementItinerary_imageView_immagineProfilo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="4dp"
-                    app:srcCompat="@drawable/ic_generic_account_minor" />
+                    android:src="@drawable/ic_generic_account_minor" />
 
                 <TextView
                     android:id="@+id/ListElementItinerary_textView_username"

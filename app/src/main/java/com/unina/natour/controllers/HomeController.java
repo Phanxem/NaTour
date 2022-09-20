@@ -27,7 +27,7 @@ public class HomeController extends NaTourController{
     public HomeController(NaTourActivity activity) {
         super(activity);
 
-        this.listaItinerariController = new ListaItinerariController(activity,ListaItinerariController.CODE_ITINERARY_RANDOM, null);
+        this.listaItinerariController = new ListaItinerariController(activity,ListaItinerariController.CODE_ITINERARY_RANDOM, null, -1);
     }
 
     public void searchItinerary(String searchString){

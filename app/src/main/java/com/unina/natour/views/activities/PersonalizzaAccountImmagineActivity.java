@@ -10,14 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.ImmagineProfiloController;
 import com.unina.natour.controllers.InfoOpzionaliProfiloController;
 import com.unina.natour.models.ImpostaImmagineProfiloModel;
-import com.unina.natour.views.dialogs.MessageDialog;
-import com.unina.natour.views.observers.Observer;
 
 @RequiresApi(api = Build.VERSION_CODES.P)
 @SuppressLint("LongLogTag")
@@ -36,7 +33,7 @@ public class PersonalizzaAccountImmagineActivity extends NaTourActivity {
 
         immagineProfiloController = new ImmagineProfiloController(this);
 
-        impostaImmagineProfiloModel = immagineProfiloController.getImpostaImmagineProfiloModel();
+        impostaImmagineProfiloModel = immagineProfiloController.getModel();
         impostaImmagineProfiloModel.registerObserver(this);
         addModel(impostaImmagineProfiloModel);
 

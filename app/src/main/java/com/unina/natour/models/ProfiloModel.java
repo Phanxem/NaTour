@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 import java.util.Date;
 
-public class ProfiloPersonaleModel extends NaTourModel{
+public class ProfiloModel extends NaTourModel{
 
     private Long id;
     private String username;
@@ -16,7 +16,7 @@ public class ProfiloPersonaleModel extends NaTourModel{
     private boolean isFacebookLinked;
     private boolean isGoogleLinked;
 
-    public ProfiloPersonaleModel(){
+    public ProfiloModel(){
         super();
     }
 

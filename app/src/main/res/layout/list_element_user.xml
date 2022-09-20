@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="8dp"
@@ -19,14 +19,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ListElementUser_textView_name">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ListElementUser_imageView_immagineProfilo"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            app:srcCompat="@drawable/ic_generic_account" />
+            android:src="@drawable/ic_generic_account" />
+
 
         <TextView
             android:id="@+id/ListElementUser_textView_username"

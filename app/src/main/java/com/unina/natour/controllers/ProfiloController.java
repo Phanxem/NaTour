@@ -1,50 +1,62 @@
 package com.unina.natour.controllers;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.unina.natour.R;
-import com.unina.natour.controllers.utils.StringsUtils;
-import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureGetUserException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedGetUserException;
 import com.unina.natour.dto.response.EmailResponseDTO;
 import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.dto.response.UserResponseDTO;
-import com.unina.natour.models.ProfiloPersonaleModel;
+import com.unina.natour.models.ProfiloModel;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.NaTourActivity;
+import com.unina.natour.views.activities.PersonalizzaAccountInfoOpzionaliActivity;
+import com.unina.natour.views.activities.ProfiloUtenteActivity;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class ProfiloPersonaleController extends NaTourController {
+public class ProfiloController extends NaTourController {
 
+    private static final String EXTRA_USER_ID = "USER_ID";
     private ListaItinerariController listaItinerariController;
 
-    private ProfiloPersonaleModel profiloPersonaleModel;
+    private ProfiloModel profiloModel;
+    private boolean isMyProfile;
 
     private AmplifyDAO amplifyDAO;
     private UserDAO userDAO;
 
-    public ProfiloPersonaleController(NaTourActivity activity) {
+    public ProfiloController(NaTourActivity activity) {
         super(activity);
-
-        //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
-        String username = "user";
 
         this.amplifyDAO = new AmplifyDAO();
         this.userDAO = new UserDAOImpl(activity);
 
-        this.listaItinerariController = new ListaItinerariController(activity, ListaItinerariController.CODE_ITINERARY_BY_USERNAME, username);
+        Intent intent = new Intent();
+        long userId = intent.getLongExtra(EXTRA_USER_ID,-1);
+        if(userId < 0){
+            //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
+            String username = "user";
+            isMyProfile = true;
 
-        this.profiloPersonaleModel = new ProfiloPersonaleModel();
+            UserResponseDTO userResponseDTO = userDAO.getUser(username);
+            MessageResponseDTO messageResponseDTO = userResponseDTO.getResultMessage();
+            if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+                showErrorMessage(messageResponseDTO);
+                activity.finish();
+                return;
+            }
+
+            userId = userResponseDTO.getId();
+        }
+        else isMyProfile = false;
+
+        this.listaItinerariController = new ListaItinerariController(activity, ListaItinerariController.CODE_ITINERARY_BY_USER_ID, null, userId);
+
+        this.profiloModel = new ProfiloModel();
         //initModel();
     }
 
@@ -70,16 +82,25 @@ public class ProfiloPersonaleController extends NaTourController {
             return;
         }
 
-        boolean result = dtoToModel(getActivity(), userResponseDTO, emailResponseDTO, profiloPersonaleModel);
+        boolean result = dtoToModel(getActivity(), userResponseDTO, emailResponseDTO, profiloModel);
+        if(!result){
+            //TODO
+            showErrorMessage(0);
+            return;
+        }
     }
 
 
-    public ProfiloPersonaleModel getModel() {
-        return profiloPersonaleModel;
+    public ProfiloModel getModel() {
+        return profiloModel;
     }
 
-    public void setProfiloPersonaleModel(ProfiloPersonaleModel profiloPersonaleModel) {
-        this.profiloPersonaleModel = profiloPersonaleModel;
+    public boolean isMyProfile(){
+        return isMyProfile;
+    }
+
+    public void setProfiloPersonaleModel(ProfiloModel profiloModel) {
+        this.profiloModel = profiloModel;
     }
 
     public ListaItinerariController getListaItinerariController() {
@@ -90,7 +111,17 @@ public class ProfiloPersonaleController extends NaTourController {
         this.listaItinerariController = listaItinerariController;
     }
 
-    public static boolean dtoToModel(Context context, UserResponseDTO userDto, EmailResponseDTO emailDto, ProfiloPersonaleModel model){
+
+    public static void openProfiloUtenteActivity(NaTourActivity fromActivity, long userId){
+
+        Intent intent = new Intent(fromActivity, ProfiloUtenteActivity.class);
+        intent.putExtra(EXTRA_USER_ID,userId);
+        fromActivity.startActivity(intent);
+    }
+
+
+
+    public static boolean dtoToModel(Context context, UserResponseDTO userDto, EmailResponseDTO emailDto, ProfiloModel model){
         model.clear();
 
         model.setEmail(emailDto.getEmail());
@@ -101,11 +132,8 @@ public class ProfiloPersonaleController extends NaTourController {
         model.setPlaceOfResidence(userDto.getPlaceOfResidence());
         model.setDateOfBirth(userDto.getDateOfBirth());
 
-        if(userDto.getProfileImage() != null) model.setProfileImage(userDto.getProfileImage());
-        else {
-            Bitmap genericProfileImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_generic_account);
-            model.setProfileImage(genericProfileImage);
-        }
+        model.setProfileImage(userDto.getProfileImage());
+
 
         model.setFacebookLinked(userDto.isFacebookLinked());
         model.setGoogleLinked(userDto.isGoogleLinked());

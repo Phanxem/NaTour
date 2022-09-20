@@ -13,17 +13,15 @@ import com.unina.natour.R;
 //TODO da aggiustare (capire perché da errore se si importa solo la classe interessata)
 import com.unina.natour.controllers.*;
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.models.ProfiloPersonaleModel;
-
-import org.w3c.dom.Text;
+import com.unina.natour.models.ProfiloModel;
 
 @RequiresApi(api = Build.VERSION_CODES.P)
 public class ModificaProfiloActivity extends NaTourActivity {
 
     public ModificaProfiloController modificaProfiloController;
-    public ProfiloPersonaleController profiloPersonaleController;
+    public ProfiloController profiloController;
 
-    public ProfiloPersonaleModel profiloPersonaleModel;
+    public ProfiloModel profiloModel;
 
 
     // username
@@ -35,12 +33,12 @@ public class ModificaProfiloActivity extends NaTourActivity {
 
         modificaProfiloController = new ModificaProfiloController(this);
 
-        profiloPersonaleController = new ProfiloPersonaleController(this);
-        profiloPersonaleModel = profiloPersonaleController.getModel();
-        addModel(profiloPersonaleModel);
-        profiloPersonaleModel.registerObserver(this);
+        profiloController = new ProfiloController(this);
+        profiloModel = profiloController.getModel();
+        addModel(profiloModel);
+        profiloModel.registerObserver(this);
 
-        profiloPersonaleController.initModel();
+        profiloController.initModel();
 
         pressIconBack();
         pressTextUpdateImage();
@@ -118,39 +116,39 @@ public class ModificaProfiloActivity extends NaTourActivity {
 
     public void update(){
 
-        if(profiloPersonaleModel.getProfileImage() != null) {
+        if(profiloModel.getProfileImage() != null) {
             ImageView imageView_profileImage = findViewById(R.id.ModificaProfilo_imageView_immagineProfilo);
-            imageView_profileImage.setImageBitmap(profiloPersonaleModel.getProfileImage());
+            imageView_profileImage.setImageBitmap(profiloModel.getProfileImage());
         }
 
         TextView textView_dateOfBirth = findViewById(R.id.ModificaProfilo_textView_dataNascita);
-        String dateOfBirth = profiloPersonaleModel.getDateOfBirth();
+        String dateOfBirth = profiloModel.getDateOfBirth();
         if(dateOfBirth != null || dateOfBirth.isEmpty()) textView_dateOfBirth.setText(TimeUtils.getDateWithoutHours(dateOfBirth));
         else textView_dateOfBirth.setText(getString(R.string.ModificaProfilo_textView_dataNascita_null));
 
         TextView textView_placeOfResidence = findViewById(R.id.ModificaProfilo_textView_luogoResidenza);
-        String placeOfResidence = profiloPersonaleModel.getPlaceOfResidence();
-        if(placeOfResidence != null || placeOfResidence.isEmpty()) textView_placeOfResidence.setText(profiloPersonaleModel.getPlaceOfResidence());
+        String placeOfResidence = profiloModel.getPlaceOfResidence();
+        if(placeOfResidence != null || placeOfResidence.isEmpty()) textView_placeOfResidence.setText(profiloModel.getPlaceOfResidence());
         else textView_placeOfResidence.setText(getString(R.string.ModificaProfilo_textView_luogoResidenza_null));
 
         TextView textView_email = findViewById(R.id.ModificaProfilo_textView_email);
-        textView_email.setText(profiloPersonaleModel.getEmail());
+        textView_email.setText(profiloModel.getEmail());
 
         //TODO definire una funzione nel controller che verifica se l'utente si è registrato via
         //facebook o google, in questi casi entrambi i tasti vengono disabilitati
 
         Button button_linkFacebook = findViewById(R.id.ModificaProfilo_button_facebook);
-        if(profiloPersonaleModel.isFacebookLinked()) button_linkFacebook.setEnabled(false);
+        if(profiloModel.isFacebookLinked()) button_linkFacebook.setEnabled(false);
         else button_linkFacebook.setEnabled(true);
 
         Button button_linkGoogle = findViewById(R.id.ModificaProfilo_button_google);
-        if(profiloPersonaleModel.isGoogleLinked()) button_linkGoogle.setEnabled(false);
+        if(profiloModel.isGoogleLinked()) button_linkGoogle.setEnabled(false);
         else button_linkGoogle.setEnabled(true);
     }
 
     @Override
     protected void onResume() {
-        profiloPersonaleController.initModel();
+        profiloController.initModel();
         super.onResume();
     }
 

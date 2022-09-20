@@ -52,8 +52,7 @@ import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
-@SuppressLint("LongLogTag")
+
 public class DettagliItinerarioController extends NaTourController{
 
     public final static String EXTRA_ITINERARY_ID = "itineraryId";
@@ -93,7 +92,13 @@ public class DettagliItinerarioController extends NaTourController{
         };
 
         this.dettagliItinerarioModel = new DettagliItinerarioModel();
-        initModel();
+        boolean result = initModel();
+        if(!result){
+            //TODO
+            showErrorMessage(0);
+            getActivity().finish();
+            return;
+        }
 
         this.activityResultLauncherPermissions = activity.registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
@@ -110,11 +115,11 @@ public class DettagliItinerarioController extends NaTourController{
     public boolean initModel(){
         Intent intent = getActivity().getIntent();
         long itineraryId = intent.getLongExtra(EXTRA_ITINERARY_ID,-1);
-/*TODO
+/*
         if(itineraryId < 0){
-        showError
-            activity.finish()
-            return;
+            showErrorMessage(0);
+            getActivity().finish();
+            return false;
         }
 */
         ItineraryResponseDTO itineraryDTO = itineraryDAO.findById(itineraryId);
@@ -133,7 +138,9 @@ public class DettagliItinerarioController extends NaTourController{
         return true;
     }
 
-    public void initMap(MapView mapView) {
+    public boolean initMap(MapView mapView) {
+        if(mapView == null) return false;
+
         mapView.setTileSource(TileSourceFactory.MAPNIK);
 
         mapView.setMultiTouchControls(true);
@@ -146,11 +153,14 @@ public class DettagliItinerarioController extends NaTourController{
 
         CustomZoomButtonsController zoomController = mapView.getZoomController();
         zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER);
+
+        return true;
     }
 
-    public void initOsmdroidConfiguration(){
+    public boolean initOsmdroidConfiguration(){
         Context appContext = getActivity().getApplicationContext();
         Configuration.getInstance().load(appContext, PreferenceManager.getDefaultSharedPreferences(appContext));
+        return true;
     }
 
 
@@ -174,7 +184,6 @@ public class DettagliItinerarioController extends NaTourController{
         return true;
     }
 
-    //---
 
     public void activeNavigation(){
         if(!GPSUtils.hasGPSFeature(getActivity())){

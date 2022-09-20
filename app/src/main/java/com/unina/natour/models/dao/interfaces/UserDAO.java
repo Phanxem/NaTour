@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 public interface UserDAO extends ServerDAO{
 
     UserResponseDTO getUser(String username);
-    //UserDTO getUser(long id);
+    UserResponseDTO getUser(long id);
 
     //Bitmap getUserProfileImage(String username) throws ExecutionException, InterruptedException, ServerException, IOException;
     //File getUserProfileImage(long id);

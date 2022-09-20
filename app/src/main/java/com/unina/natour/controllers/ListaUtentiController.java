@@ -3,6 +3,7 @@ package com.unina.natour.controllers;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -47,13 +48,21 @@ public class ListaUtentiController extends NaTourController{
         this.userDAO = new UserDAOImpl(activity);
 
         if(researchCode < 0 || researchCode > 1){
-            //TODO EXCEPTION
+            //TODO
+            showErrorMessage(0);
+            //getActivity().finish();
             return;
         }
-        initModel(researchCode, researchString);
+        boolean result = initModel(researchCode, researchString);
+        if(!result){
+            //TODO
+            showErrorMessage(0);
+            //getActivity().finish();
+            return;
+        }
     }
 
-    public void initModel(long researchCode, String researchString){
+    public boolean initModel(long researchCode, String researchString){
         UserListResponseDTO usersDTO = null;
 
         if(researchCode == CODE_USER_WITH_CONVERSATION){
@@ -63,8 +72,9 @@ public class ListaUtentiController extends NaTourController{
             usersDTO = userDAO.getUserByUsername(researchString);
         }
         else{
-            //TODO EXCEPTION
-            return;
+            //TODO
+            showErrorMessage(0);
+            return false;
         }
 
         this.researchString = researchString;
@@ -73,10 +83,15 @@ public class ListaUtentiController extends NaTourController{
 
         boolean result = dtoToModel(getActivity(), usersDTO, elementsUserModel);
         if(!result){
-            //TODO ERROR
+            //TODO
+            showErrorMessage(0);
+            getActivity().finish();
+            return false;
         }
 
         this.userListAdapter = new UserListAdapter(getActivity(),elementsUserModel);
+
+        return true;
     }
 
     public void initList(NestedScrollView nestedScrollView_users, RecyclerView recyclerView_users, ProgressBar progressBar_users) {
@@ -142,13 +157,9 @@ public class ListaUtentiController extends NaTourController{
 
 
     public boolean dtoToModel(Context context, UserResponseDTO dto, ElementUserModel model){
+        model.setUserId(dto.getId());
         model.setUsername(dto.getUsername());
-        if(dto.getProfileImage() != null) model.setProfileImage(dto.getProfileImage());
-        else {
-            Bitmap genericProfileImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_generic_account);
-            model.setProfileImage(genericProfileImage);
-        }
-
+        model.setProfileImage(dto.getProfileImage());
         return true;
     }
 
@@ -164,6 +175,7 @@ public class ListaUtentiController extends NaTourController{
                 //TODO ERROR
                 return false;
             }
+            model.add(elementModel);
         }
         return true;
     }

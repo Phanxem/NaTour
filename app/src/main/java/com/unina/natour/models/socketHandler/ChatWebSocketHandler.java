@@ -34,7 +34,6 @@ public class ChatWebSocketHandler {
                 .build();
 
         ChatWebSocketListener listener = new ChatWebSocketListener(context);
-
         OkHttpClient client = new OkHttpClient();
 
         webSocket = client.newWebSocket(request, listener);

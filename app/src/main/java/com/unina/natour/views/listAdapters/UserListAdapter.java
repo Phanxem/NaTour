@@ -1,5 +1,7 @@
 package com.unina.natour.views.listAdapters;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.DettagliItinerarioController;
+import com.unina.natour.controllers.ProfiloController;
 import com.unina.natour.models.ElementItineraryModel;
 import com.unina.natour.models.ElementUserModel;
 import com.unina.natour.views.activities.NaTourActivity;
@@ -44,11 +47,16 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         ElementUserModel user = elementsUserModel.get(position);
 
         holder.textView_user.setText(user.getUsername());
-        holder.imageView_user.setImageBitmap(user.getProfileImage());
+
+        if(user.getProfileImage() != null) holder.imageView_user.setImageBitmap(user.getProfileImage());
+        else{
+            holder.imageView_user.setImageDrawable(activity.getDrawable(R.drawable.ic_generic_account));
+        }
 
         holder.relativeLayout_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ProfiloController.openProfiloUtenteActivity(activity, user.getUserId());
                 //TODO openProfiloActivity;
             }
         });

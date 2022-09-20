@@ -12,8 +12,6 @@ import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
-@SuppressLint("LongLogTag")
 public class AutenticazioneController extends NaTourController{
 
     private AmplifyDAO amplifyDAO;
@@ -22,7 +20,6 @@ public class AutenticazioneController extends NaTourController{
         super(activity);
         this.amplifyDAO = new AmplifyDAO();
     }
-
 
     public Boolean signIn(String usernameEmail, String password) {
         if(!StringsUtils.areAllFieldsFull(usernameEmail,password)){
@@ -39,9 +36,6 @@ public class AutenticazioneController extends NaTourController{
 
         return true;
     }
-
-
-
 
 
     public static void openAutenticazioneActivity(NaTourActivity fromActivity){

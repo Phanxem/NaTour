@@ -1,7 +1,6 @@
 package com.unina.natour.views.activities;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.graphics.Paint;
@@ -18,14 +17,11 @@ import android.widget.TextView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.DettagliItinerarioController;
-import com.unina.natour.controllers.PianificaItinerarioController;
 import com.unina.natour.controllers.SegnalaItinerarioController;
 import com.unina.natour.controllers.VisualizzaSegnalazioniController;
 import com.unina.natour.controllers.utils.DrawableUtils;
 import com.unina.natour.models.DettagliItinerarioModel;
 import com.unina.natour.views.dialogs.EliminaItinerarioDialog;
-import com.unina.natour.views.dialogs.MessageDialog;
-import com.unina.natour.views.observers.Observer;
 
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
@@ -148,7 +144,7 @@ public class DettagliItinerarioActivity extends NaTourActivity {
     public void pressWarning(){
         NaTourActivity activity = this;
 
-        RelativeLayout relativeLayout_warning = findViewById(R.id.ItineraryDetails_relativeLayout_warning);
+        RelativeLayout relativeLayout_warning = findViewById(R.id.Profilo_relativeLayout_sendMessage);
         relativeLayout_warning.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -213,7 +209,7 @@ public class DettagliItinerarioActivity extends NaTourActivity {
     }
 
     public void update(){
-        RelativeLayout relativeLayout_warning = findViewById(R.id.ItineraryDetails_relativeLayout_warning);
+        RelativeLayout relativeLayout_warning = findViewById(R.id.Profilo_relativeLayout_sendMessage);
         ConstraintLayout constraintLayout_durationDistanceDifficulty = findViewById(R.id.ItineraryDetails_constraintLayout_durationDistanceDifficulty);
         ScrollView scrollView_body = findViewById(R.id.ItineraryDetails_scrollView_body);
         ImageView imageView_back = findViewById(R.id.ItineraryDetails_imageView_iconaIndietro);

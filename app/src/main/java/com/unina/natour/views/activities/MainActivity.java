@@ -1,29 +1,17 @@
 package com.unina.natour.views.activities;
 
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.unina.natour.R;
-import com.unina.natour.controllers.ImportaFileGPXController;
 import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.PianificaItinerarioController;
-import com.unina.natour.controllers.ProfiloPersonaleController;
-import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.fragments.CommunityFragment;
 import com.unina.natour.views.fragments.HomeFragment;
 import com.unina.natour.views.fragments.PianificaItinerarioFragment;

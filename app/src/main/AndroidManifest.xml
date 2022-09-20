@@ -21,6 +21,9 @@
         android:usesCleartextTraffic="true">
 
         <activity
+            android:name=".views.activities.ProfiloUtenteActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.activities.HomeGuestActivity"
             android:exported="false" />
         <activity

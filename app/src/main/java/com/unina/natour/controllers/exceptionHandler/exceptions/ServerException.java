@@ -9,7 +9,7 @@ public class ServerException extends Exception {
     private String message;
 
     public ServerException(){
-        this(MessageController.unknownErrorMessage());
+        this(MessageController.getUnknownErrorMessage());
     }
 
     public ServerException(MessageResponseDTO messageResponseDTO){

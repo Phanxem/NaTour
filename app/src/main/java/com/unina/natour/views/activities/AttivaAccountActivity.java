@@ -20,16 +20,12 @@ public class AttivaAccountActivity extends NaTourActivity {
 
     private AttivaAccountController attivaAccountController;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attiva_account);
 
         attivaAccountController = new AttivaAccountController(this);
-
-
         attivaAccountController.initAccountActivation();
 
         pressButtonConfirm();
