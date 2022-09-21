@@ -1,35 +1,29 @@
 package com.unina.natour.views.listAdapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.unina.natour.R;
-import com.unina.natour.controllers.ImportaFileGPXController;
-import com.unina.natour.models.ChatMessageModel;
-import com.unina.natour.views.activities.ChatActivity;
+import com.unina.natour.models.ElementMessageModel;
 
-import java.io.File;
 import java.util.List;
 
-public class ChatListAdapter extends ArrayAdapter<ChatMessageModel> {
+public class ChatListAdapter extends ArrayAdapter<ElementMessageModel> {
 
-    public ChatListAdapter(Context context, List<ChatMessageModel> messages) {
+    public ChatListAdapter(Context context, List<ElementMessageModel> messages) {
         super(context, R.layout.list_element_chat_message_sent,messages);
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ChatMessageModel message = getItem(position);
+        ElementMessageModel message = getItem(position);
 
         TextView textView_message = null;
 

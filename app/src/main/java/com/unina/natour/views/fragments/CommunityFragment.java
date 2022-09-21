@@ -78,9 +78,9 @@ public class CommunityFragment extends NaTourFragment {
 
     public void searchFromSearchBar(){
         ImageView imageView_iconClose = view.findViewById(R.id.Community_imageView_cancelResearch);
-        RecyclerView recyclerView_itineraries = view.findViewById(R.id.Community_recycleView_utenti);
-        NestedScrollView nestedScrollView_itineraries = view.findViewById(R.id.Community_nestedScrollView_utenti);
-        ProgressBar progressBar_itinearies = view.findViewById(R.id.Community_progressBar_utenti);
+        RecyclerView recyclerView_users = view.findViewById(R.id.Community_recycleView_utenti);
+        NestedScrollView nestedScrollView_users = view.findViewById(R.id.Community_nestedScrollView_utenti);
+        ProgressBar progressBar_users = view.findViewById(R.id.Community_progressBar_utenti);
 
         EditText editText_barraRicerca = view.findViewById(R.id.Community_editText_research);
         editText_barraRicerca.setOnKeyListener(new View.OnKeyListener() {
@@ -91,7 +91,7 @@ public class CommunityFragment extends NaTourFragment {
 
                     if(searchString != null && !searchString.isEmpty()) {
                         communityController.searchUser(searchString);
-                        listaUtentiController.initList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
+                        listaUtentiController.initList(nestedScrollView_users,recyclerView_users, progressBar_users);
 
                         editText_barraRicerca.onEditorAction(EditorInfo.IME_ACTION_DONE);
                         imageView_iconClose.setVisibility(View.VISIBLE);

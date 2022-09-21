@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
+import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.dto.response.UserListResponseDTO;
 import com.unina.natour.dto.response.UserResponseDTO;
 import com.unina.natour.models.ElementItineraryModel;
@@ -77,6 +78,13 @@ public class ListaUtentiController extends NaTourController{
             return false;
         }
 
+        MessageResponseDTO messageResponseDTO = usersDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            //TODO
+            showErrorMessage(messageResponseDTO);
+            return false;
+        }
+
         this.researchString = researchString;
         this.researchCode = researchCode;
 
@@ -85,11 +93,10 @@ public class ListaUtentiController extends NaTourController{
         if(!result){
             //TODO
             showErrorMessage(0);
-            getActivity().finish();
             return false;
         }
 
-        this.userListAdapter = new UserListAdapter(getActivity(),elementsUserModel);
+        this.userListAdapter = new UserListAdapter(getActivity(),elementsUserModel, researchCode);
 
         return true;
     }
@@ -97,7 +104,6 @@ public class ListaUtentiController extends NaTourController{
     public void initList(NestedScrollView nestedScrollView_users, RecyclerView recyclerView_users, ProgressBar progressBar_users) {
         recyclerView_users.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView_users.setAdapter(userListAdapter);
-
 
 
         nestedScrollView_users.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
@@ -149,14 +155,16 @@ public class ListaUtentiController extends NaTourController{
         }
 
         elementsUserModel.clear();
-        researchCode = researchCode;
-        researchString = searchString;
+        this.researchCode = researchCode;
+        this.researchString = searchString;
 
         initModel(researchCode, searchString);
     }
 
 
     public boolean dtoToModel(Context context, UserResponseDTO dto, ElementUserModel model){
+        model.clear();
+
         model.setUserId(dto.getId());
         model.setUsername(dto.getUsername());
         model.setProfileImage(dto.getProfileImage());

@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.unina.natour.amplify.ApplicationConfig;
 import com.unina.natour.controllers.ChatController;
-import com.unina.natour.models.ChatMessageModel;
+import com.unina.natour.models.ElementMessageModel;
 import com.unina.natour.views.activities.ChatActivity;
 
 import okhttp3.Response;
@@ -24,6 +24,7 @@ public class ChatWebSocketListener extends WebSocketListener {
     public ChatWebSocketListener(Context context){
         this.context = context;
     }
+
 
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
@@ -48,18 +49,19 @@ public class ChatWebSocketListener extends WebSocketListener {
             ChatActivity chatActivity = (ChatActivity) currentActivity;
             ChatController chatController = chatActivity.getChatController();
 
-            ChatMessageModel messageModel = new ChatMessageModel(text, false);
+            ElementMessageModel messageModel = new ElementMessageModel(text, false);
 
             chatActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     //chatController.receiveMessage(text);
-                    chatController.addMessage(messageModel);
+                    //chatController.addMessage(messageModel);
                 }
             });
         }
 
     }
+
     @Override
     public void onMessage(WebSocket webSocket, ByteString bytes) {
         Log.i(TAG, "ON MESSAGE (bytes)");

@@ -1,18 +1,19 @@
 package com.unina.natour.views.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.ChatController;
-import com.unina.natour.views.dialogs.MessageDialog;
+import com.unina.natour.controllers.ListaMessaggiController;
 
 //FATE PRELIMINARE DI TESTING
 //facciamo in modo che tutti i messaggi che scriviamo vengono visualizzati come inviati da noi
@@ -25,7 +26,8 @@ public class ChatActivity extends NaTourActivity {
     //TODO
     //ProfiloController profiloController;
 
-    ChatController chatController;
+    private ChatController chatController;
+    private ListaMessaggiController listaMessaggiController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,16 +35,17 @@ public class ChatActivity extends NaTourActivity {
         setContentView(R.layout.activity_chat);
 
         this.chatController = new ChatController(this);
+        this.listaMessaggiController = chatController.getListaMessaggiController();
 
-        ListView listView_messages = findViewById(R.id.Chat_listView_messages);
-        chatController.initListViewChat(listView_messages);
+        RecyclerView recyclerView_messages= findViewById(R.id.Chat_recyclerView_messages);
+        NestedScrollView nestedScrollView_messages = findViewById(R.id.Chat_nestedScrollView_messages);
+        ProgressBar progressBar_messages = findViewById(R.id.Chat_progressBar_messages);
 
+        listaMessaggiController.initList(nestedScrollView_messages,recyclerView_messages,progressBar_messages);
 
         pressBackIcon();
         pressMenuIcon();
         pressUserAccount();
-
-
 
     }
 
@@ -56,7 +59,7 @@ public class ChatActivity extends NaTourActivity {
             @Override
             public void onClick(View v) {
                 //TODO
-                chatController.testClose();
+                //chatController.testClose();
             }
         });
     }
@@ -67,7 +70,7 @@ public class ChatActivity extends NaTourActivity {
             @Override
             public void onClick(View v) {
                 //TODO
-                chatController.testOpen();
+                //chatController.testOpen();
             }
         });
     }
@@ -78,7 +81,7 @@ public class ChatActivity extends NaTourActivity {
             @Override
             public void onClick(View v) {
                 //TODO
-                chatController.testSend();
+                //chatController.testSend();
             }
         });
 

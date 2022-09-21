@@ -2,6 +2,7 @@ package com.unina.natour.views.listAdapters;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
+import com.unina.natour.controllers.ChatController;
 import com.unina.natour.controllers.DettagliItinerarioController;
+import com.unina.natour.controllers.ListaUtentiController;
 import com.unina.natour.controllers.ProfiloController;
 import com.unina.natour.models.ElementItineraryModel;
 import com.unina.natour.models.ElementUserModel;
@@ -28,11 +31,13 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
 
     private ArrayList<ElementUserModel> elementsUserModel;
 
+    private long researchCode;
 
-    public UserListAdapter(NaTourActivity activity, ArrayList<ElementUserModel> model){
+
+    public UserListAdapter(NaTourActivity activity, ArrayList<ElementUserModel> model, long researchCode){
         this.elementsUserModel = model;
         this.activity = activity;
-
+        this.researchCode = researchCode;
     }
 
     @NonNull
@@ -56,8 +61,13 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         holder.relativeLayout_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProfiloController.openProfiloUtenteActivity(activity, user.getUserId());
-                //TODO openProfiloActivity;
+                if(researchCode == ListaUtentiController.CODE_USER_BY_RESEARCH) {
+                    ProfiloController.openProfiloUtenteActivity(activity, user.getUserId());
+                }
+                else{
+                    Log.i("--------------", "id: " + user.getUserId());
+                    ChatController.openChatActivity(activity,user.getUserId());
+                }
             }
         });
     }

@@ -1,46 +1,68 @@
 package com.unina.natour.controllers;
 
+import android.content.Intent;
 import android.util.Log;
 import android.widget.ListView;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.fragment.app.FragmentActivity;
-
-import com.unina.natour.models.ChatMessageModel;
-import com.unina.natour.models.RicercaPuntoModel;
-import com.unina.natour.models.dao.implementation.AddressDAOImpl;
-import com.unina.natour.models.dao.interfaces.AddressDAO;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.UserResponseDTO;
+import com.unina.natour.models.ElementMessageModel;
+import com.unina.natour.models.dao.implementation.UserDAOImpl;
+import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.models.socketHandler.ChatWebSocketHandler;
+import com.unina.natour.views.activities.AutenticazioneActivity;
+import com.unina.natour.views.activities.ChatActivity;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.listAdapters.ChatListAdapter;
-import com.unina.natour.views.listAdapters.RisultatiRicercaPuntoListAdapter;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ChatController extends NaTourController{
 
 
-    ChatListAdapter chatListAdapter;
+    private static final String EXTRA_SOURCE_USER_ID = "SOURCE_USER_ID";
+    private static final String EXTRA_DESTATION_USER_ID = "DESTINATION_USER_ID";
 
-    ChatWebSocketHandler chatWebSocketHandler;
 
+    private ListaMessaggiController listaMessaggiController;
 
-    List<ChatMessageModel> messages;
-    //TODO
-    //MessageDAO messageDAO;
+    private UserDAO userDAO;
 
     public ChatController(NaTourActivity activity){
         super(activity);
 
-        this.messages = new LinkedList<ChatMessageModel>();
+        this.userDAO = new UserDAOImpl(getActivity());
 
-        ChatMessageModel message1 = new ChatMessageModel("hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello",true);
-        ChatMessageModel message2 = new ChatMessageModel("hi",false);
+        //Amplify
+        String user = "user";
+        UserResponseDTO userResponseDTO = userDAO.getUser(user);
+        MessageResponseDTO messageResponseDTO = userResponseDTO.getResultMessage();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
+            return;
+        }
+
+        //TODO testing
+        //long myId = userResponseDTO.getId();
+        long myId = 11;
+
+        Intent intent = getActivity().getIntent();
+        long userId = intent.getLongExtra(EXTRA_DESTATION_USER_ID, -1);
+        if(userId < 0){
+            Log.i(TAG,"id non inserito");
+            showErrorMessage(messageResponseDTO);
+            return;
+        }
+
+        this.listaMessaggiController = new ListaMessaggiController(activity, myId, userId);
+
+
+        /*
+        this.messages = new LinkedList<ElementMessageModel>();
+
+        ElementMessageModel message1 = new ElementMessageModel("hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello",true);
+        ElementMessageModel message2 = new ElementMessageModel("hi",false);
 
         messages.add(message1);
         messages.add(message2);
@@ -48,32 +70,32 @@ public class ChatController extends NaTourController{
         this.chatListAdapter = new ChatListAdapter(activity, messages);
 
         this.chatWebSocketHandler = new ChatWebSocketHandler(activity);
-
+*/
     }
 
-    public void initListViewChat(ListView listView_messages) {
-        listView_messages.setAdapter(chatListAdapter);
-    }
-
-    public void back(){
-
-    }
-
-    public void menu() {
-
-    }
 
     public void sendMessage(){
         //TODO socket
 
     }
 
-    public void addMessage(ChatMessageModel message3){
+    public ListaMessaggiController getListaMessaggiController() {
+        return listaMessaggiController;
+    }
+
+    public void setListaMessaggiController(ListaMessaggiController listaMessaggiController) {
+        this.listaMessaggiController = listaMessaggiController;
+    }
+
+
+//TODO socketTests
+    /*
+    public void addMessage(ElementMessageModel message3){
         //Log.i(TAG, message.getMessage());
 
         chatListAdapter.add(message3);
 
-        for(ChatMessageModel messageModel: messages){
+        for(ElementMessageModel messageModel: messages){
             Log.i(TAG, messageModel.getMessage());
         }
 
@@ -81,19 +103,19 @@ public class ChatController extends NaTourController{
     }
 
     public void receiveMessage(String message){
-        ChatMessageModel receivedMessage = new ChatMessageModel(message,false);
+        ElementMessageModel receivedMessage = new ElementMessageModel(message,false);
         chatListAdapter.add(receivedMessage);
 
-        for(ChatMessageModel messageModel: messages){
+        for(ElementMessageModel messageModel: messages){
             Log.i(TAG, messageModel.getMessage());
         }
     }
 
-    public List<ChatMessageModel> getMessages() {
+    public List<ElementMessageModel> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<ChatMessageModel> messages) {
+    public void setMessages(List<ElementMessageModel> messages) {
         this.messages = messages;
     }
 
@@ -112,9 +134,17 @@ public class ChatController extends NaTourController{
         String text = "testing";
         boolean result = chatWebSocketHandler.sendToWebSocket(text);
         if(result) {
-            ChatMessageModel message = new ChatMessageModel(text,true);
+            ElementMessageModel message = new ElementMessageModel(text,true);
             chatListAdapter.add(message);
         }
 
     }
+    */
+
+    public static void openChatActivity(NaTourActivity fromActivity, long idUser){
+        Intent intent = new Intent(fromActivity, ChatActivity.class);
+        intent.putExtra(EXTRA_DESTATION_USER_ID, idUser);
+        fromActivity.startActivity(intent);
+    }
+
 }

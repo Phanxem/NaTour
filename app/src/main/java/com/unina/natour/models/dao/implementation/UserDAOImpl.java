@@ -369,7 +369,7 @@ public class UserDAOImpl implements UserDAO {
         test.setProfileImage(null);
         test.setUsername("giacomo");
         test.setDateOfBirth("12/03/07");
-        test.setId(43l);
+        test.setId(22l);
         test.setPlaceOfResidence("memdfjmdsmsfa");
         test.setFacebookLinked(false);
         test.setGoogleLinked(false);

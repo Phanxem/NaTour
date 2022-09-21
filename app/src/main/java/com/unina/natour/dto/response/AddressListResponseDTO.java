@@ -1,11 +1,16 @@
 package com.unina.natour.dto.response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AddressListResponseDTO {
 
     private MessageResponseDTO resultMessage;
     private List<AddressResponseDTO> addresses;
+
+    public AddressListResponseDTO(){
+        this.addresses = new ArrayList<AddressResponseDTO>();
+    }
 
     public MessageResponseDTO getResultMessage() {
         return resultMessage;

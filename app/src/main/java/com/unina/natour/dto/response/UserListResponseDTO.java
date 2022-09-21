@@ -1,11 +1,17 @@
 package com.unina.natour.dto.response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserListResponseDTO {
 
     private MessageResponseDTO resultMessage;
     private List<UserResponseDTO> users;
+
+    public UserListResponseDTO(){
+        this.users = new ArrayList<UserResponseDTO>();
+    }
+
 
     public MessageResponseDTO getResultMessage() {
         return resultMessage;
