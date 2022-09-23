@@ -35,13 +35,24 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/ListElementUser_imageView_immagineProfilo"
             android:layout_alignBottom="@id/ListElementUser_imageView_immagineProfilo"
-            android:layout_alignParentEnd="true"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_toStartOf="@+id/ListElementUser_imageView_notification"
             android:layout_toEndOf="@+id/ListElementUser_imageView_immagineProfilo"
             android:gravity="center_vertical"
             android:text="Username"
             android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/ListElementUser_imageView_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/ListElementUser_imageView_immagineProfilo"
+            android:layout_alignBottom="@id/ListElementUser_imageView_immagineProfilo"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_unseen" />
 
 
     </RelativeLayout>

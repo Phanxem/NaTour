@@ -2,10 +2,8 @@ package com.unina.natour.models.dao.implementation;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Build;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,7 +12,8 @@ import com.unina.natour.controllers.MessageController;
 import com.unina.natour.controllers.utils.FileUtils;
 import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.dto.request.OptionalInfoRequestDTO;
-import com.unina.natour.dto.response.UserListResponseDTO;
+import com.unina.natour.dto.response.UserChatResponseDTO;
+import com.unina.natour.dto.response.UserChatListResponseDTO;
 import com.unina.natour.dto.response.UserResponseDTO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 
@@ -363,61 +362,101 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public UserListResponseDTO getUserWithConversation() {
+    public UserChatListResponseDTO findUserChatByConversation() {
 
-        UserResponseDTO test = new UserResponseDTO();
-        test.setProfileImage(null);
-        test.setUsername("giacomo");
-        test.setDateOfBirth("12/03/07");
-        test.setId(22l);
-        test.setPlaceOfResidence("memdfjmdsmsfa");
-        test.setFacebookLinked(false);
-        test.setGoogleLinked(false);
+        UserChatResponseDTO test1 = new UserChatResponseDTO();
+        test1.setProfileImage(null);
+        test1.setUsername("Antonio");
+        test1.setId(22l);
+        test1.setMessagesToRead(false);
 
-        List<UserResponseDTO> result = new ArrayList<UserResponseDTO>();
-        result.add(test);
-        result.add(test);
-        result.add(test);
-        result.add(test);
-        result.add(test);
-        result.add(test);
-        result.add(test);
-        result.add(test);
-        result.add(test);
-        result.add(test);
-        result.add(test);
+        UserChatResponseDTO test2 = new UserChatResponseDTO();
+        test2.setProfileImage(null);
+        test2.setUsername("giacomo");
+        test2.setId(23l);
+        test2.setMessagesToRead(true);
 
-        UserListResponseDTO userListResponseDTO = new UserListResponseDTO();
+        UserChatResponseDTO test3 = new UserChatResponseDTO();
+        test3.setProfileImage(null);
+        test3.setUsername("massimo");
+        test3.setId(24l);
+        test3.setMessagesToRead(false);
+
+
+
+
+        List<UserChatResponseDTO> result = new ArrayList<UserChatResponseDTO>();
+        result.add(test1);
+        result.add(test2);
+        result.add(test3);
+        result.add(test1);
+        result.add(test2);
+        result.add(test3);
+        result.add(test1);
+        result.add(test2);
+        result.add(test3);
+        result.add(test1);
+        result.add(test2);
+        result.add(test3);
+
+
+        UserChatListResponseDTO userChatListResponseDTO = new UserChatListResponseDTO();
         MessageResponseDTO messageResponseDTO = MessageController.getSuccessMessage();
-        userListResponseDTO.setResultMessage(messageResponseDTO);
-        userListResponseDTO.setUsers(result);
+        userChatListResponseDTO.setResultMessage(messageResponseDTO);
+        userChatListResponseDTO.setUsers(result);
 
-        return userListResponseDTO;
+        return userChatListResponseDTO;
     }
 
     @Override
-    public UserListResponseDTO getUserByUsername(String researchString) {
-        UserResponseDTO test = new UserResponseDTO();
-        test.setProfileImage(null);
-        test.setUsername("flkgsdfs");
-        test.setDateOfBirth("13/03/07");
-        test.setId(432l);
-        test.setPlaceOfResidence("mestolo");
-        test.setFacebookLinked(false);
-        test.setGoogleLinked(false);
+    public UserChatListResponseDTO findUserChatByUsername(String researchString) {
 
-        List<UserResponseDTO> result = new ArrayList<UserResponseDTO>();
-        result.add(test);
-        result.add(test);
-        result.add(test);
+        UserChatResponseDTO test1 = new UserChatResponseDTO();
+        test1.setProfileImage(null);
+        test1.setUsername("Mayro");
+        test1.setId(224l);
+        test1.setMessagesToRead(false);
 
-        UserListResponseDTO userListResponseDTO = new UserListResponseDTO();
+        UserChatResponseDTO test2 = new UserChatResponseDTO();
+        test2.setProfileImage(null);
+        test2.setUsername("Sendo");
+        test2.setId(234l);
+        test2.setMessagesToRead(true);
+
+        UserChatResponseDTO test3 = new UserChatResponseDTO();
+        test3.setProfileImage(null);
+        test3.setUsername("Massima");
+        test3.setId(24l);
+        test3.setMessagesToRead(true);
+
+
+
+
+        List<UserChatResponseDTO> result = new ArrayList<UserChatResponseDTO>();
+        result.add(test1);
+        result.add(test2);
+        result.add(test3);
+        result.add(test1);
+        result.add(test2);
+        result.add(test3);
+        result.add(test1);
+        result.add(test2);
+        result.add(test3);
+        result.add(test1);
+        result.add(test2);
+        result.add(test3);
+
+
+        UserChatListResponseDTO userChatListResponseDTO = new UserChatListResponseDTO();
         MessageResponseDTO messageResponseDTO = MessageController.getSuccessMessage();
-        userListResponseDTO.setResultMessage(messageResponseDTO);
-        userListResponseDTO.setUsers(result);
+        userChatListResponseDTO.setResultMessage(messageResponseDTO);
+        userChatListResponseDTO.setUsers(result);
 
-        return userListResponseDTO;
+        return userChatListResponseDTO;
     }
+
+
+
 
 
 

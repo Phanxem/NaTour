@@ -11,6 +11,8 @@ import okhttp3.WebSocket;
 import okio.ByteString;
 
 public class ChatWebSocketHandler {
+
+    //testing socket
     private final static String URL_WEBSOCKET = "wss://w7m7m8mork.execute-api.eu-west-1.amazonaws.com/production";
     private final static String URL_CONNECTION = "https://w7m7m8mork.execute-api.eu-west-1.amazonaws.com/production/@connections";
 

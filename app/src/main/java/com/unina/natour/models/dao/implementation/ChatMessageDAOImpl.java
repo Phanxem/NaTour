@@ -28,16 +28,42 @@ public class ChatMessageDAOImpl implements ChatMessageDAO {
         test2.setUserSourceId(22);
         test2.setUserDestinationId(11);
 
+        ChatMessageResponseDTO testP = new ChatMessageResponseDTO();
+        testP.setMessage("PRIMO");
+        testP.setDateOfInput("12/12/22");
+        testP.setUserSourceId(11);
+        testP.setUserDestinationId(22);
+
+        ChatMessageResponseDTO testU = new ChatMessageResponseDTO();
+        testU.setMessage("ULTIMO");
+        testU.setDateOfInput("12/12/22");
+        testU.setUserSourceId(22);
+        testU.setUserDestinationId(11);
+
 
         List<ChatMessageResponseDTO> list = new ArrayList<ChatMessageResponseDTO>();
 
-        list.add(test1);
-        list.add(test1);
-        list.add(test2);
+        list.add(testP);
         list.add(test1);
         list.add(test2);
         list.add(test2);
-        list.add(test1);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(test2);
+        list.add(testU);
 
         ChatMessageListResponseDTO listTest = new ChatMessageListResponseDTO();
 

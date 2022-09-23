@@ -1,6 +1,7 @@
 package com.unina.natour.controllers;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -13,10 +14,7 @@ import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.response.ChatMessageListResponseDTO;
 import com.unina.natour.dto.response.ChatMessageResponseDTO;
 import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.response.UserListResponseDTO;
-import com.unina.natour.dto.response.UserResponseDTO;
 import com.unina.natour.models.ElementMessageModel;
-import com.unina.natour.models.ElementUserModel;
 import com.unina.natour.models.dao.implementation.ChatMessageDAOImpl;
 import com.unina.natour.models.dao.interfaces.ChatMessageDAO;
 import com.unina.natour.views.activities.NaTourActivity;
@@ -58,6 +56,7 @@ public class ListaMessaggiController extends  NaTourController{
             //getActivity().finish();
             return;
         }
+
     }
 
     private boolean initModel() {
@@ -79,20 +78,35 @@ public class ListaMessaggiController extends  NaTourController{
 
         this.messagesListAdapter = new MessagesListAdapter(getActivity(),elementsMessageModel);
         messagesListAdapter.notifyDataSetChanged();
+
         return true;
     }
 
-    public void initList(NestedScrollView nestedScrollView_users, RecyclerView recyclerView_users, ProgressBar progressBar_users) {
-        recyclerView_users.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView_users.setAdapter(messagesListAdapter);
-        nestedScrollView_users.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+    public void initList(NestedScrollView nestedScrollView_messages, RecyclerView recyclerView_messages, ProgressBar progressBar_messages) {
+
+        recyclerView_messages.setAdapter(messagesListAdapter);
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        manager.setReverseLayout(true);
+
+        recyclerView_messages.setLayoutManager(manager);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                nestedScrollView_messages.fullScroll(View.FOCUS_DOWN);
+            }
+        },
+        350);
+
+
+        nestedScrollView_messages.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
+                if (scrollY < oldScrollY && scrollY ==  0) {
                     // in this method we are incrementing page number,
                     // making progress bar visible and calling get data method.
                     page++;
-                    progressBar_users.setVisibility(View.VISIBLE);
+                    progressBar_messages.setVisibility(View.VISIBLE);
 
                     ChatMessageListResponseDTO chatMessageListResponseDTO = chatMessageDAO.findMessageByUserIds(userId1, userId2);
                     MessageResponseDTO messageResponseDTO = chatMessageListResponseDTO.getResultMessage();
@@ -109,19 +123,54 @@ public class ListaMessaggiController extends  NaTourController{
                         //TODO ERROR
                     }
 
-
                     if(nextPageElements == null || nextPageElements.isEmpty()){
-                        progressBar_users.setVisibility(View.GONE);
+                        progressBar_messages.setVisibility(View.GONE);
                         return;
                     }
 
+                    int oldHeight = v.getChildAt(0).getMeasuredHeight();
+
                     elementsMessageModel.addAll(nextPageElements);
                     messagesListAdapter.notifyDataSetChanged();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            int newHeight = v.getChildAt(0).getMeasuredHeight();
+                            int oldFirstElementHeight = newHeight - oldHeight;
+                            v.scrollTo(scrollX, oldFirstElementHeight);
+                        }
+                    },
+                    350);
                 }
             }
         });
 
     }
+
+
+    public void addMessageSent(String message, Calendar dateOfInput){
+        ElementMessageModel messageModel = new ElementMessageModel();
+        messageModel.setMessage(message);
+        messageModel.setTime(dateOfInput);
+        messageModel.setType(ElementMessageModel.CODE_MESSAGE_SENT);
+
+        elementsMessageModel.add(0,messageModel);
+        messagesListAdapter.notifyDataSetChanged();
+
+    }
+
+    public void addMessageReceived(String message, Calendar dateOfInput){
+        ElementMessageModel messageModel = new ElementMessageModel();
+        messageModel.setMessage(message);
+        messageModel.setTime(dateOfInput);
+        messageModel.setType(ElementMessageModel.CODE_MESSAGE_RECEIVED);
+
+        elementsMessageModel.add(0,messageModel);
+        messagesListAdapter.notifyDataSetChanged();
+
+    }
+
 
     public boolean dtoToModel(Context context, ChatMessageResponseDTO dto, ElementMessageModel model){
         model.clear();

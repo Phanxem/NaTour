@@ -12,13 +12,15 @@ import com.amplifyframework.AmplifyException;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.core.Amplify;
+import com.unina.natour.models.socketHandler.ChatWebSocketHandler;
 import com.unina.natour.views.activities.NaTourActivity;
 
-public class ApplicationConfig extends Application {
+public class ApplicationController extends Application {
 
     private final static String TAG = "ApplicationConfig";
 
     private NaTourActivity currentActivity;
+    private ChatWebSocketHandler chatWebSocketHandler;
 
     public void onCreate() {
         super.onCreate();
@@ -36,7 +38,11 @@ public class ApplicationConfig extends Application {
         Application.ActivityLifecycleCallbacks activityLifecycleCallbacks = generateActivityLifecycleCallbacks();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
 
+
+        this.chatWebSocketHandler = new ChatWebSocketHandler(this);
         //Thread.setDefaultUncaughtExceptionHandler(generateUncaughtExcetionHandler());
+
+
 
     }
 
@@ -47,6 +53,15 @@ public class ApplicationConfig extends Application {
     public void setCurrentActivity(NaTourActivity currentActivity) {
         this.currentActivity = currentActivity;
     }
+
+    public ChatWebSocketHandler getChatWebSocketHandler() {
+        return chatWebSocketHandler;
+    }
+
+    public void setChatWebSocketHandler(ChatWebSocketHandler chatWebSocketHandler) {
+        this.chatWebSocketHandler = chatWebSocketHandler;
+    }
+
 
     private Application.ActivityLifecycleCallbacks generateActivityLifecycleCallbacks(){
 
@@ -100,6 +115,8 @@ public class ApplicationConfig extends Application {
 
         return result;
     }
+
+
 
     /*
     private Thread.UncaughtExceptionHandler generateUncaughtExcetionHandler(){

@@ -5,8 +5,10 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.unina.natour.amplify.ApplicationController;
 import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
+import com.unina.natour.models.socketHandler.ChatWebSocketHandler;
 import com.unina.natour.views.activities.NaTourActivity;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -32,6 +34,11 @@ public class DisconnessioneController extends NaTourController{
             showErrorMessage(messageResponseDTO);
             return false;
         }
+
+        ApplicationController applicationController = (ApplicationController) getActivity().getApplicationContext();
+        ChatWebSocketHandler chatWebSocketHandler = applicationController.getChatWebSocketHandler();
+
+        chatWebSocketHandler.closeWebSocket();
 
         return true;
     }
