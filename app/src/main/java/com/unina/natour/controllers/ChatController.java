@@ -1,9 +1,12 @@
 package com.unina.natour.controllers;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.ListView;
 
+import com.unina.natour.amplify.ApplicationController;
+import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.dto.response.UserResponseDTO;
 import com.unina.natour.models.ElementMessageModel;
@@ -15,6 +18,7 @@ import com.unina.natour.views.activities.ChatActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.listAdapters.ChatListAdapter;
 
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -73,18 +77,32 @@ public class ChatController extends NaTourController{
 */
     }
 
-
-    public void sendMessage(){
-        //TODO socket
-
-    }
-
     public ListaMessaggiController getListaMessaggiController() {
         return listaMessaggiController;
     }
 
     public void setListaMessaggiController(ListaMessaggiController listaMessaggiController) {
         this.listaMessaggiController = listaMessaggiController;
+    }
+
+    public boolean sendMessage(String message){
+        Calendar calendar = Calendar.getInstance();
+        //String dateOfInput = TimeUtils.toFullString(calendar);
+
+        ApplicationController applicationController = (ApplicationController) getActivity().getApplicationContext();
+        ChatWebSocketHandler chatWebSocketHandler = applicationController.getChatWebSocketHandler();
+
+        chatWebSocketHandler.sendToWebSocket(message);
+        listaMessaggiController.addMessageSent(message, Calendar.getInstance());
+        //TODO invia messaggio alla socket
+
+
+
+        return true;
+    }
+
+    public void receiveMessage(String message, Calendar calendar){
+        listaMessaggiController.addMessageReceived(message, Calendar.getInstance());
     }
 
 

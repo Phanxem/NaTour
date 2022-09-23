@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
-import com.unina.natour.amplify.ApplicationConfig;
+import com.unina.natour.amplify.ApplicationController;
 import com.unina.natour.controllers.ChatController;
 import com.unina.natour.models.ElementMessageModel;
 import com.unina.natour.views.activities.ChatActivity;
+
+import java.util.Calendar;
 
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -40,15 +42,27 @@ public class ChatWebSocketListener extends WebSocketListener {
     public void onMessage(WebSocket webSocket, String text) {
         Log.i(TAG, "ON MESSAGE (String) : " + text);
 
-        ApplicationConfig applicationConfig = (ApplicationConfig) context.getApplicationContext();
-        Activity currentActivity = applicationConfig.getCurrentActivity();
+        ApplicationController applicationController = (ApplicationController) context.getApplicationContext();
+        Activity currentActivity = applicationController.getCurrentActivity();
 
         if(currentActivity instanceof ChatActivity){
             Log.i(TAG, "Activity : ChatActivity");
 
             ChatActivity chatActivity = (ChatActivity) currentActivity;
-            ChatController chatController = chatActivity.getChatController();
+            //ChatController chatController = chatActivity.getChatController();
 
+            chatActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    chatActivity.receiveMessage(text,Calendar.getInstance());
+                    //chatController.receiveMessage(text, Calendar.getInstance());
+                }
+            });
+
+
+
+
+            /*
             ElementMessageModel messageModel = new ElementMessageModel(text, false);
 
             chatActivity.runOnUiThread(new Runnable() {
@@ -58,6 +72,8 @@ public class ChatWebSocketListener extends WebSocketListener {
                     //chatController.addMessage(messageModel);
                 }
             });
+            */
+
         }
 
     }

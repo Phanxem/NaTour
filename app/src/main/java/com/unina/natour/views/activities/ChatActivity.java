@@ -1,19 +1,25 @@
 package com.unina.natour.views.activities;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.ChatController;
 import com.unina.natour.controllers.ListaMessaggiController;
+
+import java.util.Calendar;
 
 //FATE PRELIMINARE DI TESTING
 //facciamo in modo che tutti i messaggi che scriviamo vengono visualizzati come inviati da noi
@@ -41,10 +47,11 @@ public class ChatActivity extends NaTourActivity {
         NestedScrollView nestedScrollView_messages = findViewById(R.id.Chat_nestedScrollView_messages);
         ProgressBar progressBar_messages = findViewById(R.id.Chat_progressBar_messages);
 
-        listaMessaggiController.initList(nestedScrollView_messages,recyclerView_messages,progressBar_messages);
+        listaMessaggiController.initList(nestedScrollView_messages,recyclerView_messages, progressBar_messages);
 
         pressBackIcon();
         pressMenuIcon();
+        pressSendKey();
         pressUserAccount();
 
     }
@@ -60,6 +67,7 @@ public class ChatActivity extends NaTourActivity {
             public void onClick(View v) {
                 //TODO
                 //chatController.testClose();
+
             }
         });
     }
@@ -82,6 +90,18 @@ public class ChatActivity extends NaTourActivity {
             public void onClick(View v) {
                 //TODO
                 //chatController.testSend();
+                NestedScrollView nestedScrollView_messages = findViewById(R.id.Chat_nestedScrollView_messages);
+
+                chatController.receiveMessage("test hello", Calendar.getInstance());
+
+                new Handler().postDelayed(new Runnable() {
+                                              @Override
+                                              public void run() {
+                                                  nestedScrollView_messages.fullScroll(View.FOCUS_DOWN);
+                                              }
+                                          },
+                        350);
+
             }
         });
 
@@ -90,11 +110,27 @@ public class ChatActivity extends NaTourActivity {
 
     public void pressSendKey(){
         EditText editText_messageField = findViewById(R.id.Chat_textField_messageField);
+        NestedScrollView nestedScrollView_messages = findViewById(R.id.Chat_nestedScrollView_messages);
+
+
         editText_messageField.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if(event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-                    //TODO
+
+                    String message = String.valueOf(editText_messageField.getText());
+                    chatController.sendMessage(message);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            nestedScrollView_messages.fullScroll(View.FOCUS_DOWN);
+                        }
+                    },
+                    350);
+
+                    editText_messageField.setText(null);
+
                     return true;
                 }
                 return false;
@@ -102,4 +138,18 @@ public class ChatActivity extends NaTourActivity {
         });
     }
 
+
+    public void receiveMessage(String message, Calendar time){
+        NestedScrollView nestedScrollView_messages = findViewById(R.id.Chat_nestedScrollView_messages);
+
+        chatController.receiveMessage(message, Calendar.getInstance());
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                nestedScrollView_messages.fullScroll(View.FOCUS_DOWN);
+            }
+        },
+        350);
+    }
 }

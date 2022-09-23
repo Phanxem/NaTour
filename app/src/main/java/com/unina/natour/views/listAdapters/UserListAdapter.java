@@ -1,13 +1,9 @@
 package com.unina.natour.views.listAdapters;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -16,10 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.ChatController;
-import com.unina.natour.controllers.DettagliItinerarioController;
 import com.unina.natour.controllers.ListaUtentiController;
 import com.unina.natour.controllers.ProfiloController;
-import com.unina.natour.models.ElementItineraryModel;
 import com.unina.natour.models.ElementUserModel;
 import com.unina.natour.views.activities.NaTourActivity;
 
@@ -58,18 +52,31 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
             holder.imageView_user.setImageDrawable(activity.getDrawable(R.drawable.ic_generic_account));
         }
 
-        holder.relativeLayout_user.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(researchCode == ListaUtentiController.CODE_USER_BY_RESEARCH) {
+        if(researchCode == ListaUtentiController.CODE_USER_BY_RESEARCH) {
+            holder.relativeLayout_user.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     ProfiloController.openProfiloUtenteActivity(activity, user.getUserId());
                 }
-                else{
-                    Log.i("--------------", "id: " + user.getUserId());
+            });
+
+            holder.imageView_notification.setVisibility(View.GONE);
+
+
+        }
+        else{
+            holder.relativeLayout_user.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     ChatController.openChatActivity(activity,user.getUserId());
                 }
-            }
-        });
+            });
+
+            if(user.hasMessagesToRead()) holder.imageView_notification.setVisibility(View.GONE);
+            else holder.imageView_notification.setVisibility(View.VISIBLE);
+        }
+
+
     }
 
 
@@ -84,6 +91,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         ImageView imageView_user;
         TextView textView_user;
 
+        ImageView imageView_notification;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -91,6 +100,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
 
             imageView_user = itemView.findViewById(R.id.ListElementUser_imageView_immagineProfilo);
             textView_user = itemView.findViewById(R.id.ListElementUser_textView_username);
+
+            imageView_notification = itemView.findViewById(R.id.ListElementUser_imageView_notification);
         }
     }
 

@@ -43,8 +43,9 @@ public class MainActivity extends NaTourActivity {
         //Thread.setDefaultUncaughtExceptionHandler(un);
 
         setContentView(R.layout.activity_main);
-/*
+
         mainController = new MainController(this);
+  /*
         profiloPersonaleController = new ProfiloPersonaleController(this);
         pianificaItinerarioController = new PianificaItinerarioController(this);
 */
