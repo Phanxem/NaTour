@@ -8,7 +8,7 @@ import com.unina.natour.dto.response.UserChatListResponseDTO;
 import com.unina.natour.dto.response.UserChatResponseDTO;
 import com.unina.natour.dto.response.UserResponseDTO;
 
-public interface UserDAO extends ServerDAO{
+public interface UserDAO{
 
     UserResponseDTO getUser(String username);
     UserResponseDTO getUser(long id);

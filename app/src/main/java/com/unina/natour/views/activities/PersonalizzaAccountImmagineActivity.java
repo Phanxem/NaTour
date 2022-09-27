@@ -79,6 +79,7 @@ public class PersonalizzaAccountImmagineActivity extends NaTourActivity {
     public void update() {
         ImageView imageView_immagineProfilo = findViewById(R.id.PersonalizzaAccount_imageView_immagine);
         Bitmap immagineProfilo = impostaImmagineProfiloModel.getProfileImage();
-        imageView_immagineProfilo.setImageBitmap(immagineProfilo);
+        if(immagineProfilo != null) imageView_immagineProfilo.setImageBitmap(immagineProfilo);
+
     }
 }

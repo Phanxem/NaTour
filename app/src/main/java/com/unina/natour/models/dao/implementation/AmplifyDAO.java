@@ -1,5 +1,7 @@
 package com.unina.natour.models.dao.implementation;
 
+import android.util.Log;
+
 import com.amplifyframework.auth.AuthUserAttribute;
 import com.amplifyframework.auth.AuthUserAttributeKey;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
@@ -198,6 +200,7 @@ public class AmplifyDAO {
                 },
                 error -> {
                     String message = error.getCause().getMessage();
+                    Log.e("TAG","error",error);
                     MessageResponseDTO messageResponseDTO = new MessageResponseDTO(MessageController.ERROR_CODE_AMPLIFY, message);
                     EmailResponseDTO emailResponseDTO = new EmailResponseDTO(messageResponseDTO, null);
                     completableFuture.complete(emailResponseDTO);

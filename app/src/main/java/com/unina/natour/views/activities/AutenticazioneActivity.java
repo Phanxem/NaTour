@@ -1,8 +1,8 @@
 package com.unina.natour.views.activities;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -10,14 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.facebook.login.widget.LoginButton;
 import com.unina.natour.R;
 import com.unina.natour.controllers.AutenticazioneController;
-import com.unina.natour.controllers.HomeController;
 import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.RecuperoPasswordController;
 import com.unina.natour.controllers.RegistrazioneController;
-import com.unina.natour.controllers.SplashScreenController;
-import com.unina.natour.views.dialogs.MessageDialog;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class AutenticazioneActivity extends NaTourActivity {
@@ -35,7 +33,18 @@ public class AutenticazioneActivity extends NaTourActivity {
         pressButtonSignIn();
         pressTextSignUp();
         pressTextPasswordRecovery();
+
+        pressButtonFB();
     }
+
+    private void pressButtonFB() {
+
+        LoginButton loginButton = findViewById(R.id.SignIn_loginButton_loginFacebook);
+
+        autenticazioneController.initButtonFB(loginButton);
+
+    }
+
 
     public void pressButtonSignIn() {
         NaTourActivity activity = this;
@@ -81,4 +90,13 @@ public class AutenticazioneActivity extends NaTourActivity {
             }
         });
     }
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        autenticazioneController.callbackFB(requestCode,resultCode,data);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
 }

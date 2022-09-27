@@ -12,6 +12,8 @@ import com.amplifyframework.AmplifyException;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.core.Amplify;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.unina.natour.models.socketHandler.ChatWebSocketHandler;
 import com.unina.natour.views.activities.NaTourActivity;
 
@@ -34,6 +36,9 @@ public class ApplicationController extends Application {
         catch (AmplifyException error) {
             Log.e(TAG, "Could not initialize Amplify", error);
         }
+
+        //FacebookSdk.fullyInitialize();
+        //AppEventsLogger.activateApp(this);
 
         Application.ActivityLifecycleCallbacks activityLifecycleCallbacks = generateActivityLifecycleCallbacks();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);

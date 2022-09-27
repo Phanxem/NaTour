@@ -13,11 +13,8 @@
     },
     "categories": {
       "auth": {
-        "natour180e3e36": {
-          "userPoolId": "eu-west-1_tX8IgKSQQ",
-          "userPoolName": "NaTour_UserPool",
-          "webClientId": "7urpbnftq3fo8knc31i0fovobf",
-          "nativeClientId": "26bk3j99p5hagctpjleqs9e55f"
+        "natour119af764": {
+          "facebookAppId": "601529914964479"
         }
       }
     }

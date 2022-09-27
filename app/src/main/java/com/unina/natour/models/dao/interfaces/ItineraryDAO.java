@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public interface ItineraryDAO extends ServerDAO{
+public interface ItineraryDAO{
 
     MessageResponseDTO addItinerary(ItineraryRequestDTO itineraryDTO);
 

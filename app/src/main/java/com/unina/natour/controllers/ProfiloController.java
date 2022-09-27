@@ -3,6 +3,7 @@ package com.unina.natour.controllers;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -37,6 +38,8 @@ public class ProfiloController extends NaTourController {
 
         Intent intent = new Intent();
         long userId = intent.getLongExtra(EXTRA_USER_ID,-1);
+
+
         if(userId < 0){
             //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
             String username = "user";
@@ -52,6 +55,7 @@ public class ProfiloController extends NaTourController {
 
             userId = userResponseDTO.getId();
         }
+
         else isMyProfile = false;
 
         this.listaItinerariController = new ListaItinerariController(activity, ListaItinerariController.CODE_ITINERARY_BY_USER_ID, null, userId);
@@ -67,6 +71,7 @@ public class ProfiloController extends NaTourController {
 
         MessageResponseDTO messageResponseDTO = emailResponseDTO.getResultMessage();
         if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            Log.i(TAG,"ERROR1");
             showErrorMessage(messageResponseDTO);
             return;
         }
@@ -78,12 +83,14 @@ public class ProfiloController extends NaTourController {
         UserResponseDTO userResponseDTO = userDAO.getUser(username);
         messageResponseDTO = userResponseDTO.getResultMessage();
         if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            Log.i(TAG,"ERROR2");
             showErrorMessage(messageResponseDTO);
             return;
         }
 
         boolean result = dtoToModel(getActivity(), userResponseDTO, emailResponseDTO, profiloModel);
         if(!result){
+            Log.i(TAG,"ERROR3");
             //TODO
             showErrorMessage(0);
             return;

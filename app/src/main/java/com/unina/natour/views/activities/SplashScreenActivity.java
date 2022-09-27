@@ -26,7 +26,7 @@ public class SplashScreenActivity extends NaTourActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        //DisconnessioneController disconnessioneController = new DisconnessioneController(this,null);
+        //DisconnessioneController disconnessioneController = new DisconnessioneController(this);
         //disconnessioneController.signOut();
 
         splashScreenController = new SplashScreenController(this);

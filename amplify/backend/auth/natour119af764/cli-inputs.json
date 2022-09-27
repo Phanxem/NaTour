@@ -1,0 +1,77 @@
+{
+  "version": "1",
+  "cognitoConfig": {
+    "identityPoolName": "natour119af764_identitypool_119af764",
+    "allowUnauthenticatedIdentities": true,
+    "resourceNameTruncated": "natour119af764",
+    "userPoolName": "natour119af764_userpool_119af764",
+    "autoVerifiedAttributes": [
+      "email"
+    ],
+    "mfaConfiguration": "OPTIONAL",
+    "mfaTypes": [
+      "SMS Text Message"
+    ],
+    "smsAuthenticationMessage": "Your authentication code is {####}",
+    "smsVerificationMessage": "Your verification code is {####}",
+    "emailVerificationSubject": "Your verification code",
+    "emailVerificationMessage": "Your verification code is {####}",
+    "defaultPasswordPolicy": true,
+    "passwordPolicyMinLength": "6",
+    "passwordPolicyCharacters": [],
+    "requiredAttributes": [
+      "email"
+    ],
+    "aliasAttributes": [],
+    "userpoolClientGenerateSecret": false,
+    "userpoolClientRefreshTokenValidity": 30,
+    "userpoolClientWriteAttributes": [
+      "email"
+    ],
+    "userpoolClientReadAttributes": [
+      "email"
+    ],
+    "userpoolClientLambdaRole": "natour119af764_userpoolclient_lambda_role",
+    "userpoolClientSetAttributes": false,
+    "sharedId": "119af764",
+    "resourceName": "natour119af764",
+    "authSelections": "identityPoolAndUserPool",
+    "useDefault": "manual",
+    "hostedUI": true,
+    "hostedUIDomainName": "natour119af764-119af764",
+    "authProvidersUserPool": [
+      "Facebook"
+    ],
+    "hostedUIProviderMeta": "[{\"ProviderName\":\"Facebook\",\"authorize_scopes\":\"email,public_profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"id\"}}]",
+    "userPoolGroupList": [],
+    "serviceName": "Cognito",
+    "usernameCaseSensitive": false,
+    "useEnabledMfas": true,
+    "authRoleArn": {
+      "Fn::GetAtt": [
+        "AuthRole",
+        "Arn"
+      ]
+    },
+    "unauthRoleArn": {
+      "Fn::GetAtt": [
+        "UnauthRole",
+        "Arn"
+      ]
+    },
+    "breakCircularDependency": true,
+    "dependsOn": [],
+    "thirdPartyAuth": true,
+    "authProviders": [
+      "graph.facebook.com"
+    ],
+    "userPoolGroups": false,
+    "adminQueries": false,
+    "triggers": {},
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"myapp://\"],\"LogoutURLs\":[\"myapp://\"]}",
+    "parentStack": {
+      "Ref": "AWS::StackId"
+    },
+    "permissions": []
+  }
+}

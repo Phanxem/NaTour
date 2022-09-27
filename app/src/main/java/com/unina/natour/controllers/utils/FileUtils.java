@@ -17,6 +17,12 @@ import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import io.jenetics.jpx.GPX;
 
@@ -118,6 +124,16 @@ public class FileUtils {
         bitmap = ImageDecoder.decodeBitmap(source);
 
         return bitmap;
+    }
+
+
+
+
+    public static String byteArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder(a.length * 2);
+        for(byte b: a)
+            sb.append(String.format("%02x", b));
+        return sb.toString();
     }
 
 

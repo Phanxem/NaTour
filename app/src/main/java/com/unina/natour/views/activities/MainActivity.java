@@ -2,10 +2,13 @@ package com.unina.natour.views.activities;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.RequiresApi;
 
+import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
+import com.amplifyframework.core.Amplify;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -20,14 +23,18 @@ import com.unina.natour.views.fragments.ProfiloPersonaleFragment;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends NaTourActivity {
 
-    /*
-    Thread.UncaughtExceptionHandler un = new Thread.UncaughtExceptionHandler(){
-        @Override
-        public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
-            Log.i(TAG,"pij o cazz mm'occ strunzz");
-        }
-    };
-     */
+/*
+    public void openAwsConfigurationFile(){
+        Resources resources = getActivity().getResources();
+
+        InputStream inputStream = resources.openRawResource(R.raw.awsconfiguration);
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        JsonElement jsonElement = JsonParser.parseReader(inputStreamReader);
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+    }
+    */
+
+
 
     MainController mainController;
 
@@ -115,5 +122,31 @@ public class MainActivity extends NaTourActivity {
                 return false;
             }
         });
+
+
+
+
+
+
+
+
+
+
+
+        Amplify.Auth.fetchAuthSession(
+                result -> {
+                    AWSCognitoAuthSession cognitoAuthSession = (AWSCognitoAuthSession) result;
+
+                    String accessToken = cognitoAuthSession.getUserPoolTokens().getValue().getAccessToken();
+                    String idToken = cognitoAuthSession.getUserPoolTokens().getValue().getIdToken();
+                    Log.i(TAG, "AccessToken: " + accessToken);
+                    Log.i(TAG, "IdToken: " + idToken);
+
+                },
+                error -> Log.e("AuthQuickStart", error.toString())
+        );
+
+
+
     }
 }

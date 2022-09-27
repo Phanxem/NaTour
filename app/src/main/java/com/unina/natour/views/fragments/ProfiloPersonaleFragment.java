@@ -43,40 +43,16 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
 
     ProfiloModel profiloModel;
 
-/*
-    public static ProfiloPersonaleFragment newInstance(Parcelable controller){
-        ProfiloPersonaleFragment profiloPersonaleFragment = new ProfiloPersonaleFragment();
-
-        Bundle args = new Bundle();
-        args.putParcelable(MainController.KEY_CONTROLLER, controller);
-        profiloPersonaleFragment.setArguments(args);
-
-        return profiloPersonaleFragment;
-    }
-*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profilo, container, false);
         setFragmentView(view);
-/*
-        Bundle args = getArguments();
-        if(args != null){
-            this.profiloPersonaleController = (ProfiloPersonaleController) args.getParcelable(MainController.KEY_CONTROLLER);
-
-
-        }
-        else {
-
-        }
-*/
         this.profiloController = new ProfiloController(getNaTourActivity());
         this.disconnessioneController = new DisconnessioneController(getNaTourActivity());
         this.listaItinerariController = profiloController.getListaItinerariController();
 
         this.profiloModel = profiloController.getModel();
-        //addModel(profiloPersonaleModel);
-        //profiloPersonaleModel.registerObserver(this);
 
 
         RecyclerView recyclerView_itineraries = view.findViewById(R.id.Profilo_recycleView_itinerari);
@@ -95,7 +71,6 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-
                 profiloController.initModel();
 
                 handler.post(new Runnable() {
@@ -205,7 +180,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
     public void onResume() {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
-
+/*
         executorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -220,6 +195,8 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
                 });
             }
         });
+
+ */
         super.onResume();
     }
 

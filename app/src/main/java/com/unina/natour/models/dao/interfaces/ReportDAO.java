@@ -7,7 +7,7 @@ import com.unina.natour.dto.response.ReportResponseDTO;
 
 import java.util.List;
 
-public interface ReportDAO extends ServerDAO{
+public interface ReportDAO {
 
     MessageResponseDTO addReport(ReportRequestDTO reportRequestDTO);
 

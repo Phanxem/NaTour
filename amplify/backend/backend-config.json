@@ -1,11 +1,30 @@
 {
   "auth": {
-    "natour180e3e36": {
+    "natour119af764": {
       "service": "Cognito",
-      "serviceType": "imported",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
-      "customAuth": false
+      "customAuth": false,
+      "frontendAuthConfig": {
+        "socialProviders": [
+          "FACEBOOK"
+        ],
+        "usernameAttributes": [],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": "6",
+          "passwordPolicyCharacters": []
+        },
+        "mfaConfiguration": "OPTIONAL",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      }
     }
   }
 }

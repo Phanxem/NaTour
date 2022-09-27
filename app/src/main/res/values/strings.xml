@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">NaTour</string>
 
+    <string name="facebook_app_id">601529914964479</string>
+    <string name="fb_login_protocol_scheme">fb601529914964479</string>
+    <string name="facebook_client_token">270cff03a69799a3ea99f284d295eb6b</string>
+
+
+
     <!-- UI value -->
     <string name="SplashScreen_textView_loading">Loading...</string>
 

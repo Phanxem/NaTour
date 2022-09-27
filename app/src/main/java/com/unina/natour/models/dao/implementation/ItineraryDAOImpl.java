@@ -93,12 +93,15 @@ public class ItineraryDAOImpl implements ItineraryDAO {
                 .build();
 
 
+
         String url = URL + ADD_ITINERARY + "?" + PARAM_KEY_USERNAME + "=" + username;
 
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
                 .build();
+
+
 
         OkHttpClient client = new OkHttpClient();
 
