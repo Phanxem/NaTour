@@ -1,5 +1,9 @@
 package com.unina.natour.views.activities;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 
 import android.content.Intent;
@@ -11,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.common.SignInButton;
 import com.unina.natour.R;
 import com.unina.natour.controllers.AutenticazioneController;
 import com.unina.natour.controllers.MainController;
@@ -35,15 +40,42 @@ public class AutenticazioneActivity extends NaTourActivity {
         pressTextPasswordRecovery();
 
         pressButtonFB();
+        pressButtonGoogle();
     }
 
     private void pressButtonFB() {
 
-        LoginButton loginButton = findViewById(R.id.SignIn_loginButton_loginFacebook);
+        LoginButton facebookLoginButton = findViewById(R.id.SignIn_loginButton_loginFacebook);
 
-        autenticazioneController.initButtonFB(loginButton);
+        autenticazioneController.initButtonFacebook(facebookLoginButton);
 
     }
+
+    public void pressButtonGoogle(){
+        AutenticazioneActivity activity = this;
+        ActivityResultLauncher<Intent> activityResultLauncherGoogleLogin;
+        activityResultLauncherGoogleLogin = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>()
+                {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+
+                        if(result == null || result.getData() == null) return;
+
+                        activity.onActivityResult(AutenticazioneController.GOOGLE_LOGIN_CODE, result.getResultCode(), result.getData());
+                    }
+                }
+        );
+
+        SignInButton googleLoginButton = findViewById(R.id.SignIn_signInButton_loginGoogle);
+
+        autenticazioneController.initButtonGoogle(googleLoginButton, activityResultLauncherGoogleLogin);
+
+
+
+    }
+
 
 
     public void pressButtonSignIn() {
@@ -81,7 +113,6 @@ public class AutenticazioneActivity extends NaTourActivity {
 
     public void pressTextPasswordRecovery() {
         NaTourActivity activity = this;
-
         TextView textView_passwordRecovery = findViewById(R.id.SignIn_textView_recuperaPassword);
         textView_passwordRecovery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,8 +126,18 @@ public class AutenticazioneActivity extends NaTourActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        autenticazioneController.callbackFB(requestCode,resultCode,data);
         super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == AutenticazioneController.GOOGLE_LOGIN_CODE){
+            //google
+            autenticazioneController.callbackGoogle(data);
+        }
+        else{
+            //facebook
+            autenticazioneController.callbackFacebook(requestCode,resultCode,data);
+        }
+
+
     }
 
 }

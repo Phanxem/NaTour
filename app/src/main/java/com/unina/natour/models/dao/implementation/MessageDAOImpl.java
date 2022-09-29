@@ -5,7 +5,7 @@ import com.unina.natour.controllers.MessageController;
 import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.models.dao.interfaces.MessageDAO;
 
-public class MessageDAOImpl implements MessageDAO {
+public class MessageDAOImpl extends ServerDAO implements MessageDAO {
 
     public static MessageResponseDTO toMessageDTO(JsonObject jsonObject){
         if(!jsonObject.has("code")  || !jsonObject.has("message")){

@@ -14,7 +14,9 @@
     "categories": {
       "auth": {
         "natour119af764": {
-          "facebookAppId": "601529914964479"
+          "facebookAppId": "601529914964479",
+          "googleClientId": "975864961953-1p4la1diaks1858j9kgr19hl391vm2m7.apps.googleusercontent.com",
+          "googleAndroid": "975864961953-d9qnpm5qshp5oc2si706e3a6f4sjgsom.apps.googleusercontent.com"
         }
       }
     }

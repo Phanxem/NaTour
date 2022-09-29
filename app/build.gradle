@@ -78,8 +78,11 @@ dependencies {
 
     //fb login
     implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
-    
 
+    //bug fix
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+
+    //google login
+    implementation "com.google.android.gms:play-services-auth:20.3.0"
 
 }

@@ -30,7 +30,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class RouteDAOImpl implements RouteDAO {
+public class RouteDAOImpl extends ServerDAO implements RouteDAO {
     private static final String URL = SERVER_URL + "/route";
 
     private static final String GET_ROUTE = "/get";

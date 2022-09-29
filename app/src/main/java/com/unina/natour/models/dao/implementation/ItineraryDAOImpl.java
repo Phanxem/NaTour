@@ -36,7 +36,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ItineraryDAOImpl implements ItineraryDAO {
+public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
 
     private static final String URL = SERVER_URL + "/itinerary";
 

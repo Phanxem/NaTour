@@ -17,7 +17,7 @@ import com.unina.natour.dto.response.MessageResponseDTO;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class AmplifyDAO {
+public class AmplifyDAO extends ServerDAO {
 
     public MessageResponseDTO signUp(String username, String email, String password){
 

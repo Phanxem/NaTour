@@ -34,7 +34,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class UserDAOImpl implements UserDAO {
+public class UserDAOImpl extends ServerDAO implements UserDAO {
 
     private static final String URL = SERVER_URL + "/user";
 

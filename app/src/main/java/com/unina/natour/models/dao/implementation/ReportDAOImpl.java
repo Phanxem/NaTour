@@ -12,7 +12,7 @@ import com.unina.natour.models.dao.interfaces.ReportDAO;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReportDAOImpl implements ReportDAO {
+public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
 
     @Override
     public MessageResponseDTO addReport(ReportRequestDTO reportRequestDTO) {
