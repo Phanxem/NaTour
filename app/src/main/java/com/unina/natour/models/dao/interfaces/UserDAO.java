@@ -6,9 +6,12 @@ import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.dto.request.OptionalInfoRequestDTO;
 import com.unina.natour.dto.response.UserChatListResponseDTO;
 import com.unina.natour.dto.response.UserChatResponseDTO;
+import com.unina.natour.dto.response.UserIdResponseDTO;
 import com.unina.natour.dto.response.UserResponseDTO;
 
 public interface UserDAO{
+
+    UserIdResponseDTO getUserId(String identityProvider, String userProviderId);
 
     UserResponseDTO getUser(String username);
     UserResponseDTO getUser(long id);
@@ -25,4 +28,6 @@ public interface UserDAO{
     UserChatListResponseDTO findUserChatByConversation();
 
     UserChatListResponseDTO findUserChatByUsername(String researchString);
+
+    MessageResponseDTO cancelRegistrationUser();
 }

@@ -50,7 +50,7 @@ public class RegistrazioneActivity extends NaTourActivity {
 
                 Boolean result = registrazioneController.signUp(username,email,password);
 
-                if(result) AttivaAccountController.openAttivaAccountActivity(activity, username, password);
+                if(result) AttivaAccountController.openAttivaAccountActivity(activity, username, password, email);
             }
         });
     }

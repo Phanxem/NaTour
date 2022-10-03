@@ -22,11 +22,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/AccountActivation_textView_completaRegistrazione">
+        app:layout_constraintTop_toBottomOf="@+id/AccountActivation_textView_email">
 
         <TextView
             android:id="@+id/AccountActivation_textView_codice"
@@ -66,7 +67,7 @@
                 android:background="@android:color/transparent"
                 android:ems="10"
                 android:inputType="number"
-                android:minHeight="48dp"/>
+                android:minHeight="48dp" />
         </RelativeLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -92,5 +93,41 @@
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@+id/AccountActivation_constraintLayout_codice"
         app:layout_constraintTop_toBottomOf="@+id/AccountActivation_constraintLayout_codice" />
+
+    <TextView
+        android:id="@+id/AccountActivation_textView_titoloUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Username"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccountActivation_textView_completaRegistrazione" />
+
+    <TextView
+        android:id="@+id/AccountActivation_textView_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccountActivation_textView_titoloUsername" />
+
+    <TextView
+        android:id="@+id/AccountActivation_textView_titoloEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Email"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccountActivation_textView_username" />
+
+    <TextView
+        android:id="@+id/AccountActivation_textView_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccountActivation_textView_titoloEmail" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -39,11 +39,11 @@ public class AutenticazioneActivity extends NaTourActivity {
         pressTextSignUp();
         pressTextPasswordRecovery();
 
-        pressButtonFB();
+        pressButtonFacebook();
         pressButtonGoogle();
     }
 
-    private void pressButtonFB() {
+    private void pressButtonFacebook() {
 
         LoginButton facebookLoginButton = findViewById(R.id.SignIn_loginButton_loginFacebook);
 

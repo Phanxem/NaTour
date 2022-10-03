@@ -10,6 +10,8 @@ import androidx.annotation.RequiresApi;
 import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
+import com.unina.natour.models.dao.implementation.UserDAOImpl;
+import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.AttivaAccountActivity;
 import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.activities.NaTourActivity;
@@ -20,16 +22,20 @@ public class AttivaAccountController extends NaTourController{
     public static final String SHARED_PREFERENCES_ACCOUNT_ACTIVATION = "accountActivation";
     public static final String SHARED_PREFERENCES_USERNAME = "USERNAME";
     public static final String SHARED_PREFERENCES_PASSWORD = "PASSWORD";
+    public static final String SHARED_PREFERENCES_EMAIL = "EMAIL";
 
     public static final String EXTRA_USERNAME = "USERNAME";
     public static final String EXTRA_PASSWORD = "PASSWORD";
+    public static final String EXTRA_EMAIL = "EMAIL";
 
     private AutenticazioneController autenticazioneController;
 
     private String username;
     private String password;
+    private String email;
 
     private AmplifyDAO amplifyDAO;
+    private UserDAO userDAO;
 
     public AttivaAccountController(NaTourActivity activity){
         super(activity);
@@ -37,10 +43,12 @@ public class AttivaAccountController extends NaTourController{
         this.autenticazioneController = new AutenticazioneController(activity);
 
         this.amplifyDAO = new AmplifyDAO();
+        this.userDAO = new UserDAOImpl(getActivity());
 
         Intent intent = activity.getIntent();
         this.username = intent.getStringExtra(EXTRA_USERNAME);
         this.password = intent.getStringExtra(EXTRA_PASSWORD);
+        this.email = intent.getStringExtra(EXTRA_EMAIL);
     }
 
     public void initAccountActivation(){
@@ -51,6 +59,7 @@ public class AttivaAccountController extends NaTourController{
         sharedPreferencesEditor.putBoolean(SHARED_PREFERENCES_ACCOUNT_ACTIVATION,true);
         sharedPreferencesEditor.putString(SHARED_PREFERENCES_USERNAME,username);
         sharedPreferencesEditor.putString(SHARED_PREFERENCES_PASSWORD,password);
+        sharedPreferencesEditor.putString(SHARED_PREFERENCES_EMAIL,email);
         sharedPreferencesEditor.commit();
     }
 
@@ -75,6 +84,7 @@ public class AttivaAccountController extends NaTourController{
         sharedPreferencesEditor.remove(SHARED_PREFERENCES_ACCOUNT_ACTIVATION);
         sharedPreferencesEditor.remove(SHARED_PREFERENCES_USERNAME);
         sharedPreferencesEditor.remove(SHARED_PREFERENCES_PASSWORD);
+        sharedPreferencesEditor.remove(SHARED_PREFERENCES_EMAIL);
         sharedPreferencesEditor.commit();
 
         messageResponseDTO = amplifyDAO.signIn(username,password);
@@ -86,9 +96,7 @@ public class AttivaAccountController extends NaTourController{
         return true;
     }
 
-    public void cancelAccountActivation(){
-
-
+    public boolean cancelAccountActivation(){
         /*
         AmplifyUtils amplifyUtils = new AmplifyUtils(activity);
         AmazonCognitoIdentityProviderClient cognitoIdentityProviderClient = new AmazonCognitoIdentityProviderClient();
@@ -111,7 +119,13 @@ public class AttivaAccountController extends NaTourController{
 
 */
 
-
+        /*todo
+        MessageResponseDTO messageResponseDTO = userDAO.cancelRegistrationUser();
+        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(messageResponseDTO);
+            return false;
+        }
+        */
 
         //---
 
@@ -122,10 +136,12 @@ public class AttivaAccountController extends NaTourController{
         sharedPreferencesEditor.remove(SHARED_PREFERENCES_ACCOUNT_ACTIVATION);
         sharedPreferencesEditor.remove(SHARED_PREFERENCES_USERNAME);
         sharedPreferencesEditor.remove(SHARED_PREFERENCES_PASSWORD);
+        sharedPreferencesEditor.remove(SHARED_PREFERENCES_EMAIL);
         sharedPreferencesEditor.commit();
 
         getActivity().finish();
 
+        return true;
     }
 
     public void back(){
@@ -146,7 +162,7 @@ public class AttivaAccountController extends NaTourController{
     }
 
 
-    public static void openAttivaAccountActivity(NaTourActivity fromActivity, String username, String password){
+    public static void openAttivaAccountActivity(NaTourActivity fromActivity, String username, String password, String email){
         if( !(fromActivity instanceof RegistrazioneActivity) ){
             Intent intentAutenticazioneActivity = new Intent(fromActivity, AutenticazioneActivity.class);
             intentAutenticazioneActivity.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -160,6 +176,7 @@ public class AttivaAccountController extends NaTourController{
         Intent intent = new Intent(fromActivity, AttivaAccountActivity.class);
         intent.putExtra(EXTRA_USERNAME,username);
         intent.putExtra(EXTRA_PASSWORD,password);
+        intent.putExtra(EXTRA_EMAIL,email);
         fromActivity.startActivity(intent);
     }
 

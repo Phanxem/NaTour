@@ -3,6 +3,7 @@ package com.unina.natour.views.activities;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +28,16 @@ public class AttivaAccountActivity extends NaTourActivity {
 
         attivaAccountController = new AttivaAccountController(this);
         attivaAccountController.initAccountActivation();
+
+        Intent intent = this.getIntent();
+        String username = intent.getStringExtra(AttivaAccountController.EXTRA_USERNAME);
+        String email = intent.getStringExtra(AttivaAccountController.EXTRA_EMAIL);
+
+        TextView textView_username = findViewById(R.id.AccountActivation_textView_username);
+        TextView textView_email = findViewById(R.id.AccountActivation_textView_email);
+
+        textView_username.setText(username);
+        textView_email.setText(email);
 
         pressButtonConfirm();
         pressButtonCancel();

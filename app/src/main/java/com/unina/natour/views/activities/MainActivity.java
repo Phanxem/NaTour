@@ -122,31 +122,5 @@ public class MainActivity extends NaTourActivity {
                 return false;
             }
         });
-
-
-
-
-
-
-
-
-
-
-
-        Amplify.Auth.fetchAuthSession(
-                result -> {
-                    AWSCognitoAuthSession cognitoAuthSession = (AWSCognitoAuthSession) result;
-
-                    String accessToken = cognitoAuthSession.getUserPoolTokens().getValue().getAccessToken();
-                    String idToken = cognitoAuthSession.getUserPoolTokens().getValue().getIdToken();
-                    Log.i(TAG, "AccessToken: " + accessToken);
-                    Log.i(TAG, "IdToken: " + idToken);
-
-                },
-                error -> Log.e("AuthQuickStart", error.toString())
-        );
-
-
-
     }
 }

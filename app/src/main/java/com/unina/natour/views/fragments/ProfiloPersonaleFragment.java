@@ -105,7 +105,10 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
                 if(item.getItemId() == R.id.ProfiloPersonaleF_popupMenu_esci){
                     Boolean result = disconnessioneController.signOut();
 
-                    if(result) AutenticazioneController.openAutenticazioneActivity(activity);
+                    if(result){
+                        AutenticazioneController.openAutenticazioneActivity(activity);
+                        activity.finish();
+                    }
 
                     return true;
                 }

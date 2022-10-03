@@ -6,6 +6,7 @@ import com.amazonaws.auth.AWSSessionCredentials;
 import com.amazonaws.auth.CognitoCredentialsProvider;
 import com.unina.natour.controllers.utils.SignAWSv4Utils;
 import com.unina.natour.controllers.utils.TimeUtils;
+import com.unina.natour.dto.response.MessageResponseDTO;
 
 import java.io.IOException;
 import java.net.URL;
@@ -187,5 +188,11 @@ public class ServerDAO {
 
     }
 
+
+
+    public static MessageResponseDTO testServer(){
+        //TODO
+        return null;
+    }
 
 }

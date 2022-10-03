@@ -214,18 +214,4 @@
         app:layout_constraintTop_toBottomOf="@+id/Profilo_constraintLayout_info" />
 
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/SignIn_loginButton_loginFacebook"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/Profilo_textView_itinerari"
-        app:layout_constraintTop_toBottomOf="@+id/Profilo_constraintLayout_info" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

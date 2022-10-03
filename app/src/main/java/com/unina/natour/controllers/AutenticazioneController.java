@@ -81,7 +81,7 @@ public class AutenticazioneController extends NaTourController{
     }
 
 
-    public boolean initButtonFacebook(LoginButton loginButton){
+    public void initButtonFacebook(LoginButton loginButton){
         loginButton.setPermissions(Arrays.asList(EMAIL));
 
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -91,6 +91,7 @@ public class AutenticazioneController extends NaTourController{
                 federateWithFacebook(loginResult.getAccessToken());
                 Log.i(TAG, "----------------FB SUCCESS");
 
+                MainController.openMainActivity(getActivity());
 
             }
 
@@ -104,8 +105,6 @@ public class AutenticazioneController extends NaTourController{
                 Log.i(TAG, "FB ERROR");
             }
         });
-
-        return true;
     }
 
     private void federateWithFacebook(AccessToken accessToken){
@@ -153,7 +152,7 @@ public class AutenticazioneController extends NaTourController{
 
         //----------------------------------------------------------------------------------------
 
-
+/*
                 String url = "https://vwyxm7bcre.execute-api.eu-west-1.amazonaws.com/testing/test";
 
                 RequestBody requestBody = new MultipartBody.Builder()
@@ -173,54 +172,6 @@ public class AutenticazioneController extends NaTourController{
                     exception.printStackTrace();
                 }
 
-/*
-                ZonedDateTime time = ZonedDateTime.now(ZoneId.of("Europe/Dublin")).minusHours(1);
-                String region = "eu-west-1";
-                String service = "execute-api";
-
-                String authorization = null;
-                try {
-                    String canonicalRequest = SignOkHttp.getCanonicalRequest("GET",
-                                                    "/testing/test",
-                                                    "",
-                                                    "vwyxm7bcre.execute-api.eu-west-1.amazonaws.com",
-                                                    time,
-                                                    cccp.getCredentials().getSessionToken(),
-                                                    request
-                    );
-
-
-                    String stringToSign = SignOkHttp.getStringToSign(time,region,service,canonicalRequest);
-
-                    byte[] derivedSigningKey = SignOkHttp.getDerivedSigningKey(cccp.getCredentials().getAWSSecretKey(),
-                                                                               time,
-                                                                               region,
-                                                                               service
-                    );
-
-                    String signature = SignOkHttp.getSignature(stringToSign,derivedSigningKey);
-
-                    authorization = SignOkHttp.getAuthorization(cccp.getCredentials().getAWSAccessKeyId(),time,region,service,signature);
-
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-                catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
-                catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-
-                request = request.newBuilder()
-                        .addHeader("X-Amz-Date", TimeUtils.toISO8601String(time))
-                        .addHeader("X-Amz-Security-Token", cccp.getCredentials().getSessionToken())
-                        .addHeader("Authorization", authorization)
-                        .build();
-
-
-*/
                 OkHttpClient client = new OkHttpClient();
                 Call call = client.newCall(request);
 
@@ -245,7 +196,7 @@ public class AutenticazioneController extends NaTourController{
                         Log.e("TESTING----------: ", response.body().string());
                     }
                 });
-
+*/
 
 
 
@@ -258,10 +209,6 @@ public class AutenticazioneController extends NaTourController{
 
 
 
-
-
-        //cccp.withLogins(logins);
-        //cccp.refresh();
     }
 
     public void callbackFacebook(int requestCode, int resultCode, Intent data){
@@ -270,30 +217,7 @@ public class AutenticazioneController extends NaTourController{
 
 
     public void initButtonGoogle(SignInButton googleLoginButton, ActivityResultLauncher<Intent> activityResultLauncher) {
-/*
-        ActivityResultLauncher<Intent> activityResultLauncherGoogleLogin;
-        activityResultLauncherGoogleLogin = getActivity().registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>()
-                {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
 
-                        if(result == null || result.getData() == null) return;
-
-
-
-                        Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
-                        GoogleSignInAccount googleSignInAccount = task.getResult();
-
-                        Log.i(TAG + " ------", "start\nidToken:" + googleSignInAccount.getIdToken() );
-                        //federatedGoogle
-
-
-                    }
-                }
-        );
-*/
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getActivity().getResources().getString(R.string.google_client))
                 .requestEmail()
@@ -357,7 +281,7 @@ public class AutenticazioneController extends NaTourController{
 
 
                 //----------------------------------------------------------------------------------------
-
+/*
 
                 String url = "https://vwyxm7bcre.execute-api.eu-west-1.amazonaws.com/testing/test";
 
@@ -407,7 +331,7 @@ public class AutenticazioneController extends NaTourController{
 
 
 
-
+*/
                 //----------------------------------------------------------------------------------------
 
             }
@@ -419,6 +343,8 @@ public class AutenticazioneController extends NaTourController{
         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
         GoogleSignInAccount googleSignInAccount = task.getResult();
         federateWithGoogle(googleSignInAccount);
+
+        MainController.openMainActivity(getActivity());
 
     }
 

@@ -2,6 +2,7 @@ package com.unina.natour.amplify;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -12,14 +13,21 @@ import com.amplifyframework.AmplifyException;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.core.Amplify;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
+import com.unina.natour.controllers.MessageController;
+import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.UserIdResponseDTO;
+import com.unina.natour.models.dao.implementation.UserDAOImpl;
+import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.models.socketHandler.ChatWebSocketHandler;
 import com.unina.natour.views.activities.NaTourActivity;
 
 public class ApplicationController extends Application {
 
     private final static String TAG = "ApplicationConfig";
+
+    private final static String IDP_COGNITO = "Cognito";
+    private final static String IDP_FACEBOOK = "Facebook";
+    private final static String IDP_GOOGLE = "Google";
 
     private NaTourActivity currentActivity;
     private ChatWebSocketHandler chatWebSocketHandler;
@@ -43,12 +51,7 @@ public class ApplicationController extends Application {
         Application.ActivityLifecycleCallbacks activityLifecycleCallbacks = generateActivityLifecycleCallbacks();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
 
-
         this.chatWebSocketHandler = new ChatWebSocketHandler(this);
-        //Thread.setDefaultUncaughtExceptionHandler(generateUncaughtExcetionHandler());
-
-
-
     }
 
     public Activity getCurrentActivity() {
@@ -121,51 +124,78 @@ public class ApplicationController extends Application {
         return result;
     }
 
+    public static class UserInfo{
+        private static String identityProvider;
+        private static String userProviderId;
+        private static Long userId;
+
+        public static String getIdentityProvider() {
+            return identityProvider;
+        }
+
+        public static String getUserProviderId() {
+            return userProviderId;
+        }
+
+        public static Long getUserId() {
+            return userId;
+        }
 
 
-    /*
-    private Thread.UncaughtExceptionHandler generateUncaughtExcetionHandler(){
-        Thread.UncaughtExceptionHandler uncaughtExceptionHandler = new Thread.UncaughtExceptionHandler(){
+        public static boolean signInWithCognito(Context context, String cognitoUsername){
+            UserDAO userDAO = new UserDAOImpl(context);
 
-            ExceptionHandler exceptionHandler = new ExceptionHandler();
-
-            @Override
-            public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
-                //Log.e(TAG,"TestGlobalExceptionHandler", e);
-
-                Log.i(TAG,"pij o cazz mm'occ strunzz");
-
-                MessageDialog messageDialog = new MessageDialog();
-                messageDialog.setNaTourActivity(currentActivity);
-
-                if(e instanceof AmplifyException){
-                    AmplifyException ex = (AmplifyException) e;
-                    exceptionHandler.handleMessageError(messageDialog,ex);
-                    return;
-                }
-                if(e instanceof ServerException){
-                    ServerException ex = (ServerException) e;
-                    exceptionHandler.handleMessageError(messageDialog,ex);
-                    return;
-                }
-                if(e instanceof AppException){
-                    AppException ex = (AppException) e;
-                    exceptionHandler.handleMessageError(messageDialog,ex);
-                    return;
-                }
-                else{
-                    exceptionHandler.handleMessageError(messageDialog);
-                }
-
-
-
-                //exceptionHandler.handleMessageError(messageDialog);
+            UserIdResponseDTO userIdResponseDTO = userDAO.getUserId(IDP_COGNITO, cognitoUsername);
+            MessageResponseDTO messageResponseDTO = userIdResponseDTO.getResultMessage();
+            if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+                //todo handle error
+                return false;
             }
-        };
 
-        return uncaughtExceptionHandler;
+            identityProvider = IDP_COGNITO;
+            userProviderId = cognitoUsername;
+            userId = userIdResponseDTO.getUserId();
+            return true;
+        }
+
+        public static boolean signInWithFacebook(Context context, String facebookId){
+            UserDAO userDAO = new UserDAOImpl(context);
+
+            UserIdResponseDTO userIdResponseDTO = userDAO.getUserId(IDP_FACEBOOK, facebookId);
+            MessageResponseDTO messageResponseDTO = userIdResponseDTO.getResultMessage();
+            if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+                //todo handle error
+                return false;
+            }
+
+            identityProvider = IDP_FACEBOOK;
+            userProviderId = facebookId;
+            userId = userIdResponseDTO.getUserId();
+            return true;
+        }
+
+        public static boolean signInWithGoogle(Context context, String googleId){
+            UserDAO userDAO = new UserDAOImpl(context);
+
+            UserIdResponseDTO userIdResponseDTO = userDAO.getUserId(IDP_GOOGLE, googleId);
+            MessageResponseDTO messageResponseDTO = userIdResponseDTO.getResultMessage();
+            if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+                //todo handle error
+                return false;
+            }
+
+            identityProvider = IDP_GOOGLE;
+            userProviderId = googleId;
+            userId = userIdResponseDTO.getUserId();
+            return true;
+        }
+
+        public static boolean signOut(){
+            identityProvider = null;
+            userProviderId = null;
+            userId = null;
+            return true;
+        }
+
     }
-*/
-
-
 }

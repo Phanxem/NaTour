@@ -14,6 +14,7 @@ import com.unina.natour.dto.response.MessageResponseDTO;
 import com.unina.natour.dto.request.OptionalInfoRequestDTO;
 import com.unina.natour.dto.response.UserChatResponseDTO;
 import com.unina.natour.dto.response.UserChatListResponseDTO;
+import com.unina.natour.dto.response.UserIdResponseDTO;
 import com.unina.natour.dto.response.UserResponseDTO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 
@@ -182,6 +183,12 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
         return result;
     }
 */
+
+    @Override
+    public UserIdResponseDTO getUserId(String identityProvider, String userProviderId) {
+        //TODO
+        return null;
+    }
 
     public UserResponseDTO getUser(String username){
         UserResponseDTO test = new UserResponseDTO();
@@ -455,10 +462,10 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
         return userChatListResponseDTO;
     }
 
-
-
-
-
+    @Override
+    public MessageResponseDTO cancelRegistrationUser() {
+        return null;
+    }
 
 
     public UserResponseDTO toUserResponseDTO(JsonObject jsonObject, Bitmap bitmap){
