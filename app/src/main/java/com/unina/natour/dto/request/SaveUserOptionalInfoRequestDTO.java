@@ -1,17 +1,12 @@
 package com.unina.natour.dto.request;
 
-import com.unina.natour.dto.response.MessageResponseDTO;
-
-public class OptionalInfoRequestDTO {
-
-
-
+public class SaveUserOptionalInfoRequestDTO {
     private String placeOfResidence;
     private String dateOfBirth;
 
-    public OptionalInfoRequestDTO(){};
+    public SaveUserOptionalInfoRequestDTO(){};
 
-    public OptionalInfoRequestDTO(String placeOfResidence, String dateOfBirth) {
+    public SaveUserOptionalInfoRequestDTO(String placeOfResidence, String dateOfBirth) {
         this.placeOfResidence = placeOfResidence;
         this.dateOfBirth = dateOfBirth;
 

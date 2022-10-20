@@ -2,12 +2,11 @@ package com.unina.natour.models.dao.implementation;
 
 import com.google.gson.JsonObject;
 import com.unina.natour.controllers.MessageController;
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.models.dao.interfaces.MessageDAO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 
-public class MessageDAOImpl extends ServerDAO implements MessageDAO {
+public class ResultMessageDAO extends ServerDAO {
 
-    public static MessageResponseDTO toMessageDTO(JsonObject jsonObject){
+    public static ResultMessageDTO toMessageDTO(JsonObject jsonObject){
         if(!jsonObject.has("code")  || !jsonObject.has("message")){
             return MessageController.getUnknownErrorMessage();
         }
@@ -15,8 +14,8 @@ public class MessageDAOImpl extends ServerDAO implements MessageDAO {
         long code = jsonObject.get("code").getAsLong();
         String message = jsonObject.get("message").getAsString();
 
-        MessageResponseDTO messageResponseDTO = new MessageResponseDTO(code,message);
+        ResultMessageDTO resultMessageDTO = new ResultMessageDTO(code,message);
 
-        return messageResponseDTO;
+        return resultMessageDTO;
     }
 }

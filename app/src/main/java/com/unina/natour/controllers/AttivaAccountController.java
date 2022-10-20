@@ -3,12 +3,9 @@ package com.unina.natour.controllers;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
 
 import com.unina.natour.controllers.utils.StringsUtils;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
@@ -70,9 +67,9 @@ public class AttivaAccountController extends NaTourController{
             return false;
         }
 
-        MessageResponseDTO messageResponseDTO = amplifyDAO.activateAccount(username, code);
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        ResultMessageDTO resultMessageDTO = amplifyDAO.activateAccount(username, code);
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
@@ -87,9 +84,9 @@ public class AttivaAccountController extends NaTourController{
         sharedPreferencesEditor.remove(SHARED_PREFERENCES_EMAIL);
         sharedPreferencesEditor.commit();
 
-        messageResponseDTO = amplifyDAO.signIn(username,password);
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        resultMessageDTO = amplifyDAO.signIn(username,password);
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
@@ -152,9 +149,9 @@ public class AttivaAccountController extends NaTourController{
     }
 
     public boolean resendCode(){
-        MessageResponseDTO messageResponseDTO = amplifyDAO.resendActivationCode(username);
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        ResultMessageDTO resultMessageDTO = amplifyDAO.resendActivationCode(username);
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 

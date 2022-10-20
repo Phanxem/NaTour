@@ -7,7 +7,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.unina.natour.controllers.utils.StringsUtils;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.views.activities.CompletaRecuperoPasswordActivity;
 import com.unina.natour.views.activities.IniziaRecuperoPasswordActivity;
@@ -31,10 +31,10 @@ public class RecuperoPasswordController extends NaTourController{
             return false;
         }
 
-        MessageResponseDTO messageResponseDTO = amplifyDAO.startPasswordRecovery(username);
+        ResultMessageDTO resultMessageDTO = amplifyDAO.startPasswordRecovery(username);
 
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
@@ -56,10 +56,10 @@ public class RecuperoPasswordController extends NaTourController{
             return false;
         }
 
-        MessageResponseDTO messageResponseDTO = amplifyDAO.completePasswordRecovery(code,password);
+        ResultMessageDTO resultMessageDTO = amplifyDAO.completePasswordRecovery(code,password);
 
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 

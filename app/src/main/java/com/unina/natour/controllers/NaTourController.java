@@ -1,6 +1,6 @@
 package com.unina.natour.controllers;
 
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.views.activities.NaTourActivity;
 
 public class NaTourController {
@@ -35,8 +35,8 @@ public class NaTourController {
         this.messageController = messageController;
     }
 
-    public void showErrorMessage(MessageResponseDTO messageResponseDTO){
-        this.messageController.showErrorMessage(messageResponseDTO);
+    public void showErrorMessage(ResultMessageDTO resultMessageDTO){
+        this.messageController.showErrorMessage(resultMessageDTO);
     }
 
     public void showErrorMessage(long code){

@@ -1,33 +1,27 @@
 package com.unina.natour.controllers;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.util.Log;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
 import com.unina.natour.R;
-import com.unina.natour.controllers.utils.StringsUtils;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSFeatureNotPresentException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSNotEnabledException;
 import com.unina.natour.controllers.utils.AddressUtils;
 import com.unina.natour.controllers.utils.GPSUtils;
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.response.ItineraryResponseDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.GetItineraryResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.DettagliItinerarioModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
@@ -122,16 +116,16 @@ public class DettagliItinerarioController extends NaTourController{
             return false;
         }
 */
-        ItineraryResponseDTO itineraryDTO = itineraryDAO.findById(itineraryId);
-        MessageResponseDTO messageResponseDTO = itineraryDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        GetItineraryResponseDTO itineraryDTO = itineraryDAO.getItineraryById(itineraryId);
+        ResultMessageDTO resultMessageDTO = itineraryDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
         boolean result = dtoToModel(itineraryDTO,dettagliItinerarioModel);
         if(!result){
-            showErrorMessage(messageResponseDTO);
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
@@ -255,7 +249,7 @@ public class DettagliItinerarioController extends NaTourController{
 
     //---
 
-    public static boolean dtoToModel(ItineraryResponseDTO dto, DettagliItinerarioModel model){
+    public static boolean dtoToModel(GetItineraryResponseDTO dto, DettagliItinerarioModel model){
         model.clear();
 
         model.setItineraryId(dto.getId());

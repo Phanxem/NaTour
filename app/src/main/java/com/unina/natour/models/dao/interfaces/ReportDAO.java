@@ -1,19 +1,20 @@
 package com.unina.natour.models.dao.interfaces;
 
-import com.unina.natour.dto.request.ReportRequestDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.response.ReportListResponseDTO;
-import com.unina.natour.dto.response.ReportResponseDTO;
-
-import java.util.List;
+import com.unina.natour.dto.request.SaveReportRequestDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.response.GetListReportResponseDTO;
+import com.unina.natour.dto.response.GetReportResponseDTO;
 
 public interface ReportDAO {
 
-    MessageResponseDTO addReport(ReportRequestDTO reportRequestDTO);
+    //GETs
+    public GetReportResponseDTO getReportById(long idReport);
 
-    ReportListResponseDTO findByItineraryId(long itineraryId);
+    public GetListReportResponseDTO getReportByIdItinerary(long idItinerary);
 
-    ReportResponseDTO findById(long reportId);
+    //POSTs
+    public ResultMessageDTO addReport(SaveReportRequestDTO saveReportRequestDTO);
 
-    MessageResponseDTO deleteById(long reportId);
+    //DELETEs
+    public ResultMessageDTO deleteReportById(long reportId);
 }

@@ -13,9 +13,6 @@ public class ProfiloModel extends NaTourModel{
     private String placeOfResidence;
     private String dateOfBirth;
 
-    private boolean isFacebookLinked;
-    private boolean isGoogleLinked;
-
     public ProfiloModel(){
         super();
     }
@@ -68,21 +65,7 @@ public class ProfiloModel extends NaTourModel{
         this.dateOfBirth = dateOfBirth;
     }
 
-    public boolean isFacebookLinked() {
-        return isFacebookLinked;
-    }
 
-    public void setFacebookLinked(boolean facebookLinked) {
-        isFacebookLinked = facebookLinked;
-    }
-
-    public boolean isGoogleLinked() {
-        return isGoogleLinked;
-    }
-
-    public void setGoogleLinked(boolean googleLinked) {
-        isGoogleLinked = googleLinked;
-    }
 
     public void clear(){
         this.id = -1l;
@@ -92,7 +75,5 @@ public class ProfiloModel extends NaTourModel{
         this.placeOfResidence = null;
         this.dateOfBirth = null;
 
-        this.isFacebookLinked = false;
-        this.isGoogleLinked = false;
     }
 }

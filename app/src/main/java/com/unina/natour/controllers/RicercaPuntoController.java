@@ -16,17 +16,10 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
 import com.unina.natour.controllers.utils.AddressMapper;
-import com.unina.natour.controllers.utils.StringsUtils;
-import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.CurrentLocationNotFoundException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureFindAddressException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSFeatureNotPresentException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.GPSNotEnabledException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindAddressException;
 import com.unina.natour.controllers.utils.GPSUtils;
-import com.unina.natour.dto.response.AddressListResponseDTO;
-import com.unina.natour.dto.response.AddressResponseDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.GetListAddressResponseDTO;
+import com.unina.natour.dto.response.GetAddressResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.RicercaPuntoModel;
 import com.unina.natour.models.dao.implementation.AddressDAOImpl;
@@ -37,10 +30,8 @@ import com.unina.natour.views.listAdapters.RisultatiRicercaPuntoListAdapter;
 
 import org.osmdroid.util.GeoPoint;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class RicercaPuntoController extends NaTourController{
@@ -126,10 +117,10 @@ public class RicercaPuntoController extends NaTourController{
 
         GeoPoint geoPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
 
-        AddressResponseDTO addressDTO = addressDAO.findAddressByGeoPoint(geoPoint);
-        MessageResponseDTO messageResponseDTO = addressDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        GetAddressResponseDTO addressDTO = addressDAO.getAddressByGeoPoint(geoPoint);
+        ResultMessageDTO resultMessageDTO = addressDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return;
         }
         AddressModel addressModel = new AddressModel();
@@ -137,7 +128,7 @@ public class RicercaPuntoController extends NaTourController{
         boolean result = AddressMapper.dtoToModel(addressDTO, addressModel);
         if(!result){
             //TODO error
-            showErrorMessage(messageResponseDTO);
+            showErrorMessage(resultMessageDTO);
             return;
         }
 
@@ -159,10 +150,10 @@ public class RicercaPuntoController extends NaTourController{
             risultatiRicercaPuntoListAdapter.notifyDataSetChanged();
             return;
         }
-        AddressListResponseDTO resultAddressesDTO = addressDAO.findAddressesByQuery(searchString);
-        MessageResponseDTO messageResponseDTO = resultAddressesDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        GetListAddressResponseDTO resultAddressesDTO = addressDAO.getAddressesByQuery(searchString);
+        ResultMessageDTO resultMessageDTO = resultAddressesDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return;
         }
 

@@ -1,24 +1,6 @@
 package com.unina.natour.controllers;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.content.res.Resources;
-
-import androidx.fragment.app.FragmentActivity;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.unina.natour.R;
-import com.unina.natour.dto.response.ItineraryResponseDTO;
-import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
-import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
-
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.List;
 
 public class HomeController extends NaTourController{
 

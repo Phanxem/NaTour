@@ -8,10 +8,9 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.response.UserChatListResponseDTO;
-import com.unina.natour.dto.response.UserChatResponseDTO;
-import com.unina.natour.dto.response.UserResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.response.composted.ListUserChatResponseDTO;
+import com.unina.natour.dto.response.composted.UserChatResponseDTO;
 import com.unina.natour.models.ElementUserModel;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
@@ -60,7 +59,7 @@ public class ListaUtentiController extends NaTourController{
     }
 
     public boolean initModel(long researchCode, String researchString){
-        UserChatListResponseDTO usersDTO = null;
+        ListUserChatResponseDTO usersDTO = null;
 
         if(researchCode == CODE_USER_WITH_CONVERSATION){
             usersDTO = userDAO.findUserChatByConversation();
@@ -74,10 +73,10 @@ public class ListaUtentiController extends NaTourController{
             return false;
         }
 
-        MessageResponseDTO messageResponseDTO = usersDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+        ResultMessageDTO resultMessageDTO = usersDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
             //TODO
-            showErrorMessage(messageResponseDTO);
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
@@ -111,7 +110,7 @@ public class ListaUtentiController extends NaTourController{
                     page++;
                     progressBar_users.setVisibility(View.VISIBLE);
 
-                    UserChatListResponseDTO usersDTO;
+                    ListUserChatResponseDTO usersDTO;
 
                     if(researchCode == CODE_USER_WITH_CONVERSATION){
                         usersDTO = userDAO.findUserChatByConversation();
@@ -162,13 +161,13 @@ public class ListaUtentiController extends NaTourController{
         model.clear();
 
         model.setUserId(dto.getId());
-        model.setUsername(dto.getUsername());
+        model.setUsername(dto.getNameChat());
         model.setProfileImage(dto.getProfileImage());
         model.setMessagesToRead(dto.hasMessagesToRead());
         return true;
     }
 
-    public boolean dtoToModel(Context context, UserChatListResponseDTO dto, List<ElementUserModel> model){
+    public boolean dtoToModel(Context context, ListUserChatResponseDTO dto, List<ElementUserModel> model){
         model.clear();
 
         List<UserChatResponseDTO> usersDto = dto.getUsers();

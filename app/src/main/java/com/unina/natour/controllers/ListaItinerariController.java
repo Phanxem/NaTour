@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -15,9 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.response.ItineraryElementResponseDTO;
-import com.unina.natour.dto.response.ItineraryListResponseDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.composted.ItineraryElementResponseDTO;
+import com.unina.natour.dto.response.GetListItineraryResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.ElementItineraryModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
@@ -79,11 +78,11 @@ public class ListaItinerariController extends NaTourController{
     }
 
     public boolean initModel(){
-        ItineraryListResponseDTO itinerariesDTO = itinearyDAO.getRandomItineraryList();
-        MessageResponseDTO messageResponseDTO = itinerariesDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+        GetListItineraryResponseDTO itinerariesDTO = itinearyDAO.getListItineraryRandom();
+        ResultMessageDTO resultMessageDTO = itinerariesDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
             //TODO
-            showErrorMessage(messageResponseDTO);
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
@@ -104,11 +103,11 @@ public class ListaItinerariController extends NaTourController{
 
 
     public boolean initModel(String researchString){
-        ItineraryListResponseDTO itinerariesDTO = itinearyDAO.findByName(researchString);
-        MessageResponseDTO messageResponseDTO = itinerariesDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+        GetListItineraryResponseDTO itinerariesDTO = itinearyDAO.getListItineraryByName(researchString);
+        ResultMessageDTO resultMessageDTO = itinerariesDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
             //TODO
-            showErrorMessage(messageResponseDTO);
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
@@ -128,11 +127,11 @@ public class ListaItinerariController extends NaTourController{
     }
 
     public boolean initModel(long userId){
-        ItineraryListResponseDTO itinerariesDTO = itinearyDAO.findByUserId(userId);
-        MessageResponseDTO messageResponseDTO = itinerariesDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+        GetListItineraryResponseDTO itinerariesDTO = itinearyDAO.getListItineraryByIdUser(userId);
+        ResultMessageDTO resultMessageDTO = itinerariesDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
             //TODO
-            showErrorMessage(messageResponseDTO);
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
@@ -169,16 +168,16 @@ public class ListaItinerariController extends NaTourController{
                     page++;
                     progressBar_itineraries.setVisibility(View.VISIBLE);
 
-                    ItineraryListResponseDTO itinerariesDTO;
+                    GetListItineraryResponseDTO itinerariesDTO;
 
                     if(researchCode == CODE_ITINERARY_RANDOM){
-                        itinerariesDTO = itinearyDAO.getRandomItineraryList();
+                        itinerariesDTO = itinearyDAO.getListItineraryRandom();
                     }
                     else if (researchCode == CODE_ITINERARY_BY_USER_ID){
-                        itinerariesDTO = itinearyDAO.findByUserId(userId);
+                        itinerariesDTO = itinearyDAO.getListItineraryByIdUser(userId);
                     }
                     else if (researchCode == CODE_ITINERARY_BY_RESEARCH){
-                        itinerariesDTO = itinearyDAO.findByName(researchString);
+                        itinerariesDTO = itinearyDAO.getListItineraryByName(researchString);
                     }
                     else{
                         //TODO
@@ -229,7 +228,7 @@ public class ListaItinerariController extends NaTourController{
 
         model.clear();
 
-        model.setItineraryId(dto.getItineraryId());
+        model.setItineraryId(dto.getId());
         model.setDescription(dto.getDescription());
         int difficulty = dto.getDifficulty();
         if(difficulty == 0) model.setDifficulty("Facile");
@@ -259,10 +258,10 @@ public class ListaItinerariController extends NaTourController{
         return true;
     }
 
-    public static boolean dtoToModel(Context context, ItineraryListResponseDTO dto, List<ElementItineraryModel> model){
+    public static boolean dtoToModel(Context context, GetListItineraryResponseDTO dto, List<ElementItineraryModel> model){
         model.clear();
 
-        List<ItineraryElementResponseDTO> dtos = dto.getItineraries();
+        List<ItineraryElementResponseDTO> dtos = dto.getListItinerary();
 
         for(ItineraryElementResponseDTO elementDto : dtos){
             ElementItineraryModel elementModel = new ElementItineraryModel();

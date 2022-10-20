@@ -1,31 +1,22 @@
 package com.unina.natour.controllers;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.ImageDecoder;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
 import com.unina.natour.controllers.utils.FileUtils;
-import com.unina.natour.controllers.utils.StringsUtils;
-import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureReadProfileImageException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureUpdateProfileImageException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedUpdateProfileImageException;
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.response.UserResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 import com.unina.natour.models.ImpostaImmagineProfiloModel;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
@@ -34,7 +25,6 @@ import com.unina.natour.views.activities.PersonalizzaAccountImmagineActivity;
 
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 
 public class ImmagineProfiloController extends NaTourController{
@@ -134,14 +124,14 @@ public class ImmagineProfiloController extends NaTourController{
         //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
         String username = "user";
 
-        UserResponseDTO userResponseDTO = userDAO.getUser(username);
-        MessageResponseDTO messageResponseDTO = userResponseDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(username);
+        ResultMessageDTO resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
-        boolean result = dtoToModel(userResponseDTO, impostaImmagineProfiloModel);
+        boolean result = dtoToModel(getUserWithImageResponseDTO, impostaImmagineProfiloModel);
         if(!result){
             //TODO
             showErrorMessage(0);
@@ -159,8 +149,8 @@ public class ImmagineProfiloController extends NaTourController{
         Bitmap profileImage = impostaImmagineProfiloModel.getProfileImage();
 
         if(profileImage == null){
-            MessageResponseDTO messageResponseDTO = userDAO.removeProfileImage();
-            if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            ResultMessageDTO resultMessageDTO = userDAO.removeProfileImage();
+            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
                 //TODO
                 showErrorMessage(0);
                 return false;
@@ -170,8 +160,8 @@ public class ImmagineProfiloController extends NaTourController{
 
         Bitmap resizedProfileImage = resizeBitmap(profileImage, MIN_WIDTH);
 
-        MessageResponseDTO messageResponseDTO = userDAO.updateProfileImage(resizedProfileImage);
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+        ResultMessageDTO resultMessageDTO = userDAO.updateProfileImage(resizedProfileImage);
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
             //TODO
             showErrorMessage(0);
             return false;
@@ -246,7 +236,7 @@ public class ImmagineProfiloController extends NaTourController{
 
 
 
-    public static boolean dtoToModel(UserResponseDTO user, ImpostaImmagineProfiloModel model){
+    public static boolean dtoToModel(GetUserWithImageResponseDTO user, ImpostaImmagineProfiloModel model){
 
         model.clear();
 

@@ -11,12 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.response.ChatMessageListResponseDTO;
-import com.unina.natour.dto.response.ChatMessageResponseDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.GetListChatMessageResponseDTO;
+import com.unina.natour.dto.response.GetChatMessageResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.ElementMessageModel;
-import com.unina.natour.models.dao.implementation.ChatMessageDAOImpl;
-import com.unina.natour.models.dao.interfaces.ChatMessageDAO;
+import com.unina.natour.models.dao.implementation.ChatDAOImpl;
+import com.unina.natour.models.dao.interfaces.ChatDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.listAdapters.MessagesListAdapter;
 
@@ -27,7 +27,7 @@ import java.util.List;
 
 public class ListaMessaggiController extends  NaTourController{
 
-    private long userId1;
+    private long myUserId;
     private long userId2;
 
     private MessagesListAdapter messagesListAdapter;
@@ -35,19 +35,19 @@ public class ListaMessaggiController extends  NaTourController{
     private ArrayList<ElementMessageModel> elementsMessageModel;
     private int page = 0;
 
-    private ChatMessageDAO chatMessageDAO;
+    private ChatDAO chatDAO;
 
-    public ListaMessaggiController(NaTourActivity activity, long userId1, long userId2){
+    public ListaMessaggiController(NaTourActivity activity, long myUserId, long userId2){
         super(activity);
 
         //TODO test
         //this.userId1 = userId1;
-        this.userId1 = 11;
+        this.myUserId = 11;
         this.userId2 = userId2;
 
         this.elementsMessageModel = new ArrayList<ElementMessageModel>();
 
-        this.chatMessageDAO = new ChatMessageDAOImpl();
+        this.chatDAO = new ChatDAOImpl();
 
         boolean result = initModel();
         if(!result){
@@ -60,15 +60,15 @@ public class ListaMessaggiController extends  NaTourController{
     }
 
     private boolean initModel() {
-        ChatMessageListResponseDTO chatMessageListResponseDTO = chatMessageDAO.findMessageByUserIds(userId1, userId2);
-        MessageResponseDTO messageResponseDTO = chatMessageListResponseDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+        GetListChatMessageResponseDTO getListChatMessageResponseDTO = chatDAO.getMessageByidsUser(myUserId, userId2);
+        ResultMessageDTO resultMessageDTO = getListChatMessageResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
             //TODO
-            showErrorMessage(messageResponseDTO);
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
-        boolean result = dtoToModel(getActivity(), chatMessageListResponseDTO, elementsMessageModel);
+        boolean result = dtoToModel(getActivity(), getListChatMessageResponseDTO, elementsMessageModel);
         if(!result){
             showErrorMessage(0);
             return false;
@@ -108,16 +108,16 @@ public class ListaMessaggiController extends  NaTourController{
                     page++;
                     progressBar_messages.setVisibility(View.VISIBLE);
 
-                    ChatMessageListResponseDTO chatMessageListResponseDTO = chatMessageDAO.findMessageByUserIds(userId1, userId2);
-                    MessageResponseDTO messageResponseDTO = chatMessageListResponseDTO.getResultMessage();
-                    if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+                    GetListChatMessageResponseDTO getListChatMessageResponseDTO = chatDAO.getMessageByidsUser(myUserId, userId2);
+                    ResultMessageDTO resultMessageDTO = getListChatMessageResponseDTO.getResultMessage();
+                    if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
                         //TODO
-                        showErrorMessage(messageResponseDTO);
+                        showErrorMessage(resultMessageDTO);
                         return;
                     }
 
                     ArrayList<ElementMessageModel> nextPageElements = new ArrayList<ElementMessageModel>();
-                    boolean result = dtoToModel(getActivity(), chatMessageListResponseDTO, nextPageElements);
+                    boolean result = dtoToModel(getActivity(), getListChatMessageResponseDTO, nextPageElements);
                     if(!result){
                         showErrorMessage(0);
                         //TODO ERROR
@@ -172,10 +172,10 @@ public class ListaMessaggiController extends  NaTourController{
     }
 
 
-    public boolean dtoToModel(Context context, ChatMessageResponseDTO dto, ElementMessageModel model){
+    public boolean dtoToModel(Context context, GetChatMessageResponseDTO dto, ElementMessageModel model){
         model.clear();
 
-        model.setMessage(dto.getMessage());
+        model.setMessage(dto.getBody());
 
         Calendar calendar = null;
         try {
@@ -187,18 +187,18 @@ public class ListaMessaggiController extends  NaTourController{
         }
         model.setTime(calendar);
 
-        if(userId1 == dto.getUserSourceId()) model.setType(ElementMessageModel.CODE_MESSAGE_SENT);
+        if(myUserId == dto.getIdUser()) model.setType(ElementMessageModel.CODE_MESSAGE_SENT);
         else model.setType(ElementMessageModel.CODE_MESSAGE_RECEIVED);
 
         return true;
     }
 
-    public boolean dtoToModel(Context context, ChatMessageListResponseDTO dto, List<ElementMessageModel> model){
+    public boolean dtoToModel(Context context, GetListChatMessageResponseDTO dto, List<ElementMessageModel> model){
         model.clear();
 
-        List<ChatMessageResponseDTO> usersDto = dto.getMessages();
+        List<GetChatMessageResponseDTO> usersDto = dto.getListMessage();
 
-        for(ChatMessageResponseDTO elementDto : usersDto){
+        for(GetChatMessageResponseDTO elementDto : usersDto){
             ElementMessageModel elementModel = new ElementMessageModel();
             boolean result = dtoToModel(context, elementDto, elementModel);
             if(!result){

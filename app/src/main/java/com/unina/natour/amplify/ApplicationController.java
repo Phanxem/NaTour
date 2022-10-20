@@ -14,7 +14,7 @@ import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.MessageController;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.response.UserIdResponseDTO;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
@@ -145,9 +145,9 @@ public class ApplicationController extends Application {
         public static boolean signInWithCognito(Context context, String cognitoUsername){
             UserDAO userDAO = new UserDAOImpl(context);
 
-            UserIdResponseDTO userIdResponseDTO = userDAO.getUserId(IDP_COGNITO, cognitoUsername);
-            MessageResponseDTO messageResponseDTO = userIdResponseDTO.getResultMessage();
-            if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            UserIdResponseDTO userIdResponseDTO = userDAO.getUserByIdP(IDP_COGNITO, cognitoUsername);
+            ResultMessageDTO resultMessageDTO = userIdResponseDTO.getResultMessage();
+            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
                 //todo handle error
                 return false;
             }
@@ -161,9 +161,9 @@ public class ApplicationController extends Application {
         public static boolean signInWithFacebook(Context context, String facebookId){
             UserDAO userDAO = new UserDAOImpl(context);
 
-            UserIdResponseDTO userIdResponseDTO = userDAO.getUserId(IDP_FACEBOOK, facebookId);
-            MessageResponseDTO messageResponseDTO = userIdResponseDTO.getResultMessage();
-            if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            UserIdResponseDTO userIdResponseDTO = userDAO.getUserByIdP(IDP_FACEBOOK, facebookId);
+            ResultMessageDTO resultMessageDTO = userIdResponseDTO.getResultMessage();
+            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
                 //todo handle error
                 return false;
             }
@@ -177,9 +177,9 @@ public class ApplicationController extends Application {
         public static boolean signInWithGoogle(Context context, String googleId){
             UserDAO userDAO = new UserDAOImpl(context);
 
-            UserIdResponseDTO userIdResponseDTO = userDAO.getUserId(IDP_GOOGLE, googleId);
-            MessageResponseDTO messageResponseDTO = userIdResponseDTO.getResultMessage();
-            if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+            UserIdResponseDTO userIdResponseDTO = userDAO.getUserByIdP(IDP_GOOGLE, googleId);
+            ResultMessageDTO resultMessageDTO = userIdResponseDTO.getResultMessage();
+            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
                 //todo handle error
                 return false;
             }

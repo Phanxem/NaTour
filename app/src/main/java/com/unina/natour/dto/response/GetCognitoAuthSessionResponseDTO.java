@@ -2,17 +2,17 @@ package com.unina.natour.dto.response;
 
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 
-public class CognitoAuthSessionDTO {
-    private MessageResponseDTO resultMessage;
+public class GetCognitoAuthSessionResponseDTO {
+    private ResultMessageDTO resultMessage;
     private AWSCognitoAuthSession authSessione;
 
 
 
-    public MessageResponseDTO getResultMessage() {
+    public ResultMessageDTO getResultMessage() {
         return resultMessage;
     }
 
-    public void setResultMessage(MessageResponseDTO resultMessage) {
+    public void setResultMessage(ResultMessageDTO resultMessage) {
         this.resultMessage = resultMessage;
     }
 

@@ -6,7 +6,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.unina.natour.controllers.utils.StringsUtils;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.views.activities.ModificaPasswordActivity;
 import com.unina.natour.views.activities.NaTourActivity;
@@ -32,10 +32,10 @@ public class ModificaPasswordController extends NaTourController{
             return false;
         }
 
-        MessageResponseDTO messageResponseDTO = amplifyDAO.updatePassword(oldPassword, newPassword);
+        ResultMessageDTO resultMessageDTO = amplifyDAO.updatePassword(oldPassword, newPassword);
 
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 

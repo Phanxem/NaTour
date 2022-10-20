@@ -12,17 +12,9 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
 import com.unina.natour.controllers.utils.AddressMapper;
-import com.unina.natour.controllers.utils.StringsUtils;
-import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureFindAddressException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureReadGPXFileException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.InvalidURLFormatException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindAddressException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotExistDirectoryException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotExistParentDirectoryException;
 import com.unina.natour.controllers.utils.FileUtils;
-import com.unina.natour.dto.response.AddressResponseDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.GetAddressResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.ImportaFileGPXModel;
 import com.unina.natour.models.dao.implementation.AddressDAOImpl;
@@ -35,11 +27,9 @@ import org.osmdroid.util.GeoPoint;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Latitude;
@@ -177,11 +167,11 @@ public class ImportaFileGPXController extends NaTourController{
 
         ArrayList<AddressModel> addresses = new ArrayList<AddressModel>();
         for(GeoPoint geoPoint: geoPoints){
-            AddressResponseDTO addressDTO = addressDAO.findAddressByGeoPoint(geoPoint);
+            GetAddressResponseDTO addressDTO = addressDAO.getAddressByGeoPoint(geoPoint);
 
-            MessageResponseDTO messageResponseDTO = addressDTO.getResultMessage();
-            if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-                showErrorMessage(messageResponseDTO);
+            ResultMessageDTO resultMessageDTO = addressDTO.getResultMessage();
+            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+                showErrorMessage(resultMessageDTO);
                 return false;
             }
 

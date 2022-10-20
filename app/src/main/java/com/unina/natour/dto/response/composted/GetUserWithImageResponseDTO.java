@@ -1,12 +1,12 @@
-package com.unina.natour.dto.response;
+package com.unina.natour.dto.response.composted;
 
 import android.graphics.Bitmap;
 
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 
-public class UserResponseDTO {
+public class GetUserWithImageResponseDTO {
 
-    private MessageResponseDTO resultMessage;
+    private ResultMessageDTO resultMessage;
 
     private Long id;
     private String username;
@@ -14,18 +14,15 @@ public class UserResponseDTO {
     private String placeOfResidence;
     private String dateOfBirth;
 
-    private boolean isFacebookLinked;
-    private boolean isGoogleLinked;
-
-    public UserResponseDTO() {
+    public GetUserWithImageResponseDTO() {
     }
 
 
-    public MessageResponseDTO getResultMessage() {
+    public ResultMessageDTO getResultMessage() {
         return resultMessage;
     }
 
-    public void setResultMessage(MessageResponseDTO resultMessage) {
+    public void setResultMessage(ResultMessageDTO resultMessage) {
         this.resultMessage = resultMessage;
     }
 
@@ -69,19 +66,4 @@ public class UserResponseDTO {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public boolean isFacebookLinked() {
-        return isFacebookLinked;
-    }
-
-    public void setFacebookLinked(boolean facebookLinked) {
-        isFacebookLinked = facebookLinked;
-    }
-
-    public boolean isGoogleLinked() {
-        return isGoogleLinked;
-    }
-
-    public void setGoogleLinked(boolean googleLinked) {
-        isGoogleLinked = googleLinked;
-    }
 }

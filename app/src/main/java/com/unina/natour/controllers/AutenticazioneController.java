@@ -27,26 +27,16 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.Task;
 import com.unina.natour.R;
 import com.unina.natour.controllers.utils.StringsUtils;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
-import com.unina.natour.models.dao.implementation.ServerDAO;
 import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class AutenticazioneController extends NaTourController{
 
@@ -71,9 +61,9 @@ public class AutenticazioneController extends NaTourController{
             return false;
         }
 
-        MessageResponseDTO messageResponseDTO = amplifyDAO.signIn(usernameEmail,password);
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        ResultMessageDTO resultMessageDTO = amplifyDAO.signIn(usernameEmail,password);
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
@@ -87,9 +77,24 @@ public class AutenticazioneController extends NaTourController{
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                if(loginResult.getAccessToken() != null && !loginResult.getAccessToken().isExpired())
-                federateWithFacebook(loginResult.getAccessToken());
+                if(loginResult.getAccessToken() == null || loginResult.getAccessToken().isExpired()){
+                    //TODO
+                    //showError
+                }
+
+                boolean result = federateWithFacebook(loginResult.getAccessToken());
+                if(!result){
+                    //TODO
+                    //showError
+                }
                 Log.i(TAG, "----------------FB SUCCESS");
+
+
+                //TODO
+                /*
+                cerca nel db se esiste un utente Facebook con l'id dell'utente appena loggato
+                - se non esiste, crea un nuovo utente e inseriscilo
+                 */
 
                 MainController.openMainActivity(getActivity());
 
@@ -98,16 +103,18 @@ public class AutenticazioneController extends NaTourController{
             @Override
             public void onCancel() {
                 Log.i(TAG, "FB CANCEL");
+                //TODO do nothing
             }
 
             @Override
             public void onError(@NonNull FacebookException e) {
+                //TODO show error
                 Log.i(TAG, "FB ERROR");
             }
         });
     }
 
-    private void federateWithFacebook(AccessToken accessToken){
+    private boolean federateWithFacebook(AccessToken accessToken){
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -147,6 +154,7 @@ public class AutenticazioneController extends NaTourController{
                 Log.i(TAG, "SessionToken: " + cccp.getCredentials().getSessionToken());
 
                 Log.i(TAG, "Facebook UserId: " + Profile.getCurrentProfile().getId());
+
 
 
 
@@ -208,7 +216,7 @@ public class AutenticazioneController extends NaTourController{
 
 
 
-
+        return true;
     }
 
     public void callbackFacebook(int requestCode, int resultCode, Intent data){
@@ -234,9 +242,9 @@ public class AutenticazioneController extends NaTourController{
 
     }
 
-    void federateWithGoogle(GoogleSignInAccount account){
+    boolean federateWithGoogle(GoogleSignInAccount account){
         if(account.getIdToken() == null){
-             return;
+             return false;
         }
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -336,13 +344,24 @@ public class AutenticazioneController extends NaTourController{
 
             }
         });
+
+        return true;
     }
 
     public void callbackGoogle(Intent data){
 
         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
         GoogleSignInAccount googleSignInAccount = task.getResult();
-        federateWithGoogle(googleSignInAccount);
+        boolean result = federateWithGoogle(googleSignInAccount);
+        if(!result){
+            //TODO
+            //showError
+        }
+
+        /*
+            cerca nel db se esiste un utente Facebook con l'id dell'utente appena loggato
+            - se non esiste, crea un nuovo utente e inseriscilo
+        */
 
         MainController.openMainActivity(getActivity());
 

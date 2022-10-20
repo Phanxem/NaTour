@@ -10,12 +10,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.unina.natour.controllers.MessageController;
 import com.unina.natour.controllers.utils.FileUtils;
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.request.OptionalInfoRequestDTO;
-import com.unina.natour.dto.response.UserChatResponseDTO;
-import com.unina.natour.dto.response.UserChatListResponseDTO;
+import com.unina.natour.dto.response.GetUserResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.request.SaveUserOptionalInfoRequestDTO;
+import com.unina.natour.dto.response.composted.UserChatResponseDTO;
+import com.unina.natour.dto.response.composted.ListUserChatResponseDTO;
 import com.unina.natour.dto.response.UserIdResponseDTO;
-import com.unina.natour.dto.response.UserResponseDTO;
+import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 
 import java.io.File;
@@ -185,20 +186,19 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
 */
 
     @Override
-    public UserIdResponseDTO getUserId(String identityProvider, String userProviderId) {
+    public GetUserResponseDTO getUserByIdP(String identityProvider, String userProviderId) {
         //TODO
         return null;
     }
 
-    public UserResponseDTO getUser(String username){
-        UserResponseDTO test = new UserResponseDTO();
+    public GetUserWithImageResponseDTO getUser(String username){
+        GetUserWithImageResponseDTO test = new GetUserWithImageResponseDTO();
         test.setProfileImage(null);
         test.setUsername("Jennifer");
         test.setDateOfBirth("04/04/04");
         test.setId(482l);
         test.setPlaceOfResidence("America, latina");
-        test.setFacebookLinked(false);
-        test.setGoogleLinked(false);
+
 
         test.setResultMessage(MessageController.getSuccessMessage());
 
@@ -206,15 +206,14 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
     }
 
     @Override
-    public UserResponseDTO getUser(long id) {
-        UserResponseDTO test = new UserResponseDTO();
+    public GetUserWithImageResponseDTO getUser(long id) {
+        GetUserWithImageResponseDTO test = new GetUserWithImageResponseDTO();
         test.setProfileImage(null);
         test.setUsername("sdfgfgsf");
         test.setDateOfBirth("03/03/03");
         test.setId(48l);
         test.setPlaceOfResidence("sedano, volato, cazzi");
-        test.setFacebookLinked(false);
-        test.setGoogleLinked(false);
+
 
         test.setResultMessage(MessageController.getSuccessMessage());
 
@@ -223,7 +222,7 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
 
 
     @Override
-    public MessageResponseDTO updateProfileImage(Bitmap profileImage) {
+    public ResultMessageDTO updateProfileImage(Bitmap profileImage) {
 
         //String username = Amplify.Auth.getCurrentUser().getUsername();
         String username = TEST_USER;
@@ -234,8 +233,8 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
             file = FileUtils.toPngFile(context, profileImage);
         }
         catch (IOException e) {
-            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
-            return messageResponseDTO;
+            ResultMessageDTO resultMessageDTO = MessageController.getFailureMessage();
+            return resultMessageDTO;
         }
         RequestBody pngRequestBody = RequestBody.create(file, MediaType.parse("application/octet-stream"));
 
@@ -282,23 +281,23 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
             jsonObjectResult = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
-            return messageResponseDTO;
+            ResultMessageDTO resultMessageDTO = MessageController.getFailureMessage();
+            return resultMessageDTO;
         }
 
         if(exception[0] != null){
-            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
-            return messageResponseDTO;
+            ResultMessageDTO resultMessageDTO = MessageController.getFailureMessage();
+            return resultMessageDTO;
         }
 
-        MessageResponseDTO result = MessageDAOImpl.toMessageDTO(jsonObjectResult);
+        ResultMessageDTO result = ResultMessageDAO.toMessageDTO(jsonObjectResult);
 
         return result;
     }
 
 
     @Override
-    public MessageResponseDTO updateOptionalInfo(OptionalInfoRequestDTO optionalInfo) {
+    public ResultMessageDTO updateOptionalInfo(SaveUserOptionalInfoRequestDTO optionalInfo) {
 
         //String username = Amplify.Auth.getCurrentUser().getUsername();
         String username = TEST_USER;
@@ -347,47 +346,47 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
             jsonObjectResult = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
-            return messageResponseDTO;
+            ResultMessageDTO resultMessageDTO = MessageController.getFailureMessage();
+            return resultMessageDTO;
         }
 
         if(exception[0] != null){
-            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
-            return messageResponseDTO;
+            ResultMessageDTO resultMessageDTO = MessageController.getFailureMessage();
+            return resultMessageDTO;
         }
 
 
-        MessageResponseDTO result = MessageDAOImpl.toMessageDTO(jsonObjectResult);
+        ResultMessageDTO result = ResultMessageDAO.toMessageDTO(jsonObjectResult);
 
         return result;
     }
 
     @Override
-    public MessageResponseDTO removeProfileImage() {
+    public ResultMessageDTO removeProfileImage() {
         //TODO
         return null;
     }
 
     @Override
-    public UserChatListResponseDTO findUserChatByConversation() {
+    public ListUserChatResponseDTO findUserChatByConversation() {
 
         UserChatResponseDTO test1 = new UserChatResponseDTO();
         test1.setProfileImage(null);
-        test1.setUsername("Antonio");
+        test1.setNameChat("Antonio");
         test1.setId(22l);
-        test1.setMessagesToRead(false);
+        test1.setHasMessagesToRead(false);
 
         UserChatResponseDTO test2 = new UserChatResponseDTO();
         test2.setProfileImage(null);
-        test2.setUsername("giacomo");
+        test2.setNameChat("giacomo");
         test2.setId(23l);
-        test2.setMessagesToRead(true);
+        test2.setHasMessagesToRead(true);
 
         UserChatResponseDTO test3 = new UserChatResponseDTO();
         test3.setProfileImage(null);
-        test3.setUsername("massimo");
+        test3.setNameChat("massimo");
         test3.setId(24l);
-        test3.setMessagesToRead(false);
+        test3.setHasMessagesToRead(false);
 
 
 
@@ -407,34 +406,34 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
         result.add(test3);
 
 
-        UserChatListResponseDTO userChatListResponseDTO = new UserChatListResponseDTO();
-        MessageResponseDTO messageResponseDTO = MessageController.getSuccessMessage();
-        userChatListResponseDTO.setResultMessage(messageResponseDTO);
-        userChatListResponseDTO.setUsers(result);
+        ListUserChatResponseDTO listUserChatResponseDTO = new ListUserChatResponseDTO();
+        ResultMessageDTO resultMessageDTO = MessageController.getSuccessMessage();
+        listUserChatResponseDTO.setResultMessage(resultMessageDTO);
+        listUserChatResponseDTO.setUsers(result);
 
-        return userChatListResponseDTO;
+        return listUserChatResponseDTO;
     }
 
     @Override
-    public UserChatListResponseDTO findUserChatByUsername(String researchString) {
+    public ListUserChatResponseDTO findUserChatByUsername(String researchString) {
 
         UserChatResponseDTO test1 = new UserChatResponseDTO();
         test1.setProfileImage(null);
-        test1.setUsername("Mayro");
+        test1.setNameChat("Mayro");
         test1.setId(224l);
-        test1.setMessagesToRead(false);
+        test1.setHasMessagesToRead(false);
 
         UserChatResponseDTO test2 = new UserChatResponseDTO();
         test2.setProfileImage(null);
-        test2.setUsername("Sendo");
+        test2.setNameChat("Sendo");
         test2.setId(234l);
-        test2.setMessagesToRead(true);
+        test2.setHasMessagesToRead(true);
 
         UserChatResponseDTO test3 = new UserChatResponseDTO();
         test3.setProfileImage(null);
-        test3.setUsername("Massima");
+        test3.setNameChat("Massima");
         test3.setId(24l);
-        test3.setMessagesToRead(true);
+        test3.setHasMessagesToRead(true);
 
 
 
@@ -454,46 +453,46 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
         result.add(test3);
 
 
-        UserChatListResponseDTO userChatListResponseDTO = new UserChatListResponseDTO();
-        MessageResponseDTO messageResponseDTO = MessageController.getSuccessMessage();
-        userChatListResponseDTO.setResultMessage(messageResponseDTO);
-        userChatListResponseDTO.setUsers(result);
+        ListUserChatResponseDTO listUserChatResponseDTO = new ListUserChatResponseDTO();
+        ResultMessageDTO resultMessageDTO = MessageController.getSuccessMessage();
+        listUserChatResponseDTO.setResultMessage(resultMessageDTO);
+        listUserChatResponseDTO.setUsers(result);
 
-        return userChatListResponseDTO;
+        return listUserChatResponseDTO;
     }
 
     @Override
-    public MessageResponseDTO cancelRegistrationUser() {
+    public ResultMessageDTO cancelRegistrationUser() {
         return null;
     }
 
 
-    public UserResponseDTO toUserResponseDTO(JsonObject jsonObject, Bitmap bitmap){
-        UserResponseDTO userResponseDTO = new UserResponseDTO();
+    public GetUserWithImageResponseDTO toUserResponseDTO(JsonObject jsonObject, Bitmap bitmap){
+        GetUserWithImageResponseDTO getUserWithImageResponseDTO = new GetUserWithImageResponseDTO();
 
         if(!jsonObject.has("id")  || !jsonObject.has("username") ) {
-            MessageResponseDTO messageResponseDTO = MessageDAOImpl.toMessageDTO(jsonObject);
-            userResponseDTO.setResultMessage(messageResponseDTO);
+            ResultMessageDTO resultMessageDTO = ResultMessageDAO.toMessageDTO(jsonObject);
+            getUserWithImageResponseDTO.setResultMessage(resultMessageDTO);
         }
 
         long id = jsonObject.get("id").getAsLong();
         String username = jsonObject.get("username").getAsString();
 
-        userResponseDTO.setId(id);
-        userResponseDTO.setUsername(username);
+        getUserWithImageResponseDTO.setId(id);
+        getUserWithImageResponseDTO.setUsername(username);
 
         if(jsonObject.has("placeOfResidence")){
             String placeOfResidence = jsonObject.get("placeOfResidence").getAsString();
-            userResponseDTO.setPlaceOfResidence(placeOfResidence);
+            getUserWithImageResponseDTO.setPlaceOfResidence(placeOfResidence);
         }
 
         if(jsonObject.has("dateOfBirth")){
             String dateOfBirth = jsonObject.get("dateOfBirth").getAsString();
-            userResponseDTO.setDateOfBirth(dateOfBirth);
+            getUserWithImageResponseDTO.setDateOfBirth(dateOfBirth);
         }
 
-        userResponseDTO.setProfileImage(bitmap);
+        getUserWithImageResponseDTO.setProfileImage(bitmap);
 
-        return userResponseDTO;
+        return getUserWithImageResponseDTO;
     }
 }

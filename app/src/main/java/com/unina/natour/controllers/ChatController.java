@@ -1,26 +1,18 @@
 package com.unina.natour.controllers;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.ListView;
 
 import com.unina.natour.amplify.ApplicationController;
-import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.response.UserResponseDTO;
-import com.unina.natour.models.ElementMessageModel;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.models.socketHandler.ChatWebSocketHandler;
-import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.activities.ChatActivity;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.listAdapters.ChatListAdapter;
 
 import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
 
 public class ChatController extends NaTourController{
 
@@ -40,10 +32,10 @@ public class ChatController extends NaTourController{
 
         //Amplify
         String user = "user";
-        UserResponseDTO userResponseDTO = userDAO.getUser(user);
-        MessageResponseDTO messageResponseDTO = userResponseDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(user);
+        ResultMessageDTO resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return;
         }
 
@@ -55,7 +47,7 @@ public class ChatController extends NaTourController{
         long userId = intent.getLongExtra(EXTRA_DESTATION_USER_ID, -1);
         if(userId < 0){
             Log.i(TAG,"id non inserito");
-            showErrorMessage(messageResponseDTO);
+            showErrorMessage(resultMessageDTO);
             return;
         }
 

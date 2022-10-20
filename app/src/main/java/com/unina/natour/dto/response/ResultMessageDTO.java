@@ -1,13 +1,13 @@
 package com.unina.natour.dto.response;
 
-public class MessageResponseDTO {
+public class ResultMessageDTO {
 
     private long code;
     private String message;
 
-    public MessageResponseDTO() {}
+    public ResultMessageDTO() {}
 
-    public MessageResponseDTO(long code, String message) {
+    public ResultMessageDTO(long code, String message) {
         this.code = code;
         this.message = message;
     }

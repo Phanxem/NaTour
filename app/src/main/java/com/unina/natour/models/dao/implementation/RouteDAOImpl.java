@@ -9,8 +9,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.unina.natour.controllers.MessageController;
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.response.RouteResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.response.GetRouteResponseDTO;
 import com.unina.natour.models.RouteLegModel;
 import com.unina.natour.models.dao.interfaces.RouteDAO;
 
@@ -37,16 +37,16 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
 
 
     @Override
-    public RouteResponseDTO findRouteByCoordinates(String coordinates) {
-        RouteResponseDTO routeResponseDTO = new RouteResponseDTO();
+    public GetRouteResponseDTO getRouteByCoordinates(String coordinates) {
+        GetRouteResponseDTO getRouteResponseDTO = new GetRouteResponseDTO();
 
         //can throw UnsupportedEncodingException
         String url = null;
         try {
             url = URL + GET_ROUTE + "/" + URLEncoder.encode(coordinates,"UTF-8");
         } catch (UnsupportedEncodingException e) {
-            routeResponseDTO.setResultMessage(MessageController.getFailureMessage());
-            return routeResponseDTO;
+            getRouteResponseDTO.setResultMessage(MessageController.getFailureMessage());
+            return getRouteResponseDTO;
         }
 
         Request request = new Request.Builder()
@@ -87,26 +87,26 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
             jsonObjectResult = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
-            routeResponseDTO.setResultMessage(messageResponseDTO);
-            return routeResponseDTO;
+            ResultMessageDTO resultMessageDTO = MessageController.getFailureMessage();
+            getRouteResponseDTO.setResultMessage(resultMessageDTO);
+            return getRouteResponseDTO;
         }
 
         if(exception[0] != null){
-            MessageResponseDTO messageResponseDTO = MessageController.getFailureMessage();
-            routeResponseDTO.setResultMessage(messageResponseDTO);
-            return routeResponseDTO;
+            ResultMessageDTO resultMessageDTO = MessageController.getFailureMessage();
+            getRouteResponseDTO.setResultMessage(resultMessageDTO);
+            return getRouteResponseDTO;
         }
 
         //can throw MessageException
-        RouteResponseDTO result = toRouteDTO(jsonObjectResult);
+        GetRouteResponseDTO result = toRouteDTO(jsonObjectResult);
 
         return result;
     }
 
 
     @Override
-    public RouteResponseDTO findRouteByGeoPoints(List<GeoPoint> geoPoints){
+    public GetRouteResponseDTO getRouteByGeoPoints(List<GeoPoint> geoPoints){
 
         if(geoPoints.size() <= 1) return null;
 
@@ -119,21 +119,21 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
         }
 
         //can throw UnsupportedEncodingException, ExecutionException, InterruptedException, MessageException
-        return findRouteByCoordinates(coordinates);
+        return getRouteByCoordinates(coordinates);
     }
 
 
 
 
-    public static RouteResponseDTO toRouteDTO(JsonObject jsonObject) {
-        RouteResponseDTO routeResponseDTO = new RouteResponseDTO();
+    public static GetRouteResponseDTO toRouteDTO(JsonObject jsonObject) {
+        GetRouteResponseDTO getRouteResponseDTO = new GetRouteResponseDTO();
 
         if(!jsonObject.has("wayPoints")  || !jsonObject.has("tracks") )
         {
-            MessageResponseDTO messageResponseDTO = MessageDAOImpl.toMessageDTO(jsonObject);
-            routeResponseDTO.setResultMessage(messageResponseDTO);
+            ResultMessageDTO resultMessageDTO = ResultMessageDAO.toMessageDTO(jsonObject);
+            getRouteResponseDTO.setResultMessage(resultMessageDTO);
 
-            return routeResponseDTO;
+            return getRouteResponseDTO;
         }
 
         JsonArray jsonArrayWayPoints = jsonObject.get("wayPoints").getAsJsonArray();
@@ -188,10 +188,10 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
         }
 
 
-        routeResponseDTO.setWayPoints(geoWayPoints);
-        routeResponseDTO.setRouteLegs(routeLegs);
+        getRouteResponseDTO.setWayPoints(geoWayPoints);
+        getRouteResponseDTO.setTracks(routeLegs);
 
-        return routeResponseDTO;
+        return getRouteResponseDTO;
     }
 
 

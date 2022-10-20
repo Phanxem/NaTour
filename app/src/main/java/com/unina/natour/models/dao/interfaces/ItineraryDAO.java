@@ -1,28 +1,36 @@
 package com.unina.natour.models.dao.interfaces;
 
-import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.dto.response.ItineraryListResponseDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.request.ItineraryRequestDTO;
-import com.unina.natour.dto.response.ItineraryElementResponseDTO;
-import com.unina.natour.dto.response.ItineraryResponseDTO;
+import com.unina.natour.dto.response.GetListItineraryResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.request.SaveItineraryRequestDTO;
+import com.unina.natour.dto.response.GetItineraryResponseDTO;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
+import io.jenetics.jpx.GPX;
 
 public interface ItineraryDAO{
 
-    MessageResponseDTO addItinerary(ItineraryRequestDTO itineraryDTO);
+    //GETs
+    public GetItineraryResponseDTO getItineraryById(long idItinerary);
 
-    ItineraryListResponseDTO getRandomItineraryList();
+    public GPX getItineraryGpxById(long idItinerary);
+
+    public GetListItineraryResponseDTO getListItineraryByIdUser(long userId, int page);
+
+    public GetListItineraryResponseDTO getListItineraryRandom();
+
+    public GetListItineraryResponseDTO getListItineraryByName(String name);
+
+
+    //POSTs
+    public ResultMessageDTO addItinerary(SaveItineraryRequestDTO saveItineraryRequest);
+
+
+    //DELETEs
+    public ResultMessageDTO deleteItineraryById(long idItinerary);
+
+
+
+
 
     //ItineraryListResponseDTO getUserItinearyList(String username);
-    ItineraryListResponseDTO findByUserId(long userId);
-
-    ItineraryResponseDTO findById(long itineraryId);
-
-    MessageResponseDTO deleteById(long itinerayId);
-
-    ItineraryListResponseDTO findByName(String researchString);
 }

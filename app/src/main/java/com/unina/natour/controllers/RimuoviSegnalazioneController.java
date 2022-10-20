@@ -1,8 +1,6 @@
 package com.unina.natour.controllers;
 
-import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.implementation.ReportDAOImpl;
-import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 import com.unina.natour.models.dao.interfaces.ReportDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 
@@ -20,6 +18,6 @@ public class RimuoviSegnalazioneController extends NaTourController{
     }
 
     public void deleteReport(){
-        reportDAO.deleteById(reportId);
+        reportDAO.deleteReportById(reportId);
     }
 }

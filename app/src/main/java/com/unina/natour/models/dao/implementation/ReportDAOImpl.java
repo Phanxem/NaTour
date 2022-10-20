@@ -3,10 +3,10 @@ package com.unina.natour.models.dao.implementation;
 import android.util.Log;
 
 import com.unina.natour.controllers.MessageController;
-import com.unina.natour.dto.request.ReportRequestDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.response.ReportListResponseDTO;
-import com.unina.natour.dto.response.ReportResponseDTO;
+import com.unina.natour.dto.request.SaveReportRequestDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.response.GetListReportResponseDTO;
+import com.unina.natour.dto.response.GetReportResponseDTO;
 import com.unina.natour.models.dao.interfaces.ReportDAO;
 
 import java.util.ArrayList;
@@ -15,24 +15,24 @@ import java.util.List;
 public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
 
     @Override
-    public MessageResponseDTO addReport(ReportRequestDTO reportRequestDTO) {
+    public ResultMessageDTO addReport(SaveReportRequestDTO saveReportRequestDTO) {
         Log.i("TAG","segnalazione effettuata");
         return null;
     }
 
     @Override
-    public ReportListResponseDTO findByItineraryId(long itineraryId) {
+    public GetListReportResponseDTO getReportByIdItinerary(long idItinerary) {
         Log.i("TAG","itinerari recuperati");
 
-        List<ReportResponseDTO> test = new ArrayList<ReportResponseDTO>();
+        List<GetReportResponseDTO> test = new ArrayList<GetReportResponseDTO>();
 
-        ReportResponseDTO test1 = new ReportResponseDTO();
+        GetReportResponseDTO test1 = new GetReportResponseDTO();
         test1.setId(1);
         test1.setName("jennifer");
         test1.setDescription("pyro");
         test1.setDateOfInput("12/12/22");
-        test1.setId_user(23);
-        test1.setId_itinerary(3);
+        test1.setIdUser(23);
+        test1.setIdItinerary(3);
 
         test.add(test1);
         test.add(test1);
@@ -41,31 +41,31 @@ public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
         test.add(test1);
         test.add(test1);
 
-        ReportListResponseDTO reportListResponseDTO = new ReportListResponseDTO();
-        MessageResponseDTO messageResponseDTO = MessageController.getSuccessMessage();
+        GetListReportResponseDTO getListReportResponseDTO = new GetListReportResponseDTO();
+        ResultMessageDTO resultMessageDTO = MessageController.getSuccessMessage();
 
-        reportListResponseDTO.setResultMessage(messageResponseDTO);
-        reportListResponseDTO.setReports(test);
+        getListReportResponseDTO.setResultMessage(resultMessageDTO);
+        getListReportResponseDTO.setListReport(test);
 
-        return reportListResponseDTO;
+        return getListReportResponseDTO;
     }
 
     @Override
-    public ReportResponseDTO findById(long reportId) {
+    public GetReportResponseDTO getReportById(long idReport) {
 
-        ReportResponseDTO test = new ReportResponseDTO();
+        GetReportResponseDTO test = new GetReportResponseDTO();
         test.setId(15);
         test.setName("jdfsdfsennifer");
         test.setDescription("pyrfgdfgo");
         test.setDateOfInput("11/11/21");
-        test.setId_user(23);
-        test.setId_itinerary(6);
+        test.setIdUser(23);
+        test.setIdItinerary(6);
 
         return test;
     }
 
     @Override
-    public MessageResponseDTO deleteById(long reportId) {
+    public ResultMessageDTO deleteReportById(long reportId) {
         Log.i("TAG","segnalazione rimossa");
         return null;
     }

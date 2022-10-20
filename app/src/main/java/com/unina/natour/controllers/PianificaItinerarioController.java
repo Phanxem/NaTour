@@ -25,20 +25,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
 import com.unina.natour.controllers.utils.AddressMapper;
-import com.unina.natour.controllers.utils.StringsUtils;
-import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureFindAddressException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureFindRouteException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.InvalidIndexPointException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.InvalidURLFormatException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NoIndexSelectedException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NoPointSelectedException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindAddressException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFindRouteException;
 import com.unina.natour.controllers.utils.GPSUtils;
-import com.unina.natour.dto.response.AddressResponseDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.response.RouteResponseDTO;
+import com.unina.natour.dto.response.GetAddressResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.response.GetRouteResponseDTO;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.PianificaItinerarioModel;
 import com.unina.natour.models.RouteLegModel;
@@ -58,11 +48,8 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @SuppressLint("LongLogTag")
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -80,6 +67,7 @@ public class PianificaItinerarioController extends NaTourController implements P
     ActivityResultLauncher<String> activityResultLauncherPermissions;
 
     PuntiIntermediListAdapter puntiIntermediListAdapter;
+
     PianificaItinerarioModel pianificaItinerarioModel;
 
     RouteDAO routeDAO;
@@ -137,17 +125,17 @@ public class PianificaItinerarioController extends NaTourController implements P
                                 List<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
                                 for(AddressModel address: addresses) geoPoints.add(address.getPoint());
 
-                                RouteResponseDTO routeResponseDTO = null;
+                                GetRouteResponseDTO getRouteResponseDTO = null;
 
 
-                                routeResponseDTO = routeDAO.findRouteByGeoPoints(geoPoints);
-                                MessageResponseDTO messageResponseDTO = routeResponseDTO.getResultMessage();
-                                if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-                                    showErrorMessage(messageResponseDTO);
+                                getRouteResponseDTO = routeDAO.getRouteByGeoPoints(geoPoints);
+                                ResultMessageDTO resultMessageDTO = getRouteResponseDTO.getResultMessage();
+                                if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+                                    showErrorMessage(resultMessageDTO);
                                     return;
                                 }
 
-                                pianificaItinerarioModel.updateRoutes(routeResponseDTO.getRouteLegs());
+                                pianificaItinerarioModel.updateRoutes(getRouteResponseDTO.getTracks());
                                 puntiIntermediListAdapter.notifyDataSetChanged();
 
                             }
@@ -451,15 +439,15 @@ public class PianificaItinerarioController extends NaTourController implements P
 
 
 
-        RouteResponseDTO routeResponseDTO = routeDAO.findRouteByGeoPoints(geoPoints);
-        MessageResponseDTO messageResponseDTO = routeResponseDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        GetRouteResponseDTO getRouteResponseDTO = routeDAO.getRouteByGeoPoints(geoPoints);
+        ResultMessageDTO resultMessageDTO = getRouteResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return;
         }
 
 
-        RouteLegModel routeLeg = routeResponseDTO.getRouteLegs().get(0);
+        RouteLegModel routeLeg = getRouteResponseDTO.getTracks().get(0);
         List<RouteLegModel> route = pianificaItinerarioModel.getRouteLegs();
 
         route.remove(index+1);
@@ -518,17 +506,17 @@ public class PianificaItinerarioController extends NaTourController implements P
         if(intermediateAddressRoute != null) geoPoints.add(intermediateAddressRoute.getPoint());
         geoPoints.add(destinationAddressRoute.getPoint());
 
-        RouteResponseDTO routeResponseDTO = routeDAO.findRouteByGeoPoints(geoPoints);
-        MessageResponseDTO messageResponseDTO = routeResponseDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        GetRouteResponseDTO getRouteResponseDTO = routeDAO.getRouteByGeoPoints(geoPoints);
+        ResultMessageDTO resultMessageDTO = getRouteResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return;
         }
 
 
-        RouteLegModel routeLeg0 = routeResponseDTO.getRouteLegs().get(0);
+        RouteLegModel routeLeg0 = getRouteResponseDTO.getTracks().get(0);
         RouteLegModel routeLeg1 = null;
-        if(intermediateAddressRoute != null) routeLeg1 = routeResponseDTO.getRouteLegs().get(1);
+        if(intermediateAddressRoute != null) routeLeg1 = getRouteResponseDTO.getTracks().get(1);
 
         List<RouteLegModel> route = pianificaItinerarioModel.getRouteLegs();
 
@@ -559,10 +547,10 @@ public class PianificaItinerarioController extends NaTourController implements P
         geoPoints.add(startingAddressRoute.getPoint());
         geoPoints.add(intermediateAddressRoute.getPoint());
         geoPoints.add(destinationAddressRoute.getPoint());
-        RouteResponseDTO routeResponseDTO = routeDAO.findRouteByGeoPoints(geoPoints);
+        GetRouteResponseDTO getRouteResponseDTO = routeDAO.getRouteByGeoPoints(geoPoints);
 
-        RouteLegModel routeLeg0 = routeResponseDTO.getRouteLegs().get(0);
-        RouteLegModel routeLeg1 = routeResponseDTO.getRouteLegs().get(1);
+        RouteLegModel routeLeg0 = getRouteResponseDTO.getTracks().get(0);
+        RouteLegModel routeLeg1 = getRouteResponseDTO.getTracks().get(1);
 
         List<RouteLegModel> route = pianificaItinerarioModel.getRouteLegs();
 
@@ -575,10 +563,10 @@ public class PianificaItinerarioController extends NaTourController implements P
     private void setPointSelectedOnMap(GeoPoint geoPoint) {
         if(geoPoint == null) return;
 
-        AddressResponseDTO addressDTO = addressDAO.findAddressByGeoPoint(geoPoint);
-        MessageResponseDTO messageResponseDTO = addressDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        GetAddressResponseDTO addressDTO = addressDAO.getAddressByGeoPoint(geoPoint);
+        ResultMessageDTO resultMessageDTO = addressDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return;
         }
 

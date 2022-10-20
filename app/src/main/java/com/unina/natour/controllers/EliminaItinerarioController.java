@@ -4,7 +4,7 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 import com.unina.natour.views.activities.NaTourActivity;
@@ -24,9 +24,9 @@ public class EliminaItinerarioController extends NaTourController{
     }
 
     public boolean deleteItinerary(){
-        MessageResponseDTO messageResponseDTO = itineraryDAO.deleteById(itineraryId);
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        ResultMessageDTO resultMessageDTO = itineraryDAO.deleteItineraryById(itineraryId);
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
         return true;

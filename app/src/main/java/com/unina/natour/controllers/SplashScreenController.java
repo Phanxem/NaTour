@@ -4,38 +4,27 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
-import com.amplifyframework.core.Amplify;
 import com.facebook.AccessToken;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.Task;
 import com.unina.natour.R;
 import com.unina.natour.amplify.ApplicationController;
-import com.unina.natour.controllers.utils.StringsUtils;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedFetchAuthSessionException;
-import com.unina.natour.dto.response.CognitoAuthSessionDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.GetCognitoAuthSessionResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.models.dao.implementation.ServerDAO;
 import com.unina.natour.views.activities.ConnessioneServerFallitaActivity;
 import com.unina.natour.views.activities.NaTourActivity;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class SplashScreenController extends NaTourController{
@@ -100,16 +89,16 @@ public class SplashScreenController extends NaTourController{
 
 
     private boolean isSignedIn(){
-        CognitoAuthSessionDTO cognitoAuthSessionDTO = amplifyDAO.fetchAuthSessione();
-        MessageResponseDTO messageResponseDTO = cognitoAuthSessionDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = amplifyDAO.fetchAuthSessione();
+        ResultMessageDTO resultMessageDTO = getCognitoAuthSessionResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             //todo handle error
             return false;
         }
 
         //Signed in with cognito
-        AWSCognitoAuthSession authSession = cognitoAuthSessionDTO.getAuthSessione();
+        AWSCognitoAuthSession authSession = getCognitoAuthSessionResponseDTO.getAuthSessione();
         if(authSession.isSignedIn()){
             Log.i(TAG, "logged with Cognito");
             return true;
@@ -164,8 +153,8 @@ public class SplashScreenController extends NaTourController{
     }
 
     private boolean isServerReachable(){
-        MessageResponseDTO messageResponseDTO = ServerDAO.testServer();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+        ResultMessageDTO resultMessageDTO = ServerDAO.testServer();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
             //todo handle error
             return false;
         }

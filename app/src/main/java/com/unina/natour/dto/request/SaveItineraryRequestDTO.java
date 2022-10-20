@@ -4,7 +4,7 @@ import java.io.File;
 
 import io.jenetics.jpx.GPX;
 
-public class ItineraryRequestDTO {
+public class SaveItineraryRequestDTO {
 
     private String name;
     private GPX gpx;

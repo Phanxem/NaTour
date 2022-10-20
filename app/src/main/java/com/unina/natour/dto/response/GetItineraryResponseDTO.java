@@ -1,29 +1,24 @@
 package com.unina.natour.dto.response;
 
-import io.jenetics.jpx.GPX;
+public class GetItineraryResponseDTO {
 
-public class ItineraryResponseDTO {
-
-    private MessageResponseDTO resultMessage;
+    private ResultMessageDTO resultMessage;
 
     private long id;
     private String name;
-    private GPX gpx;
     private Float duration;
     private Float lenght;
     private Integer difficulty;
     private String description;
 
-    private boolean hasBeenReported;
-
-    private long id_user;
+    private long idUser;
 
 
-    public MessageResponseDTO getResultMessage() {
+    public ResultMessageDTO getResultMessage() {
         return resultMessage;
     }
 
-    public void setResultMessage(MessageResponseDTO resultMessage) {
+    public void setResultMessage(ResultMessageDTO resultMessage) {
         this.resultMessage = resultMessage;
     }
 
@@ -41,14 +36,6 @@ public class ItineraryResponseDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public GPX getGpx() {
-        return gpx;
-    }
-
-    public void setGpx(GPX gpx) {
-        this.gpx = gpx;
     }
 
     public Float getDuration() {
@@ -83,19 +70,11 @@ public class ItineraryResponseDTO {
         this.description = description;
     }
 
-    public boolean getHasBeenReported() {
-        return hasBeenReported;
+    public long getIdUser() {
+        return idUser;
     }
 
-    public void setHasBeenReported(boolean hasBeenReported) {
-        this.hasBeenReported = hasBeenReported;
-    }
-
-    public long getId_user() {
-        return id_user;
-    }
-
-    public void setId_user(long id_user) {
-        this.id_user = id_user;
+    public void setIdUser(long idUser) {
+        this.idUser = idUser;
     }
 }

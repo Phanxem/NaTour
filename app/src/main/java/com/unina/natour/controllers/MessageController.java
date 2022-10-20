@@ -1,7 +1,7 @@
 package com.unina.natour.controllers;
 
 import com.unina.natour.R;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
@@ -22,8 +22,8 @@ public class MessageController {
 
 
 
-    public static final MessageResponseDTO MESSAGE_UNKNOWN_ERROR = new MessageResponseDTO(ERROR_CODE_UNKNOWN, ERROR_MESSAGE_UNKNOWN);
-    public static final MessageResponseDTO MESSAGE_SUCCESS = new MessageResponseDTO(SUCCESS_CODE, SUCCESS_MESSAGE);
+    public static final ResultMessageDTO MESSAGE_UNKNOWN_ERROR = new ResultMessageDTO(ERROR_CODE_UNKNOWN, ERROR_MESSAGE_UNKNOWN);
+    public static final ResultMessageDTO MESSAGE_SUCCESS = new ResultMessageDTO(SUCCESS_CODE, SUCCESS_MESSAGE);
 
     public final String TAG = this.getClass().getSimpleName();
 
@@ -58,9 +58,9 @@ public class MessageController {
     }
 
 
-    public void showErrorMessage(MessageResponseDTO messageResponseDTO) {
-        long errorCode = messageResponseDTO.getCode();
-        String errorMessage = messageResponseDTO.getMessage();
+    public void showErrorMessage(ResultMessageDTO resultMessageDTO) {
+        long errorCode = resultMessageDTO.getCode();
+        String errorMessage = resultMessageDTO.getMessage();
         String messageToShow = ERROR_MESSAGE_UNKNOWN;
 
         if(errorCode == ERROR_CODE_AMPLIFY){
@@ -140,27 +140,27 @@ public class MessageController {
     }
 
 
-    public static MessageResponseDTO getSuccessMessage(){
-        MessageResponseDTO messageResponseDTO = new MessageResponseDTO(SUCCESS_CODE, SUCCESS_MESSAGE);
+    public static ResultMessageDTO getSuccessMessage(){
+        ResultMessageDTO resultMessageDTO = new ResultMessageDTO(SUCCESS_CODE, SUCCESS_MESSAGE);
 
-        return messageResponseDTO;
+        return resultMessageDTO;
     }
 
 
-    public static MessageResponseDTO getUnknownErrorMessage(){
-        MessageResponseDTO messageResponseDTO = new MessageResponseDTO(ERROR_CODE_UNKNOWN, ERROR_MESSAGE_UNKNOWN);
+    public static ResultMessageDTO getUnknownErrorMessage(){
+        ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ERROR_CODE_UNKNOWN, ERROR_MESSAGE_UNKNOWN);
 
-        return messageResponseDTO;
+        return resultMessageDTO;
     }
 
 
-    public static MessageResponseDTO getFailureMessage(){
-        MessageResponseDTO messageResponseDTO = new MessageResponseDTO(ERROR_CODE_FAILURE, ERROR_MESSAGE_FAILURE);
+    public static ResultMessageDTO getFailureMessage(){
+        ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ERROR_CODE_FAILURE, ERROR_MESSAGE_FAILURE);
 
-        return messageResponseDTO;
+        return resultMessageDTO;
     }
 
-    public static MessageResponseDTO getNotFoundMessage(){
+    public static ResultMessageDTO getNotFoundMessage(){
         return null;
     }
 }

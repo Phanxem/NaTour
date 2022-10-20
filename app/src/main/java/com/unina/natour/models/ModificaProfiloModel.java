@@ -1,7 +1,7 @@
 package com.unina.natour.models;
 
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.response.UserResponseDTO;
+import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -68,15 +68,15 @@ public class ModificaProfiloModel extends NaTourModel {
 
 
 
-    public void setByDTO(UserResponseDTO userResponseDTO) throws ParseException {
+    public void setByDTO(GetUserWithImageResponseDTO getUserWithImageResponseDTO) throws ParseException {
 
-        String stringDateOfBirth = userResponseDTO.getDateOfBirth();
+        String stringDateOfBirth = getUserWithImageResponseDTO.getDateOfBirth();
         if(stringDateOfBirth != null && !stringDateOfBirth.isEmpty()) {
             Calendar dateOfBirth = TimeUtils.toCalendar(stringDateOfBirth);
             this.optionalInfoModel.setDateOfBirth(dateOfBirth);
         }
 
-        String completeAddress = userResponseDTO.getPlaceOfResidence();
+        String completeAddress = getUserWithImageResponseDTO.getPlaceOfResidence();
         if(completeAddress != null && !completeAddress.isEmpty()){
             String[] strings = completeAddress.split(",");
             this.optionalInfoModel.setCountry(strings[0]);

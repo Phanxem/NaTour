@@ -4,14 +4,10 @@ import android.content.Intent;
 
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.utils.StringsUtils;
-import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureGetUserException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedGetUserException;
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.request.ReportRequestDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.response.ReportResponseDTO;
-import com.unina.natour.dto.response.UserResponseDTO;
+import com.unina.natour.dto.request.SaveReportRequestDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 import com.unina.natour.models.dao.implementation.ReportDAOImpl;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.ReportDAO;
@@ -19,9 +15,7 @@ import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.SegnalaItinerarioActivity;
 
-import java.io.IOException;
 import java.util.Calendar;
-import java.util.concurrent.ExecutionException;
 
 public class SegnalaItinerarioController extends NaTourController{
 
@@ -59,31 +53,31 @@ public class SegnalaItinerarioController extends NaTourController{
             return false;
         }
 
-        ReportRequestDTO reportRequestDTO = new ReportRequestDTO();
+        SaveReportRequestDTO saveReportRequestDTO = new SaveReportRequestDTO();
 
-        reportRequestDTO.setName(titolo);
-        reportRequestDTO.setDescription(descrizione);
-        reportRequestDTO.setId_itinerary(itineraryId);
+        saveReportRequestDTO.setName(titolo);
+        saveReportRequestDTO.setDescription(descrizione);
+        saveReportRequestDTO.setId_itinerary(itineraryId);
 
         String username = Amplify.Auth.getCurrentUser().getUsername();
-        UserResponseDTO userResponseDTO = userDAO.getUser(username);
-        MessageResponseDTO messageResponseDTO = userResponseDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(username);
+        ResultMessageDTO resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
-        reportRequestDTO.setId_user(userResponseDTO.getId());
+        saveReportRequestDTO.setId_user(getUserWithImageResponseDTO.getId());
 
         Calendar calendar = Calendar.getInstance();
         String stringDateOfInput = TimeUtils.toFullString(calendar);
 
-        reportRequestDTO.setDateOfInput(stringDateOfInput);
+        saveReportRequestDTO.setDateOfInput(stringDateOfInput);
 
 
-        messageResponseDTO = reportDAO.addReport(reportRequestDTO);
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        resultMessageDTO = reportDAO.addReport(saveReportRequestDTO);
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
         return true;

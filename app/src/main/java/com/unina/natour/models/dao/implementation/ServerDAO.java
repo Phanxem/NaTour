@@ -3,10 +3,9 @@ package com.unina.natour.models.dao.implementation;
 import android.util.Log;
 
 import com.amazonaws.auth.AWSSessionCredentials;
-import com.amazonaws.auth.CognitoCredentialsProvider;
 import com.unina.natour.controllers.utils.SignAWSv4Utils;
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,8 +24,7 @@ public class ServerDAO {
     static final String SERVICE = "execute-api";
     static final ZoneId ZONE_ID = ZoneId.of("Europe/Dublin");
 
-    public static Request signRequest(Request request,
-                                   AWSSessionCredentials awsSessionCredentials) throws Exception {
+    public static Request signRequest(Request request, AWSSessionCredentials awsSessionCredentials) throws Exception {
 
         URL url = request.url().url();
         String method = request.method().toString().toUpperCase();
@@ -190,7 +188,7 @@ public class ServerDAO {
 
 
 
-    public static MessageResponseDTO testServer(){
+    public static ResultMessageDTO testServer(){
         //TODO
         return null;
     }

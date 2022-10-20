@@ -1,19 +1,10 @@
 package com.unina.natour.controllers;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.RequiresApi;
-
-import com.unina.natour.controllers.utils.StringsUtils;
-import com.unina.natour.controllers.exceptionHandler.exceptions.ServerException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureAddItineraryException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureInitSaveItineraryException;
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.NotCompletedAddItineraryException;
-import com.unina.natour.dto.request.ItineraryRequestDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.request.SaveItineraryRequestDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.SalvaItinerarioModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
@@ -23,10 +14,8 @@ import com.unina.natour.views.activities.SalvaItinerarioActivity;
 
 import org.osmdroid.util.GeoPoint;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.TrackSegment;
@@ -41,7 +30,6 @@ public class SalvaItinerarioController extends NaTourController{
     public final static String EXTRA_DURATION = "duration";
     public final static String EXTRA_DISTANCE = "distance";
     public final static String EXTRA_WAYPOINTS = "waypoints";
-    ;
 
     SalvaItinerarioModel salvaItinerarioModel;
 
@@ -134,7 +122,7 @@ public class SalvaItinerarioController extends NaTourController{
                 .addTrack( track -> track.addSegment(trackSegment))
                 .build();
 
-        ItineraryRequestDTO itineraryDTO = new ItineraryRequestDTO();
+        SaveItineraryRequestDTO itineraryDTO = new SaveItineraryRequestDTO();
 
         itineraryDTO.setName(titolo);
         itineraryDTO.setDescription(descrizione);
@@ -146,9 +134,9 @@ public class SalvaItinerarioController extends NaTourController{
 
 
 
-        MessageResponseDTO messageResponseDTO = itineraryDAO.addItinerary(itineraryDTO);
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        ResultMessageDTO resultMessageDTO = itineraryDAO.addItinerary(itineraryDTO);
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 

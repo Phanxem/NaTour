@@ -7,15 +7,14 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
-import com.unina.natour.dto.response.EmailResponseDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.response.UserResponseDTO;
+import com.unina.natour.dto.response.GetCognitoEmailResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 import com.unina.natour.models.ProfiloModel;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.activities.PersonalizzaAccountInfoOpzionaliActivity;
 import com.unina.natour.views.activities.ProfiloUtenteActivity;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -45,15 +44,15 @@ public class ProfiloController extends NaTourController {
             String username = "user";
             isMyProfile = true;
 
-            UserResponseDTO userResponseDTO = userDAO.getUser(username);
-            MessageResponseDTO messageResponseDTO = userResponseDTO.getResultMessage();
-            if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-                showErrorMessage(messageResponseDTO);
+            GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(username);
+            ResultMessageDTO resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
+            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+                showErrorMessage(resultMessageDTO);
                 activity.finish();
                 return;
             }
 
-            userId = userResponseDTO.getId();
+            userId = getUserWithImageResponseDTO.getId();
         }
 
         else isMyProfile = false;
@@ -67,28 +66,28 @@ public class ProfiloController extends NaTourController {
 
 
     public void initModel() {
-        EmailResponseDTO emailResponseDTO = amplifyDAO.getEmail();
+        GetCognitoEmailResponseDTO getCognitoEmailResponseDTO = amplifyDAO.getEmail();
 
-        MessageResponseDTO messageResponseDTO = emailResponseDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+        ResultMessageDTO resultMessageDTO = getCognitoEmailResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
             Log.i(TAG,"ERROR1");
-            showErrorMessage(messageResponseDTO);
+            showErrorMessage(resultMessageDTO);
             return;
         }
-        String email = emailResponseDTO.getEmail();
+        String email = getCognitoEmailResponseDTO.getEmail();
 
 
         //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
         String username = "user";
-        UserResponseDTO userResponseDTO = userDAO.getUser(username);
-        messageResponseDTO = userResponseDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+        GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(username);
+        resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
             Log.i(TAG,"ERROR2");
-            showErrorMessage(messageResponseDTO);
+            showErrorMessage(resultMessageDTO);
             return;
         }
 
-        boolean result = dtoToModel(getActivity(), userResponseDTO, emailResponseDTO, profiloModel);
+        boolean result = dtoToModel(getActivity(), getUserWithImageResponseDTO, getCognitoEmailResponseDTO, profiloModel);
         if(!result){
             Log.i(TAG,"ERROR3");
             //TODO
@@ -128,7 +127,7 @@ public class ProfiloController extends NaTourController {
 
 
 
-    public static boolean dtoToModel(Context context, UserResponseDTO userDto, EmailResponseDTO emailDto, ProfiloModel model){
+    public static boolean dtoToModel(Context context, GetUserWithImageResponseDTO userDto, GetCognitoEmailResponseDTO emailDto, ProfiloModel model){
         model.clear();
 
         model.setEmail(emailDto.getEmail());
@@ -140,10 +139,6 @@ public class ProfiloController extends NaTourController {
         model.setDateOfBirth(userDto.getDateOfBirth());
 
         model.setProfileImage(userDto.getProfileImage());
-
-
-        model.setFacebookLinked(userDto.isFacebookLinked());
-        model.setGoogleLinked(userDto.isGoogleLinked());
 
         return true;
     }

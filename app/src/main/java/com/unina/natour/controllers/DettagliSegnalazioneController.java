@@ -2,9 +2,9 @@ package com.unina.natour.controllers;
 
 import android.content.Intent;
 
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.response.ReportResponseDTO;
-import com.unina.natour.dto.response.ItineraryResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.response.GetReportResponseDTO;
+import com.unina.natour.dto.response.GetItineraryResponseDTO;
 import com.unina.natour.models.DettagliSegnalazioneModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.implementation.ReportDAOImpl;
@@ -53,21 +53,21 @@ public class DettagliSegnalazioneController extends NaTourController{
         }
 
         //TODO test
-        ReportResponseDTO reportDTO = reportDAO.findById(reportId);
-        MessageResponseDTO messageResponseDTO = reportDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+        GetReportResponseDTO reportDTO = reportDAO.getReportById(reportId);
+        ResultMessageDTO resultMessageDTO = reportDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
             //TODO
-            showErrorMessage(messageResponseDTO.getCode());
+            showErrorMessage(resultMessageDTO.getCode());
             return false;
         }
 
-        long itineraryId = reportDTO.getId_itinerary();
+        long itineraryId = reportDTO.getIdItinerary();
 
-        ItineraryResponseDTO itineraryDTO = itineraryDAO.findById(itineraryId);
-        messageResponseDTO = itineraryDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
+        GetItineraryResponseDTO itineraryDTO = itineraryDAO.getItineraryById(itineraryId);
+        resultMessageDTO = itineraryDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
             //TODO
-            showErrorMessage(messageResponseDTO.getCode());
+            showErrorMessage(resultMessageDTO.getCode());
             return false;
         }
 
@@ -114,7 +114,7 @@ public class DettagliSegnalazioneController extends NaTourController{
 
     //---
 
-    public static boolean dtoToModel(ReportResponseDTO dtoReport, ItineraryResponseDTO dtoItinerary, DettagliSegnalazioneModel model){
+    public static boolean dtoToModel(GetReportResponseDTO dtoReport, GetItineraryResponseDTO dtoItinerary, DettagliSegnalazioneModel model){
         model.clear();
 
         model.setItineraryId(dtoItinerary.getId());

@@ -1,35 +1,37 @@
-package com.unina.natour.dto.response;
+package com.unina.natour.dto.response.composted;
 
 import android.graphics.Bitmap;
 
+import com.unina.natour.dto.response.ResultMessageDTO;
+
 public class ItineraryElementResponseDTO {
 
-    private MessageResponseDTO resultMessage;
+    private ResultMessageDTO resultMessage;
 
-    private long itineraryId;
+    private long id;
     private String name;
-    private Bitmap userImage;
-    private String username;
     private String description;
     private float duration;
     private float lenght;
     private int difficulty;
 
+    private Bitmap userImage;
+    private String username;
 
-    public MessageResponseDTO getResultMessage() {
+    public ResultMessageDTO getResultMessage() {
         return resultMessage;
     }
 
-    public void setResultMessage(MessageResponseDTO resultMessage) {
+    public void setResultMessage(ResultMessageDTO resultMessage) {
         this.resultMessage = resultMessage;
     }
 
-    public long getItineraryId() {
-        return itineraryId;
+    public long getId() {
+        return id;
     }
 
-    public void setItineraryId(long itineraryId) {
-        this.itineraryId = itineraryId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {

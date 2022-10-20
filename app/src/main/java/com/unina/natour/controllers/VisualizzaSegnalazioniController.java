@@ -3,11 +3,10 @@ package com.unina.natour.controllers;
 import android.content.Intent;
 import android.widget.ListView;
 
-import com.unina.natour.dto.request.ReportRequestDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
-import com.unina.natour.dto.response.ReportListResponseDTO;
-import com.unina.natour.dto.response.ReportResponseDTO;
-import com.unina.natour.dto.response.ItineraryResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.response.GetListReportResponseDTO;
+import com.unina.natour.dto.response.GetReportResponseDTO;
+import com.unina.natour.dto.response.GetItineraryResponseDTO;
 import com.unina.natour.models.ElementReportModel;
 import com.unina.natour.models.VisualizzaSegnalazioniModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
@@ -65,21 +64,21 @@ public class VisualizzaSegnalazioniController extends NaTourController{
 
     public boolean initModel(long itineraryId){
 
-        ItineraryResponseDTO itineraryDTO = itineraryDAO.findById(itineraryId);
-        MessageResponseDTO messageResponseDTO = itineraryDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        GetItineraryResponseDTO itineraryDTO = itineraryDAO.getItineraryById(itineraryId);
+        ResultMessageDTO resultMessageDTO = itineraryDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
-        ReportListResponseDTO reportListResponseDTO = reportDAO.findByItineraryId(itineraryId);
-        messageResponseDTO = reportListResponseDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        GetListReportResponseDTO getListReportResponseDTO = reportDAO.getReportByIdItinerary(itineraryId);
+        resultMessageDTO = getListReportResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             return false;
         }
 
-        boolean result = dtoToModel(itineraryDTO, reportListResponseDTO, visualizzaSegnalazioniModel);
+        boolean result = dtoToModel(itineraryDTO, getListReportResponseDTO, visualizzaSegnalazioniModel);
         if(!result){
             //TODO
             showErrorMessage(0);
@@ -100,13 +99,13 @@ public class VisualizzaSegnalazioniController extends NaTourController{
     }
 
 
-    public static boolean dtoToModel(ItineraryResponseDTO itineraryDto, ReportListResponseDTO reportListDto, VisualizzaSegnalazioniModel model){
+    public static boolean dtoToModel(GetItineraryResponseDTO itineraryDto, GetListReportResponseDTO reportListDto, VisualizzaSegnalazioniModel model){
         model.clear();
 
-        List<ReportResponseDTO> reportDtos = reportListDto.getReports();
+        List<GetReportResponseDTO> reportDtos = reportListDto.getListReport();
 
         List<ElementReportModel> listReportModel = new ArrayList<ElementReportModel>();
-        for(ReportResponseDTO elementDto: reportDtos){
+        for(GetReportResponseDTO elementDto: reportDtos){
             ElementReportModel elementModel = new ElementReportModel();
             boolean result = dtoToModel(elementDto, elementModel);
             if(!result){
@@ -123,7 +122,7 @@ public class VisualizzaSegnalazioniController extends NaTourController{
         return true;
     }
 
-    public static boolean dtoToModel(ReportResponseDTO dto, ElementReportModel model){
+    public static boolean dtoToModel(GetReportResponseDTO dto, ElementReportModel model){
         model.clear();
 
         model.setId(dto.getId());

@@ -1,22 +1,23 @@
 package com.unina.natour.dto.response;
 
-public class UserIdResponseDTO {
+import java.util.List;
+
+public class GetListChatResponseDTO {
+
     private ResultMessageDTO resultMessage;
-    private long userId;
+    private List<GetChatResponseDTO> listChat;
 
     public ResultMessageDTO getResultMessage() {
         return resultMessage;
     }
-
     public void setResultMessage(ResultMessageDTO resultMessage) {
         this.resultMessage = resultMessage;
     }
-
-    public long getUserId() {
-        return userId;
+    public List<GetChatResponseDTO> getListChat() {
+        return listChat;
+    }
+    public void setListChat(List<GetChatResponseDTO> listChat) {
+        this.listChat = listChat;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
 }

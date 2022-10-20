@@ -2,22 +2,22 @@ package com.unina.natour.dto.response;
 
 import org.osmdroid.util.GeoPoint;
 
-public class AddressResponseDTO {
+public class GetAddressResponseDTO {
 
-    private MessageResponseDTO resultMessage;
+    private ResultMessageDTO resultMessage;
 
     private GeoPoint point;
     private String addressName;
 
-    public MessageResponseDTO getResultMessage() {
+    public ResultMessageDTO getResultMessage() {
         return resultMessage;
     }
 
-    public void setResultMessage(MessageResponseDTO resultMessage) {
+    public void setResultMessage(ResultMessageDTO resultMessage) {
         this.resultMessage = resultMessage;
     }
 
-    public AddressResponseDTO(){
+    public GetAddressResponseDTO(){
         super();
     }
 

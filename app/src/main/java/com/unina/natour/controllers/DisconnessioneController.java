@@ -13,8 +13,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.unina.natour.amplify.ApplicationController;
-import com.unina.natour.dto.response.CognitoAuthSessionDTO;
-import com.unina.natour.dto.response.MessageResponseDTO;
+import com.unina.natour.dto.response.GetCognitoAuthSessionResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.models.socketHandler.ChatWebSocketHandler;
 import com.unina.natour.views.activities.NaTourActivity;
@@ -38,25 +38,25 @@ public class DisconnessioneController extends NaTourController{
     public Boolean signOut(){
 
         //loggato con cognito
-        CognitoAuthSessionDTO cognitoAuthSessionDTO = amplifyDAO.fetchAuthSessione();
-        MessageResponseDTO messageResponseDTO = cognitoAuthSessionDTO.getResultMessage();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = amplifyDAO.fetchAuthSessione();
+        ResultMessageDTO resultMessageDTO = getCognitoAuthSessionResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            showErrorMessage(resultMessageDTO);
             //todo handle error
             return false;
         }
 
 
-        AWSCognitoAuthSession authSession = cognitoAuthSessionDTO.getAuthSessione();
+        AWSCognitoAuthSession authSession = getCognitoAuthSessionResponseDTO.getAuthSessione();
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity());
 
         //Signed in with cognito
         if(authSession.isSignedIn()){
-            messageResponseDTO = amplifyDAO.signOut();
+            resultMessageDTO = amplifyDAO.signOut();
 
-            if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-                showErrorMessage(messageResponseDTO);
+            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+                showErrorMessage(resultMessageDTO);
                 return false;
             }
         }

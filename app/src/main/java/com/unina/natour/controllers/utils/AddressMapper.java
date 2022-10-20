@@ -1,14 +1,14 @@
 package com.unina.natour.controllers.utils;
 
-import com.unina.natour.dto.response.AddressListResponseDTO;
-import com.unina.natour.dto.response.AddressResponseDTO;
+import com.unina.natour.dto.response.GetListAddressResponseDTO;
+import com.unina.natour.dto.response.GetAddressResponseDTO;
 import com.unina.natour.models.AddressModel;
 
 import java.util.List;
 
 public class AddressMapper {
 
-    public static boolean dtoToModel(AddressResponseDTO dto, AddressModel model){
+    public static boolean dtoToModel(GetAddressResponseDTO dto, AddressModel model){
         model.clear();
 
         model.setAddressName(dto.getAddressName());
@@ -17,12 +17,12 @@ public class AddressMapper {
         return true;
     }
 
-    public static boolean dtoToModel(AddressListResponseDTO dto, List<AddressModel> model){
+    public static boolean dtoToModel(GetListAddressResponseDTO dto, List<AddressModel> model){
         model.clear();
 
-        List<AddressResponseDTO> dtos = dto.getAddresses();
+        List<GetAddressResponseDTO> dtos = dto.getListAddress();
 
-        for(AddressResponseDTO elementDto : dtos){
+        for(GetAddressResponseDTO elementDto : dtos){
             AddressModel elementModel = new AddressModel();
             boolean result = dtoToModel(elementDto, elementModel);
             if(!result){
