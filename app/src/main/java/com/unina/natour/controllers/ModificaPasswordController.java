@@ -34,7 +34,7 @@ public class ModificaPasswordController extends NaTourController{
 
         ResultMessageDTO resultMessageDTO = amplifyDAO.updatePassword(oldPassword, newPassword);
 
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }

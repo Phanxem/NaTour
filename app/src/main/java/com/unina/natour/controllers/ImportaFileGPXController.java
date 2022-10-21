@@ -170,7 +170,7 @@ public class ImportaFileGPXController extends NaTourController{
             GetAddressResponseDTO addressDTO = addressDAO.getAddressByGeoPoint(geoPoint);
 
             ResultMessageDTO resultMessageDTO = addressDTO.getResultMessage();
-            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
                 showErrorMessage(resultMessageDTO);
                 return false;
             }

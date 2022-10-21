@@ -55,7 +55,7 @@ public class DettagliSegnalazioneController extends NaTourController{
         //TODO test
         GetReportResponseDTO reportDTO = reportDAO.getReportById(reportId);
         ResultMessageDTO resultMessageDTO = reportDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             //TODO
             showErrorMessage(resultMessageDTO.getCode());
             return false;
@@ -65,7 +65,7 @@ public class DettagliSegnalazioneController extends NaTourController{
 
         GetItineraryResponseDTO itineraryDTO = itineraryDAO.getItineraryById(itineraryId);
         resultMessageDTO = itineraryDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             //TODO
             showErrorMessage(resultMessageDTO.getCode());
             return false;

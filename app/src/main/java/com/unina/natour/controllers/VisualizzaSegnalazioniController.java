@@ -66,14 +66,14 @@ public class VisualizzaSegnalazioniController extends NaTourController{
 
         GetItineraryResponseDTO itineraryDTO = itineraryDAO.getItineraryById(itineraryId);
         ResultMessageDTO resultMessageDTO = itineraryDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }
 
         GetListReportResponseDTO getListReportResponseDTO = reportDAO.getReportByIdItinerary(itineraryId);
         resultMessageDTO = getListReportResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }

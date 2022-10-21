@@ -13,16 +13,24 @@ import java.security.NoSuchAlgorithmException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+import okhttp3.FormBody;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 
 public class ServerDAO {
 
-    static final String DOMAIN = "192.168.1.3:8080";
-    static final String SERVER_URL = "http://" + DOMAIN;
+    public static final String DOMAIN = "192.168.1.3:8080";
+    public static final String SERVER_URL = "http://" + DOMAIN;
 
-    static final String REGION = "eu-west-1";
-    static final String SERVICE = "execute-api";
-    static final ZoneId ZONE_ID = ZoneId.of("Europe/Dublin");
+    private static final String REGION = "eu-west-1";
+    private static final String SERVICE = "execute-api";
+    private static final ZoneId ZONE_ID = ZoneId.of("Europe/Dublin");
+
+    public ResultMessageDAO resultMessageDAO;
+
+    public ServerDAO(){
+        this.resultMessageDAO = new ResultMessageDAO();
+    }
 
     public static Request signRequest(Request request, AWSSessionCredentials awsSessionCredentials) throws Exception {
 
@@ -188,8 +196,16 @@ public class ServerDAO {
 
 
 
-    public static ResultMessageDTO testServer(){
-        //TODO
+
+    public ResultMessageDTO testServer(){
+        String url = SERVER_URL + "/server/test";
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        ResultMessageDTO resultMessageDTO = resultMessageDAO.fulfilRequest(request);
+
         return null;
     }
 

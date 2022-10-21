@@ -135,7 +135,7 @@ public class SalvaItinerarioController extends NaTourController{
 
 
         ResultMessageDTO resultMessageDTO = itineraryDAO.addItinerary(itineraryDTO);
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }

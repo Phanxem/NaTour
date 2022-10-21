@@ -13,7 +13,7 @@ import com.amplifyframework.AmplifyException;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.core.Amplify;
-import com.unina.natour.controllers.MessageController;
+import com.unina.natour.controllers.ResultMessageController;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.response.UserIdResponseDTO;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
@@ -147,7 +147,7 @@ public class ApplicationController extends Application {
 
             UserIdResponseDTO userIdResponseDTO = userDAO.getUserByIdP(IDP_COGNITO, cognitoUsername);
             ResultMessageDTO resultMessageDTO = userIdResponseDTO.getResultMessage();
-            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
                 //todo handle error
                 return false;
             }
@@ -163,7 +163,7 @@ public class ApplicationController extends Application {
 
             UserIdResponseDTO userIdResponseDTO = userDAO.getUserByIdP(IDP_FACEBOOK, facebookId);
             ResultMessageDTO resultMessageDTO = userIdResponseDTO.getResultMessage();
-            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
                 //todo handle error
                 return false;
             }
@@ -179,7 +179,7 @@ public class ApplicationController extends Application {
 
             UserIdResponseDTO userIdResponseDTO = userDAO.getUserByIdP(IDP_GOOGLE, googleId);
             ResultMessageDTO resultMessageDTO = userIdResponseDTO.getResultMessage();
-            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
                 //todo handle error
                 return false;
             }

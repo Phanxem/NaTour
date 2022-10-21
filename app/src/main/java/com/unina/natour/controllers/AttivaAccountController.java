@@ -63,12 +63,12 @@ public class AttivaAccountController extends NaTourController{
     public Boolean activeAccount(String code){
 
         if(!StringsUtils.areAllFieldsFull(code)) {
-            showErrorMessage(MessageController.ERROR_CODE_EMPTY_FIELD_ACTIVATION);
+            showErrorMessage(ResultMessageController.ERROR_CODE_EMPTY_FIELD_ACTIVATION);
             return false;
         }
 
         ResultMessageDTO resultMessageDTO = amplifyDAO.activateAccount(username, code);
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }
@@ -85,7 +85,7 @@ public class AttivaAccountController extends NaTourController{
         sharedPreferencesEditor.commit();
 
         resultMessageDTO = amplifyDAO.signIn(username,password);
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }
@@ -150,7 +150,7 @@ public class AttivaAccountController extends NaTourController{
 
     public boolean resendCode(){
         ResultMessageDTO resultMessageDTO = amplifyDAO.resendActivationCode(username);
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }

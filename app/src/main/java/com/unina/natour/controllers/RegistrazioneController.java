@@ -37,7 +37,7 @@ public class RegistrazioneController extends NaTourController{
 
         ResultMessageDTO resultMessageDTO = amplifyDAO.signUp(username, email, password);
 
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }

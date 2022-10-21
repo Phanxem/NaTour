@@ -33,7 +33,7 @@ public class RecuperoPasswordController extends NaTourController{
 
         ResultMessageDTO resultMessageDTO = amplifyDAO.startPasswordRecovery(username);
 
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }
@@ -58,7 +58,7 @@ public class RecuperoPasswordController extends NaTourController{
 
         ResultMessageDTO resultMessageDTO = amplifyDAO.completePasswordRecovery(code,password);
 
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }

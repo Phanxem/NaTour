@@ -3,6 +3,7 @@ package com.unina.natour.models.dao.interfaces;
 import android.graphics.Bitmap;
 
 import com.unina.natour.dto.request.SaveUserRequestDTO;
+import com.unina.natour.dto.response.GetBitmapResponseDTO;
 import com.unina.natour.dto.response.GetListUserResponseDTO;
 import com.unina.natour.dto.response.GetUserResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
@@ -14,9 +15,9 @@ import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 public interface UserDAO{
 
     //GETs
-    public GetUserResponseDTO getUserByIdP(long idUser);
+    public GetUserResponseDTO getUserById(long idUser);
 
-    public Bitmap getUserImageById(long idUser);
+    public GetBitmapResponseDTO getUserImageById(long idUser);
     public GetUserResponseDTO getUserByIdP(String identityProvider, String userProviderId);
 
     public GetUserResponseDTO getUserByIdConnection(String idConnection);
@@ -37,7 +38,7 @@ public interface UserDAO{
 
 
     //DELETEs
-    public ResultMessageDTO cancelRegistrationUser();
+    public ResultMessageDTO cancelRegistrationUser(String idCognitoUser);
 
 
     //UserResponseDTO getUser(String username);
@@ -50,7 +51,7 @@ public interface UserDAO{
 
 
 
-
+/*
     //COMPOSITED
     GetUserWithImageResponseDTO getUser(long id);
 
@@ -62,6 +63,6 @@ public interface UserDAO{
 
     ListUserChatResponseDTO findUserChatByUsername(String researchString);
 
-
+*/
 
 }

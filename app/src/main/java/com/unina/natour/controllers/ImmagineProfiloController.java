@@ -126,7 +126,7 @@ public class ImmagineProfiloController extends NaTourController{
 
         GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(username);
         ResultMessageDTO resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }
@@ -150,7 +150,7 @@ public class ImmagineProfiloController extends NaTourController{
 
         if(profileImage == null){
             ResultMessageDTO resultMessageDTO = userDAO.removeProfileImage();
-            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
                 //TODO
                 showErrorMessage(0);
                 return false;
@@ -161,7 +161,7 @@ public class ImmagineProfiloController extends NaTourController{
         Bitmap resizedProfileImage = resizeBitmap(profileImage, MIN_WIDTH);
 
         ResultMessageDTO resultMessageDTO = userDAO.updateProfileImage(resizedProfileImage);
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             //TODO
             showErrorMessage(0);
             return false;

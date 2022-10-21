@@ -130,7 +130,7 @@ public class PianificaItinerarioController extends NaTourController implements P
 
                                 getRouteResponseDTO = routeDAO.getRouteByGeoPoints(geoPoints);
                                 ResultMessageDTO resultMessageDTO = getRouteResponseDTO.getResultMessage();
-                                if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+                                if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
                                     showErrorMessage(resultMessageDTO);
                                     return;
                                 }
@@ -441,7 +441,7 @@ public class PianificaItinerarioController extends NaTourController implements P
 
         GetRouteResponseDTO getRouteResponseDTO = routeDAO.getRouteByGeoPoints(geoPoints);
         ResultMessageDTO resultMessageDTO = getRouteResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return;
         }
@@ -508,7 +508,7 @@ public class PianificaItinerarioController extends NaTourController implements P
 
         GetRouteResponseDTO getRouteResponseDTO = routeDAO.getRouteByGeoPoints(geoPoints);
         ResultMessageDTO resultMessageDTO = getRouteResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return;
         }
@@ -565,7 +565,7 @@ public class PianificaItinerarioController extends NaTourController implements P
 
         GetAddressResponseDTO addressDTO = addressDAO.getAddressByGeoPoint(geoPoint);
         ResultMessageDTO resultMessageDTO = addressDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return;
         }

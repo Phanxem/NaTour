@@ -40,7 +40,7 @@ public class DisconnessioneController extends NaTourController{
         //loggato con cognito
         GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = amplifyDAO.fetchAuthSessione();
         ResultMessageDTO resultMessageDTO = getCognitoAuthSessionResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             //todo handle error
             return false;
@@ -55,7 +55,7 @@ public class DisconnessioneController extends NaTourController{
         if(authSession.isSignedIn()){
             resultMessageDTO = amplifyDAO.signOut();
 
-            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
                 showErrorMessage(resultMessageDTO);
                 return false;
             }

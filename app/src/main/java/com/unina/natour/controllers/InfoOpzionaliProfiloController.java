@@ -61,7 +61,7 @@ public class InfoOpzionaliProfiloController extends NaTourController {
 
         GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(username);
         ResultMessageDTO resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }
@@ -117,7 +117,7 @@ public class InfoOpzionaliProfiloController extends NaTourController {
         }
 
         ResultMessageDTO resultMessageDTO = userDAO.updateOptionalInfo(saveUserOptionalInfoRequestDTO);
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }

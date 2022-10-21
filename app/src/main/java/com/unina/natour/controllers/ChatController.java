@@ -34,7 +34,7 @@ public class ChatController extends NaTourController{
         String user = "user";
         GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(user);
         ResultMessageDTO resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return;
         }

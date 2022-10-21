@@ -46,7 +46,7 @@ public class ProfiloController extends NaTourController {
 
             GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(username);
             ResultMessageDTO resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
-            if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+            if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
                 showErrorMessage(resultMessageDTO);
                 activity.finish();
                 return;
@@ -69,7 +69,7 @@ public class ProfiloController extends NaTourController {
         GetCognitoEmailResponseDTO getCognitoEmailResponseDTO = amplifyDAO.getEmail();
 
         ResultMessageDTO resultMessageDTO = getCognitoEmailResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             Log.i(TAG,"ERROR1");
             showErrorMessage(resultMessageDTO);
             return;
@@ -81,7 +81,7 @@ public class ProfiloController extends NaTourController {
         String username = "user";
         GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(username);
         resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             Log.i(TAG,"ERROR2");
             showErrorMessage(resultMessageDTO);
             return;

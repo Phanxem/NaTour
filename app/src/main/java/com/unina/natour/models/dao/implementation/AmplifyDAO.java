@@ -7,7 +7,7 @@ import com.amplifyframework.auth.AuthUserAttributeKey;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
-import com.unina.natour.controllers.MessageController;
+import com.unina.natour.controllers.ResultMessageController;
 import com.unina.natour.dto.response.GetCognitoAuthSessionResponseDTO;
 import com.unina.natour.dto.response.GetCognitoEmailResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
@@ -31,11 +31,11 @@ public class AmplifyDAO extends ServerDAO {
                 password,
                 options,
                 result -> {
-                    completableFuture.complete(MessageController.getSuccessMessage());
+                    completableFuture.complete(ResultMessageController.SUCCESS_MESSAGE);
                 },
                 error -> {
                     String message = error.getCause().getMessage();
-                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(MessageController.ERROR_CODE_AMPLIFY, message);
+                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ResultMessageController.ERROR_CODE_AMPLIFY, message);
                     completableFuture.complete(resultMessageDTO);
                 }
         );
@@ -45,7 +45,7 @@ public class AmplifyDAO extends ServerDAO {
             result = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            result = MessageController.getFailureMessage();
+            result = ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
         }
 
         return result;
@@ -59,11 +59,11 @@ public class AmplifyDAO extends ServerDAO {
                 username,
                 confirmationCode,
                 confirmSignUpResult -> {
-                    completableFuture.complete(MessageController.getSuccessMessage());
+                    completableFuture.complete(ResultMessageController.SUCCESS_MESSAGE);
                 },
                 error -> {
                     String message = error.getCause().getMessage();
-                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(MessageController.ERROR_CODE_AMPLIFY, message);
+                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ResultMessageController.ERROR_CODE_AMPLIFY, message);
                     completableFuture.complete(resultMessageDTO);
                 }
         );
@@ -73,7 +73,7 @@ public class AmplifyDAO extends ServerDAO {
             result = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            result = MessageController.getFailureMessage();
+            result = ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
         }
 
         return result;
@@ -85,11 +85,11 @@ public class AmplifyDAO extends ServerDAO {
         Amplify.Auth.resendSignUpCode(
                 username,
                 result -> {
-                    completableFuture.complete(MessageController.getSuccessMessage());
+                    completableFuture.complete(ResultMessageController.SUCCESS_MESSAGE);
                 },
                 error -> {
                     String message = error.getCause().getMessage();
-                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(MessageController.ERROR_CODE_AMPLIFY, message);
+                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ResultMessageController.ERROR_CODE_AMPLIFY, message);
                     completableFuture.complete(resultMessageDTO);
                 }
         );
@@ -99,7 +99,7 @@ public class AmplifyDAO extends ServerDAO {
             result = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            result = MessageController.getFailureMessage();
+            result = ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
         }
 
         return result;
@@ -112,11 +112,11 @@ public class AmplifyDAO extends ServerDAO {
                 username,
                 password,
                 result -> {
-                    completableFuture.complete(MessageController.getSuccessMessage());
+                    completableFuture.complete(ResultMessageController.SUCCESS_MESSAGE);
                 },
                 error -> {
                     String message = error.getCause().getMessage();
-                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(MessageController.ERROR_CODE_AMPLIFY, message);
+                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ResultMessageController.ERROR_CODE_AMPLIFY, message);
                     completableFuture.complete(resultMessageDTO);
                 }
         );
@@ -126,7 +126,7 @@ public class AmplifyDAO extends ServerDAO {
             result = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            result = MessageController.getFailureMessage();
+            result = ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
         }
 
         return result;
@@ -137,11 +137,11 @@ public class AmplifyDAO extends ServerDAO {
 
         Amplify.Auth.signOut(
                 () -> {
-                    completableFuture.complete(MessageController.getSuccessMessage());
+                    completableFuture.complete(ResultMessageController.SUCCESS_MESSAGE);
                 },
                 error -> {
                     String message = error.getCause().getMessage();
-                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(MessageController.ERROR_CODE_AMPLIFY, message);
+                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ResultMessageController.ERROR_CODE_AMPLIFY, message);
                     completableFuture.complete(resultMessageDTO);
                 }
         );
@@ -151,7 +151,7 @@ public class AmplifyDAO extends ServerDAO {
             result = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            result = MessageController.getFailureMessage();
+            result = ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
         }
 
         return result;
@@ -164,11 +164,11 @@ public class AmplifyDAO extends ServerDAO {
                 oldPassword,
                 newPassword,
                 () -> {
-                    completableFuture.complete(MessageController.getSuccessMessage());
+                    completableFuture.complete(ResultMessageController.SUCCESS_MESSAGE);
                 },
                 error -> {
                     String message = error.getCause().getMessage();
-                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(MessageController.ERROR_CODE_AMPLIFY, message);
+                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ResultMessageController.ERROR_CODE_AMPLIFY, message);
                     completableFuture.complete(resultMessageDTO);
                 }
         );
@@ -178,7 +178,7 @@ public class AmplifyDAO extends ServerDAO {
             result = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            result = MessageController.getFailureMessage();
+            result = ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
         }
 
         return result;
@@ -191,7 +191,7 @@ public class AmplifyDAO extends ServerDAO {
                 attributes -> {
                     for (AuthUserAttribute attribute : attributes) {
                         if (attribute.getKey().getKeyString().equals("email")) {
-                            GetCognitoEmailResponseDTO getCognitoEmailResponseDTO = new GetCognitoEmailResponseDTO(MessageController.getSuccessMessage(),attribute.getValue());
+                            GetCognitoEmailResponseDTO getCognitoEmailResponseDTO = new GetCognitoEmailResponseDTO(ResultMessageController.SUCCESS_MESSAGE,attribute.getValue());
                             completableFuture.complete(getCognitoEmailResponseDTO);
                         }
                     }
@@ -199,7 +199,7 @@ public class AmplifyDAO extends ServerDAO {
                 error -> {
                     String message = error.getCause().getMessage();
                     Log.e("TAG","error",error);
-                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(MessageController.ERROR_CODE_AMPLIFY, message);
+                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ResultMessageController.ERROR_CODE_AMPLIFY, message);
                     GetCognitoEmailResponseDTO getCognitoEmailResponseDTO = new GetCognitoEmailResponseDTO(resultMessageDTO, null);
                     completableFuture.complete(getCognitoEmailResponseDTO);
                 }
@@ -210,7 +210,7 @@ public class AmplifyDAO extends ServerDAO {
             result = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            ResultMessageDTO resultMessageDTO = MessageController.getFailureMessage();
+            ResultMessageDTO resultMessageDTO = ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
             result = new GetCognitoEmailResponseDTO(resultMessageDTO,null);
         }
 
@@ -223,11 +223,11 @@ public class AmplifyDAO extends ServerDAO {
         Amplify.Auth.resetPassword(
                 username,
                 result -> {
-                    completableFuture.complete(MessageController.getSuccessMessage());
+                    completableFuture.complete(ResultMessageController.SUCCESS_MESSAGE);
                 },
                 error -> {
                     String message = error.getCause().getMessage();
-                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(MessageController.ERROR_CODE_AMPLIFY, message);
+                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ResultMessageController.ERROR_CODE_AMPLIFY, message);
                     completableFuture.complete(resultMessageDTO);
                 }
         );
@@ -237,7 +237,7 @@ public class AmplifyDAO extends ServerDAO {
             result = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            result = MessageController.getFailureMessage();
+            result = ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
         }
 
         return result;
@@ -250,11 +250,11 @@ public class AmplifyDAO extends ServerDAO {
                 password,
                 confirmationCode,
                 () -> {
-                    completableFuture.complete(MessageController.getSuccessMessage());
+                    completableFuture.complete(ResultMessageController.SUCCESS_MESSAGE);
                 },
                 error ->{
                     String message = error.getCause().getMessage();
-                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(MessageController.ERROR_CODE_AMPLIFY, message);
+                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ResultMessageController.ERROR_CODE_AMPLIFY, message);
                     completableFuture.complete(resultMessageDTO);
                 }
         );
@@ -264,7 +264,7 @@ public class AmplifyDAO extends ServerDAO {
             result = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            result = MessageController.getFailureMessage();
+            result = ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
         }
         return result;
     }
@@ -279,13 +279,13 @@ public class AmplifyDAO extends ServerDAO {
 
                     GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = new GetCognitoAuthSessionResponseDTO();
                     getCognitoAuthSessionResponseDTO.setAuthSessione(cognitoAuthSession);
-                    getCognitoAuthSessionResponseDTO.setResultMessage(MessageController.getSuccessMessage());
+                    getCognitoAuthSessionResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
                     completableFuture.complete(getCognitoAuthSessionResponseDTO);
                 },
                 error -> {
                     String message = error.getCause().getMessage();
                     GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = new GetCognitoAuthSessionResponseDTO();
-                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(MessageController.ERROR_CODE_AMPLIFY, message);
+                    ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ResultMessageController.ERROR_CODE_AMPLIFY, message);
                     getCognitoAuthSessionResponseDTO.setResultMessage(resultMessageDTO);
                     completableFuture.complete(getCognitoAuthSessionResponseDTO);
                 }
@@ -298,7 +298,7 @@ public class AmplifyDAO extends ServerDAO {
         }
         catch (ExecutionException | InterruptedException e) {
             result = new GetCognitoAuthSessionResponseDTO();
-            ResultMessageDTO resultMessageDTO = MessageController.getFailureMessage();
+            ResultMessageDTO resultMessageDTO = ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
             result.setResultMessage(resultMessageDTO);
         }
 

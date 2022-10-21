@@ -74,7 +74,7 @@ public class ListaUtentiController extends NaTourController{
         }
 
         ResultMessageDTO resultMessageDTO = usersDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             //TODO
             showErrorMessage(resultMessageDTO);
             return false;

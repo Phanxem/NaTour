@@ -2,71 +2,280 @@ package com.unina.natour.models.dao.implementation;
 
 import android.util.Log;
 
-import com.unina.natour.controllers.MessageController;
+import androidx.annotation.NonNull;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.unina.natour.controllers.ResultMessageController;
 import com.unina.natour.dto.request.SaveReportRequestDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.response.GetListReportResponseDTO;
 import com.unina.natour.dto.response.GetReportResponseDTO;
 import com.unina.natour.models.dao.interfaces.ReportDAO;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
 
+    private static final String URL = SERVER_URL + "/report";
+
     @Override
-    public ResultMessageDTO addReport(SaveReportRequestDTO saveReportRequestDTO) {
-        Log.i("TAG","segnalazione effettuata");
-        return null;
+    public GetReportResponseDTO getReportById(long idReport) {
+        String url = URL + "/get/" + idReport;
+        GetReportResponseDTO getReportResponseDTO =  getReportResponseDTO(url);
+
+        return getReportResponseDTO;
     }
+
 
     @Override
     public GetListReportResponseDTO getReportByIdItinerary(long idItinerary) {
-        Log.i("TAG","itinerari recuperati");
-
-        List<GetReportResponseDTO> test = new ArrayList<GetReportResponseDTO>();
-
-        GetReportResponseDTO test1 = new GetReportResponseDTO();
-        test1.setId(1);
-        test1.setName("jennifer");
-        test1.setDescription("pyro");
-        test1.setDateOfInput("12/12/22");
-        test1.setIdUser(23);
-        test1.setIdItinerary(3);
-
-        test.add(test1);
-        test.add(test1);
-        test.add(test1);
-        test.add(test1);
-        test.add(test1);
-        test.add(test1);
-
-        GetListReportResponseDTO getListReportResponseDTO = new GetListReportResponseDTO();
-        ResultMessageDTO resultMessageDTO = MessageController.getSuccessMessage();
-
-        getListReportResponseDTO.setResultMessage(resultMessageDTO);
-        getListReportResponseDTO.setListReport(test);
+        String url = URL + "/get/itinerary/" + idItinerary;
+        GetListReportResponseDTO getListReportResponseDTO =  getListReportResponseDTO(url);
 
         return getListReportResponseDTO;
     }
 
+
+
     @Override
-    public GetReportResponseDTO getReportById(long idReport) {
+    public ResultMessageDTO addReport(SaveReportRequestDTO saveReportRequestDTO) {
+        String url = URL + "/add";
 
-        GetReportResponseDTO test = new GetReportResponseDTO();
-        test.setId(15);
-        test.setName("jdfsdfsennifer");
-        test.setDescription("pyrfgdfgo");
-        test.setDateOfInput("11/11/21");
-        test.setIdUser(23);
-        test.setIdItinerary(6);
+        FormBody.Builder builder = new FormBody.Builder();
+        builder.add("name", saveReportRequestDTO.getName());
+        builder.add("dateOfInput", saveReportRequestDTO.getDateOfInput());
+        builder.add("description", saveReportRequestDTO.getDescription());
+        String stringIdItinerary = String.valueOf(saveReportRequestDTO.getIdItinerary());
+        builder.add("idItinerary", stringIdItinerary);
+        String stringIdUser = String.valueOf(saveReportRequestDTO.getIdUser());
+        builder.add("idUser", stringIdUser);
 
-        return test;
+        RequestBody requestBody = builder.build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+        ResultMessageDTO resultMessageDTO = resultMessageDAO.fulfilRequest(request);
+        return resultMessageDTO;
     }
 
     @Override
-    public ResultMessageDTO deleteReportById(long reportId) {
-        Log.i("TAG","segnalazione rimossa");
-        return null;
+    public ResultMessageDTO deleteReportById(long idReport) {
+        String url = URL + "/delete/" + idReport;
+
+        Request request = new Request.Builder()
+                .url(url)
+                .delete()
+                .build();
+
+        ResultMessageDTO resultMessageDTO = resultMessageDAO.fulfilRequest(request);
+        return resultMessageDTO;
     }
+
+
+
+
+    private GetReportResponseDTO getReportResponseDTO(String url){
+        GetReportResponseDTO getReportResponseDTO = new GetReportResponseDTO();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        OkHttpClient client = new OkHttpClient();
+
+        Call call = client.newCall(request);
+
+        final IOException[] exception = {null};
+        CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();
+
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                exception[0] = e;
+                completableFuture.complete(null);
+                return;
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+
+                String jsonStringResult = response.body().string();
+                JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
+                JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
+
+                completableFuture.complete(jsonObjectResult);
+            }
+        });
+
+
+
+        JsonObject jsonObjectResult = null;
+        try {
+            jsonObjectResult = completableFuture.get();
+        }
+        catch (ExecutionException | InterruptedException e) {
+            getReportResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
+            return getReportResponseDTO;
+        }
+
+        if(exception[0] != null){
+            getReportResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
+            return getReportResponseDTO;
+        }
+
+        ResultMessageDTO resultMessage = ResultMessageDAO.getResultMessage(jsonObjectResult);
+
+        if(!ResultMessageController.isSuccess(resultMessage)){
+            getReportResponseDTO.setResultMessage(resultMessage);
+            return getReportResponseDTO;
+        }
+
+        getReportResponseDTO = toGetReportResponseDTO(jsonObjectResult);
+
+        return getReportResponseDTO;
+    }
+
+    private GetListReportResponseDTO getListReportResponseDTO(String url){
+        GetListReportResponseDTO getListReportResponseDTO = new GetListReportResponseDTO();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        OkHttpClient client = new OkHttpClient();
+
+        Call call = client.newCall(request);
+
+        final IOException[] exception = {null};
+        CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();
+
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                exception[0] = e;
+                completableFuture.complete(null);
+                return;
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+
+                String jsonStringResult = response.body().string();
+                JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
+                JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
+
+                completableFuture.complete(jsonObjectResult);
+            }
+        });
+
+
+
+        JsonObject jsonObjectResult = null;
+        try {
+            jsonObjectResult = completableFuture.get();
+        }
+        catch (ExecutionException | InterruptedException e) {
+            getListReportResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
+            return getListReportResponseDTO;
+        }
+
+        if(exception[0] != null){
+            getListReportResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
+            return getListReportResponseDTO;
+        }
+
+        ResultMessageDTO resultMessage = ResultMessageDAO.getResultMessage(jsonObjectResult);
+
+        if(!ResultMessageController.isSuccess(resultMessage)){
+            getListReportResponseDTO.setResultMessage(resultMessage);
+            return getListReportResponseDTO;
+        }
+
+        getListReportResponseDTO = toGetListReportResponseDTO(jsonObjectResult);
+
+        return getListReportResponseDTO;
+    }
+
+
+
+    public GetReportResponseDTO toGetReportResponseDTO(JsonObject jsonObject){
+        GetReportResponseDTO getReportResponseDTO = new GetReportResponseDTO();
+
+        if(!jsonObject.has("resultMessage") ){
+            JsonObject jsonResultMessage = jsonObject.get("resultMessage").getAsJsonObject();
+
+            long code = jsonResultMessage.get("code").getAsLong();
+            String message = jsonResultMessage.get("message").getAsString();
+
+            ResultMessageDTO resultMessageDTO = new ResultMessageDTO(code,message);
+            getReportResponseDTO.setResultMessage(resultMessageDTO);
+        }
+
+        long id = jsonObject.get("id").getAsLong();
+        getReportResponseDTO.setId(id);
+
+        String name = jsonObject.get("name").getAsString();
+        getReportResponseDTO.setName(name);
+
+        String dateOfInput = jsonObject.get("dateOfInput").getAsString();
+        getReportResponseDTO.setDateOfInput(dateOfInput);
+
+        if(jsonObject.has("description")){
+            String description = jsonObject.get("description").getAsString();
+            getReportResponseDTO.setDescription(description);
+        }
+
+        long idUser = jsonObject.get("idUser").getAsLong();
+        getReportResponseDTO.setIdUser(idUser);
+
+        long idItinerary = jsonObject.get("idItinerary").getAsLong();
+        getReportResponseDTO.setIdItinerary(idItinerary);
+
+        return getReportResponseDTO;
+    }
+
+    public GetListReportResponseDTO toGetListReportResponseDTO(JsonObject jsonObject){
+        GetListReportResponseDTO getListReportResponseDTO = new GetListReportResponseDTO();
+
+        if(!jsonObject.has("resultMessage") ){
+            JsonObject jsonResultMessage = jsonObject.get("resultMessage").getAsJsonObject();
+
+            long code = jsonResultMessage.get("code").getAsLong();
+            String message = jsonResultMessage.get("message").getAsString();
+
+            ResultMessageDTO resultMessageDTO = new ResultMessageDTO(code,message);
+            getListReportResponseDTO.setResultMessage(resultMessageDTO);
+        }
+
+        JsonArray jsonArray = jsonObject.get("listReport").getAsJsonArray();
+        List<GetReportResponseDTO> listReport = new ArrayList<GetReportResponseDTO>();
+        for(JsonElement jsonElement : jsonArray){
+            JsonObject jsonObjectElement = jsonElement.getAsJsonObject();
+
+            GetReportResponseDTO getReportResponseDTO = toGetReportResponseDTO(jsonObject);
+            listReport.add(getReportResponseDTO);
+        }
+        getListReportResponseDTO.setListReport(listReport);
+
+        return getListReportResponseDTO;
+    }
+
 }

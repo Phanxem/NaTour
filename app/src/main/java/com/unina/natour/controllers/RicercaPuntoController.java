@@ -119,7 +119,7 @@ public class RicercaPuntoController extends NaTourController{
 
         GetAddressResponseDTO addressDTO = addressDAO.getAddressByGeoPoint(geoPoint);
         ResultMessageDTO resultMessageDTO = addressDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return;
         }
@@ -152,7 +152,7 @@ public class RicercaPuntoController extends NaTourController{
         }
         GetListAddressResponseDTO resultAddressesDTO = addressDAO.getAddressesByQuery(searchString);
         ResultMessageDTO resultMessageDTO = resultAddressesDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return;
         }

@@ -62,7 +62,7 @@ public class ListaMessaggiController extends  NaTourController{
     private boolean initModel() {
         GetListChatMessageResponseDTO getListChatMessageResponseDTO = chatDAO.getMessageByidsUser(myUserId, userId2);
         ResultMessageDTO resultMessageDTO = getListChatMessageResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             //TODO
             showErrorMessage(resultMessageDTO);
             return false;
@@ -110,7 +110,7 @@ public class ListaMessaggiController extends  NaTourController{
 
                     GetListChatMessageResponseDTO getListChatMessageResponseDTO = chatDAO.getMessageByidsUser(myUserId, userId2);
                     ResultMessageDTO resultMessageDTO = getListChatMessageResponseDTO.getResultMessage();
-                    if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+                    if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
                         //TODO
                         showErrorMessage(resultMessageDTO);
                         return;

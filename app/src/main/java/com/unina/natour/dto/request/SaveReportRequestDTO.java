@@ -6,8 +6,8 @@ public class SaveReportRequestDTO {
     private String dateOfInput;
     private String description;
 
-    private long id_itinerary;
-    private long id_user;
+    private long idItinerary;
+    private long idUser;
 
 
     public String getName() {
@@ -34,20 +34,20 @@ public class SaveReportRequestDTO {
         this.description = description;
     }
 
-    public long getId_itinerary() {
-        return id_itinerary;
+    public long getIdItinerary() {
+        return idItinerary;
     }
 
-    public void setId_itinerary(long id_itinerary) {
-        this.id_itinerary = id_itinerary;
+    public void setIdItinerary(long idItinerary) {
+        this.idItinerary = idItinerary;
     }
 
-    public long getId_user() {
-        return id_user;
+    public long getIdUser() {
+        return idUser;
     }
 
-    public void setId_user(long id_user) {
-        this.id_user = id_user;
+    public void setIdUser(long idUser) {
+        this.idUser = idUser;
     }
 
 }

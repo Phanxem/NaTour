@@ -5,32 +5,51 @@ import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
-public class MessageController {
+public class ResultMessageController {
 
+    public static final ResultMessageDTO SUCCESS_MESSAGE = new ResultMessageDTO(200, "");
+    public static final ResultMessageDTO ERROR_MESSAGE_FAILURE_CLIENT = new ResultMessageDTO(400, "");
+    public static final ResultMessageDTO ERROR_MESSAGE_UNKNOWN2 = new ResultMessageDTO(100, "");
+
+
+
+
+
+
+
+/*
     public static final long ERROR_CODE_UNKNOWN = 100;
     public static final String ERROR_MESSAGE_UNKNOWN = "Errore Sconosciuto";
 
     public static final long SUCCESS_CODE = 200;
     public static final String SUCCESS_MESSAGE = "Operazione effettuata con successo";
 
-    public static final long ERROR_CODE_AMPLIFY = 300;
+
     public static final long ERROR_CODE_FAILURE = 400;
     public static final String ERROR_MESSAGE_FAILURE = "Operazione non completata";
 
     public static final long ERROR_CODE_EMPTY_FIELD = 500;
     public static final long ERROR_CODE_EMPTY_FIELD_ACTIVATION = 501;
 
+*/
+
+    public static final long ERROR_CODE_AMPLIFY = 300;
 
 
+
+/*
     public static final ResultMessageDTO MESSAGE_UNKNOWN_ERROR = new ResultMessageDTO(ERROR_CODE_UNKNOWN, ERROR_MESSAGE_UNKNOWN);
     public static final ResultMessageDTO MESSAGE_SUCCESS = new ResultMessageDTO(SUCCESS_CODE, SUCCESS_MESSAGE);
+*/
+
+
 
     public final String TAG = this.getClass().getSimpleName();
 
     private NaTourActivity activity;
     private MessageDialog messageDialog;
 
-    public MessageController(NaTourActivity activity){
+    public ResultMessageController(NaTourActivity activity){
         this.activity = activity;
         this.messageDialog = new MessageDialog();
         this.messageDialog.setNaTourActivity(activity);
@@ -53,11 +72,12 @@ public class MessageController {
 
     }
 
+
     public void setGoBackOnClose(boolean value){
         this.messageDialog.setGoBackOnClose(value);
     }
 
-
+/*
     public void showErrorMessage(ResultMessageDTO resultMessageDTO) {
         long errorCode = resultMessageDTO.getCode();
         String errorMessage = resultMessageDTO.getMessage();
@@ -81,6 +101,13 @@ public class MessageController {
         messageDialog.setMessage(messageToShow);
         messageDialog.showOverUi();
     }
+*/
+
+    public void showErrorMessage(String messageToShow) {
+        messageDialog.setMessage(messageToShow);
+        messageDialog.showOverUi();
+    }
+
 
     private String findMessageFromAmplifyMessage(String message){
         String amplifyMessage = null;
@@ -139,7 +166,35 @@ public class MessageController {
         return activity.getString(R.string.UnknownException);
     }
 
+    //TODO
+    private String getMessageToShow(ResultMessageDTO resultMessageDTO, Object o){
 
+        return null;
+    }
+
+
+
+
+    public static boolean isSuccess(ResultMessageDTO resultMessageDTO){
+        long code = resultMessageDTO.getCode();
+
+        return code == SUCCESS_MESSAGE.getCode();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
     public static ResultMessageDTO getSuccessMessage(){
         ResultMessageDTO resultMessageDTO = new ResultMessageDTO(SUCCESS_CODE, SUCCESS_MESSAGE);
 
@@ -163,4 +218,5 @@ public class MessageController {
     public static ResultMessageDTO getNotFoundMessage(){
         return null;
     }
+ */
 }

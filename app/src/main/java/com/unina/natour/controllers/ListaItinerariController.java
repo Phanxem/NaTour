@@ -80,7 +80,7 @@ public class ListaItinerariController extends NaTourController{
     public boolean initModel(){
         GetListItineraryResponseDTO itinerariesDTO = itinearyDAO.getListItineraryRandom();
         ResultMessageDTO resultMessageDTO = itinerariesDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             //TODO
             showErrorMessage(resultMessageDTO);
             return false;
@@ -105,7 +105,7 @@ public class ListaItinerariController extends NaTourController{
     public boolean initModel(String researchString){
         GetListItineraryResponseDTO itinerariesDTO = itinearyDAO.getListItineraryByName(researchString);
         ResultMessageDTO resultMessageDTO = itinerariesDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             //TODO
             showErrorMessage(resultMessageDTO);
             return false;
@@ -129,7 +129,7 @@ public class ListaItinerariController extends NaTourController{
     public boolean initModel(long userId){
         GetListItineraryResponseDTO itinerariesDTO = itinearyDAO.getListItineraryByIdUser(userId);
         ResultMessageDTO resultMessageDTO = itinerariesDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             //TODO
             showErrorMessage(resultMessageDTO);
             return false;

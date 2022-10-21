@@ -1,7 +1,7 @@
 package com.unina.natour.controllers.exceptionHandler.exceptions;
 
 
-import com.unina.natour.controllers.MessageController;
+import com.unina.natour.controllers.ResultMessageController;
 import com.unina.natour.dto.response.ResultMessageDTO;
 
 public class ServerException extends Exception {
@@ -9,7 +9,7 @@ public class ServerException extends Exception {
     private String message;
 
     public ServerException(){
-        this(MessageController.getUnknownErrorMessage());
+        this(ResultMessageController.getUnknownErrorMessage());
     }
 
     public ServerException(ResultMessageDTO resultMessageDTO){

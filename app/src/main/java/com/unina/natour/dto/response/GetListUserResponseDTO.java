@@ -6,8 +6,9 @@ import java.util.List;
 
 public class GetListUserResponseDTO {
 
+
     private ResultMessageDTO resultMessage;
-    private List<GetUserWithImageResponseDTO> listUser;
+    private List<GetUserResponseDTO> listUser;
 
 
     public ResultMessageDTO getResultMessage() {
@@ -16,10 +17,10 @@ public class GetListUserResponseDTO {
     public void setResultMessage(ResultMessageDTO resultMessage) {
         this.resultMessage = resultMessage;
     }
-    public List<GetUserWithImageResponseDTO> getListUser() {
+    public List<GetUserResponseDTO> getListUser() {
         return listUser;
     }
-    public void setListUser(List<GetUserWithImageResponseDTO> listUser) {
+    public void setListUser(List<GetUserResponseDTO> listUser) {
         this.listUser = listUser;
     }
 

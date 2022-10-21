@@ -8,10 +8,10 @@ import java.util.List;
 public class GetListItineraryResponseDTO {
 
     private ResultMessageDTO resultMessage;
-    private List<ItineraryElementResponseDTO> listItinerary;
+    private List<GetItineraryResponseDTO> listItinerary;
 
     public GetListItineraryResponseDTO(){
-        this.listItinerary = new ArrayList<ItineraryElementResponseDTO>();
+        this.listItinerary = new ArrayList<GetItineraryResponseDTO>();
     }
 
 
@@ -23,11 +23,11 @@ public class GetListItineraryResponseDTO {
         this.resultMessage = resultMessage;
     }
 
-    public List<ItineraryElementResponseDTO> getListItinerary() {
+    public List<GetItineraryResponseDTO> getListItinerary() {
         return listItinerary;
     }
 
-    public void setListItinerary(List<ItineraryElementResponseDTO> listItinerary) {
+    public void setListItinerary(List<GetItineraryResponseDTO> listItinerary) {
         this.listItinerary = listItinerary;
     }
 }

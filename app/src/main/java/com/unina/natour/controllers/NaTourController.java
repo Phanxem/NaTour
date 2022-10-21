@@ -8,12 +8,12 @@ public class NaTourController {
     public final String TAG = this.getClass().getSimpleName();
 
     private NaTourActivity activity;
-    private MessageController messageController;
+    private ResultMessageController resultMessageController;
 
 
     public NaTourController(NaTourActivity activity){
         this.activity = activity;
-        this.messageController = new MessageController(activity);
+        this.resultMessageController = new ResultMessageController(activity);
 
     }
 
@@ -27,20 +27,20 @@ public class NaTourController {
         this.activity = activity;
     }
 
-    public MessageController getMessageController() {
-        return messageController;
+    public ResultMessageController getMessageController() {
+        return resultMessageController;
     }
 
-    public void setErrorMessageController(MessageController messageController) {
-        this.messageController = messageController;
+    public void setErrorMessageController(ResultMessageController resultMessageController) {
+        this.resultMessageController = resultMessageController;
     }
 
     public void showErrorMessage(ResultMessageDTO resultMessageDTO){
-        this.messageController.showErrorMessage(resultMessageDTO);
+        this.resultMessageController.showErrorMessage(resultMessageDTO);
     }
 
     public void showErrorMessage(long code){
-        this.messageController.showErrorMessage(code);
+        this.resultMessageController.showErrorMessage(code);
     }
 
 //---

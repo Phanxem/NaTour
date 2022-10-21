@@ -8,11 +8,8 @@ public class GetChatMessageResponseDTO {
     private String body;
     private String dateOfInput;
 
-
     private long idUser;
     private long idChat;
-
-
 
 
     public ResultMessageDTO getResultMessage() {

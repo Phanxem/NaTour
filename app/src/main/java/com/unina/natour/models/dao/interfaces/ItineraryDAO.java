@@ -1,5 +1,6 @@
 package com.unina.natour.models.dao.interfaces;
 
+import com.unina.natour.dto.response.GetGpxResponseDTO;
 import com.unina.natour.dto.response.GetListItineraryResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.request.SaveItineraryRequestDTO;
@@ -12,13 +13,13 @@ public interface ItineraryDAO{
     //GETs
     public GetItineraryResponseDTO getItineraryById(long idItinerary);
 
-    public GPX getItineraryGpxById(long idItinerary);
+    public GetGpxResponseDTO getItineraryGpxById(long idItinerary);
 
     public GetListItineraryResponseDTO getListItineraryByIdUser(long userId, int page);
 
     public GetListItineraryResponseDTO getListItineraryRandom();
 
-    public GetListItineraryResponseDTO getListItineraryByName(String name);
+    public GetListItineraryResponseDTO getListItineraryByName(String name, int page);
 
 
     //POSTs

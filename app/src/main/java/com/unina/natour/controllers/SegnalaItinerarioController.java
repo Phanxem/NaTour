@@ -57,17 +57,17 @@ public class SegnalaItinerarioController extends NaTourController{
 
         saveReportRequestDTO.setName(titolo);
         saveReportRequestDTO.setDescription(descrizione);
-        saveReportRequestDTO.setId_itinerary(itineraryId);
+        saveReportRequestDTO.setIdItinerary(itineraryId);
 
         String username = Amplify.Auth.getCurrentUser().getUsername();
         GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(username);
         ResultMessageDTO resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }
 
-        saveReportRequestDTO.setId_user(getUserWithImageResponseDTO.getId());
+        saveReportRequestDTO.setIdUser(getUserWithImageResponseDTO.getId());
 
         Calendar calendar = Calendar.getInstance();
         String stringDateOfInput = TimeUtils.toFullString(calendar);
@@ -76,7 +76,7 @@ public class SegnalaItinerarioController extends NaTourController{
 
 
         resultMessageDTO = reportDAO.addReport(saveReportRequestDTO);
-        if(resultMessageDTO.getCode() != MessageController.SUCCESS_CODE){
+        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
             showErrorMessage(resultMessageDTO);
             return false;
         }
