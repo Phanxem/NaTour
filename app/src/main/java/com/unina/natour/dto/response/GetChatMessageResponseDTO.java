@@ -11,6 +11,7 @@ public class GetChatMessageResponseDTO {
     private long idUser;
     private long idChat;
 
+    private boolean toRead;
 
     public ResultMessageDTO getResultMessage() {
         return resultMessage;
@@ -60,4 +61,11 @@ public class GetChatMessageResponseDTO {
         this.body = body;
     }
 
+    public boolean isToRead() {
+        return toRead;
+    }
+
+    public void setToRead(boolean toRead) {
+        this.toRead = toRead;
+    }
 }

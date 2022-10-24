@@ -144,7 +144,7 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
 
         if(!jsonObject.has("wayPoints")  || !jsonObject.has("tracks") )
         {
-            ResultMessageDTO resultMessageDTO = ResultMessageDAO.toMessageDTO(jsonObject);
+            ResultMessageDTO resultMessageDTO = ResultMessageDAO.getResultMessage(jsonObject);
             getRouteResponseDTO.setResultMessage(resultMessageDTO);
 
             return getRouteResponseDTO;

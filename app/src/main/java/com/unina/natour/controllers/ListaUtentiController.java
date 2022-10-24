@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.dto.response.ResultMessageDTO;
-import com.unina.natour.dto.response.composted.ListUserChatResponseDTO;
-import com.unina.natour.dto.response.composted.UserChatResponseDTO;
+import com.unina.natour.dto.response.composted.GetListChatWithUserResponseDTO;
+import com.unina.natour.dto.response.composted.GetChatWithUserResponseDTO;
 import com.unina.natour.models.ElementUserModel;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
@@ -59,7 +59,7 @@ public class ListaUtentiController extends NaTourController{
     }
 
     public boolean initModel(long researchCode, String researchString){
-        ListUserChatResponseDTO usersDTO = null;
+        GetListChatWithUserResponseDTO usersDTO = null;
 
         if(researchCode == CODE_USER_WITH_CONVERSATION){
             usersDTO = userDAO.findUserChatByConversation();
@@ -110,7 +110,7 @@ public class ListaUtentiController extends NaTourController{
                     page++;
                     progressBar_users.setVisibility(View.VISIBLE);
 
-                    ListUserChatResponseDTO usersDTO;
+                    GetListChatWithUserResponseDTO usersDTO;
 
                     if(researchCode == CODE_USER_WITH_CONVERSATION){
                         usersDTO = userDAO.findUserChatByConversation();
@@ -157,22 +157,22 @@ public class ListaUtentiController extends NaTourController{
     }
 
 
-    public boolean dtoToModel(Context context, UserChatResponseDTO dto, ElementUserModel model){
+    public boolean dtoToModel(Context context, GetChatWithUserResponseDTO dto, ElementUserModel model){
         model.clear();
 
-        model.setUserId(dto.getId());
+        model.setUserId(dto.getIdUser());
         model.setUsername(dto.getNameChat());
         model.setProfileImage(dto.getProfileImage());
         model.setMessagesToRead(dto.hasMessagesToRead());
         return true;
     }
 
-    public boolean dtoToModel(Context context, ListUserChatResponseDTO dto, List<ElementUserModel> model){
+    public boolean dtoToModel(Context context, GetListChatWithUserResponseDTO dto, List<ElementUserModel> model){
         model.clear();
 
-        List<UserChatResponseDTO> usersDto = dto.getUsers();
+        List<GetChatWithUserResponseDTO> usersDto = dto.getListChat();
 
-        for(UserChatResponseDTO elementDto : usersDto){
+        for(GetChatWithUserResponseDTO elementDto : usersDto){
             ElementUserModel elementModel = new ElementUserModel();
             boolean result = dtoToModel(context, elementDto, elementModel);
             if(!result){

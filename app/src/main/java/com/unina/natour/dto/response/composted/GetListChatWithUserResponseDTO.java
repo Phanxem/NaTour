@@ -1,18 +1,17 @@
 package com.unina.natour.dto.response.composted;
 
 import com.unina.natour.dto.response.ResultMessageDTO;
-import com.unina.natour.dto.response.composted.UserChatResponseDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListUserChatResponseDTO {
+public class GetListChatWithUserResponseDTO {
 
     private ResultMessageDTO resultMessage;
-    private List<UserChatResponseDTO> users;
+    private List<GetChatWithUserResponseDTO> listChat;
 
-    public ListUserChatResponseDTO(){
-        this.users = new ArrayList<UserChatResponseDTO>();
+    public GetListChatWithUserResponseDTO(){
+        this.listChat = new ArrayList<GetChatWithUserResponseDTO>();
     }
 
 
@@ -24,11 +23,11 @@ public class ListUserChatResponseDTO {
         this.resultMessage = resultMessage;
     }
 
-    public List<UserChatResponseDTO> getUsers() {
-        return users;
+    public List<GetChatWithUserResponseDTO> getListChat() {
+        return listChat;
     }
 
-    public void setUsers(List<UserChatResponseDTO> users) {
-        this.users = users;
+    public void setListChat(List<GetChatWithUserResponseDTO> listChat) {
+        this.listChat = listChat;
     }
 }

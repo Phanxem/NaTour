@@ -17,6 +17,7 @@ import com.unina.natour.dto.response.GetListUserResponseDTO;
 import com.unina.natour.dto.response.GetUserResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.request.SaveUserOptionalInfoRequestDTO;
+import com.unina.natour.dto.response.composted.GetListUserWithImageResponseDTO;
 import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 
@@ -24,8 +25,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -393,6 +399,107 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
 
         ResultMessageDTO resultMessageDTO = resultMessageDAO.fulfilRequest(request);
         return resultMessageDTO;
+    }
+
+
+
+    @Override
+    public GetUserWithImageResponseDTO getUserWithImageById(long idUser){
+        GetUserWithImageResponseDTO getUserWithImageResponseDTO = new GetUserWithImageResponseDTO();
+
+        GetUserResponseDTO getUserResponseDTO = getUserById(idUser);
+        if(!ResultMessageController.isSuccess(getUserResponseDTO.getResultMessage())){
+            getUserWithImageResponseDTO.setResultMessage(getUserResponseDTO.getResultMessage());
+            return getUserWithImageResponseDTO;
+        }
+
+        GetBitmapResponseDTO getBitmapResponseDTO = getUserImageById(idUser);
+        if(!ResultMessageController.isSuccess(getBitmapResponseDTO.getResultMessage())){
+            getUserWithImageResponseDTO.setResultMessage(getBitmapResponseDTO.getResultMessage());
+            return getUserWithImageResponseDTO;
+        }
+
+        getUserWithImageResponseDTO.setId(getUserResponseDTO.getId());
+        getUserWithImageResponseDTO.setUsername(getUserResponseDTO.getUsername());
+        getUserWithImageResponseDTO.setProfileImage(getBitmapResponseDTO.getBitmap());
+        getUserWithImageResponseDTO.setPlaceOfResidence(getUserResponseDTO.getPlaceOfResidence());
+        getUserWithImageResponseDTO.setDateOfBirth(getUserResponseDTO.getDateOfBirth());
+
+        getUserWithImageResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
+
+        return getUserWithImageResponseDTO;
+    }
+
+    @Override
+    public GetListUserWithImageResponseDTO getListUserWithImageByUsername(String username, int page) {
+
+        GetListUserWithImageResponseDTO getListUserWithImageResponseDTO = new GetListUserWithImageResponseDTO();
+
+        GetListUserResponseDTO getListUserResponseDTO = getListUserByUsername(username, page);
+        if(!ResultMessageController.isSuccess(getListUserResponseDTO.getResultMessage())){
+            getListUserWithImageResponseDTO.setResultMessage(getListUserResponseDTO.getResultMessage());
+            return getListUserWithImageResponseDTO;
+        }
+
+        List<GetUserResponseDTO> listUser = getListUserResponseDTO.getListUser();
+
+        GetBitmapResponseDTO[] arrayImage = new GetBitmapResponseDTO[listUser.size()];
+
+
+        ExecutorService executor = Executors.newFixedThreadPool(listUser.size());
+
+        for(int i = 0; i < listUser.size(); i++){
+            int iTemp = i;
+
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+
+                    GetUserResponseDTO user = listUser.get(iTemp);
+
+                    GetBitmapResponseDTO getBitmapResponseDTO = getUserImageById(user.getId());
+
+                    arrayImage[iTemp] = getBitmapResponseDTO;
+                }
+            };
+
+            executor.execute(runnable);
+        }
+
+        boolean finished = false;
+        try {
+            finished = executor.awaitTermination(1, TimeUnit.MINUTES);
+        }
+        catch (InterruptedException e) {
+            getListUserWithImageResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
+            return getListUserWithImageResponseDTO;
+        }
+
+        if(!finished){
+            getListUserWithImageResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
+            return getListUserWithImageResponseDTO;
+        }
+
+        List<GetUserWithImageResponseDTO> listUserImage = new ArrayList<GetUserWithImageResponseDTO>();
+        for(int i = 0; i < listUser.size(); i++){
+            GetUserWithImageResponseDTO getUserWithImageResponseDTO = new GetUserWithImageResponseDTO();
+
+            GetUserResponseDTO getUserResponseDTO = listUser.get(i);
+            GetBitmapResponseDTO getBitmapResponseDTO = arrayImage[i];
+
+            getUserWithImageResponseDTO.setId(getUserResponseDTO.getId());
+            getUserWithImageResponseDTO.setUsername(getUserResponseDTO.getUsername());
+            getUserWithImageResponseDTO.setProfileImage(getBitmapResponseDTO.getBitmap());
+            getUserWithImageResponseDTO.setPlaceOfResidence(getUserResponseDTO.getPlaceOfResidence());
+            getUserWithImageResponseDTO.setDateOfBirth(getUserResponseDTO.getDateOfBirth());
+
+            listUserImage.add(getUserWithImageResponseDTO);
+        }
+
+        getListUserWithImageResponseDTO.setListUser(listUserImage);
+        getListUserWithImageResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
+
+        return getListUserWithImageResponseDTO;
     }
 
 

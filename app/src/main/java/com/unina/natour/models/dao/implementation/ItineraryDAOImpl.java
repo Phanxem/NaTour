@@ -1,6 +1,8 @@
 package com.unina.natour.models.dao.implementation;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
@@ -12,19 +14,34 @@ import com.unina.natour.controllers.ResultMessageController;
 import com.unina.natour.controllers.utils.FileUtils;
 import com.unina.natour.dto.response.GetGpxResponseDTO;
 import com.unina.natour.dto.response.GetListItineraryResponseDTO;
+import com.unina.natour.dto.response.GetListReportResponseDTO;
+import com.unina.natour.dto.response.GetReportResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.request.SaveItineraryRequestDTO;
 import com.unina.natour.dto.response.GetItineraryResponseDTO;
+import com.unina.natour.dto.response.composted.GetItineraryWithReportResponseDTO;
+import com.unina.natour.dto.response.composted.GetItineraryWithUserResponseDTO;
+import com.unina.natour.dto.response.composted.GetListItineraryWithUserResponseDTO;
+import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
+import com.unina.natour.models.dao.interfaces.ReportDAO;
+import com.unina.natour.models.dao.interfaces.UserDAO;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import io.jenetics.jpx.GPX;
 import okhttp3.Call;
@@ -39,6 +56,8 @@ import okhttp3.Response;
 public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
 
     private static final String URL = SERVER_URL + "/itinerary";
+
+    private static final int ELEMENT_PER_PAGE = 20;
 
     private static final String ADD_ITINERARY = "/add";
 
@@ -58,10 +77,14 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
 
     private Context context;
     private ResultMessageDAO resultMessageDAO;
+    private UserDAO userDAO;
+    private ReportDAO reportDAO;
 
     public ItineraryDAOImpl(Context context){
         this.context = context;
         this.resultMessageDAO = new ResultMessageDAO();
+        this.userDAO = new UserDAOImpl(context);
+        this.reportDAO = new ReportDAOImpl();
     }
 
 
@@ -241,6 +264,67 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
 
 
 
+    //COMPOSITED
+    @Override
+    public GetListItineraryWithUserResponseDTO getListItineraryWithUserRandom() {
+
+        //recupera lista itinerari
+        GetListItineraryResponseDTO getListItineraryResponseDTO = getListItineraryRandom();
+        List<GetItineraryResponseDTO> listItinerary = getListItineraryResponseDTO.getListItinerary();
+
+        GetListItineraryWithUserResponseDTO getListItineraryWithUserResponseDTO = getListItineraryWithUserResponseDTO(listItinerary);
+
+        return getListItineraryWithUserResponseDTO;
+    }
+
+    @Override
+    public GetListItineraryWithUserResponseDTO getListItineraryWithUserByName(String name, int page) {
+
+        //recupera lista itinerari
+        GetListItineraryResponseDTO getListItineraryResponseDTO = getListItineraryByName(name, page);
+        List<GetItineraryResponseDTO> listItinerary = getListItineraryResponseDTO.getListItinerary();
+
+        GetListItineraryWithUserResponseDTO getListItineraryWithUserResponseDTO = getListItineraryWithUserResponseDTO(listItinerary);
+
+        return getListItineraryWithUserResponseDTO;
+    }
+
+    @Override
+    public GetItineraryWithReportResponseDTO getItineraryWithReportById(long idItinerary) {
+        GetItineraryWithReportResponseDTO getItineraryWithReportResponseDTO = new GetItineraryWithReportResponseDTO();
+
+        GetItineraryResponseDTO getItineraryResponseDTO = getItineraryById(idItinerary);
+        if(!ResultMessageController.isSuccess(getItineraryResponseDTO.getResultMessage())){
+            getItineraryWithReportResponseDTO.setResultMessage(getItineraryResponseDTO.getResultMessage());
+            return getItineraryWithReportResponseDTO;
+        }
+
+        GetListReportResponseDTO getListReportResponseDTO = reportDAO.getReportByIdItinerary(idItinerary);
+        if(!ResultMessageController.isSuccess(getItineraryResponseDTO.getResultMessage())){
+            getItineraryWithReportResponseDTO.setResultMessage(getListReportResponseDTO.getResultMessage());
+            return getItineraryWithReportResponseDTO;
+        }
+
+        getItineraryWithReportResponseDTO.setId(getItineraryResponseDTO.getId());
+        getItineraryWithReportResponseDTO.setDescription(getItineraryResponseDTO.getDescription());
+        getItineraryWithReportResponseDTO.setDifficulty(getItineraryResponseDTO.getDifficulty());
+        getItineraryWithReportResponseDTO.setDuration(getItineraryResponseDTO.getDuration());
+        getItineraryWithReportResponseDTO.setLenght(getItineraryResponseDTO.getLenght());
+        getItineraryWithReportResponseDTO.setIdUser(getItineraryResponseDTO.getIdUser());
+        getItineraryWithReportResponseDTO.setName(getItineraryResponseDTO.getName());
+
+        List<GetReportResponseDTO> listReport = getListReportResponseDTO.getListReport();
+
+        if(listReport.isEmpty()) getItineraryWithReportResponseDTO.setReported(false);
+        else getItineraryWithReportResponseDTO.setReported(true);
+
+        getItineraryWithReportResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
+
+        return getItineraryWithReportResponseDTO;
+    }
+
+
+
 
     private GetItineraryResponseDTO getItineraryResponseDTO(String url){
         GetItineraryResponseDTO getItineraryResponseDTO = new GetItineraryResponseDTO();
@@ -364,6 +448,99 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
         return getListItineraryResponseDTO;
     }
 
+
+    private GetListItineraryWithUserResponseDTO getListItineraryWithUserResponseDTO(List<GetItineraryResponseDTO> listItinerary){
+
+        GetListItineraryWithUserResponseDTO getListItineraryWithUserResponseDTO = new GetListItineraryWithUserResponseDTO();
+
+        //inserisci gli idUser in un Map(long, Set<int>)
+        //dove la key è l'idUser, e il value è l'insieme di index della lista itinerari corrispondenti all'idUser
+        Map<Long, Set<Integer>> mapIdUser = new HashMap<Long, Set<Integer>>();
+
+        GetItineraryResponseDTO tempItinerary = null;
+        long tempIdUser = -1;
+        for(int i = 0; i < listItinerary.size(); i++){
+            tempItinerary = listItinerary.get(i);
+            tempIdUser = tempItinerary.getIdUser();
+
+            if(!mapIdUser.containsKey(tempIdUser)){
+                Set<Integer> setIndex = new HashSet<Integer>();
+                setIndex.add(i);
+                mapIdUser.put(tempIdUser, setIndex);
+            }
+            else{
+                Set<Integer> setIndex = mapIdUser.get(tempIdUser);
+                setIndex.add(i);
+                mapIdUser.replace(tempIdUser,setIndex);
+            }
+        }
+
+        //Definiamo un array di UserWithImageDTO con listaItinerari.size() elementi
+        GetUserWithImageResponseDTO[] arrayUser = new GetUserWithImageResponseDTO[listItinerary.size()];
+
+        ExecutorService executor = Executors.newFixedThreadPool(ELEMENT_PER_PAGE);
+
+        //avvio un for sulla Mappa degli idUser
+        for(Map.Entry<Long, Set<Integer>> entry : mapIdUser.entrySet()){
+
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUserWithImageById(entry.getKey());
+
+                    for(Integer index : entry.getValue()){
+                        arrayUser[index] = getUserWithImageResponseDTO;
+                    }
+
+                }
+            };
+
+            executor.execute(runnable);
+        }
+
+        boolean finished = false;
+        try {
+            finished = executor.awaitTermination(1, TimeUnit.MINUTES);
+        }
+        catch (InterruptedException e) {
+            getListItineraryWithUserResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
+            return getListItineraryWithUserResponseDTO;
+        }
+
+        if(!finished){
+            getListItineraryWithUserResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
+            return getListItineraryWithUserResponseDTO;
+        }
+
+
+        List<GetItineraryWithUserResponseDTO> listItineraryWithUser = new ArrayList<GetItineraryWithUserResponseDTO>();
+
+        for(int i = 0; i < listItinerary.size(); i++){
+            GetItineraryResponseDTO getItineraryResponseDTO = listItinerary.get(i);
+            GetUserWithImageResponseDTO getUserWithImageResponseDTO = arrayUser[i];
+
+            GetItineraryWithUserResponseDTO getItineraryWithUserResponseDTO = new GetItineraryWithUserResponseDTO();
+
+            getItineraryWithUserResponseDTO.setId(getItineraryResponseDTO.getId());
+            getItineraryWithUserResponseDTO.setName(getItineraryResponseDTO.getName());
+            getItineraryWithUserResponseDTO.setDescription(getItineraryResponseDTO.getDescription());
+            getItineraryWithUserResponseDTO.setDuration(getItineraryResponseDTO.getDuration());
+            getItineraryWithUserResponseDTO.setLenght(getItineraryResponseDTO.getLenght());
+            getItineraryWithUserResponseDTO.setDifficulty(getItineraryResponseDTO.getDifficulty());
+
+            if(ResultMessageController.isSuccess(getUserWithImageResponseDTO.getResultMessage())){
+                getItineraryWithUserResponseDTO.setUsername(getUserWithImageResponseDTO.getUsername());
+                getItineraryWithUserResponseDTO.setUserImage(getUserWithImageResponseDTO.getProfileImage());
+            }
+
+            listItineraryWithUser.add(getItineraryWithUserResponseDTO);
+        }
+
+        getListItineraryWithUserResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
+        getListItineraryWithUserResponseDTO.setListItinerary(listItineraryWithUser);
+
+        return getListItineraryWithUserResponseDTO;
+    }
 
 //MAPPER
 

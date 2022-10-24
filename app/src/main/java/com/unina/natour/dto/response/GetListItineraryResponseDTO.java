@@ -1,7 +1,5 @@
 package com.unina.natour.dto.response;
 
-import com.unina.natour.dto.response.composted.ItineraryElementResponseDTO;
-
 import java.util.ArrayList;
 import java.util.List;
 

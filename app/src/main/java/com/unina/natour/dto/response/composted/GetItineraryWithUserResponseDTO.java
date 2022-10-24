@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 import com.unina.natour.dto.response.ResultMessageDTO;
 
-public class ItineraryElementResponseDTO {
+public class GetItineraryWithUserResponseDTO {
 
     private ResultMessageDTO resultMessage;
 

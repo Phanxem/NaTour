@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.response.composted.ItineraryElementResponseDTO;
+import com.unina.natour.dto.response.composted.GetItineraryWithUserResponseDTO;
 import com.unina.natour.dto.response.GetListItineraryResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.ElementItineraryModel;
@@ -224,7 +224,7 @@ public class ListaItinerariController extends NaTourController{
 
     }
 
-    public static boolean dtoToModel(Context context, ItineraryElementResponseDTO dto, ElementItineraryModel model){
+    public static boolean dtoToModel(Context context, GetItineraryWithUserResponseDTO dto, ElementItineraryModel model){
 
         model.clear();
 
@@ -261,9 +261,9 @@ public class ListaItinerariController extends NaTourController{
     public static boolean dtoToModel(Context context, GetListItineraryResponseDTO dto, List<ElementItineraryModel> model){
         model.clear();
 
-        List<ItineraryElementResponseDTO> dtos = dto.getListItinerary();
+        List<GetItineraryWithUserResponseDTO> dtos = dto.getListItinerary();
 
-        for(ItineraryElementResponseDTO elementDto : dtos){
+        for(GetItineraryWithUserResponseDTO elementDto : dtos){
             ElementItineraryModel elementModel = new ElementItineraryModel();
             boolean result = dtoToModel(context, elementDto, elementModel);
             if(!result) {

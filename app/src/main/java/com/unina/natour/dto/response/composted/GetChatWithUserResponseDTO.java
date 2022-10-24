@@ -2,25 +2,33 @@ package com.unina.natour.dto.response.composted;
 
 import android.graphics.Bitmap;
 
-public class UserChatResponseDTO {
+import com.unina.natour.dto.response.ResultMessageDTO;
 
-    private Long id;
+public class GetChatWithUserResponseDTO {
 
+    private ResultMessageDTO resultMessage;
+
+    private Long idUser;
     private String nameChat;
     private Bitmap profileImage;
 
-    private String lastMessage;
-    private String inputTime;
     private boolean hasMessagesToRead;
 
 
-
-    public Long getId() {
-        return id;
+    public ResultMessageDTO getResultMessage() {
+        return resultMessage;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setResultMessage(ResultMessageDTO resultMessage) {
+        this.resultMessage = resultMessage;
+    }
+
+    public Long getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(Long idUser) {
+        this.idUser = idUser;
     }
 
     public String getNameChat() {
@@ -45,22 +53,6 @@ public class UserChatResponseDTO {
 
     public void setHasMessagesToRead(boolean hasMessagesToRead) {
         this.hasMessagesToRead = hasMessagesToRead;
-    }
-
-    public String getLastMessage() {
-        return lastMessage;
-    }
-
-    public void setLastMessage(String lastMessage) {
-        this.lastMessage = lastMessage;
-    }
-
-    public String getInputTime() {
-        return inputTime;
-    }
-
-    public void setInputTime(String inputTime) {
-        this.inputTime = inputTime;
     }
 
     public boolean isHasMessagesToRead() {

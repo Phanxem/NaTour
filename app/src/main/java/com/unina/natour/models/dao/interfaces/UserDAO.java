@@ -8,8 +8,7 @@ import com.unina.natour.dto.response.GetListUserResponseDTO;
 import com.unina.natour.dto.response.GetUserResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.request.SaveUserOptionalInfoRequestDTO;
-import com.unina.natour.dto.response.composted.ListUserChatResponseDTO;
-import com.unina.natour.dto.response.UserIdResponseDTO;
+import com.unina.natour.dto.response.composted.GetListUserWithImageResponseDTO;
 import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 
 public interface UserDAO{
@@ -39,6 +38,24 @@ public interface UserDAO{
 
     //DELETEs
     public ResultMessageDTO cancelRegistrationUser(String idCognitoUser);
+
+
+
+    //COMPOSITEDs
+    public GetUserWithImageResponseDTO getUserWithImageById(long idUser);
+
+    public GetListUserWithImageResponseDTO getListUserWithImageByUsername(String username, int page);
+
+
+
+
+
+
+
+
+
+
+
 
 
     //UserResponseDTO getUser(String username);
