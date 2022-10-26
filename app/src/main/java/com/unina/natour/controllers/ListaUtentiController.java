@@ -1,5 +1,6 @@
 package com.unina.natour.controllers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -8,11 +9,16 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.R;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.dto.response.composted.GetListChatWithUserResponseDTO;
 import com.unina.natour.dto.response.composted.GetChatWithUserResponseDTO;
+import com.unina.natour.dto.response.composted.GetListUserWithImageResponseDTO;
+import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 import com.unina.natour.models.ElementUserModel;
+import com.unina.natour.models.dao.implementation.ChatDAOImpl;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
+import com.unina.natour.models.dao.interfaces.ChatDAO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.listAdapters.UserListAdapter;
@@ -31,65 +37,87 @@ public class ListaUtentiController extends NaTourController{
     private UserListAdapter userListAdapter;
 
     private ArrayList<ElementUserModel> elementsUserModel;
-    private int page = 0;
 
     private UserDAO userDAO;
+    private ChatDAO chatDAO;
 
 
     public ListaUtentiController(NaTourActivity activity, long researchCode, String researchString) {
         super(activity);
+        String messageToShow = null;
+
 
         this.elementsUserModel = new ArrayList<ElementUserModel>();
 
         this.userDAO = new UserDAOImpl(activity);
 
+        this.chatDAO = new ChatDAOImpl(activity);
+
         if(researchCode < 0 || researchCode > 1){
-            //TODO
-            showErrorMessage(0);
-            //getActivity().finish();
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return;
         }
         boolean result = initModel(researchCode, researchString);
         if(!result){
-            //TODO
-            showErrorMessage(0);
-            //getActivity().finish();
             return;
         }
     }
 
     public boolean initModel(long researchCode, String researchString){
-        GetListChatWithUserResponseDTO usersDTO = null;
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        if(CurrentUserInfo.isGuest()){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
+            return false;
+        }
+
+        boolean result = false;
 
         if(researchCode == CODE_USER_WITH_CONVERSATION){
-            usersDTO = userDAO.findUserChatByConversation();
+            GetListChatWithUserResponseDTO getListChatWithUserResponseDTO = chatDAO.getListChatByIdUser(CurrentUserInfo.getId(), 0);
+
+            if(!ResultMessageController.isSuccess(getListChatWithUserResponseDTO.getResultMessage())){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessageAndBack(messageToShow);
+                return false;
+            }
+
+            result = dtoToModel(getActivity(), getListChatWithUserResponseDTO, elementsUserModel);
+            if(!result){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessageAndBack(messageToShow);
+                return false;
+            }
+
         }
         else if (researchCode == CODE_USER_BY_RESEARCH){
-            usersDTO = userDAO.findUserChatByUsername(researchString);
+            GetListUserWithImageResponseDTO getListUserWithImageResponseDTO = userDAO.getListUserWithImageByUsername(researchString, 0);
+
+            if(!ResultMessageController.isSuccess(getListUserWithImageResponseDTO.getResultMessage())){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessageAndBack(messageToShow);
+                return false;
+            }
+
+            result = dtoToModel(getActivity(), getListUserWithImageResponseDTO, elementsUserModel);
+            if(!result){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessageAndBack(messageToShow);
+                return false;
+            }
         }
         else{
-            //TODO
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
-        ResultMessageDTO resultMessageDTO = usersDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            //TODO
-            showErrorMessage(resultMessageDTO);
-            return false;
-        }
 
         this.researchString = researchString;
         this.researchCode = researchCode;
-
-
-        boolean result = dtoToModel(getActivity(), usersDTO, elementsUserModel);
-        if(!result){
-            //TODO
-            showErrorMessage(0);
-            return false;
-        }
 
         this.userListAdapter = new UserListAdapter(getActivity(),elementsUserModel, researchCode);
 
@@ -97,11 +125,16 @@ public class ListaUtentiController extends NaTourController{
     }
 
     public void initList(NestedScrollView nestedScrollView_users, RecyclerView recyclerView_users, ProgressBar progressBar_users) {
+        Activity activity = getActivity();
+        final String[] messageToShow = {null};
+
         recyclerView_users.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView_users.setAdapter(userListAdapter);
 
 
         nestedScrollView_users.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            int page = 0;
+
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
@@ -112,23 +145,47 @@ public class ListaUtentiController extends NaTourController{
 
                     GetListChatWithUserResponseDTO usersDTO;
 
+                    boolean result = false;
+
                     if(researchCode == CODE_USER_WITH_CONVERSATION){
-                        usersDTO = userDAO.findUserChatByConversation();
+                        GetListChatWithUserResponseDTO getListChatWithUserResponseDTO = chatDAO.getListChatByIdUser(CurrentUserInfo.getId(), page);
+
+                        if(!ResultMessageController.isSuccess(getListChatWithUserResponseDTO.getResultMessage())){
+                            messageToShow[0] = activity.getString(R.string.Message_UnknownError);
+                            showErrorMessage(messageToShow[0]);
+                            return ;
+                        }
+
+                        result = dtoToModel(getActivity(), getListChatWithUserResponseDTO, elementsUserModel);
+                        if(!result){
+                            messageToShow[0] = activity.getString(R.string.Message_UnknownError);
+                            showErrorMessageAndBack(messageToShow[0]);
+                            return;
+                        }
                     }
                     else if (researchCode == CODE_USER_BY_RESEARCH){
-                        usersDTO = userDAO.findUserChatByUsername(researchString);
+                        GetListUserWithImageResponseDTO getListUserWithImageResponseDTO = userDAO.getListUserWithImageByUsername(researchString, page);
+
+                        if(!ResultMessageController.isSuccess(getListUserWithImageResponseDTO.getResultMessage())){
+                            messageToShow[0] = activity.getString(R.string.Message_UnknownError);
+                            showErrorMessageAndBack(messageToShow[0]);
+                            return;
+                        }
+
+                        result = dtoToModel(getActivity(), getListUserWithImageResponseDTO, elementsUserModel);
+                        if(!result){
+                            messageToShow[0] = activity.getString(R.string.Message_UnknownError);
+                            showErrorMessageAndBack(messageToShow[0]);
+                            return;
+                        }
                     }
                     else{
-                        //TODO EXCEPTION
+                        messageToShow[0] = activity.getString(R.string.Message_UnknownError);
+                        showErrorMessageAndBack(messageToShow[0]);
                         return;
                     }
 
                     ArrayList<ElementUserModel> nextPageElements = new ArrayList<ElementUserModel>();
-                    boolean result = dtoToModel(getActivity(), usersDTO, nextPageElements);
-                    if(!result){
-                        //TODO ERROR
-                    }
-
 
                     if(nextPageElements == null || nextPageElements.isEmpty()){
                         progressBar_users.setVisibility(View.GONE);
@@ -168,6 +225,9 @@ public class ListaUtentiController extends NaTourController{
     }
 
     public boolean dtoToModel(Context context, GetListChatWithUserResponseDTO dto, List<ElementUserModel> model){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         model.clear();
 
         List<GetChatWithUserResponseDTO> usersDto = dto.getListChat();
@@ -176,7 +236,40 @@ public class ListaUtentiController extends NaTourController{
             ElementUserModel elementModel = new ElementUserModel();
             boolean result = dtoToModel(context, elementDto, elementModel);
             if(!result){
-                //TODO ERROR
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessageAndBack(messageToShow);
+                return false;
+            }
+            model.add(elementModel);
+        }
+        return true;
+    }
+
+
+    public boolean dtoToModel(Context context, GetUserWithImageResponseDTO dto, ElementUserModel model){
+        model.clear();
+
+        model.setUserId(dto.getId());
+        model.setUsername(dto.getUsername());
+        model.setProfileImage(dto.getProfileImage());
+        model.setMessagesToRead(false);
+        return true;
+    }
+
+    public boolean dtoToModel(Context context, GetListUserWithImageResponseDTO dto, List<ElementUserModel> model){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        model.clear();
+
+        List<GetUserWithImageResponseDTO> usersDto = dto.getListUser();
+
+        for(GetUserWithImageResponseDTO elementDto : usersDto){
+            ElementUserModel elementModel = new ElementUserModel();
+            boolean result = dtoToModel(context, elementDto, elementModel);
+            if(!result){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessageAndBack(messageToShow);
                 return false;
             }
             model.add(elementModel);

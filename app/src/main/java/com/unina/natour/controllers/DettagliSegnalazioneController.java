@@ -1,7 +1,10 @@
 package com.unina.natour.controllers;
 
+import android.app.Activity;
 import android.content.Intent;
 
+import com.unina.natour.R;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.response.GetReportResponseDTO;
 import com.unina.natour.dto.response.GetItineraryResponseDTO;
@@ -35,29 +38,33 @@ public class DettagliSegnalazioneController extends NaTourController{
         this.reportDAO = new ReportDAOImpl();
 
         boolean result = initModel();
-        if(!result){
-            //TODO
-            showErrorMessage(0);
-            getActivity().finish();
-            return;
-        }
+        if(!result){ return;}
     }
 
     public boolean initModel(){
-        long reportId = getActivity().getIntent().getLongExtra(EXTRA_REPORT_ID, -1);
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        Intent intent = getActivity().getIntent();
+        long reportId = intent.getLongExtra(EXTRA_REPORT_ID, -1);
 
         if(reportId < 0){
-            //TODO
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
-        //TODO test
         GetReportResponseDTO reportDTO = reportDAO.getReportById(reportId);
         ResultMessageDTO resultMessageDTO = reportDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            //TODO
-            showErrorMessage(resultMessageDTO.getCode());
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_NOT_FOUND){
+                messageToShow = activity.getString(R.string.Message_ReportNotFoundError);
+                showErrorMessageAndBack(messageToShow);
+                return false;
+            }
+
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
@@ -65,16 +72,22 @@ public class DettagliSegnalazioneController extends NaTourController{
 
         GetItineraryResponseDTO itineraryDTO = itineraryDAO.getItineraryById(itineraryId);
         resultMessageDTO = itineraryDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            //TODO
-            showErrorMessage(resultMessageDTO.getCode());
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_NOT_FOUND){
+                messageToShow = activity.getString(R.string.Message_ItineraryNotFoundError);
+                showErrorMessageAndBack(messageToShow);
+                return false;
+            }
+
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
         boolean result = dtoToModel(reportDTO, itineraryDTO, dettagliSegnalazioneModel);
         if(!result){
-            //TODO
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
@@ -86,22 +99,24 @@ public class DettagliSegnalazioneController extends NaTourController{
     }
 
     public boolean isMyItinerary() {
+        Activity activity = getActivity();
+        String messageToShow = null;
 
-        /*TODO
-        effettuare un controllo per verificare se l'utente ha effettuato l'accesso guest,
-        in questo caso il risultato della funzione sarà sempre false;
+        if(CurrentUserInfo.isGuest()) return false;
 
-        String username = Amplify.Auth.getCurrentUser().getUsername();
-        UserDTO userDTO = userDAO.getUser(username);
-        ItineraryResponseDTO itineraryDTO = itineraryDAO.findById(dettagliSegnalazioneModel.getItineraryId());
+        GetItineraryResponseDTO getItineraryResponseDTO = itineraryDAO.getItineraryById(dettagliSegnalazioneModel.getItineraryId());
+        if(!ResultMessageController.isSuccess(getItineraryResponseDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return false;
+        }
 
-        long idUserItinerary = itineraryDTO.getId_user()
-        long myIdUser = userDTO.getId();
+        long id = CurrentUserInfo.getId();
+        long idUserItinerary = getItineraryResponseDTO.getIdUser();
 
-        if(idUserItinerary == myIdUser) return true
+        if(id == idUserItinerary) return true;
+
         return false;
-        */
-        return true;
     }
 
     //---

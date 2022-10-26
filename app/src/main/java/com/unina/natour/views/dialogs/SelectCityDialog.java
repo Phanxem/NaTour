@@ -19,7 +19,7 @@ import com.unina.natour.controllers.SelezionaNazioneController;
 
 public class SelectCityDialog extends NaTourDialog {
 
-    SelezionaCittàController selezionaCittàController;
+    private SelezionaCittàController selezionaCittàController;
 
     public SelectCityDialog(){ }
 

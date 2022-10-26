@@ -12,10 +12,10 @@ import android.widget.EditText;
 import com.unina.natour.R;
 import com.unina.natour.controllers.ModificaPasswordController;
 import com.unina.natour.controllers.ModificaProfiloController;
-@RequiresApi(api = Build.VERSION_CODES.P)
+
 public class ModificaPasswordActivity extends NaTourActivity {
 
-    ModificaPasswordController modificaProfiloController;
+    private ModificaPasswordController modificaProfiloController;
 
 
     @Override

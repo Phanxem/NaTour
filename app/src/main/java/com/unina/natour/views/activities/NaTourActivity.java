@@ -1,10 +1,9 @@
 package com.unina.natour.views.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 
 import com.unina.natour.models.NaTourModel;
-import com.unina.natour.views.observers.Observer;
+import com.unina.natour.config.observers.Observer;
 
 import java.util.ArrayList;
 import java.util.List;

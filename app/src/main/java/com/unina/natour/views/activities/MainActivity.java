@@ -23,6 +23,11 @@ import com.unina.natour.views.fragments.ProfiloPersonaleFragment;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends NaTourActivity {
 
+    public final static long CODE_FRAGMENT_HOME = 0l;
+    public final static long CODE_FRAGMENT_PROFILO = 1l;
+    public final static long CODE_FRAGMENT_PIANIFICA = 2l;
+    public final static long CODE_FRAGMENT_COMMUNITY = 3l;
+
 /*
     public void openAwsConfigurationFile(){
         Resources resources = getActivity().getResources();
@@ -36,7 +41,8 @@ public class MainActivity extends NaTourActivity {
 
 
 
-    MainController mainController;
+    private MainController mainController;
+
 
     //ProfiloPersonaleController profiloPersonaleController;
     //PianificaItinerarioController pianificaItinerarioController;
@@ -83,6 +89,9 @@ public class MainActivity extends NaTourActivity {
                 .replace(R.id.Main_fragment_containter, homeFragment)
                 .commit();
 
+        mainController.setCurrentFragment(homeFragment);
+
+
         BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.bottomMenu_community);
         badgeDrawable.setVisible(true);
 
@@ -95,6 +104,7 @@ public class MainActivity extends NaTourActivity {
                             .replace(R.id.Main_fragment_containter,homeFragment)
                             .commit();
 
+                    mainController.setCurrentFragment(homeFragment);
                     return true;
                 }
                 if (item.getItemId() == R.id.bottomMenu_profilo) {
@@ -102,6 +112,7 @@ public class MainActivity extends NaTourActivity {
                             .replace(R.id.Main_fragment_containter,profiloFragment)
                             .commit();
 
+                    mainController.setCurrentFragment(profiloFragment);
                     return true;
                 }
                 if (item.getItemId() == R.id.bottomMenu_pianifica) {
@@ -109,6 +120,7 @@ public class MainActivity extends NaTourActivity {
                             .replace(R.id.Main_fragment_containter,pianificaFragment)
                             .commit();
 
+                    mainController.setCurrentFragment(pianificaFragment);
                     return true;
                 }
                 if (item.getItemId() == R.id.bottomMenu_community) {
@@ -116,6 +128,7 @@ public class MainActivity extends NaTourActivity {
                             .replace(R.id.Main_fragment_containter,communityFragment)
                             .commit();
 
+                    mainController.setCurrentFragment(communityFragment);
                     return true;
                 }
 
@@ -123,4 +136,9 @@ public class MainActivity extends NaTourActivity {
             }
         });
     }
+
+    public MainController getMainController() {
+        return mainController;
+    }
+
 }

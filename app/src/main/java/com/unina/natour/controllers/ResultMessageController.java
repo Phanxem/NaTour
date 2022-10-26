@@ -1,5 +1,7 @@
 package com.unina.natour.controllers;
 
+import android.app.Activity;
+
 import com.unina.natour.R;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.views.activities.NaTourActivity;
@@ -11,37 +13,16 @@ public class ResultMessageController {
     public static final ResultMessageDTO ERROR_MESSAGE_FAILURE_CLIENT = new ResultMessageDTO(400, "");
     public static final ResultMessageDTO ERROR_MESSAGE_UNKNOWN2 = new ResultMessageDTO(100, "");
 
+    public static final ResultMessageDTO ERROR_MESSAGE_INVALID_REQUEST = new ResultMessageDTO(400,"");
+    public static final ResultMessageDTO ERROR_MESSAGE_FAILURE = new ResultMessageDTO(500,"");
+    public static final ResultMessageDTO ERROR_MESSAGE_NOT_FOUND = new ResultMessageDTO(404,"");
+    public static final ResultMessageDTO ERROR_MESSAGE_UNIQUE_VIOLATION = new ResultMessageDTO(402,"");
 
 
-
-
-
-
-/*
-    public static final long ERROR_CODE_UNKNOWN = 100;
-    public static final String ERROR_MESSAGE_UNKNOWN = "Errore Sconosciuto";
-
-    public static final long SUCCESS_CODE = 200;
-    public static final String SUCCESS_MESSAGE = "Operazione effettuata con successo";
-
-
-    public static final long ERROR_CODE_FAILURE = 400;
-    public static final String ERROR_MESSAGE_FAILURE = "Operazione non completata";
-
-    public static final long ERROR_CODE_EMPTY_FIELD = 500;
-    public static final long ERROR_CODE_EMPTY_FIELD_ACTIVATION = 501;
-
-*/
 
     public static final long ERROR_CODE_AMPLIFY = 300;
-
-
-
-/*
-    public static final ResultMessageDTO MESSAGE_UNKNOWN_ERROR = new ResultMessageDTO(ERROR_CODE_UNKNOWN, ERROR_MESSAGE_UNKNOWN);
-    public static final ResultMessageDTO MESSAGE_SUCCESS = new ResultMessageDTO(SUCCESS_CODE, SUCCESS_MESSAGE);
-*/
-
+    public static final long ERROR_CODE_NOT_FOUND = 404;
+    public static final long ERROR_CODE_SERVER = 500;
 
 
     public final String TAG = this.getClass().getSimpleName();
@@ -91,16 +72,6 @@ public class ResultMessageController {
         messageDialog.showOverUi();
     }
 
-    public void showErrorMessage(long errorCode) {
-        String messageToShow = ERROR_MESSAGE_UNKNOWN;
-
-        if(errorCode == ERROR_CODE_EMPTY_FIELD_ACTIVATION){
-            messageToShow = ""; //todo
-        }
-
-        messageDialog.setMessage(messageToShow);
-        messageDialog.showOverUi();
-    }
 */
 
     public void showErrorMessage(String messageToShow) {
@@ -109,68 +80,65 @@ public class ResultMessageController {
     }
 
 
-    private String findMessageFromAmplifyMessage(String message){
+    public static String findMessageFromAmplifyMessage(Activity activity, String message){
         String amplifyMessage = null;
 
         amplifyMessage = activity.getString(R.string.AmplifyException_UserAlreadyExists);
         if(message.contains(amplifyMessage)){
-            return activity.getString(R.string.UserAlreadyExists);
+            return activity.getString(R.string.Message_UserAlreadyExistsError);
         }
 
         amplifyMessage = activity.getString(R.string.AmplifyException_EmailAlreadyExists);
         if(message.contains(amplifyMessage)){
-            return activity.getString(R.string.EmailAlreadyExists);
+            return activity.getString(R.string.Message_EmailAlreadyExistsError);
         }
 
         amplifyMessage = activity.getString(R.string.AmplifyException_PasswordNotConformPolicy);
         if(message.contains(amplifyMessage)){
-            return activity.getString(R.string.PasswordNotConformPolicy);
+            return activity.getString(R.string.Message_PasswordNotConformPolicyError);
         }
 
         amplifyMessage = activity.getString(R.string.AmplifyException_InvalidVerificationCode);
         if(message.contains(amplifyMessage)){
-            return activity.getString(R.string.InvalidVerificationCode);
+            return activity.getString(R.string.Message_InvalidVerificationCodeError);
         }
 
         amplifyMessage = activity.getString(R.string.AmplifyException_InvalidEmailFormat);
         if(message.contains(amplifyMessage)){
-            return activity.getString(R.string.InvalidEmailFormat);
+            return activity.getString(R.string.Message_InvalidEmailFormatError);
         }
 
         amplifyMessage = activity.getString(R.string.AmplifyException_UserNotExist);
         if(message.contains(amplifyMessage)){
-            return activity.getString(R.string.UserNotExist);
+            return activity.getString(R.string.Message_UserNotExistError);
         }
 
         amplifyMessage = activity.getString(R.string.AmplifyException_IncorrectUserPassword);
         if(message.contains(amplifyMessage)){
-            return activity.getString(R.string.IncorrectUserPassword);
+            return activity.getString(R.string.Message_IncorrectUserPasswordError);
         }
 
         amplifyMessage = activity.getString(R.string.AmplifyException_UserNotConfirmed);
         if(message.contains(amplifyMessage)){
-            return activity.getString(R.string.UserNotConfirmed);
+            return activity.getString(R.string.Message_UserNotConfirmedError);
         }
 
 
         amplifyMessage = activity.getString(R.string.AmplifyException_AccountNotFound);
         if(message.contains(amplifyMessage)){
-            return activity.getString(R.string.AccountNotFound);
+            return activity.getString(R.string.Message_AccountNotFoundError);
         }
 
         amplifyMessage = activity.getString(R.string.AmplifyException_ErrorPasswordRecovery_UserNotConfirmed);
         if(message.contains(amplifyMessage)){
-            return activity.getString(R.string.ErrorPasswordRecovery_UserNotConfirmed);
+            return activity.getString(R.string.Message_ErrorPasswordRecoveryUserNotConfirmedError);
         }
 
-        return activity.getString(R.string.UnknownException);
+        return activity.getString(R.string.Message_UnknownError);
     }
 
-    //TODO
-    private String getMessageToShow(ResultMessageDTO resultMessageDTO, Object o){
 
-        return null;
-    }
+
 
 
 
@@ -181,42 +149,4 @@ public class ResultMessageController {
         return code == SUCCESS_MESSAGE.getCode();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-    public static ResultMessageDTO getSuccessMessage(){
-        ResultMessageDTO resultMessageDTO = new ResultMessageDTO(SUCCESS_CODE, SUCCESS_MESSAGE);
-
-        return resultMessageDTO;
-    }
-
-
-    public static ResultMessageDTO getUnknownErrorMessage(){
-        ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ERROR_CODE_UNKNOWN, ERROR_MESSAGE_UNKNOWN);
-
-        return resultMessageDTO;
-    }
-
-
-    public static ResultMessageDTO getFailureMessage(){
-        ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ERROR_CODE_FAILURE, ERROR_MESSAGE_FAILURE);
-
-        return resultMessageDTO;
-    }
-
-    public static ResultMessageDTO getNotFoundMessage(){
-        return null;
-    }
- */
 }

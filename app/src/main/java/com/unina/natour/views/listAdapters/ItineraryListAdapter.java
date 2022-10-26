@@ -26,21 +26,14 @@ public class ItineraryListAdapter extends RecyclerView.Adapter<ItineraryListAdap
 
     private NaTourActivity activity;
 
-
     private ArrayList<ElementItineraryModel> elementsItineraryModel;
     private boolean doBelongToSameUser;
-
-    //private DettagliItinerarioController dettagliItinerarioController;
-
 
     public ItineraryListAdapter(NaTourActivity activity, ArrayList<ElementItineraryModel> model, boolean doBelongToSameUser){
         this.elementsItineraryModel = model;
         this.activity = activity;
 
-
         this.doBelongToSameUser = doBelongToSameUser;
-
-        //this.dettagliItinerarioController = new DettagliItinerarioController(activity);
 
     }
 

@@ -1,5 +1,6 @@
 package com.unina.natour.views.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -70,7 +71,10 @@ public class ProfiloUtenteActivity extends NaTourActivity{
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                profiloController.initModel();
+                Intent intent = new Intent();
+                long userId = intent.getLongExtra(ProfiloController.EXTRA_USER_ID,-1);
+
+                profiloController.initModel(userId);
 
                 handler.post(new Runnable() {
                     @Override
@@ -149,8 +153,10 @@ public class ProfiloUtenteActivity extends NaTourActivity{
         executorService.execute(new Runnable() {
             @Override
             public void run() {
+                Intent intent = new Intent();
+                long userId = intent.getLongExtra(ProfiloController.EXTRA_USER_ID,-1);
 
-                profiloController.initModel();
+                profiloController.initModel(userId);
 
                 handler.post(new Runnable() {
                     @Override

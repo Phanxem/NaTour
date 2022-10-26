@@ -1,31 +1,38 @@
 package com.unina.natour.controllers;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.Fragment;
 
-import com.unina.natour.amplify.ApplicationController;
-import com.unina.natour.models.socketHandler.ChatWebSocketHandler;
+import com.unina.natour.config.ApplicationController;
+import com.unina.natour.controllers.socketHandler.ChatWebSocketHandler;
 import com.unina.natour.views.activities.MainActivity;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
 
 public class MainController extends NaTourController{
 
 
     public static final String KEY_CONTROLLER = "CONTROLLER";
 
+    public Fragment currentFragment;
+
     public MainController(NaTourActivity activity){
         super(activity);
+
+        this.currentFragment = null;
 
         ApplicationController applicationController = (ApplicationController) activity.getApplicationContext();
         ChatWebSocketHandler chatWebSocketHandler = applicationController.getChatWebSocketHandler();
 
         chatWebSocketHandler.openWebSocket();
+    }
 
+    public Fragment getCurrentFragment() {
+        return currentFragment;
+    }
+
+    public void setCurrentFragment(Fragment currentFragment) {
+        this.currentFragment = currentFragment;
     }
 
     public static void openMainActivity(NaTourActivity fromActivity){

@@ -7,7 +7,6 @@ import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.util.Log;
 
-import com.unina.natour.controllers.exceptionHandler.exceptions.subAppException.FailureReadProfileImageException;
 import com.unina.natour.views.activities.NaTourActivity;
 
 import java.io.ByteArrayInputStream;

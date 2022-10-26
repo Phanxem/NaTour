@@ -35,14 +35,15 @@ public class NaTourController {
         this.resultMessageController = resultMessageController;
     }
 
-    public void showErrorMessage(ResultMessageDTO resultMessageDTO){
-        this.resultMessageController.showErrorMessage(resultMessageDTO);
+    public void showErrorMessage(String messageToShow) {
+        this.resultMessageController.showErrorMessage(messageToShow);
     }
 
-    public void showErrorMessage(long code){
-        this.resultMessageController.showErrorMessage(code);
+    public void showErrorMessageAndBack(String messageToShow){
+        resultMessageController.setGoBackOnClose(true);
+        resultMessageController.showErrorMessage(messageToShow);
     }
 
-//---
+
 
 }

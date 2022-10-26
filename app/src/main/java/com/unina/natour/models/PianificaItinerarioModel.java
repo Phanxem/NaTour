@@ -1,20 +1,14 @@
 package com.unina.natour.models;
 
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
 import com.unina.natour.controllers.PianificaItinerarioController;
-import com.unina.natour.views.observers.Observable;
-import com.unina.natour.views.observers.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.Route;
-
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class PianificaItinerarioModel extends NaTourModel {
 
     private AddressModel startingPoint;

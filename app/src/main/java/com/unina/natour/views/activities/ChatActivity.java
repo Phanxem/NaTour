@@ -142,7 +142,7 @@ public class ChatActivity extends NaTourActivity {
     public void receiveMessage(String message, Calendar time){
         NestedScrollView nestedScrollView_messages = findViewById(R.id.Chat_nestedScrollView_messages);
 
-        chatController.receiveMessage(message, Calendar.getInstance());
+        chatController.receiveMessage(message, time);
 
         new Handler().postDelayed(new Runnable() {
             @Override

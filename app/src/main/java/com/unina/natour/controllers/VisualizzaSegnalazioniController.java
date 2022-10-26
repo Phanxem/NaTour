@@ -1,8 +1,10 @@
 package com.unina.natour.controllers;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.widget.ListView;
 
+import com.unina.natour.R;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.response.GetListReportResponseDTO;
 import com.unina.natour.dto.response.GetReportResponseDTO;
@@ -34,23 +36,27 @@ public class VisualizzaSegnalazioniController extends NaTourController{
 
     public VisualizzaSegnalazioniController(NaTourActivity activity){
         super(activity);
+        String messageToShow = null;
 
         this.visualizzaSegnalazioniModel = new VisualizzaSegnalazioniModel();
 
         long itineraryId = getActivity().getIntent().getLongExtra(EXTRA_ITINERARY_ID, -1);
-        /*TODO
         if(itineraryId < 0){
-            exteption
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
+            return;
         }
-         */
+
 
         this.itineraryDAO = new ItineraryDAOImpl(getActivity());
         this.reportDAO = new ReportDAOImpl();
 
-        initModel(itineraryId);
+        boolean result = initModel(itineraryId);
+        if(!result){
+            return;
+        }
+
         this.reportListAdapter = new ReportListAdapter(activity, visualizzaSegnalazioniModel.getReports(),getActivity());
-
-
 
     }
 
@@ -63,25 +69,27 @@ public class VisualizzaSegnalazioniController extends NaTourController{
     }
 
     public boolean initModel(long itineraryId){
+        Activity activity = getActivity();
+        String messageToShow = null;
 
         GetItineraryResponseDTO itineraryDTO = itineraryDAO.getItineraryById(itineraryId);
-        ResultMessageDTO resultMessageDTO = itineraryDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        if(!ResultMessageController.isSuccess(itineraryDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
         GetListReportResponseDTO getListReportResponseDTO = reportDAO.getReportByIdItinerary(itineraryId);
-        resultMessageDTO = getListReportResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        if(!ResultMessageController.isSuccess(getListReportResponseDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
         boolean result = dtoToModel(itineraryDTO, getListReportResponseDTO, visualizzaSegnalazioniModel);
         if(!result){
-            //TODO
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
         return true;

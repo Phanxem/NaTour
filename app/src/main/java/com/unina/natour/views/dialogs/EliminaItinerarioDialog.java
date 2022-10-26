@@ -12,7 +12,7 @@ import androidx.annotation.RequiresApi;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.EliminaItinerarioController;
-@RequiresApi(api = Build.VERSION_CODES.N)
+
 public class EliminaItinerarioDialog extends NaTourDialog{
 
     private View view;

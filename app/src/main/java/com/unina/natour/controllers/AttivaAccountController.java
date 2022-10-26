@@ -1,10 +1,14 @@
 package com.unina.natour.controllers;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import com.unina.natour.R;
 import com.unina.natour.controllers.utils.StringsUtils;
+import com.unina.natour.dto.request.SaveUserRequestDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
@@ -46,6 +50,12 @@ public class AttivaAccountController extends NaTourController{
         this.username = intent.getStringExtra(EXTRA_USERNAME);
         this.password = intent.getStringExtra(EXTRA_PASSWORD);
         this.email = intent.getStringExtra(EXTRA_EMAIL);
+
+        if(!StringsUtils.areAllFieldsFull(username, password, email)){
+            String messageToShow = activity.getString(R.string.Message_EmptyFieldError);
+            showErrorMessageAndBack(messageToShow);
+            return;
+        }
     }
 
     public void initAccountActivation(){
@@ -60,21 +70,32 @@ public class AttivaAccountController extends NaTourController{
         sharedPreferencesEditor.commit();
     }
 
-    public Boolean activeAccount(String code){
+    public boolean activeAccount(String code){
+        Activity activity = getActivity();
+        String messageToShow = null;
 
         if(!StringsUtils.areAllFieldsFull(code)) {
-            showErrorMessage(ResultMessageController.ERROR_CODE_EMPTY_FIELD_ACTIVATION);
+            messageToShow = activity.getString(R.string.Message_EmptyFieldError);
+            showErrorMessage(messageToShow);
             return false;
         }
 
         ResultMessageDTO resultMessageDTO = amplifyDAO.activateAccount(username, code);
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+
+            if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
+                messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
+                showErrorMessage(messageToShow);
+                return false;
+            }
+
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
 
-
-        String packageName = getActivity().getApplicationContext().getPackageName();
+        Context applicationContext = activity.getApplicationContext();
+        String packageName = applicationContext.getPackageName();
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(packageName,Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
 
@@ -84,9 +105,30 @@ public class AttivaAccountController extends NaTourController{
         sharedPreferencesEditor.remove(SHARED_PREFERENCES_EMAIL);
         sharedPreferencesEditor.commit();
 
+        String identityProvider = activity.getString(R.string.IdentityProvider_Cognito);
+
+        SaveUserRequestDTO saveUserRequestDTO = new SaveUserRequestDTO();
+        saveUserRequestDTO.setUsername(username);
+        saveUserRequestDTO.setIdentityProvider(identityProvider);
+        saveUserRequestDTO.setIdIdentityProvided(username);
+
+        resultMessageDTO = userDAO.addUser(saveUserRequestDTO);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
+            return false;
+        }
+
         resultMessageDTO = amplifyDAO.signIn(username,password);
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
+                messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
+                showErrorMessage(messageToShow);
+                return false;
+            }
+
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
 
@@ -94,37 +136,15 @@ public class AttivaAccountController extends NaTourController{
     }
 
     public boolean cancelAccountActivation(){
-        /*
-        AmplifyUtils amplifyUtils = new AmplifyUtils(activity);
-        AmazonCognitoIdentityProviderClient cognitoIdentityProviderClient = new AmazonCognitoIdentityProviderClient();
+        Activity activity = getActivity();
+        String messageToShow = null;
 
-        cognitoIdentityProviderClient.setRegion(amplifyUtils.getRegion());
-
-        AdminDeleteUserRequest adminDeleteUserRequest = new AdminDeleteUserRequest();
-        adminDeleteUserRequest.setUsername(username);
-        adminDeleteUserRequest.setUserPoolId(amplifyUtils.getPoolId());
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                cognitoIdentityProviderClient.adminDeleteUser(adminDeleteUserRequest);
-                Log.i(TAG, "Account deleted");
-            }
-        });
-
-        thread.start();
-
-*/
-
-        /*todo
-        MessageResponseDTO messageResponseDTO = userDAO.cancelRegistrationUser();
-        if(messageResponseDTO.getCode() != MessageController.SUCCESS_CODE){
-            showErrorMessage(messageResponseDTO);
+        ResultMessageDTO resultMessageDTO = userDAO.cancelRegistrationUser(username);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
-        */
-
-        //---
 
         String packageName = getActivity().getApplicationContext().getPackageName();
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(packageName,Context.MODE_PRIVATE);
@@ -149,9 +169,20 @@ public class AttivaAccountController extends NaTourController{
     }
 
     public boolean resendCode(){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         ResultMessageDTO resultMessageDTO = amplifyDAO.resendActivationCode(username);
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+
+            if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
+                messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
+                showErrorMessage(messageToShow);
+                return false;
+            }
+
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
 

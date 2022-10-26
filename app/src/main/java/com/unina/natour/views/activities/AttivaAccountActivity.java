@@ -16,7 +16,7 @@ import com.unina.natour.R;
 import com.unina.natour.controllers.AttivaAccountController;
 import com.unina.natour.controllers.ImmagineProfiloController;
 import com.unina.natour.views.dialogs.MessageDialog;
-@RequiresApi(api = Build.VERSION_CODES.P)
+
 public class AttivaAccountActivity extends NaTourActivity {
 
     private AttivaAccountController attivaAccountController;

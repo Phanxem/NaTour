@@ -1,11 +1,6 @@
 package com.unina.natour.views.activities;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,15 +8,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.unina.natour.R;
-import com.unina.natour.controllers.AutenticazioneController;
 import com.unina.natour.controllers.SalvaItinerarioController;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.models.SalvaItinerarioModel;
-import com.unina.natour.views.dialogs.MessageDialog;
-import com.unina.natour.views.dialogs.SelectCountryDialog;
 import com.unina.natour.views.dialogs.SelectDurationDialog;
-import com.unina.natour.views.observers.Observer;
-@RequiresApi(api = Build.VERSION_CODES.N)
+
 public class SalvaItinerarioActivity extends NaTourActivity
                                      implements SelectDurationDialog.OnDurationListener{
 

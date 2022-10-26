@@ -18,7 +18,7 @@ import com.unina.natour.controllers.SelezionaNazioneController;
 
 public class SelectCountryDialog extends NaTourDialog {
 
-    SelezionaNazioneController selezionaNazioneController;
+    private SelezionaNazioneController selezionaNazioneController;
 
     public SelectCountryDialog(){ }
 

@@ -1,15 +1,8 @@
 package com.unina.natour.controllers;
 
-import android.app.Activity;
-
-import androidx.fragment.app.FragmentActivity;
-
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.observers.Observer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 public class SelezionaNazioneController extends NaTourController{

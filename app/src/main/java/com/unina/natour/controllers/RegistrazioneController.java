@@ -1,10 +1,12 @@
 package com.unina.natour.controllers;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.unina.natour.R;
 import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
@@ -28,19 +30,29 @@ public class RegistrazioneController extends NaTourController{
 
 
     public Boolean signUp(String username, String email, String password){
+        Activity activity = getActivity();
+        String messageToShow = null;
 
         if(!StringsUtils.areAllFieldsFull(username,email,password)){
-            //TODO
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_EmptyFieldError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
         ResultMessageDTO resultMessageDTO = amplifyDAO.signUp(username, email, password);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
 
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+            if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
+                messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
+                showErrorMessage(messageToShow);
+                return false;
+            }
+
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
+
         return true;
     }
 

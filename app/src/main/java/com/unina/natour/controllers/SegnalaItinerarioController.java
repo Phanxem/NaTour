@@ -1,13 +1,14 @@
 package com.unina.natour.controllers;
 
+import android.app.Activity;
 import android.content.Intent;
 
-import com.amplifyframework.core.Amplify;
+import com.unina.natour.R;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.request.SaveReportRequestDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
-import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 import com.unina.natour.models.dao.implementation.ReportDAOImpl;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.ReportDAO;
@@ -29,27 +30,31 @@ public class SegnalaItinerarioController extends NaTourController{
 
     public SegnalaItinerarioController(NaTourActivity activity){
         super(activity);
+        String messageToShow = null;
 
         Intent intent = activity.getIntent();
         this.itineraryId = intent.getLongExtra(EXTRA_ITINERARY_ID,-1);
-/*TODO
+
         if(itineraryId < 0){
-            activity.finish()
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return;
         }
-*/
+
         this.reportDAO = new ReportDAOImpl();
         this.userDAO = new UserDAOImpl(getActivity());
 
     }
 
     public boolean inviaSegnalazione(String titolo, String descrizione) {
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        if(CurrentUserInfo.isGuest()) return false;
 
         if(StringsUtils.areAllFieldsFull(titolo)){
-            /*TODO def. exception
-            EmptyFieldActivationAccountCodeException exception = new EmptyFieldActivationAccountCodeException();
-            ExceptionHandler.handleMessageError(getMessageDialog(),exception);
-            */
+            messageToShow = activity.getString(R.string.Message_EmptyFieldError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
@@ -59,15 +64,7 @@ public class SegnalaItinerarioController extends NaTourController{
         saveReportRequestDTO.setDescription(descrizione);
         saveReportRequestDTO.setIdItinerary(itineraryId);
 
-        String username = Amplify.Auth.getCurrentUser().getUsername();
-        GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(username);
-        ResultMessageDTO resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
-            return false;
-        }
-
-        saveReportRequestDTO.setIdUser(getUserWithImageResponseDTO.getId());
+        saveReportRequestDTO.setIdUser(CurrentUserInfo.getId());
 
         Calendar calendar = Calendar.getInstance();
         String stringDateOfInput = TimeUtils.toFullString(calendar);
@@ -75,9 +72,10 @@ public class SegnalaItinerarioController extends NaTourController{
         saveReportRequestDTO.setDateOfInput(stringDateOfInput);
 
 
-        resultMessageDTO = reportDAO.addReport(saveReportRequestDTO);
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        ResultMessageDTO resultMessageDTO = reportDAO.addReport(saveReportRequestDTO);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            messageToShow = activity.getString(R.string.Message_EmptyFieldError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
         return true;

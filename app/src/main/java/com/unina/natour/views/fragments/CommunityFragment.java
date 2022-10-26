@@ -26,38 +26,11 @@ public class CommunityFragment extends NaTourFragment {
 
 
 
-
-
-
-
-
-    /*
-    public static CommunityFragment newInstance(Parcelable controller){
-        CommunityFragment communityFragment = new CommunityFragment();
-
-        Bundle args = new Bundle();
-        args.putParcelable(MainController.KEY_CONTROLLER, controller);
-        communityFragment.setArguments(args);
-
-        return communityFragment;
-    }
-*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_community, container, false);
         setFragmentView(view);
 
-
-
-        /*
-        Bundle args = getArguments();
-        if(args != null){
-            this.communityController = (CommunityController) args.getParcelable(MainController.KEY_CONTROLLER);
-        }
-        else{
-            this.communityController = new CommunityController(getNaTourActivity());
-        }
-        */
 
         this.communityController = new CommunityController(getNaTourActivity());
         this.listaUtentiController = communityController.getListaUtentiController();
@@ -122,5 +95,13 @@ public class CommunityFragment extends NaTourFragment {
         });
     }
 
+
+    public CommunityController getCommunityController() {
+        return communityController;
+    }
+
+    public ListaUtentiController getListaUtentiController() {
+        return listaUtentiController;
+    }
 
 }

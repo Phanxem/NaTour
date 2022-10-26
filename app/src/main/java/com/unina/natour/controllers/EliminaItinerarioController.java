@@ -1,15 +1,16 @@
 package com.unina.natour.controllers;
 
+import android.app.Activity;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.unina.natour.R;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class EliminaItinerarioController extends NaTourController{
 
     private long itineraryId;
@@ -24,11 +25,16 @@ public class EliminaItinerarioController extends NaTourController{
     }
 
     public boolean deleteItinerary(){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         ResultMessageDTO resultMessageDTO = itineraryDAO.deleteItineraryById(itineraryId);
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
+
         return true;
     }
 

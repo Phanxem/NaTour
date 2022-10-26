@@ -1,10 +1,7 @@
 package com.unina.natour.models;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.unina.natour.views.observers.Observable;
-import com.unina.natour.views.observers.Observer;
+import com.unina.natour.config.observers.Observable;
+import com.unina.natour.config.observers.Observer;
 
 import java.util.ArrayList;
 import java.util.List;

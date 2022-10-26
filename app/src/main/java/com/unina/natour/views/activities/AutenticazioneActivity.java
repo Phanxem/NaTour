@@ -22,7 +22,6 @@ import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.RecuperoPasswordController;
 import com.unina.natour.controllers.RegistrazioneController;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class AutenticazioneActivity extends NaTourActivity {
 
     private AutenticazioneController autenticazioneController;

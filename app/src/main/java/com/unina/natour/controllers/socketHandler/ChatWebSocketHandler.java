@@ -1,14 +1,10 @@
-package com.unina.natour.models.socketHandler;
+package com.unina.natour.controllers.socketHandler;
 
 import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
-import okio.ByteString;
 
 public class ChatWebSocketHandler {
 
@@ -18,9 +14,10 @@ public class ChatWebSocketHandler {
 
     private final static String KEY_ACTION = "action";
     private final static String KEY_MESSAGE = "message";
-    private final static String KEY_USERNAME = "username";
+    private final static String KEY_ID_USER = "idUser";
+    private final static String KEY_INPUT_TIME = "inputTime";
 
-    private final static String ACTION_SEND_MESSAGE = "sendmessage";
+    private final static String ACTION_SEND_MESSAGE = "sendMessage";
 
     private Context context;
     private WebSocket webSocket;
@@ -47,13 +44,20 @@ public class ChatWebSocketHandler {
         if(webSocket != null) webSocket.close(1001, "Goodbye !");
     }
 
-    public boolean sendToWebSocket(String message){
+    public boolean sendToWebSocket(String idUser, String message, String inputTime){
 
         //TODO definire la web socket in modo che venga specificato anche il destinatario e l'orario di invio
 
         boolean result = false;
+
+        String messageString = "{\"" + KEY_ACTION + "\" : \"" + ACTION_SEND_MESSAGE + "\", " +
+                                "\"" + KEY_MESSAGE + "\": \"" + message + "\", " +
+                                "\"" + KEY_ID_USER + "\": \"" + idUser + "\", " +
+                                "\"" + KEY_INPUT_TIME + "\": \"" + inputTime + "\"}";
         //webSocket.send("{\"action\": \"sendmessage\", \"message\": \"hello, I'm connect\"}");
-        result = webSocket.send("{\"" + KEY_ACTION + "\" : \"" + ACTION_SEND_MESSAGE + "\", \"" + KEY_MESSAGE + "\": \"" + message + "\"}");
+
+        result = webSocket.send(messageString);
+        //result = webSocket.send("{\"" + KEY_ACTION + "\" : \"" + ACTION_SEND_MESSAGE + "\", \"" + KEY_MESSAGE + "\": \"" + message + "\"}");
 
         return result;
     }

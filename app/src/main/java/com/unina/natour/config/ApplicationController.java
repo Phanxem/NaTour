@@ -1,8 +1,7 @@
-package com.unina.natour.amplify;
+package com.unina.natour.config;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -13,12 +12,7 @@ import com.amplifyframework.AmplifyException;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.core.Amplify;
-import com.unina.natour.controllers.ResultMessageController;
-import com.unina.natour.dto.response.ResultMessageDTO;
-import com.unina.natour.dto.response.UserIdResponseDTO;
-import com.unina.natour.models.dao.implementation.UserDAOImpl;
-import com.unina.natour.models.dao.interfaces.UserDAO;
-import com.unina.natour.models.socketHandler.ChatWebSocketHandler;
+import com.unina.natour.controllers.socketHandler.ChatWebSocketHandler;
 import com.unina.natour.views.activities.NaTourActivity;
 
 public class ApplicationController extends Application {
@@ -122,80 +116,5 @@ public class ApplicationController extends Application {
         };
 
         return result;
-    }
-
-    public static class UserInfo{
-        private static String identityProvider;
-        private static String userProviderId;
-        private static Long userId;
-
-        public static String getIdentityProvider() {
-            return identityProvider;
-        }
-
-        public static String getUserProviderId() {
-            return userProviderId;
-        }
-
-        public static Long getUserId() {
-            return userId;
-        }
-
-
-        public static boolean signInWithCognito(Context context, String cognitoUsername){
-            UserDAO userDAO = new UserDAOImpl(context);
-
-            UserIdResponseDTO userIdResponseDTO = userDAO.getUserByIdP(IDP_COGNITO, cognitoUsername);
-            ResultMessageDTO resultMessageDTO = userIdResponseDTO.getResultMessage();
-            if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-                //todo handle error
-                return false;
-            }
-
-            identityProvider = IDP_COGNITO;
-            userProviderId = cognitoUsername;
-            userId = userIdResponseDTO.getUserId();
-            return true;
-        }
-
-        public static boolean signInWithFacebook(Context context, String facebookId){
-            UserDAO userDAO = new UserDAOImpl(context);
-
-            UserIdResponseDTO userIdResponseDTO = userDAO.getUserByIdP(IDP_FACEBOOK, facebookId);
-            ResultMessageDTO resultMessageDTO = userIdResponseDTO.getResultMessage();
-            if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-                //todo handle error
-                return false;
-            }
-
-            identityProvider = IDP_FACEBOOK;
-            userProviderId = facebookId;
-            userId = userIdResponseDTO.getUserId();
-            return true;
-        }
-
-        public static boolean signInWithGoogle(Context context, String googleId){
-            UserDAO userDAO = new UserDAOImpl(context);
-
-            UserIdResponseDTO userIdResponseDTO = userDAO.getUserByIdP(IDP_GOOGLE, googleId);
-            ResultMessageDTO resultMessageDTO = userIdResponseDTO.getResultMessage();
-            if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-                //todo handle error
-                return false;
-            }
-
-            identityProvider = IDP_GOOGLE;
-            userProviderId = googleId;
-            userId = userIdResponseDTO.getUserId();
-            return true;
-        }
-
-        public static boolean signOut(){
-            identityProvider = null;
-            userProviderId = null;
-            userId = null;
-            return true;
-        }
-
     }
 }

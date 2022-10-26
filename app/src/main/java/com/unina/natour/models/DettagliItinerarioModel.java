@@ -1,10 +1,5 @@
 package com.unina.natour.models;
 
-import android.graphics.Bitmap;
-
-import com.unina.natour.views.observers.Observable;
-import com.unina.natour.views.observers.Observer;
-
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;

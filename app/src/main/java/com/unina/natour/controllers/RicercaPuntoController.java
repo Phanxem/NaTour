@@ -1,6 +1,7 @@
 package com.unina.natour.controllers;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,6 +16,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
+import com.unina.natour.R;
 import com.unina.natour.controllers.utils.AddressMapper;
 import com.unina.natour.controllers.utils.GPSUtils;
 import com.unina.natour.dto.response.GetListAddressResponseDTO;
@@ -86,16 +88,19 @@ public class RicercaPuntoController extends NaTourController{
     }
 
     public void selectCurrentPosition() {
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         if(!GPSUtils.hasGPSFeature(getActivity())){
-            //TODO
-            showErrorMessage(0);
-            return;
+            messageToShow = activity.getString(R.string.Message_GPSFeatureNotFoundError);
+            showErrorMessage(messageToShow);
+            return ;
         }
 
         if(!GPSUtils.isGPSEnabled(getActivity())){
-            //TODO
-            showErrorMessage(0);
-            return;
+            messageToShow = activity.getString(R.string.Message_GPSDisableError);
+            showErrorMessage(messageToShow);
+            return ;
         }
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -109,27 +114,27 @@ public class RicercaPuntoController extends NaTourController{
         if(location == null) location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         if(location == null){
-            //CurrentLocationNotFoundException exception = new CurrentLocationNotFoundException();
-            //TODO
-            showErrorMessage(0);
-            return;
+            messageToShow = activity.getString(R.string.Message_GPSLocationNotFoundError);
+            showErrorMessage(messageToShow);
+            return ;
         }
 
         GeoPoint geoPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
 
         GetAddressResponseDTO addressDTO = addressDAO.getAddressByGeoPoint(geoPoint);
-        ResultMessageDTO resultMessageDTO = addressDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
-            return;
+        if(!ResultMessageController.isSuccess(addressDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return ;
         }
+
         AddressModel addressModel = new AddressModel();
 
         boolean result = AddressMapper.dtoToModel(addressDTO, addressModel);
         if(!result){
-            //TODO error
-            showErrorMessage(resultMessageDTO);
-            return;
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return ;
         }
 
         Intent intent = new Intent();
@@ -145,24 +150,27 @@ public class RicercaPuntoController extends NaTourController{
     }
 
     public void searchInterestPoint(String searchString) {
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         if(searchString.isEmpty()){
             ricercaPuntoModel.clearAndNotify();
             risultatiRicercaPuntoListAdapter.notifyDataSetChanged();
             return;
         }
         GetListAddressResponseDTO resultAddressesDTO = addressDAO.getAddressesByQuery(searchString);
-        ResultMessageDTO resultMessageDTO = resultAddressesDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
-            return;
+        if(!ResultMessageController.isSuccess(resultAddressesDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return ;
         }
 
         List<AddressModel> addressModels = new ArrayList<AddressModel>();
         boolean result = AddressMapper.dtoToModel(resultAddressesDTO, addressModels);
         if(!result){
-            //todo
-            showErrorMessage(0);
-            return;
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return ;
         }
 
         ricercaPuntoModel.setResultPoints(addressModels);

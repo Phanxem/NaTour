@@ -1,4 +1,4 @@
-package com.unina.natour.views.observers;
+package com.unina.natour.config.observers;
 
 public interface Observer {
 

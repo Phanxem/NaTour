@@ -1,18 +1,14 @@
-package com.unina.natour.amplify;
+package com.unina.natour.config;
 
 import android.util.Log;
 
-import com.amazonaws.auth.AWSSessionCredentials;
 import com.unina.natour.controllers.utils.TimeUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Calendar;
-import java.util.Locale;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;

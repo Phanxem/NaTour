@@ -1,8 +1,10 @@
 package com.unina.natour.controllers;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
+import com.unina.natour.R;
 import com.unina.natour.dto.request.SaveItineraryRequestDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.AddressModel;
@@ -63,10 +65,13 @@ public class SalvaItinerarioController extends NaTourController{
     public SalvaItinerarioModel getModel(){ return salvaItinerarioModel; }
 
     public void setDifficulty(Integer difficulty){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         if(difficulty != null && (difficulty < CODE_DIFFICULTY_EASY || difficulty > CODE_DIFFICULTY_HARD)) {
-            //InvalidDifficultyException exception = new InvalidDifficultyException();
-            showErrorMessage(0);
-            return;
+            messageToShow = activity.getString(R.string.Message_InvalidDifficultyError);
+            showErrorMessage(messageToShow);
+            return ;
         }
 
         salvaItinerarioModel.setDifficulty(difficulty);
@@ -83,15 +88,16 @@ public class SalvaItinerarioController extends NaTourController{
 
 
     public boolean saveItinerary(String titolo, String descrizione) {
+        Activity activity = getActivity();
+        String messageToShow = null;
 
         if(salvaItinerarioModel.getDefaultDuration() < 0 ||
            salvaItinerarioModel.getDistance() < 0 ||
            salvaItinerarioModel.getWayPoints() == null ||
            salvaItinerarioModel.getWayPoints().isEmpty())
         {
-            getMessageController().setGoBackOnClose(true);
-            //FailureInitSaveItineraryException exception = new FailureInitSaveItineraryException();
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_InvalidItineraryError);
+            showErrorMessage(messageToShow);
             return false;
         }
 
@@ -135,12 +141,11 @@ public class SalvaItinerarioController extends NaTourController{
 
 
         ResultMessageDTO resultMessageDTO = itineraryDAO.addItinerary(itineraryDTO);
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
-
-
         return true;
     }
 

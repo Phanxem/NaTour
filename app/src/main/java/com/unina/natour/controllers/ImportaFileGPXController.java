@@ -1,6 +1,7 @@
 package com.unina.natour.controllers;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -11,6 +12,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
+import com.unina.natour.R;
 import com.unina.natour.controllers.utils.AddressMapper;
 import com.unina.natour.controllers.utils.FileUtils;
 import com.unina.natour.dto.response.GetAddressResponseDTO;
@@ -38,7 +40,6 @@ import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class ImportaFileGPXController extends NaTourController{
 
     public static final int REQUEST_CODE = 98;
@@ -79,19 +80,25 @@ public class ImportaFileGPXController extends NaTourController{
     }
 
     public void openParentDirectory(){
-        if(importaFileGPXModel.hasParentDirectory()){
-            openDirectory(importaFileGPXModel.getParentDirectory());
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        if(!importaFileGPXModel.hasParentDirectory()){
+            messageToShow = activity.getString(R.string.Message_DirectoryNotFoundError);
+            showErrorMessage(messageToShow);
             return;
         }
-        //TODO
-        showErrorMessage(0);
+        openDirectory(importaFileGPXModel.getParentDirectory());
         return;
     }
 
     public void openDirectory(File directory) {
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         if(directory == null || !directory.isDirectory()){
-            //TODO
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_DirectoryNotFoundError);
+            showErrorMessage(messageToShow);
             return;
         }
 
@@ -101,6 +108,9 @@ public class ImportaFileGPXController extends NaTourController{
     }
 
     public boolean readGPXFile(File gpxFile) {
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         GPX.Reader gpxReader = GPX.reader();
         GPX gpx = null;
 
@@ -108,13 +118,13 @@ public class ImportaFileGPXController extends NaTourController{
             gpx = gpxReader.read(gpxFile);
         }
         catch (IOException e) {
-            //TODO
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
         if(gpx == null){
-            //TODO
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_GPXNotNullError);
+            showErrorMessage(messageToShow);
             return false;
         }
 
@@ -159,8 +169,8 @@ public class ImportaFileGPXController extends NaTourController{
             geoPoints.add(destinationGeoPoint);
         }
         else {
-            //TODO
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
 
@@ -170,8 +180,9 @@ public class ImportaFileGPXController extends NaTourController{
             GetAddressResponseDTO addressDTO = addressDAO.getAddressByGeoPoint(geoPoint);
 
             ResultMessageDTO resultMessageDTO = addressDTO.getResultMessage();
-            if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-                showErrorMessage(resultMessageDTO);
+            if(!ResultMessageController.isSuccess(resultMessageDTO)){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessageAndBack(messageToShow);
                 return false;
             }
 

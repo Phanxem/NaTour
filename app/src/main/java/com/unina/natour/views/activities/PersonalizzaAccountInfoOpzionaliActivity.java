@@ -3,8 +3,6 @@ package com.unina.natour.views.activities;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,24 +12,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.*;
 import com.unina.natour.models.ImpostaInfoOpzionaliProfiloModel;
-import com.unina.natour.views.dialogs.MessageDialog;
 import com.unina.natour.views.dialogs.SelectCityDialog;
 import com.unina.natour.views.dialogs.SelectCountryDialog;
-import com.unina.natour.views.observers.Observer;
 
 import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.Calendar;
 import java.util.Locale;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressLint("LongLogTag")
 public class PersonalizzaAccountInfoOpzionaliActivity extends NaTourActivity
         implements SelectCountryDialog.OnCountryListener, SelectCityDialog.OnCityListener
@@ -59,6 +52,9 @@ public class PersonalizzaAccountInfoOpzionaliActivity extends NaTourActivity
         pressCountryField();
         pressCityField();
 
+        pressIconCancelDate();
+        pressIconCancelCountry();
+        pressIconCancelCity();
 
         pressButtonNext();
 

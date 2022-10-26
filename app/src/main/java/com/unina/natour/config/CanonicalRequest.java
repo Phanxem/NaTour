@@ -1,4 +1,4 @@
-package com.unina.natour.amplify;
+package com.unina.natour.config;
 
 import okhttp3.RequestBody;
 

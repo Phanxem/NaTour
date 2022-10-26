@@ -18,8 +18,8 @@ import com.unina.natour.controllers.ListaItinerariController;
 
 public class HomeGuestActivity extends NaTourActivity{
 
-    HomeController homeController;
-    ListaItinerariController listaItinerariController;
+    private HomeController homeController;
+    private ListaItinerariController listaItinerariController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

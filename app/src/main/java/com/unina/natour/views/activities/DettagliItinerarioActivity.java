@@ -35,17 +35,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@RequiresApi(api = Build.VERSION_CODES.N)
+
 public class DettagliItinerarioActivity extends NaTourActivity {
 
     private DettagliItinerarioController dettagliItinerarioController;
 
     private DettagliItinerarioModel dettagliItinerarioModel;
 
-    MapView mapView;
-    FolderOverlay wayPointMarkers;
-    ArrayList<Polyline> routeTracks;
-    Marker markerCurrentPosition;
+    private MapView mapView;
+    private FolderOverlay wayPointMarkers;
+    private ArrayList<Polyline> routeTracks;
+    private Marker markerCurrentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

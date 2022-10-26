@@ -15,7 +15,7 @@ import com.unina.natour.controllers.AttivaAccountController;
 import com.unina.natour.controllers.RegistrazioneController;
 import com.unina.natour.views.dialogs.MessageDialog;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
+
 public class RegistrazioneActivity extends NaTourActivity {
 
     private RegistrazioneController registrazioneController;

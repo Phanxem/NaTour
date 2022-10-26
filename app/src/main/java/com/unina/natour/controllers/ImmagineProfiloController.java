@@ -14,6 +14,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.app.ActivityCompat;
 
+import com.unina.natour.R;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.FileUtils;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
@@ -48,7 +50,6 @@ public class ImmagineProfiloController extends NaTourController{
 
     public ImmagineProfiloController(NaTourActivity activity){
         super(activity);
-
         this.impostaImmagineProfiloModel = new ImpostaImmagineProfiloModel();
 
         this.activityResultLauncherGallery = activity.registerForActivityResult(
@@ -56,23 +57,24 @@ public class ImmagineProfiloController extends NaTourController{
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        if (result == null || result.getResultCode() != Activity.RESULT_OK )
-                        {
-                            //FailureReadProfileImageException exception = new FailureReadProfileImageException();
-                            //TODO
-                            showErrorMessage(0);
-                            return;
+                        String messageToShow = null;
+
+                        if (result == null || result.getResultCode() != Activity.RESULT_OK ) {
+                            messageToShow = activity.getString(R.string.Message_UnknownError);
+                            showErrorMessage(messageToShow);
+                            return ;
                         }
                         if(result.getData() == null){
-                            return;
+                            messageToShow = activity.getString(R.string.Message_UnknownError);
+                            showErrorMessage(messageToShow);
+                            return ;
                         }
 
                         Uri uri = result.getData().getData();
                         if(uri == null){
-                            //FailureReadProfileImageException exception = new FailureReadProfileImageException();
-                            //TODO
-                            showErrorMessage(0);
-                            return;
+                            messageToShow = activity.getString(R.string.Message_UnknownError);
+                            showErrorMessage(messageToShow);
+                            return ;
                         }
 
                         Bitmap bitmap = null;
@@ -80,16 +82,16 @@ public class ImmagineProfiloController extends NaTourController{
                             bitmap = FileUtils.toBitmap(getActivity(),uri);
                         }
                         catch (IOException e) {
-                            //TODO
-                            showErrorMessage(0);
-                            return;
+                            messageToShow = activity.getString(R.string.Message_UnknownError);
+                            showErrorMessage(messageToShow);
+                            return ;
                         }
 
                         Bitmap resizedBitmap = resizeBitmap(bitmap,MIN_WIDTH);
                         if(!isValidImage(resizedBitmap)){
-                            //TODO
-                            showErrorMessage(0);
-                            return;
+                            messageToShow = activity.getString(R.string.Message_ImageInvalidError);
+                            showErrorMessage(messageToShow);
+                            return ;
                         }
 
                         impostaImmagineProfiloModel.setProfileImage(bitmap);
@@ -112,29 +114,30 @@ public class ImmagineProfiloController extends NaTourController{
         this.userDAO = new UserDAOImpl(activity);
 
         boolean result = initModel();
-        if(!result){
-            //TODO
-            showErrorMessage(0);
-            getActivity().finish();
-            return;
-        }
+        if(!result){ return; }
     }
 
     public boolean initModel(){
-        //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
-        String username = "user";
+        Activity activity = getActivity();
+        String messageToShow = null;
 
-        GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(username);
-        ResultMessageDTO resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        if(CurrentUserInfo.isGuest()){
+            return false;
+        }
+
+        long id = CurrentUserInfo.getId();
+
+        GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUserWithImageById(id);
+        if(!ResultMessageController.isSuccess(getUserWithImageResponseDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
 
         boolean result = dtoToModel(getUserWithImageResponseDTO, impostaImmagineProfiloModel);
         if(!result){
-            //TODO
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
         return true;
@@ -146,24 +149,27 @@ public class ImmagineProfiloController extends NaTourController{
 
 
     public Boolean modificaImmagineProfilo(){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        if(CurrentUserInfo.isGuest()){
+            return false;
+        }
+
         Bitmap profileImage = impostaImmagineProfiloModel.getProfileImage();
 
         if(profileImage == null){
-            ResultMessageDTO resultMessageDTO = userDAO.removeProfileImage();
-            if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-                //TODO
-                showErrorMessage(0);
-                return false;
-            }
-            return true;
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return false;
         }
 
         Bitmap resizedProfileImage = resizeBitmap(profileImage, MIN_WIDTH);
 
-        ResultMessageDTO resultMessageDTO = userDAO.updateProfileImage(resizedProfileImage);
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            //TODO
-            showErrorMessage(0);
+        ResultMessageDTO resultMessageDTO = userDAO.updateProfileImage(CurrentUserInfo.getId(), resizedProfileImage);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 

@@ -1,8 +1,6 @@
 package com.unina.natour.models.dao.implementation;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
@@ -19,7 +17,7 @@ import com.unina.natour.dto.response.GetReportResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.request.SaveItineraryRequestDTO;
 import com.unina.natour.dto.response.GetItineraryResponseDTO;
-import com.unina.natour.dto.response.composted.GetItineraryWithReportResponseDTO;
+import com.unina.natour.dto.response.composted.GetItineraryWithGpxAndReportResponseDTO;
 import com.unina.natour.dto.response.composted.GetItineraryWithUserResponseDTO;
 import com.unina.natour.dto.response.composted.GetListItineraryWithUserResponseDTO;
 import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
@@ -290,37 +288,45 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
     }
 
     @Override
-    public GetItineraryWithReportResponseDTO getItineraryWithReportById(long idItinerary) {
-        GetItineraryWithReportResponseDTO getItineraryWithReportResponseDTO = new GetItineraryWithReportResponseDTO();
+    public GetItineraryWithGpxAndReportResponseDTO getItineraryWithGpxAndReportById(long idItinerary) {
+        GetItineraryWithGpxAndReportResponseDTO getItineraryWithGpxAndReportResponseDTO = new GetItineraryWithGpxAndReportResponseDTO();
 
         GetItineraryResponseDTO getItineraryResponseDTO = getItineraryById(idItinerary);
         if(!ResultMessageController.isSuccess(getItineraryResponseDTO.getResultMessage())){
-            getItineraryWithReportResponseDTO.setResultMessage(getItineraryResponseDTO.getResultMessage());
-            return getItineraryWithReportResponseDTO;
+            getItineraryWithGpxAndReportResponseDTO.setResultMessage(getItineraryResponseDTO.getResultMessage());
+            return getItineraryWithGpxAndReportResponseDTO;
         }
 
         GetListReportResponseDTO getListReportResponseDTO = reportDAO.getReportByIdItinerary(idItinerary);
         if(!ResultMessageController.isSuccess(getItineraryResponseDTO.getResultMessage())){
-            getItineraryWithReportResponseDTO.setResultMessage(getListReportResponseDTO.getResultMessage());
-            return getItineraryWithReportResponseDTO;
+            getItineraryWithGpxAndReportResponseDTO.setResultMessage(getListReportResponseDTO.getResultMessage());
+            return getItineraryWithGpxAndReportResponseDTO;
         }
 
-        getItineraryWithReportResponseDTO.setId(getItineraryResponseDTO.getId());
-        getItineraryWithReportResponseDTO.setDescription(getItineraryResponseDTO.getDescription());
-        getItineraryWithReportResponseDTO.setDifficulty(getItineraryResponseDTO.getDifficulty());
-        getItineraryWithReportResponseDTO.setDuration(getItineraryResponseDTO.getDuration());
-        getItineraryWithReportResponseDTO.setLenght(getItineraryResponseDTO.getLenght());
-        getItineraryWithReportResponseDTO.setIdUser(getItineraryResponseDTO.getIdUser());
-        getItineraryWithReportResponseDTO.setName(getItineraryResponseDTO.getName());
+        GetGpxResponseDTO getGpxResponseDTO = getItineraryGpxById(idItinerary);
+        if(!ResultMessageController.isSuccess(getItineraryResponseDTO.getResultMessage())){
+            getItineraryWithGpxAndReportResponseDTO.setResultMessage(getGpxResponseDTO.getResultMessage());
+            return getItineraryWithGpxAndReportResponseDTO;
+        }
+
+        getItineraryWithGpxAndReportResponseDTO.setId(getItineraryResponseDTO.getId());
+        getItineraryWithGpxAndReportResponseDTO.setDescription(getItineraryResponseDTO.getDescription());
+        getItineraryWithGpxAndReportResponseDTO.setDifficulty(getItineraryResponseDTO.getDifficulty());
+        getItineraryWithGpxAndReportResponseDTO.setDuration(getItineraryResponseDTO.getDuration());
+        getItineraryWithGpxAndReportResponseDTO.setLenght(getItineraryResponseDTO.getLenght());
+        getItineraryWithGpxAndReportResponseDTO.setIdUser(getItineraryResponseDTO.getIdUser());
+        getItineraryWithGpxAndReportResponseDTO.setName(getItineraryResponseDTO.getName());
 
         List<GetReportResponseDTO> listReport = getListReportResponseDTO.getListReport();
 
-        if(listReport.isEmpty()) getItineraryWithReportResponseDTO.setReported(false);
-        else getItineraryWithReportResponseDTO.setReported(true);
+        if(listReport.isEmpty()) getItineraryWithGpxAndReportResponseDTO.setReported(false);
+        else getItineraryWithGpxAndReportResponseDTO.setReported(true);
 
-        getItineraryWithReportResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
+        getItineraryWithGpxAndReportResponseDTO.setGpx(getGpxResponseDTO.getGpx());
 
-        return getItineraryWithReportResponseDTO;
+        getItineraryWithGpxAndReportResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
+
+        return getItineraryWithGpxAndReportResponseDTO;
     }
 
 

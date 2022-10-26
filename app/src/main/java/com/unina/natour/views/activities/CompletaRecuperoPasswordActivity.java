@@ -14,7 +14,7 @@ import com.unina.natour.R;
 import com.unina.natour.controllers.AutenticazioneController;
 import com.unina.natour.controllers.RecuperoPasswordController;
 import com.unina.natour.views.dialogs.MessageDialog;
-@RequiresApi(api = Build.VERSION_CODES.N)
+
 public class CompletaRecuperoPasswordActivity extends NaTourActivity {
 
     private RecuperoPasswordController recuperoPasswordController;

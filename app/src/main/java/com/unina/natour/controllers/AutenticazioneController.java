@@ -1,5 +1,6 @@
 package com.unina.natour.controllers;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
@@ -26,9 +27,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.Task;
 import com.unina.natour.R;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.StringsUtils;
+import com.unina.natour.dto.request.SaveUserRequestDTO;
+import com.unina.natour.dto.response.GetUserResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
+import com.unina.natour.models.dao.implementation.UserDAOImpl;
+import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 
@@ -47,69 +53,128 @@ public class AutenticazioneController extends NaTourController{
 
     private CallbackManager callbackManager = CallbackManager.Factory.create();
     private AmplifyDAO amplifyDAO;
+    private UserDAO userDAO;
 
 
     public AutenticazioneController(NaTourActivity activity){
         super(activity);
         this.amplifyDAO = new AmplifyDAO();
+        this.userDAO = new UserDAOImpl(activity);
     }
 
-    public Boolean signIn(String usernameEmail, String password) {
-        if(!StringsUtils.areAllFieldsFull(usernameEmail,password)){
-            //TODO
-            showErrorMessage(0);
+    public Boolean signIn(String username, String password) {
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        if(!StringsUtils.areAllFieldsFull(username,password)){
+            messageToShow = activity.getString(R.string.Message_EmptyFieldError);
+            showErrorMessage(messageToShow);
             return false;
         }
 
-        ResultMessageDTO resultMessageDTO = amplifyDAO.signIn(usernameEmail,password);
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        ResultMessageDTO resultMessageDTO = amplifyDAO.signIn(username,password);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+
+            if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
+                messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
+                showErrorMessage(messageToShow);
+                return false;
+            }
+
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
+
+        String identityProvider = activity.getString(R.string.IdentityProvider_Cognito);
+        GetUserResponseDTO getUserResponseDTO = userDAO.getUserByIdP(identityProvider,username);
+        if(!ResultMessageController.isSuccess(getUserResponseDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return false;
+        }
+
+
+        CurrentUserInfo.set(getUserResponseDTO.getId(),identityProvider,username);
 
         return true;
     }
 
 
     public void initButtonFacebook(LoginButton loginButton){
+        Activity activity = getActivity();
+        final String[] messageToShow = {null};
+
         loginButton.setPermissions(Arrays.asList(EMAIL));
 
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 if(loginResult.getAccessToken() == null || loginResult.getAccessToken().isExpired()){
-                    //TODO
-                    //showError
+                    messageToShow[0] = activity.getString(R.string.Message_UnknownError);
+                    showErrorMessage(messageToShow[0]);
+                    return;
                 }
 
                 boolean result = federateWithFacebook(loginResult.getAccessToken());
                 if(!result){
-                    //TODO
-                    //showError
+                    messageToShow[0] = activity.getString(R.string.Message_UnknownError);
+                    showErrorMessage(messageToShow[0]);
+                    return;
                 }
                 Log.i(TAG, "----------------FB SUCCESS");
 
 
-                //TODO
-                /*
-                cerca nel db se esiste un utente Facebook con l'id dell'utente appena loggato
-                - se non esiste, crea un nuovo utente e inseriscilo
-                 */
+                String identityProvider = activity.getString(R.string.IdentityProvider_Facebook);
+                //TODO da testare
+                //String idProvided = loginResult.getAccessToken().getUserId();
+                String idProvided = Profile.getCurrentProfile().getId();
+                String username = Profile.getCurrentProfile().getName();
 
-                MainController.openMainActivity(getActivity());
+                GetUserResponseDTO getUserResponseDTO = userDAO.getUserByIdP(identityProvider, idProvided);
+                if(ResultMessageController.isSuccess(getUserResponseDTO.getResultMessage())){
+                    CurrentUserInfo.set(getUserResponseDTO.getId(),identityProvider,idProvided);
+                    MainController.openMainActivity(getActivity());
+                    return;
+                }
+
+                ResultMessageDTO resultMessageDTO = getUserResponseDTO.getResultMessage();
+                if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_NOT_FOUND){
+                    SaveUserRequestDTO saveUserRequestDTO = new SaveUserRequestDTO();
+                    saveUserRequestDTO.setUsername(username);
+                    saveUserRequestDTO.setIdentityProvider(identityProvider);
+                    saveUserRequestDTO.setIdIdentityProvided(idProvided);
+
+                    resultMessageDTO = userDAO.addUser(saveUserRequestDTO);
+                    if(!ResultMessageController.isSuccess(resultMessageDTO)){
+                        messageToShow[0] = activity.getString(R.string.Message_UnknownError);
+                        showErrorMessage(messageToShow[0]);
+                        return;
+                    }
+
+                    CurrentUserInfo.set(getUserResponseDTO.getId(),identityProvider,idProvided);
+                    MainController.openMainActivity(getActivity());
+                    return;
+                }
+                else{
+                    messageToShow[0] = activity.getString(R.string.Message_UnknownError);
+                    showErrorMessage(messageToShow[0]);
+                    return;
+                }
 
             }
 
             @Override
             public void onCancel() {
                 Log.i(TAG, "FB CANCEL");
-                //TODO do nothing
             }
 
             @Override
             public void onError(@NonNull FacebookException e) {
-                //TODO show error
                 Log.i(TAG, "FB ERROR");
+                messageToShow[0] = activity.getString(R.string.Message_UnknownError);
+                showErrorMessage(messageToShow[0]);
+                return;
             }
         });
     }
@@ -129,93 +194,25 @@ public class AutenticazioneController extends NaTourController{
 
                 IdentityManager.setDefaultIdentityManager(identityManager);
 
-                CognitoCachingCredentialsProvider cccp = IdentityManager.getDefaultIdentityManager().getUnderlyingProvider();
-
+                CognitoCachingCredentialsProvider cognitoCachingCredentialsProvider = IdentityManager.getDefaultIdentityManager().getUnderlyingProvider();
 
 
                 Map<String, String> logins = new HashMap<String, String>();
                 logins.put("graph.facebook.com", accessToken.getToken());
 
-                cccp.clear();
-                cccp.setLogins(logins);
-                cccp.refresh();
+                cognitoCachingCredentialsProvider.clear();
+                cognitoCachingCredentialsProvider.setLogins(logins);
+                cognitoCachingCredentialsProvider.refresh();
 
                 Log.i(TAG, "FederatedLogin Facebook");
-
-                //String username = Amplify.Auth.getCurrentUser();
-                //Log.i(TAG, "Username: " + username);
-
-                //String username = AccessToken.getCurrentAccessToken().getUserId();
-                //Log.i(TAG, "Username: " + username);
-                Log.i(TAG, "Token: " + cccp.getToken());
-
-                Log.i(TAG, "AccessKey: " + cccp.getCredentials().getAWSAccessKeyId());
-                Log.i(TAG, "SecretKey: " + cccp.getCredentials().getAWSSecretKey());
-                Log.i(TAG, "SessionToken: " + cccp.getCredentials().getSessionToken());
-
+                Log.i(TAG, "Token: " + cognitoCachingCredentialsProvider.getToken());
+                Log.i(TAG, "AccessKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSAccessKeyId());
+                Log.i(TAG, "SecretKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSSecretKey());
+                Log.i(TAG, "SessionToken: " + cognitoCachingCredentialsProvider.getCredentials().getSessionToken());
                 Log.i(TAG, "Facebook UserId: " + Profile.getCurrentProfile().getId());
-
-
-
-
-        //----------------------------------------------------------------------------------------
-
-/*
-                String url = "https://vwyxm7bcre.execute-api.eu-west-1.amazonaws.com/testing/test";
-
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("test", "genos")
-                        .addFormDataPart("side", "cutter")
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        //.post(requestBody)
-                        .build();
-
-                try {
-                    request = ServerDAO.signRequest(request, cccp.getCredentials());
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-
-                OkHttpClient client = new OkHttpClient();
-                Call call = client.newCall(request);
-
-
-
-                call.enqueue(new Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        Log.e("TESTING----------: ", "error ",  e);
-                    }
-
-                    @Override
-                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        Log.i("VAAAAAAAAAAAAAAAAAAAAAAAAA", "si, va");
-
-                        if(!response.isSuccessful()){
-                            Log.i("failure----------------", "failure");
-                        }
-
-
-
-                        Log.e("TESTING----------: ", response.body().string());
-                    }
-                });
-*/
-
-
-
-
-        //----------------------------------------------------------------------------------------
-
+                Log.i(TAG, "Facebook User Name: " + Profile.getCurrentProfile().getName());
             }
         });
-
-
-
         return true;
     }
 
@@ -273,74 +270,13 @@ public class AutenticazioneController extends NaTourController{
 
                 Log.i(TAG, "FederatedLogin Google");
 
-                //String username = Amplify.Auth.getCurrentUser();
-                //Log.i(TAG, "Username: " + username);
 
-                //String username = AccessToken.getCurrentAccessToken().getUserId();
-                //Log.i(TAG, "Username: " + username);
                 Log.i(TAG, "Token: " + cccp.getToken());
-
                 Log.i(TAG, "AccessKey: " + cccp.getCredentials().getAWSAccessKeyId());
                 Log.i(TAG, "SecretKey: " + cccp.getCredentials().getAWSSecretKey());
                 Log.i(TAG, "SessionToken: " + cccp.getCredentials().getSessionToken());
-
                 Log.i(TAG, "Google UserId: " + account.getId());
-
-
-
-                //----------------------------------------------------------------------------------------
-/*
-
-                String url = "https://vwyxm7bcre.execute-api.eu-west-1.amazonaws.com/testing/test";
-
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("test", "genos")
-                        .addFormDataPart("side", "cutter")
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        //.post(requestBody)
-                        .build();
-
-                try {
-                    request = ServerDAO.signRequest(request, cccp.getCredentials());
-                }
-                catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-
-
-                OkHttpClient client = new OkHttpClient();
-                Call call = client.newCall(request);
-
-
-                call.enqueue(new Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        Log.e("TESTING----------: ", "error ",  e);
-                    }
-
-                    @Override
-                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        Log.i("VAAAAAAAAAAAAAAAAAAAAAAAAA", "si, va");
-
-                        if(!response.isSuccessful()){
-                            Log.i("failure----------------", "failure");
-                        }
-
-
-
-                        Log.e("TESTING----------: ", response.body().string());
-                    }
-                });
-
-
-
-
-*/
-                //----------------------------------------------------------------------------------------
+                Log.i(TAG, "Google User Name: " + account.getDisplayName());
 
             }
         });
@@ -349,22 +285,55 @@ public class AutenticazioneController extends NaTourController{
     }
 
     public void callbackGoogle(Intent data){
+        Activity activity = getActivity();
+        String messageToShow = null;
 
         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
         GoogleSignInAccount googleSignInAccount = task.getResult();
         boolean result = federateWithGoogle(googleSignInAccount);
         if(!result){
-            //TODO
-            //showError
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return;
         }
 
-        /*
-            cerca nel db se esiste un utente Facebook con l'id dell'utente appena loggato
-            - se non esiste, crea un nuovo utente e inseriscilo
-        */
 
-        MainController.openMainActivity(getActivity());
+        String identityProvider = activity.getString(R.string.IdentityProvider_Google);
+        //TODO da testare
+        //String idProvided = loginResult.getAccessToken().getUserId();
+        String idProvided = googleSignInAccount.getId();
+        String username = googleSignInAccount.getDisplayName();
 
+        GetUserResponseDTO getUserResponseDTO = userDAO.getUserByIdP(identityProvider, idProvided);
+        if(ResultMessageController.isSuccess(getUserResponseDTO.getResultMessage())){
+            CurrentUserInfo.set(getUserResponseDTO.getId(),identityProvider,idProvided);
+            MainController.openMainActivity(getActivity());
+            return;
+        }
+
+        ResultMessageDTO resultMessageDTO = getUserResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_NOT_FOUND){
+            SaveUserRequestDTO saveUserRequestDTO = new SaveUserRequestDTO();
+            saveUserRequestDTO.setUsername(username);
+            saveUserRequestDTO.setIdentityProvider(identityProvider);
+            saveUserRequestDTO.setIdIdentityProvided(idProvided);
+
+            resultMessageDTO = userDAO.addUser(saveUserRequestDTO);
+            if(!ResultMessageController.isSuccess(resultMessageDTO)){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessage(messageToShow);
+                return;
+            }
+
+            CurrentUserInfo.set(getUserResponseDTO.getId(),identityProvider,idProvided);
+            MainController.openMainActivity(getActivity());
+            return;
+        }
+        else{
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return;
+        }
     }
 
 

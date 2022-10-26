@@ -2,7 +2,9 @@ package com.unina.natour.dto.response.composted;
 
 import com.unina.natour.dto.response.ResultMessageDTO;
 
-public class GetItineraryWithReportResponseDTO {
+import io.jenetics.jpx.GPX;
+
+public class GetItineraryWithGpxAndReportResponseDTO {
 
     private ResultMessageDTO resultMessage;
 
@@ -15,6 +17,7 @@ public class GetItineraryWithReportResponseDTO {
 
     private long idUser;
 
+    private GPX gpx;
     private boolean isReported;
 
     public ResultMessageDTO getResultMessage() {
@@ -87,5 +90,13 @@ public class GetItineraryWithReportResponseDTO {
 
     public void setReported(boolean reported) {
         isReported = reported;
+    }
+
+    public GPX getGpx() {
+        return gpx;
+    }
+
+    public void setGpx(GPX gpx) {
+        this.gpx = gpx;
     }
 }

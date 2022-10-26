@@ -25,8 +25,6 @@ public class MessagesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public MessagesListAdapter(NaTourActivity activity, ArrayList<ElementMessageModel> model){
         this.elementsMessageModel = model;
         this.activity = activity;
-
-        Log.i("--------...------", "size: "+ elementsMessageModel.size());
     }
 
 

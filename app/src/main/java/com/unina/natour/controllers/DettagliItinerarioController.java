@@ -1,6 +1,7 @@
 package com.unina.natour.controllers;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,10 +19,11 @@ import androidx.preference.PreferenceManager;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.utils.AddressUtils;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.GPSUtils;
 import com.unina.natour.controllers.utils.TimeUtils;
-import com.unina.natour.dto.response.GetItineraryResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.response.composted.GetItineraryWithGpxAndReportResponseDTO;
 import com.unina.natour.models.DettagliItinerarioModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
@@ -88,9 +90,6 @@ public class DettagliItinerarioController extends NaTourController{
         this.dettagliItinerarioModel = new DettagliItinerarioModel();
         boolean result = initModel();
         if(!result){
-            //TODO
-            showErrorMessage(0);
-            getActivity().finish();
             return;
         }
 
@@ -107,25 +106,37 @@ public class DettagliItinerarioController extends NaTourController{
     }
 
     public boolean initModel(){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         Intent intent = getActivity().getIntent();
         long itineraryId = intent.getLongExtra(EXTRA_ITINERARY_ID,-1);
-/*
+
         if(itineraryId < 0){
-            showErrorMessage(0);
-            getActivity().finish();
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
-*/
-        GetItineraryResponseDTO itineraryDTO = itineraryDAO.getItineraryById(itineraryId);
+
+
+        GetItineraryWithGpxAndReportResponseDTO itineraryDTO = itineraryDAO.getItineraryWithGpxAndReportById(itineraryId);
         ResultMessageDTO resultMessageDTO = itineraryDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_NOT_FOUND){
+                messageToShow = activity.getString(R.string.Message_ItineraryNotFoundError);
+                showErrorMessageAndBack(messageToShow);
+                return false;
+            }
+
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
         boolean result = dtoToModel(itineraryDTO,dettagliItinerarioModel);
         if(!result){
-            showErrorMessage(resultMessageDTO);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
@@ -143,7 +154,6 @@ public class DettagliItinerarioController extends NaTourController{
         mapController.setZoom(9.5);
         mapView.setMaxZoomLevel(17.0);
         mapView.setMinZoomLevel(5.0);
-
 
         CustomZoomButtonsController zoomController = mapView.getZoomController();
         zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER);
@@ -164,32 +174,31 @@ public class DettagliItinerarioController extends NaTourController{
 
 
     public boolean isMyItinerary() {
-        /*TODO
-        effettuare un controllo per verificare se l'utente ha effettuato l'accesso guest,
-        in questo caso il risultato della funzione sarà sempre false;
-        String username = Amplify.Auth.getCurrentUser().getUsername();
-        UserDTO userDTO = userDAO.getUser(username);
-        long idUserItinerary = dettagliItinerarioModel.getIdUser();
-        long myIdUser = userDTO.getIdUser();
+        if(CurrentUserInfo.isGuest()) return false;
 
-        if(idUserItinerary == myIdUser) return true
+        long id = CurrentUserInfo.getId();
+        long idUserItinerary = dettagliItinerarioModel.getIdUser();
+
+        if(id == idUserItinerary) return true;
+
         return false;
-        */
-        return true;
     }
 
 
     public void activeNavigation(){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         if(!GPSUtils.hasGPSFeature(getActivity())){
-            //TODO
-            showErrorMessage(0);
-            return;
+            messageToShow = activity.getString(R.string.Message_GPSFeatureNotFoundError);
+            showErrorMessage(messageToShow);
+            return ;
         }
 
         if(!GPSUtils.isGPSEnabled(getActivity())){
-            //TODO
-            showErrorMessage(0);
-            return;
+            messageToShow = activity.getString(R.string.Message_GPSDisableError);
+            showErrorMessage(messageToShow);
+            return ;
         }
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -249,11 +258,12 @@ public class DettagliItinerarioController extends NaTourController{
 
     //---
 
-    public static boolean dtoToModel(GetItineraryResponseDTO dto, DettagliItinerarioModel model){
+    public static boolean dtoToModel(GetItineraryWithGpxAndReportResponseDTO dto, DettagliItinerarioModel model){
         model.clear();
 
         model.setItineraryId(dto.getId());
         model.setDescription(dto.getDescription());
+
         int difficulty = dto.getDifficulty();
         if(difficulty == 0) model.setDifficulty("Facile");
         else if(difficulty == 1) model.setDifficulty("Intermedio");
@@ -290,7 +300,7 @@ public class DettagliItinerarioController extends NaTourController{
         }
         model.setRoutePoints(routePoints);
 
-        model.setHasBeenReported(dto.getHasBeenReported());
+        model.setHasBeenReported(dto.isReported());
 
         return true;
     }

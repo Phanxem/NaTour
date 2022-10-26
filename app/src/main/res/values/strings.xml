@@ -58,15 +58,22 @@
     <string name="DettagliItinerarioDialog_textView_lontanoDalPercorso">Attenzione, sei abbastanza lontando dal percorso.</string>
 
 
+    <!-- IdentityProvider-->
+    <string name="IdentityProvider_Cognito">Cognito</string>
+    <string name="IdentityProvider_Facebook">Facebook</string>
+    <string name="IdentityProvider_Google">Google</string>
+
+
     <!-- TODO: Exception Messages -->
 
-    <!-- AMPLIFY ERROR MESSAGES -->
+    <!-- AMPLIFY ERROR MESSAGES - - - - - - - - - - - - - - - - -->
     <!-- SignUp Exceptions -->
     <string name="AmplifyException_UserAlreadyExists">User already exists</string>
     <string name="AmplifyException_EmailAlreadyExists">PreSignUp failed with error EmailExistsException</string>
     <string name="AmplifyException_PasswordNotConformPolicy">Password did not conform with policy</string>
     <string name="AmplifyException_InvalidVerificationCode">Invalid verification code provided</string>
     <string name="AmplifyException_InvalidEmailFormat">Invalid email address format</string>
+
 
     <!-- SignIn Exceptions -->
     <string name="AmplifyException_UserNotExist">User does not exist</string>
@@ -77,28 +84,56 @@
     <string name="AmplifyException_AccountNotFound">Username/client id combination not found</string>
     <string name="AmplifyException_ErrorPasswordRecovery_UserNotConfirmed">Cannot reset password for the user as there is no registered/verified email or phone_number</string>
 
-
-    <!-- Generic Exceptions -->
-    <string name="UnknownException">È stato riscontrato un problema</string>
-    <string name="EmptyFieldException">Uno o più campi non sono stati compilati</string>
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
 
-    <!-- SignUp Exceptions -->
-    <string name="UserAlreadyExists">L\'username inserito è già utilizzato.</string>
-    <string name="EmailAlreadyExists">L\'email inserita è già utilizzata.</string>
-    <string name="PasswordNotConformPolicy">La password inserita è troppo corta. Una password deve essere lunga almeno 8 caratteri.</string>
-    <string name="InvalidVerificationCode">Il codice inserito non è valido</string>
-    <string name="InvalidEmailFormat">L\'e-mail inserita non è valida</string>
+    <!-- Generic ErrorMessage -->
+    <string name="Message_UnknownError">È stato riscontrato un problema</string>
+    <string name="Message_EmptyFieldError">Uno o più campi non sono stati compilati</string>
 
-    <!-- SignIn Exceptions -->
-    <string name="UserNotExist">Username o Email errata</string>
-    <string name="IncorrectUserPassword">Password errata"</string>
-    <string name="UserNotConfirmed">Account non attivo</string>
 
-    <!-- Password Recovery Exceptions -->
-    <string name="AccountNotFound">L\'username o l\'email inserita non corrisponde a nessun account</string>
-    <string name="ErrorPasswordRecovery_UserNotConfirmed">L\'account dell\'utente non risulta attivato, non è quindi possibile effettuare il recupero della password</string>
-    <string name="UnmatchPasswords">Le password inserite non corrispondono</string>
+    <!-- SignUp ErrorMessage -->
+    <string name="Message_UserAlreadyExistsError">L\'username inserito è già utilizzato.</string>
+    <string name="Message_EmailAlreadyExistsError">L\'email inserita è già utilizzata.</string>
+    <string name="Message_PasswordNotConformPolicyError">La password inserita è troppo corta. Una password deve essere lunga almeno 8 caratteri.</string>
+    <string name="Message_InvalidVerificationCodeError">Il codice inserito non è valido</string>
+    <string name="Message_InvalidEmailFormatError">L\'e-mail inserita non è valida</string>
+
+    <!-- SignIn ErrorMessage -->
+    <string name="Message_UserNotExistError">Username o Email errata</string>
+    <string name="Message_IncorrectUserPasswordError">Password errata"</string>
+    <string name="Message_UserNotConfirmedError">Account non attivo</string>
+
+    <!-- Password ErrorMessage  -->
+    <string name="Message_AccountNotFoundError">L\'username o l\'email inserita non corrisponde a nessun account</string>
+    <string name="Message_ErrorPasswordRecoveryUserNotConfirmedError">L\'account dell\'utente non risulta attivato, non è quindi possibile effettuare il recupero della password</string>
+    <string name="Message_UnmatchPasswordsError">Le password inserite non corrispondono</string>
+
+    <!-- Itinerary ErrorMessage  -->
+    <string name="Message_ItineraryNotFoundError">L\'itinerario selezionato non è disponibile</string>
+    <string name="Message_InvalidDifficultyError">La difficoltà selezionata non è valida</string>
+    <string name="Message_InvalidItineraryError">L\'itinerario contiene valori non validi</string>
+
+    <!-- GPS ErrorMessage -->
+    <string name="Message_GPSFeatureNotFoundError">Il dispositivo non disponde della funzione GPS</string>
+    <string name="Message_GPSDisableError">Attivare la funzione GPS</string>
+    <string name="Message_GPSLocationNotFoundError">Impossibile trovare la posizione</string>
+
+
+    <!-- Report ErrorMessage  -->
+    <string name="Message_ReportNotFoundError">La segnalazione non è disponibile</string>
+
+    <!-- Image ErrorMessage -->
+    <string name="Message_ImageInvalidError">L\'immagine selezionata non è valida</string>
+
+    <!-- Directories ErrorMessage -->
+    <string name="Message_DirectoryNotFoundError">La cartella selezionata non è valida</string>
+
+    <!-- GPX ErrorMessage -->
+    <string name="Message_GPXNotNullError">Il file GPX selezionato non è valido</string>
+
+    <!-- Server ErrorMessage -->
+    <string name="Message_ServerError">Server Irraggiungibile</string>
 
 
 </resources>

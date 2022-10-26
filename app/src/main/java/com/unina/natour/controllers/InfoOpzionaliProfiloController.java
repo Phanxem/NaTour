@@ -1,15 +1,15 @@
 package com.unina.natour.controllers;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 
-import androidx.annotation.RequiresApi;
-
+import com.unina.natour.R;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.TimeUtils;
+import com.unina.natour.dto.response.GetUserResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.request.SaveUserOptionalInfoRequestDTO;
-import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 import com.unina.natour.models.ImpostaInfoOpzionaliProfiloModel;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
@@ -19,7 +19,6 @@ import com.unina.natour.views.activities.PersonalizzaAccountInfoOpzionaliActivit
 import java.text.ParseException;
 import java.util.Calendar;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressLint("LongLogTag")
 public class InfoOpzionaliProfiloController extends NaTourController {
 
@@ -47,31 +46,28 @@ public class InfoOpzionaliProfiloController extends NaTourController {
         this.userDAO = new UserDAOImpl(activity);
 
         boolean result = initModel();
-        if(!result){
-            //TODO
-            showErrorMessage(0);
-            getActivity().finish();
-            return;
-        }
+        if(!result){ return;}
     }
 
     public boolean initModel(){
-        //TODO this.username = Amplify.Auth.getCurrentUser().getUsername();
-        String username = "user";
+        Activity activity = getActivity();
+        String messageToShow = null;
 
-        GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUser(username);
-        ResultMessageDTO resultMessageDTO = getUserWithImageResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        long id = CurrentUserInfo.getId();
+
+        GetUserResponseDTO getUserResponseDTO = userDAO.getUserById(id);
+        if(!ResultMessageController.isSuccess(getUserResponseDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
 
-        boolean result = dtoToModel(getUserWithImageResponseDTO,impostaInfoOpzionaliProfiloModel);
+        boolean result = dtoToModel(getUserResponseDTO,impostaInfoOpzionaliProfiloModel);
 
         if(!result){
-            //todo
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
@@ -107,18 +103,24 @@ public class InfoOpzionaliProfiloController extends NaTourController {
 
 
     public Boolean modificaInfoOpzionali(String address){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        if(CurrentUserInfo.isGuest()){ return false; }
+
         SaveUserOptionalInfoRequestDTO saveUserOptionalInfoRequestDTO = new SaveUserOptionalInfoRequestDTO();
 
         boolean result = modelToDto(impostaInfoOpzionaliProfiloModel, saveUserOptionalInfoRequestDTO);
         if(!result){
-            //TODO
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
-        ResultMessageDTO resultMessageDTO = userDAO.updateOptionalInfo(saveUserOptionalInfoRequestDTO);
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        ResultMessageDTO resultMessageDTO = userDAO.updateOptionalInfo(CurrentUserInfo.getId(),saveUserOptionalInfoRequestDTO);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
@@ -160,7 +162,7 @@ public class InfoOpzionaliProfiloController extends NaTourController {
     }
 
 
-    public static boolean dtoToModel(GetUserWithImageResponseDTO dto, ImpostaInfoOpzionaliProfiloModel model){
+    public static boolean dtoToModel(GetUserResponseDTO dto, ImpostaInfoOpzionaliProfiloModel model){
         model.clear();
 
         String stringDateOfBirth = dto.getDateOfBirth();

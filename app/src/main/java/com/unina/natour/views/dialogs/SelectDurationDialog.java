@@ -21,7 +21,7 @@ import com.unina.natour.controllers.SelezionaNazioneController;
 
 public class SelectDurationDialog extends NaTourDialog {
 
-    SelezionaDurataController selezionaDurataController;
+    private SelezionaDurataController selezionaDurataController;
 
     public SelectDurationDialog(){ }
 

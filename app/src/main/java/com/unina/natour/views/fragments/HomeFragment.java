@@ -21,42 +21,20 @@ import com.unina.natour.R;
 import com.unina.natour.controllers.HomeController;
 import com.unina.natour.controllers.ListaItinerariController;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
+
 public class HomeFragment extends NaTourFragment {
     private View view;
     private HomeController homeController;
     private ListaItinerariController listaItinerariController;
-/*
-    public static HomeFragment newInstance(Parcelable controller){
-        HomeFragment homeFragment = new HomeFragment();
 
-        Bundle args = new Bundle();
-        args.putParcelable(MainController.KEY_CONTROLLER, controller);
-        homeFragment.setArguments(args);
-
-        return homeFragment;
-    }
-*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.fragment_home, container, false);
         setFragmentView(view);
-/*
-        Bundle args = getArguments();
-        if(args != null){
-            this.homeController = (HomeController) args.getParcelable(MainController.KEY_CONTROLLER);
-        }
-        else{
 
-        }
- */
         this.homeController = new HomeController(getNaTourActivity());
         this.listaItinerariController = homeController.getListaItinerariController();
-
-
-        //ListView listView_itineraries = view.findViewById(R.id.HomeF_listView_itineraries);
-        //listaItinerariController.initItineraryList(listView_itineraries);
 
         RecyclerView recyclerView_itineraries = view.findViewById(R.id.HomeF_recycleView_itinerari);
         NestedScrollView nestedScrollView_itineraries = view.findViewById(R.id.HomeF_nestedScrollView_itinerari);

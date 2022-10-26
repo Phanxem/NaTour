@@ -1,12 +1,9 @@
 package com.unina.natour.views.fragments;
 
 import android.graphics.Paint;
-import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
 
 import android.os.Parcelable;
 import android.util.Log;
@@ -31,8 +28,6 @@ import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.RouteLegModel;
 import com.unina.natour.models.PianificaItinerarioModel;
 import com.unina.natour.views.activities.NaTourActivity;
-import com.unina.natour.views.dialogs.MessageDialog;
-import com.unina.natour.views.observers.Observer;
 
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
@@ -44,18 +39,18 @@ import org.osmdroid.views.overlay.Polyline;
 
 import java.util.ArrayList;
 import java.util.List;
-@RequiresApi(api = Build.VERSION_CODES.N)
+
 public class PianificaItinerarioFragment extends NaTourFragment {
 
-    MapView mapView;
-    Marker selectionMarker;
-    FolderOverlay wayPointMarkers;
-    ArrayList<Polyline> routeTracks;
+    private MapView mapView;
+    private Marker selectionMarker;
+    private FolderOverlay wayPointMarkers;
+    private ArrayList<Polyline> routeTracks;
 
-    PianificaItinerarioController pianificaItinerarioController;
+    private PianificaItinerarioController pianificaItinerarioController;
 
 
-    PianificaItinerarioModel pianificaItinerarioModel;
+    private PianificaItinerarioModel pianificaItinerarioModel;
 
     public static PianificaItinerarioFragment newInstance(Parcelable controller){
         PianificaItinerarioFragment pianificaFragment = new PianificaItinerarioFragment();

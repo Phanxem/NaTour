@@ -32,7 +32,6 @@ public class ConnessioneServerFallitaActivity extends NaTourActivity {
         imageView_iconRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 splashScreenController.redirectToRightActivity();
             }
         });

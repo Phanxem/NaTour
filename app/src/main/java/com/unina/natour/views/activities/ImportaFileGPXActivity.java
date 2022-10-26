@@ -1,11 +1,6 @@
 package com.unina.natour.views.activities;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,18 +11,13 @@ import android.widget.TextView;
 import com.unina.natour.R;
 import com.unina.natour.controllers.ImportaFileGPXController;
 import com.unina.natour.models.ImportaFileGPXModel;
-import com.unina.natour.views.dialogs.MessageDialog;
-import com.unina.natour.views.observers.Observer;
 
-import java.io.File;
-import java.util.List;
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class ImportaFileGPXActivity extends NaTourActivity {
 
 
-    ImportaFileGPXController importaFileGPXController;
+    private ImportaFileGPXController importaFileGPXController;
 
-    ImportaFileGPXModel importaFileGPXModel;
+    private ImportaFileGPXModel importaFileGPXModel;
 
 
     @Override

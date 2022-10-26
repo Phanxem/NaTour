@@ -15,7 +15,7 @@ import com.unina.natour.R;
 import com.unina.natour.controllers.DisconnessioneController;
 import com.unina.natour.controllers.SplashScreenController;
 import com.unina.natour.views.dialogs.MessageDialog;
-@RequiresApi(api = Build.VERSION_CODES.N)
+
 public class SplashScreenActivity extends NaTourActivity{
 
     private SplashScreenController splashScreenController;

@@ -1,9 +1,7 @@
 package com.unina.natour.controllers;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
+import android.app.Activity;
 
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.facebook.AccessToken;
@@ -12,14 +10,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.unina.natour.amplify.ApplicationController;
+import com.unina.natour.R;
+import com.unina.natour.config.ApplicationController;
 import com.unina.natour.dto.response.GetCognitoAuthSessionResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
-import com.unina.natour.models.socketHandler.ChatWebSocketHandler;
+import com.unina.natour.controllers.socketHandler.ChatWebSocketHandler;
 import com.unina.natour.views.activities.NaTourActivity;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 @SuppressLint("LongLogTag")
 public class DisconnessioneController extends NaTourController{
     private AutenticazioneController autenticazioneController;
@@ -36,16 +34,23 @@ public class DisconnessioneController extends NaTourController{
 
 
     public Boolean signOut(){
+        Activity activity = getActivity();
+        String messageToShow = null;
 
         //loggato con cognito
         GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = amplifyDAO.fetchAuthSessione();
         ResultMessageDTO resultMessageDTO = getCognitoAuthSessionResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
-            //todo handle error
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
+                messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
+                showErrorMessage(messageToShow);
+                return false;
+            }
+
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
-
 
         AWSCognitoAuthSession authSession = getCognitoAuthSessionResponseDTO.getAuthSessione();
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
@@ -55,8 +60,15 @@ public class DisconnessioneController extends NaTourController{
         if(authSession.isSignedIn()){
             resultMessageDTO = amplifyDAO.signOut();
 
-            if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-                showErrorMessage(resultMessageDTO);
+            if(!ResultMessageController.isSuccess(resultMessageDTO)){
+                if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
+                    messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
+                    showErrorMessage(messageToShow);
+                    return false;
+                }
+
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessage(messageToShow);
                 return false;
             }
         }
@@ -74,16 +86,15 @@ public class DisconnessioneController extends NaTourController{
             googleSignInClient.signOut();
         }
         else{
-            //TODO exception
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
 
-
-
         ApplicationController applicationController = (ApplicationController) getActivity().getApplicationContext();
         ChatWebSocketHandler chatWebSocketHandler = applicationController.getChatWebSocketHandler();
-
         chatWebSocketHandler.closeWebSocket();
+
         return true;
     }
 }

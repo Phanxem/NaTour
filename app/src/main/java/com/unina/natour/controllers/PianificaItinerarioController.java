@@ -2,6 +2,7 @@ package com.unina.natour.controllers;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,9 +25,11 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
+import com.unina.natour.R;
 import com.unina.natour.controllers.utils.AddressMapper;
 import com.unina.natour.controllers.utils.GPSUtils;
 import com.unina.natour.dto.response.GetAddressResponseDTO;
+import com.unina.natour.dto.response.GetRouteLegResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.response.GetRouteResponseDTO;
 import com.unina.natour.models.AddressModel;
@@ -52,7 +55,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressLint("LongLogTag")
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class PianificaItinerarioController extends NaTourController implements Parcelable{
 
     public final static Integer STARTING_POINT_CODE = -2;
@@ -129,13 +131,15 @@ public class PianificaItinerarioController extends NaTourController implements P
 
 
                                 getRouteResponseDTO = routeDAO.getRouteByGeoPoints(geoPoints);
-                                ResultMessageDTO resultMessageDTO = getRouteResponseDTO.getResultMessage();
-                                if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-                                    showErrorMessage(resultMessageDTO);
+                                if(!ResultMessageController.isSuccess(getRouteResponseDTO.getResultMessage())){
+                                    String messageToShow = activity.getString(R.string.Message_UnknownError);
+                                    showErrorMessageAndBack(messageToShow);
                                     return;
                                 }
 
-                                pianificaItinerarioModel.updateRoutes(getRouteResponseDTO.getTracks());
+                                List<RouteLegModel> tracks = dtoToModel(getRouteResponseDTO.getTracks());
+
+                                pianificaItinerarioModel.updateRoutes(tracks);
                                 puntiIntermediListAdapter.notifyDataSetChanged();
 
                             }
@@ -149,7 +153,7 @@ public class PianificaItinerarioController extends NaTourController implements P
                 new ActivityResultCallback<Boolean>() {
                     @Override
                     public void onActivityResult(Boolean result) {
-                        //if (result) openImportaFileGPXActivity();
+                        goToImportGPX();
                     }
                 }
         );
@@ -165,6 +169,8 @@ public class PianificaItinerarioController extends NaTourController implements P
         this.routeDAO = new RouteDAOImpl();
         this.addressDAO = new AddressDAOImpl();
     }
+
+
 
     public PianificaItinerarioModel getModel() {
         return pianificaItinerarioModel;
@@ -312,12 +318,15 @@ public class PianificaItinerarioController extends NaTourController implements P
     }
 
     public void setSelectedPointOnMapAsStartingPoint() {
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         AddressModel address = pianificaItinerarioModel.getPointSelectedOnMap();
 
         if(address == null){
-            //NoPointSelectedException exception = new NoPointSelectedException();
-            showErrorMessage(0);
-            return ;
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return;
         }
 
         pianificaItinerarioModel.setStartingPoint(address);
@@ -327,13 +336,15 @@ public class PianificaItinerarioController extends NaTourController implements P
     }
 
     public void setSelectedPointOnMapAsDestinationPoint() {
+        Activity activity = getActivity();
+        String messageToShow = null;
 
         AddressModel address = pianificaItinerarioModel.getPointSelectedOnMap();
 
         if(address == null){
-            //NoPointSelectedException exception = new NoPointSelectedException();
-            showErrorMessage(0);
-            return ;
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return;
         }
 
         pianificaItinerarioModel.setDestinationPoint(address);
@@ -344,13 +355,16 @@ public class PianificaItinerarioController extends NaTourController implements P
     }
 
     public void setSelectedPointOnMapAsIntermediatePoint() {
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         AddressModel address = pianificaItinerarioModel.getPointSelectedOnMap();
         Integer index = pianificaItinerarioModel.getIndexPointSelected();
 
         if(address == null){
-            //NoPointSelectedException exception = new NoPointSelectedException();
-            showErrorMessage(0);
-            return ;
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return;
         }
 
         //NUOVO PUNTO INTERMEDIO
@@ -363,23 +377,24 @@ public class PianificaItinerarioController extends NaTourController implements P
         else{
             pianificaItinerarioModel.setIntermediatePoint(index,address);
             updateRouteWithSetPoint(index);
-
         }
 
         puntiIntermediListAdapter.notifyDataSetChanged();
         pianificaItinerarioModel.removeIndexPointSelected();
         pianificaItinerarioModel.removePointSelectedOnMap();
-
     }
 
 
 
     public void updateInterestPointByIndexSelected(AddressModel address){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         Integer indexPointSelected = pianificaItinerarioModel.getIndexPointSelected();
         if(indexPointSelected == null){
-            //NoIndexSelectedException exception = new NoIndexSelectedException();
-            showErrorMessage(0);
-            return ;
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return;
         }
 
         if(indexPointSelected.equals(STARTING_POINT_CODE)){
@@ -402,15 +417,17 @@ public class PianificaItinerarioController extends NaTourController implements P
             updateRouteWithAddPoint();
             return;
         }
-
     }
 
 
     private void updateRouteWithRemovePoint(int index) {
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         if(!getModel().isValidIndexPoint(index)){
-            //InvalidIndexPointException exception = new InvalidIndexPointException();
-            showErrorMessage(0);
-            return ;
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return;
         }
 
         if(index == STARTING_POINT_CODE){
@@ -440,14 +457,15 @@ public class PianificaItinerarioController extends NaTourController implements P
 
 
         GetRouteResponseDTO getRouteResponseDTO = routeDAO.getRouteByGeoPoints(geoPoints);
-        ResultMessageDTO resultMessageDTO = getRouteResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        if(!ResultMessageController.isSuccess(getRouteResponseDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return;
         }
 
 
-        RouteLegModel routeLeg = getRouteResponseDTO.getTracks().get(0);
+        List<GetRouteLegResponseDTO> listRouteLeg = getRouteResponseDTO.getTracks();
+        RouteLegModel routeLeg = dtoToModel(listRouteLeg.get(0));
         List<RouteLegModel> route = pianificaItinerarioModel.getRouteLegs();
 
         route.remove(index+1);
@@ -455,10 +473,12 @@ public class PianificaItinerarioController extends NaTourController implements P
     }
 
     private void updateRouteWithSetPoint(int index) {
+        Activity activity = getActivity();
+        String messageToShow = null;
 
         if(!getModel().isValidIndexPoint(index)){
-            //TODO InvalidIndexPointException exception = new InvalidIndexPointException();
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return;
         }
 
@@ -507,16 +527,18 @@ public class PianificaItinerarioController extends NaTourController implements P
         geoPoints.add(destinationAddressRoute.getPoint());
 
         GetRouteResponseDTO getRouteResponseDTO = routeDAO.getRouteByGeoPoints(geoPoints);
-        ResultMessageDTO resultMessageDTO = getRouteResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        if(!ResultMessageController.isSuccess(getRouteResponseDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return;
         }
 
+        List<GetRouteLegResponseDTO> list1RouteLegDTO = getRouteResponseDTO.getTracks();
+        List<GetRouteLegResponseDTO> list2RouteLegDTO = getRouteResponseDTO.getTracks();
 
-        RouteLegModel routeLeg0 = getRouteResponseDTO.getTracks().get(0);
+        RouteLegModel routeLeg0 = dtoToModel(list1RouteLegDTO.get(0));
         RouteLegModel routeLeg1 = null;
-        if(intermediateAddressRoute != null) routeLeg1 = getRouteResponseDTO.getTracks().get(1);
+        if(intermediateAddressRoute != null) routeLeg1 = dtoToModel(list1RouteLegDTO.get(1));
 
         List<RouteLegModel> route = pianificaItinerarioModel.getRouteLegs();
 
@@ -549,8 +571,11 @@ public class PianificaItinerarioController extends NaTourController implements P
         geoPoints.add(destinationAddressRoute.getPoint());
         GetRouteResponseDTO getRouteResponseDTO = routeDAO.getRouteByGeoPoints(geoPoints);
 
-        RouteLegModel routeLeg0 = getRouteResponseDTO.getTracks().get(0);
-        RouteLegModel routeLeg1 = getRouteResponseDTO.getTracks().get(1);
+        List<GetRouteLegResponseDTO> listRouteLeg = getRouteResponseDTO.getTracks();
+
+
+        RouteLegModel routeLeg0 = dtoToModel(listRouteLeg.get(0));
+        RouteLegModel routeLeg1 = dtoToModel(listRouteLeg.get(1));
 
         List<RouteLegModel> route = pianificaItinerarioModel.getRouteLegs();
 
@@ -561,12 +586,15 @@ public class PianificaItinerarioController extends NaTourController implements P
 
 
     private void setPointSelectedOnMap(GeoPoint geoPoint) {
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         if(geoPoint == null) return;
 
         GetAddressResponseDTO addressDTO = addressDAO.getAddressByGeoPoint(geoPoint);
-        ResultMessageDTO resultMessageDTO = addressDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
+        if(!ResultMessageController.isSuccess(addressDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return;
         }
 
@@ -583,7 +611,29 @@ public class PianificaItinerarioController extends NaTourController implements P
     }
 
 
+    private RouteLegModel dtoToModel(GetRouteLegResponseDTO dto){
+        RouteLegModel routeLegModel = new RouteLegModel();
 
+        routeLegModel.setStartingPoint(dto.getStartingPoint());
+        routeLegModel.setDestinationPoint(dto.getDestinationPoint());
+        routeLegModel.setDistance(dto.getDistance());
+        routeLegModel.setDuration(dto.getDuration());
+        routeLegModel.setTrack(dto.getTrack());
+
+        return routeLegModel;
+    }
+
+    private List<RouteLegModel> dtoToModel(List<GetRouteLegResponseDTO> tracks) {
+
+        List<RouteLegModel> listRouteLeg = new ArrayList<RouteLegModel>();
+        for(GetRouteLegResponseDTO routeLegDTO : tracks){
+            RouteLegModel routeLegModel = dtoToModel(routeLegDTO);
+
+            listRouteLeg.add(routeLegModel);
+        }
+
+        return listRouteLeg;
+    }
 
 
 

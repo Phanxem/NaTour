@@ -1,10 +1,5 @@
 package com.unina.natour.models;
 
-import android.os.Environment;
-
-import com.unina.natour.views.observers.Observable;
-import com.unina.natour.views.observers.Observer;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

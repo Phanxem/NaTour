@@ -28,16 +28,4 @@ public class HomeController extends NaTourController{
         this.listaItinerariController = listaItinerariController;
     }
 
-
-/*
-    public void openAwsConfigurationFile(){
-        Resources resources = getActivity().getResources();
-
-        InputStream inputStream = resources.openRawResource(R.raw.awsconfiguration);
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-        JsonElement jsonElement = JsonParser.parseReader(inputStreamReader);
-        JsonObject jsonObject = jsonElement.getAsJsonObject();
-    }
-    */
-
 }

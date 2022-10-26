@@ -11,20 +11,19 @@ import android.widget.TextView;
 
 import com.unina.natour.R;
 //TODO da aggiustare (capire perché da errore se si importa solo la classe interessata)
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.*;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.models.ProfiloModel;
 
-@RequiresApi(api = Build.VERSION_CODES.P)
+
 public class ModificaProfiloActivity extends NaTourActivity {
 
-    public ModificaProfiloController modificaProfiloController;
-    public ProfiloController profiloController;
+    private ModificaProfiloController modificaProfiloController;
+    private ProfiloController profiloController;
 
-    public ProfiloModel profiloModel;
+    private ProfiloModel profiloModel;
 
-
-    // username
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +37,7 @@ public class ModificaProfiloActivity extends NaTourActivity {
         addModel(profiloModel);
         profiloModel.registerObserver(this);
 
-        profiloController.initModel();
+        profiloController.initModel(CurrentUserInfo.getId());
 
         pressIconBack();
         pressTextUpdateImage();
@@ -94,26 +93,6 @@ public class ModificaProfiloActivity extends NaTourActivity {
         });
     }
 
-    public void pressButtonLinkFacebookAccount(){
-        Button button_facebook = findViewById(R.id.ModificaProfilo_button_facebook);
-        button_facebook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                modificaProfiloController.linkFacebookAccount();
-            }
-        });
-    }
-
-    public void pressButtonLinkGoogleAccount(){
-        Button button_google = findViewById(R.id.ModificaProfilo_button_google);
-        button_google.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                modificaProfiloController.linkGoogleAccount();
-            }
-        });
-    }
-
     public void update(){
 
         if(profiloModel.getProfileImage() != null) {
@@ -133,22 +112,11 @@ public class ModificaProfiloActivity extends NaTourActivity {
 
         TextView textView_email = findViewById(R.id.ModificaProfilo_textView_email);
         textView_email.setText(profiloModel.getEmail());
-
-        //TODO definire una funzione nel controller che verifica se l'utente si è registrato via
-        //facebook o google, in questi casi entrambi i tasti vengono disabilitati
-
-        Button button_linkFacebook = findViewById(R.id.ModificaProfilo_button_facebook);
-        if(profiloModel.isFacebookLinked()) button_linkFacebook.setEnabled(false);
-        else button_linkFacebook.setEnabled(true);
-
-        Button button_linkGoogle = findViewById(R.id.ModificaProfilo_button_google);
-        if(profiloModel.isGoogleLinked()) button_linkGoogle.setEnabled(false);
-        else button_linkGoogle.setEnabled(true);
     }
 
     @Override
     protected void onResume() {
-        profiloController.initModel();
+        profiloController.initModel(CurrentUserInfo.getId());
         super.onResume();
     }
 

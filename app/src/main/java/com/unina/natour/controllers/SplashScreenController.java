@@ -11,18 +11,25 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import com.amplifyframework.auth.AuthUser;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
+import com.amplifyframework.core.Amplify;
 import com.facebook.AccessToken;
+import com.facebook.Profile;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.Continuation;
 import com.unina.natour.R;
-import com.unina.natour.amplify.ApplicationController;
+import com.unina.natour.config.ApplicationController;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.dto.response.GetCognitoAuthSessionResponseDTO;
+import com.unina.natour.dto.response.GetUserResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.models.dao.implementation.ServerDAO;
+import com.unina.natour.models.dao.implementation.UserDAOImpl;
+import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.ConnessioneServerFallitaActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 
@@ -32,14 +39,17 @@ public class SplashScreenController extends NaTourController{
 
     private AutenticazioneController autenticazioneController;
     private AmplifyDAO amplifyDAO;
+    private ServerDAO serverDAO;
+    private UserDAO userDAO;
 
 
     public SplashScreenController(NaTourActivity activity){
         super(activity);
 
-
         this.autenticazioneController = new AutenticazioneController(getActivity());
         this.amplifyDAO = new AmplifyDAO();
+        this.serverDAO = new ServerDAO();
+        this.userDAO = new UserDAOImpl(activity);
     }
 
     public void redirectToRightActivity(){
@@ -62,6 +72,8 @@ public class SplashScreenController extends NaTourController{
 
 
         if(isSignedIn()){
+            updateCurrentUser();
+
             MainController.openMainActivity(getActivity());
             getActivity().finish();
             return;
@@ -89,13 +101,36 @@ public class SplashScreenController extends NaTourController{
 
 
     private boolean isSignedIn(){
+        if(isSignedInWithCognito()) return true;
+
+        if(isSignedInWithFacebook()) return true;
+
+        if(isSignedInWithGoogle()) return true;
+
+        return false;
+    }
+
+
+    private boolean isSignedInWithCognito(){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = amplifyDAO.fetchAuthSessione();
         ResultMessageDTO resultMessageDTO = getCognitoAuthSessionResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            showErrorMessage(resultMessageDTO);
-            //todo handle error
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+
+            if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
+                messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
+                showErrorMessage(messageToShow);
+                return false;
+            }
+
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
+
+
 
         //Signed in with cognito
         AWSCognitoAuthSession authSession = getCognitoAuthSessionResponseDTO.getAuthSessione();
@@ -104,13 +139,20 @@ public class SplashScreenController extends NaTourController{
             return true;
         }
 
+        return false;
+    }
+
+    private boolean isSignedInWithFacebook(){
         //Signed in with facebook
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         if(accessToken != null && !accessToken.isExpired()){
             Log.i(TAG, "logged with Facebook");
             return true;
         }
+        return false;
+    }
 
+    private boolean isSignedInWithGoogle(){
         //Signed in with google
         GoogleSignInAccount googleSignInAccount = GoogleSignIn.getLastSignedInAccount(getActivity());
         if(googleSignInAccount != null && !googleSignInAccount.isExpired()){
@@ -134,6 +176,76 @@ public class SplashScreenController extends NaTourController{
         return false;
     }
 
+    private void updateCurrentUser(){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        CurrentUserInfo.clear();
+        if(!isSignedIn()){
+            return;
+        }
+
+        String identityProvider = null;
+        String idIdentityProvided = null;
+        long id = -1;
+
+        if(isSignedInWithCognito()){
+            identityProvider = activity.getString(R.string.IdentityProvider_Cognito);
+            AuthUser currentUser = Amplify.Auth.getCurrentUser();
+            idIdentityProvided = currentUser.getUsername();
+
+            GetUserResponseDTO getUserResponseDTO = userDAO.getUserByIdP(identityProvider,idIdentityProvided);
+            if(!ResultMessageController.isSuccess(getUserResponseDTO.getResultMessage())){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessage(messageToShow);
+                return;
+            }
+
+            id = getUserResponseDTO.getId();
+
+            CurrentUserInfo.set(id,identityProvider,idIdentityProvided);
+            return;
+        }
+
+        if(isSignedInWithFacebook()){
+            identityProvider = activity.getString(R.string.IdentityProvider_Facebook);
+            idIdentityProvided = Profile.getCurrentProfile().getId();
+
+            GetUserResponseDTO getUserResponseDTO = userDAO.getUserByIdP(identityProvider,idIdentityProvided);
+            if(!ResultMessageController.isSuccess(getUserResponseDTO.getResultMessage())){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessage(messageToShow);
+                return;
+            }
+
+            id = getUserResponseDTO.getId();
+
+            CurrentUserInfo.set(id,identityProvider,idIdentityProvided);
+            return;
+        }
+
+        if(isSignedInWithGoogle()){
+            identityProvider = activity.getString(R.string.IdentityProvider_Facebook);
+
+            GoogleSignInAccount googleSignInAccount = GoogleSignIn.getLastSignedInAccount(getActivity());
+            idIdentityProvided = googleSignInAccount.getId();
+
+            GetUserResponseDTO getUserResponseDTO = userDAO.getUserByIdP(identityProvider,idIdentityProvided);
+            if(!ResultMessageController.isSuccess(getUserResponseDTO.getResultMessage())){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessage(messageToShow);
+                return;
+            }
+
+            id = getUserResponseDTO.getId();
+
+            CurrentUserInfo.set(id,identityProvider,idIdentityProvided);
+            return;
+        }
+
+        return;
+    }
+
     private boolean hasInternetConnection(){
         ConnectivityManager connectivityManager = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -153,9 +265,20 @@ public class SplashScreenController extends NaTourController{
     }
 
     private boolean isServerReachable(){
-        ResultMessageDTO resultMessageDTO = ServerDAO.testServer();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            //todo handle error
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        ResultMessageDTO resultMessageDTO = serverDAO.testServer();
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+
+            if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_SERVER){
+                messageToShow = activity.getString(R.string.Message_ServerError);
+                showErrorMessage(messageToShow);
+                return false;
+            }
+
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
         return true;

@@ -1,5 +1,6 @@
 package com.unina.natour.views.fragments;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,16 +33,16 @@ import com.unina.natour.views.activities.NaTourActivity;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@RequiresApi(api = Build.VERSION_CODES.P)
+
 public class ProfiloPersonaleFragment extends NaTourFragment{
 
-    ProfiloController profiloController;
+    private ProfiloController profiloController;
 
-    ListaItinerariController listaItinerariController;
-    DisconnessioneController disconnessioneController;
+    private ListaItinerariController listaItinerariController;
+    private DisconnessioneController disconnessioneController;
 
 
-    ProfiloModel profiloModel;
+    private ProfiloModel profiloModel;
 
 
     @Override
@@ -71,7 +72,10 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                profiloController.initModel();
+                Intent intent = new Intent();
+                long userId = intent.getLongExtra(ProfiloController.EXTRA_USER_ID,-1);
+
+                profiloController.initModel(userId);
 
                 handler.post(new Runnable() {
                     @Override
@@ -183,12 +187,14 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
     public void onResume() {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
-/*
+
         executorService.execute(new Runnable() {
             @Override
             public void run() {
+                Intent intent = new Intent();
+                long userId = intent.getLongExtra(ProfiloController.EXTRA_USER_ID,-1);
 
-                profiloController.initModel();
+                profiloController.initModel(userId);
 
                 handler.post(new Runnable() {
                     @Override
@@ -199,7 +205,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
             }
         });
 
- */
+
         super.onResume();
     }
 

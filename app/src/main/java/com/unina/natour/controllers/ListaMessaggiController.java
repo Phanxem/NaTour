@@ -1,8 +1,8 @@
 package com.unina.natour.controllers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -10,10 +10,11 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.unina.natour.R;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.response.GetListChatMessageResponseDTO;
 import com.unina.natour.dto.response.GetChatMessageResponseDTO;
-import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.ElementMessageModel;
 import com.unina.natour.models.dao.implementation.ChatDAOImpl;
 import com.unina.natour.models.dao.interfaces.ChatDAO;
@@ -27,54 +28,55 @@ import java.util.List;
 
 public class ListaMessaggiController extends  NaTourController{
 
-    private long myUserId;
-    private long userId2;
+    //private long myUserId;
+    private long idUserDestination;
 
     private MessagesListAdapter messagesListAdapter;
 
     private ArrayList<ElementMessageModel> elementsMessageModel;
-    private int page = 0;
 
     private ChatDAO chatDAO;
 
-    public ListaMessaggiController(NaTourActivity activity, long myUserId, long userId2){
+    public ListaMessaggiController(NaTourActivity activity, long idUserDestination){
         super(activity);
+        String messageToShow = null;
 
-        //TODO test
-        //this.userId1 = userId1;
-        this.myUserId = 11;
-        this.userId2 = userId2;
+        this.idUserDestination = idUserDestination;
 
         this.elementsMessageModel = new ArrayList<ElementMessageModel>();
 
-        this.chatDAO = new ChatDAOImpl();
+        this.chatDAO = new ChatDAOImpl(activity);
 
         boolean result = initModel();
         if(!result){
-            //TODO
-            showErrorMessage(0);
-            //getActivity().finish();
             return;
         }
 
     }
 
     private boolean initModel() {
-        GetListChatMessageResponseDTO getListChatMessageResponseDTO = chatDAO.getMessageByidsUser(myUserId, userId2);
-        ResultMessageDTO resultMessageDTO = getListChatMessageResponseDTO.getResultMessage();
-        if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-            //TODO
-            showErrorMessage(resultMessageDTO);
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        if(CurrentUserInfo.isGuest()){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
+            return false;
+        }
+
+        GetListChatMessageResponseDTO getListChatMessageResponseDTO = chatDAO.getMessageByIdsUser(CurrentUserInfo.getId(), idUserDestination, 0);
+        if(!ResultMessageController.isSuccess(getListChatMessageResponseDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
 
         boolean result = dtoToModel(getActivity(), getListChatMessageResponseDTO, elementsMessageModel);
         if(!result){
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
             return false;
         }
-
-        Log.i(TAG + "--------...------", "size: "+ elementsMessageModel.size());
 
         this.messagesListAdapter = new MessagesListAdapter(getActivity(),elementsMessageModel);
         messagesListAdapter.notifyDataSetChanged();
@@ -83,6 +85,8 @@ public class ListaMessaggiController extends  NaTourController{
     }
 
     public void initList(NestedScrollView nestedScrollView_messages, RecyclerView recyclerView_messages, ProgressBar progressBar_messages) {
+        Activity activity = getActivity();
+        final String[] messageToShow = {null};
 
         recyclerView_messages.setAdapter(messagesListAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
@@ -100,6 +104,8 @@ public class ListaMessaggiController extends  NaTourController{
 
 
         nestedScrollView_messages.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            int page = 0;
+
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if (scrollY < oldScrollY && scrollY ==  0) {
@@ -108,19 +114,19 @@ public class ListaMessaggiController extends  NaTourController{
                     page++;
                     progressBar_messages.setVisibility(View.VISIBLE);
 
-                    GetListChatMessageResponseDTO getListChatMessageResponseDTO = chatDAO.getMessageByidsUser(myUserId, userId2);
-                    ResultMessageDTO resultMessageDTO = getListChatMessageResponseDTO.getResultMessage();
-                    if(resultMessageDTO.getCode() != ResultMessageController.SUCCESS_CODE){
-                        //TODO
-                        showErrorMessage(resultMessageDTO);
+                    GetListChatMessageResponseDTO getListChatMessageResponseDTO = chatDAO.getMessageByIdsUser(CurrentUserInfo.getId(), idUserDestination, page);
+                    if(!ResultMessageController.isSuccess(getListChatMessageResponseDTO.getResultMessage())){
+                        messageToShow[0] = activity.getString(R.string.Message_UnknownError);
+                        showErrorMessage(messageToShow[0]);
                         return;
                     }
 
                     ArrayList<ElementMessageModel> nextPageElements = new ArrayList<ElementMessageModel>();
                     boolean result = dtoToModel(getActivity(), getListChatMessageResponseDTO, nextPageElements);
                     if(!result){
-                        showErrorMessage(0);
-                        //TODO ERROR
+                        messageToShow[0] = activity.getString(R.string.Message_UnknownError);
+                        showErrorMessage(messageToShow[0]);
+                        return;
                     }
 
                     if(nextPageElements == null || nextPageElements.isEmpty()){
@@ -173,8 +179,10 @@ public class ListaMessaggiController extends  NaTourController{
 
 
     public boolean dtoToModel(Context context, GetChatMessageResponseDTO dto, ElementMessageModel model){
-        model.clear();
+        Activity activity = getActivity();
+        String messageToShow = null;
 
+        model.clear();
         model.setMessage(dto.getBody());
 
         Calendar calendar = null;
@@ -182,12 +190,13 @@ public class ListaMessaggiController extends  NaTourController{
             calendar = TimeUtils.toCalendar(dto.getDateOfInput());
         }
         catch (ParseException e) {
-            showErrorMessage(0);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
             return false;
         }
         model.setTime(calendar);
 
-        if(myUserId == dto.getIdUser()) model.setType(ElementMessageModel.CODE_MESSAGE_SENT);
+        if(CurrentUserInfo.getId() == dto.getIdUser()) model.setType(ElementMessageModel.CODE_MESSAGE_SENT);
         else model.setType(ElementMessageModel.CODE_MESSAGE_RECEIVED);
 
         return true;
