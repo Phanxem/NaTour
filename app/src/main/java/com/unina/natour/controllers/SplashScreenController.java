@@ -70,6 +70,22 @@ public class SplashScreenController extends NaTourController{
             return;
         }
 
+        //TODO dopo la fase di testing rimuovere----------------------------------------------------
+        /*
+        DisconnessioneController disconnessioneController = new DisconnessioneController(getActivity());
+        disconnessioneController.signOut();
+
+        String packageName = getActivity().getApplicationContext().getPackageName();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(packageName,Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+
+        sharedPreferencesEditor.remove(AttivaAccountController.SHARED_PREFERENCES_ACCOUNT_ACTIVATION);
+        sharedPreferencesEditor.remove(AttivaAccountController.SHARED_PREFERENCES_USERNAME);
+        sharedPreferencesEditor.remove(AttivaAccountController.SHARED_PREFERENCES_PASSWORD);
+        sharedPreferencesEditor.remove(AttivaAccountController.SHARED_PREFERENCES_EMAIL);
+        sharedPreferencesEditor.commit();
+*/
+        //------------------------------------------------------------------------------------------
 
         if(isSignedIn()){
             updateCurrentUser();
@@ -271,6 +287,15 @@ public class SplashScreenController extends NaTourController{
         ResultMessageDTO resultMessageDTO = serverDAO.testServer();
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
 
+            if(resultMessageDTO == null){
+                Log.e(TAG, "result null");
+                messageToShow = activity.getString(R.string.Message_ServerError);
+                showErrorMessage(messageToShow);
+                return false;
+            }
+
+            Log.e(TAG, "code: " + resultMessageDTO.getCode());
+
             if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_SERVER){
                 messageToShow = activity.getString(R.string.Message_ServerError);
                 showErrorMessage(messageToShow);
@@ -281,6 +306,8 @@ public class SplashScreenController extends NaTourController{
             showErrorMessage(messageToShow);
             return false;
         }
+
+        Log.e(TAG, "true");
         return true;
     }
 }

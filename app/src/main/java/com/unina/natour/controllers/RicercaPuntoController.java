@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.util.Log;
 import android.widget.ListView;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -160,6 +161,7 @@ public class RicercaPuntoController extends NaTourController{
         }
         GetListAddressResponseDTO resultAddressesDTO = addressDAO.getAddressesByQuery(searchString);
         if(!ResultMessageController.isSuccess(resultAddressesDTO.getResultMessage())){
+            Log.e(TAG, "ERRORE 1");
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessage(messageToShow);
             return ;
@@ -168,6 +170,7 @@ public class RicercaPuntoController extends NaTourController{
         List<AddressModel> addressModels = new ArrayList<AddressModel>();
         boolean result = AddressMapper.dtoToModel(resultAddressesDTO, addressModels);
         if(!result){
+            Log.e(TAG, "ERRORE 2");
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessage(messageToShow);
             return ;

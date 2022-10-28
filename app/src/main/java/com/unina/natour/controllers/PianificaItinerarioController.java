@@ -66,6 +66,7 @@ public class PianificaItinerarioController extends NaTourController implements P
 
     ActivityResultLauncher<Intent> activityResultLauncherRicercaPunto;
     ActivityResultLauncher<Intent> activityResultLauncherImportaFileGPX;
+    
     ActivityResultLauncher<String> activityResultLauncherPermissions;
 
     PuntiIntermediListAdapter puntiIntermediListAdapter;
@@ -348,6 +349,7 @@ public class PianificaItinerarioController extends NaTourController implements P
         }
 
         pianificaItinerarioModel.setDestinationPoint(address);
+
         updateRouteWithSetPoint(DESTINATION_POINT_CODE);
         pianificaItinerarioModel.removeIndexPointSelected();
         pianificaItinerarioModel.removePointSelectedOnMap();
@@ -477,6 +479,7 @@ public class PianificaItinerarioController extends NaTourController implements P
         String messageToShow = null;
 
         if(!getModel().isValidIndexPoint(index)){
+            Log.e(TAG, "ERROR1");
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessage(messageToShow);
             return;
@@ -528,6 +531,7 @@ public class PianificaItinerarioController extends NaTourController implements P
 
         GetRouteResponseDTO getRouteResponseDTO = routeDAO.getRouteByGeoPoints(geoPoints);
         if(!ResultMessageController.isSuccess(getRouteResponseDTO.getResultMessage())){
+            Log.e(TAG, "ERROR2");
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessage(messageToShow);
             return;

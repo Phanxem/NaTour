@@ -53,14 +53,14 @@ public class ChatController extends NaTourController{
         return idOtherUser;
     }
 
-    public boolean sendMessage(long idDestination, String message){
+    public boolean sendMessage(String message){
         Activity activity = getActivity();
         String messageToShow = null;
 
         Calendar calendar = Calendar.getInstance();
         String stringInputTime = TimeUtils.toFullString(calendar);
 
-        String stringId = String.valueOf(idDestination);
+        String stringId = String.valueOf(idOtherUser);
 
         ApplicationController applicationController = (ApplicationController) getActivity().getApplicationContext();
         ChatWebSocketHandler chatWebSocketHandler = applicationController.getChatWebSocketHandler();

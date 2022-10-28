@@ -79,7 +79,7 @@ public class ListaItinerariController extends NaTourController{
         String messageToShow = null;
 
         GetListItineraryWithUserResponseDTO getListItineraryWithUserResponseDTO = itinearyDAO.getListItineraryWithUserRandom();
-        if(ResultMessageController.isSuccess(getListItineraryWithUserResponseDTO.getResultMessage())){
+        if(!ResultMessageController.isSuccess(getListItineraryWithUserResponseDTO.getResultMessage())){
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;

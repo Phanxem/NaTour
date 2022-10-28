@@ -89,6 +89,7 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
 
             executor.execute(runnable);
         }
+        executor.shutdown();
 
         boolean finished = false;
         try {
@@ -133,6 +134,7 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
 
             executor.execute(runnable);
         }
+        executor.shutdown();
 
         finished = false;
         try {

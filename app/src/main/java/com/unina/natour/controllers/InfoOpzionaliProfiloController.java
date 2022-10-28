@@ -110,17 +110,25 @@ public class InfoOpzionaliProfiloController extends NaTourController {
 
         SaveUserOptionalInfoRequestDTO saveUserOptionalInfoRequestDTO = new SaveUserOptionalInfoRequestDTO();
 
+        Calendar dateOfBirth = impostaInfoOpzionaliProfiloModel.getDateOfBirth();
+
+        if( (address == null || address.isEmpty()) &&
+            (dateOfBirth == null) )
+        {
+            return true;
+        }
+
         boolean result = modelToDto(impostaInfoOpzionaliProfiloModel, saveUserOptionalInfoRequestDTO);
         if(!result){
             messageToShow = activity.getString(R.string.Message_UnknownError);
-            showErrorMessageAndBack(messageToShow);
+            showErrorMessage(messageToShow);
             return false;
         }
 
         ResultMessageDTO resultMessageDTO = userDAO.updateOptionalInfo(CurrentUserInfo.getId(),saveUserOptionalInfoRequestDTO);
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
             messageToShow = activity.getString(R.string.Message_UnknownError);
-            showErrorMessageAndBack(messageToShow);
+            showErrorMessage(messageToShow);
             return false;
         }
 
@@ -165,37 +173,41 @@ public class InfoOpzionaliProfiloController extends NaTourController {
     public static boolean dtoToModel(GetUserResponseDTO dto, ImpostaInfoOpzionaliProfiloModel model){
         model.clear();
 
-        String stringDateOfBirth = dto.getDateOfBirth();
         Calendar dateOfBirth = null;
-        try {
-            dateOfBirth = TimeUtils.toCalendar(stringDateOfBirth);
-        }
-        catch (ParseException e) {
-            return false;
+        String stringDateOfBirth = dto.getDateOfBirth();
+        if(stringDateOfBirth != null){
+            try {
+                dateOfBirth = TimeUtils.toCalendar(stringDateOfBirth);
+            }
+            catch (ParseException e) {
+                return false;
+            }
         }
 
         model.setDateOfBirth(dateOfBirth);
 
-        String fullPlaceOfResidence = dto.getPlaceOfResidence();
-        String[] placeOfResidence = fullPlaceOfResidence.split(", ");
 
         String country = "";
         String city = "";
         String address = "";
+        String fullPlaceOfResidence = dto.getPlaceOfResidence();
+        if(fullPlaceOfResidence != null && !fullPlaceOfResidence.isEmpty()) {
+            String[] placeOfResidence = fullPlaceOfResidence.split(", ");
 
-        if(placeOfResidence.length>0){
-            country = placeOfResidence[0];
-        }
-        if(placeOfResidence.length>1){
-            city = placeOfResidence[1];
-        }
-        for(int i = 2; i < placeOfResidence.length; i++){
-            address = address + placeOfResidence[i];
-        }
+            if (placeOfResidence.length > 0) {
+                country = placeOfResidence[0];
+            }
+            if (placeOfResidence.length > 1) {
+                city = placeOfResidence[1];
+            }
+            for (int i = 2; i < placeOfResidence.length; i++) {
+                address = address + placeOfResidence[i];
+            }
 
-        model.setCountry(country);
-        model.setCity(city);
-        model.setAddress(address);
+            model.setCountry(country);
+            model.setCity(city);
+            model.setAddress(address);
+        }
 
         return true;
     }

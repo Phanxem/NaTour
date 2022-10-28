@@ -144,6 +144,8 @@ public class ResultMessageController {
 
 
     public static boolean isSuccess(ResultMessageDTO resultMessageDTO){
+        if(resultMessageDTO == null) return false;
+
         long code = resultMessageDTO.getCode();
 
         return code == SUCCESS_MESSAGE.getCode();

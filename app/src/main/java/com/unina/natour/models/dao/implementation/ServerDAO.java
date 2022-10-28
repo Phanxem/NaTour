@@ -19,7 +19,7 @@ import okhttp3.RequestBody;
 
 public class ServerDAO {
 
-    public static final String DOMAIN = "192.168.1.3:8080";
+    public static final String DOMAIN = "192.168.1.8:8080";
     public static final String SERVER_URL = "http://" + DOMAIN;
 
     private static final String REGION = "eu-west-1";
@@ -206,7 +206,7 @@ public class ServerDAO {
 
         ResultMessageDTO resultMessageDTO = resultMessageDAO.fulfilRequest(request);
 
-        return null;
+        return resultMessageDTO;
     }
 
 }

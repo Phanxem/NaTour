@@ -2,6 +2,7 @@ package com.unina.natour.dto.response;
 
 import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GetListUserResponseDTO {
@@ -10,6 +11,9 @@ public class GetListUserResponseDTO {
     private ResultMessageDTO resultMessage;
     private List<GetUserResponseDTO> listUser;
 
+    public GetListUserResponseDTO(){
+        this.listUser = new ArrayList<GetUserResponseDTO>();
+    }
 
     public ResultMessageDTO getResultMessage() {
         return resultMessage;

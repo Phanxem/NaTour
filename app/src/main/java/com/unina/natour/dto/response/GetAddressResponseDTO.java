@@ -9,6 +9,8 @@ public class GetAddressResponseDTO {
     private GeoPoint point;
     private String addressName;
 
+
+
     public ResultMessageDTO getResultMessage() {
         return resultMessage;
     }

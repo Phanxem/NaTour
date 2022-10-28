@@ -1,6 +1,7 @@
 package com.unina.natour.models.dao.implementation;
 
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -47,10 +48,12 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
             url = URL + GET_ROUTE + "/" + URLEncoder.encode(coordinates,"UTF-8");
         }
         catch (UnsupportedEncodingException e) {
+            Log.e("TAG", "ERROR A");
             getRouteResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
             return getRouteResponseDTO;
         }
 
+        Log.e("TAG", "BEFORE getRouteResponseDTO()");
         getRouteResponseDTO = getRouteResponseDTO(url);
 
         return getRouteResponseDTO;
@@ -69,6 +72,8 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
             GeoPoint geoPoint = geoPoints.get(i);
             coordinates = coordinates + geoPoint.getLongitude() + "," + geoPoint.getLatitude();
         }
+
+        Log.e("TAG", "BEFORE getRouteByCoordinates");
 
         return getRouteByCoordinates(coordinates);
     }
@@ -131,6 +136,8 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
             return getRouteResponseDTO;
         }
 
+        Log.e("TAG", "BEFORE toGet");
+
         getRouteResponseDTO = toGetRouteResponseDTO(jsonObjectResult);
 
         return getRouteResponseDTO;
@@ -144,6 +151,7 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
 
         if(!jsonObject.has("wayPoints")  || !jsonObject.has("tracks") )
         {
+            Log.e("TAG", "ERROR F");
             ResultMessageDTO resultMessageDTO = ResultMessageDAO.getResultMessage(jsonObject);
             getRouteResponseDTO.setResultMessage(resultMessageDTO);
 
@@ -204,6 +212,8 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
 
         getRouteResponseDTO.setWayPoints(geoWayPoints);
         getRouteResponseDTO.setTracks(routeLegs);
+
+        getRouteResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
 
         return getRouteResponseDTO;
     }

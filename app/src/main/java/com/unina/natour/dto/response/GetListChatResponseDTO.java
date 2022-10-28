@@ -1,11 +1,16 @@
 package com.unina.natour.dto.response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GetListChatResponseDTO {
 
     private ResultMessageDTO resultMessage;
     private List<GetChatResponseDTO> listChat;
+
+    public GetListChatResponseDTO(){
+        this.listChat = new ArrayList<GetChatResponseDTO>();
+    }
 
     public ResultMessageDTO getResultMessage() {
         return resultMessage;

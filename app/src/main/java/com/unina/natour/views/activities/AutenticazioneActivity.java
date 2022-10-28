@@ -18,6 +18,7 @@ import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.SignInButton;
 import com.unina.natour.R;
 import com.unina.natour.controllers.AutenticazioneController;
+import com.unina.natour.controllers.HomeController;
 import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.RecuperoPasswordController;
 import com.unina.natour.controllers.RegistrazioneController;
@@ -38,42 +39,13 @@ public class AutenticazioneActivity extends NaTourActivity {
         pressTextSignUp();
         pressTextPasswordRecovery();
 
+        pressButtonSignInGuest();
+
         pressButtonFacebook();
         pressButtonGoogle();
     }
 
-    private void pressButtonFacebook() {
 
-        LoginButton facebookLoginButton = findViewById(R.id.SignIn_loginButton_loginFacebook);
-
-        autenticazioneController.initButtonFacebook(facebookLoginButton);
-
-    }
-
-    public void pressButtonGoogle(){
-        AutenticazioneActivity activity = this;
-        ActivityResultLauncher<Intent> activityResultLauncherGoogleLogin;
-        activityResultLauncherGoogleLogin = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>()
-                {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-
-                        if(result == null || result.getData() == null) return;
-
-                        activity.onActivityResult(AutenticazioneController.GOOGLE_LOGIN_CODE, result.getResultCode(), result.getData());
-                    }
-                }
-        );
-
-        SignInButton googleLoginButton = findViewById(R.id.SignIn_signInButton_loginGoogle);
-
-        autenticazioneController.initButtonGoogle(googleLoginButton, activityResultLauncherGoogleLogin);
-
-
-
-    }
 
 
 
@@ -121,7 +93,50 @@ public class AutenticazioneActivity extends NaTourActivity {
         });
     }
 
+    public void pressButtonSignInGuest(){
+        NaTourActivity activity = this;
 
+        Button button_signInGuest = findViewById(R.id.SignIn_button_signInGuest);
+        button_signInGuest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HomeController.openHomeGuestActivity(activity);
+            }
+        });
+    }
+
+    private void pressButtonFacebook() {
+
+        LoginButton facebookLoginButton = findViewById(R.id.SignIn_loginButton_loginFacebook);
+
+        autenticazioneController.initButtonFacebook(facebookLoginButton);
+
+    }
+
+    public void pressButtonGoogle(){
+        AutenticazioneActivity activity = this;
+        ActivityResultLauncher<Intent> activityResultLauncherGoogleLogin;
+        activityResultLauncherGoogleLogin = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>()
+                {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+
+                        if(result == null || result.getData() == null) return;
+
+                        activity.onActivityResult(AutenticazioneController.GOOGLE_LOGIN_CODE, result.getResultCode(), result.getData());
+                    }
+                }
+        );
+
+        SignInButton googleLoginButton = findViewById(R.id.SignIn_signInButton_loginGoogle);
+
+        autenticazioneController.initButtonGoogle(googleLoginButton, activityResultLauncherGoogleLogin);
+
+
+
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

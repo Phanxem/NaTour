@@ -46,9 +46,6 @@ public class SalvaItinerarioController extends NaTourController{
         float distance = intent.getFloatExtra(EXTRA_DISTANCE, -1);
         List<AddressModel> wayPoints = intent.getParcelableArrayListExtra(EXTRA_WAYPOINTS);
 
-        Log.i(TAG, "-------------------------" + duration + " | " + distance + " | ");
-
-
         this.salvaItinerarioModel = new SalvaItinerarioModel();
 
         if(duration >= 0 && distance >= 0 && wayPoints != null && !wayPoints.isEmpty()){

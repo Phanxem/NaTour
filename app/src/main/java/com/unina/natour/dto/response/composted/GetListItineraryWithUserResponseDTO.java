@@ -2,12 +2,17 @@ package com.unina.natour.dto.response.composted;
 
 import com.unina.natour.dto.response.ResultMessageDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GetListItineraryWithUserResponseDTO {
 
     private ResultMessageDTO resultMessage;
     private List<GetItineraryWithUserResponseDTO> listItinerary;
+
+    public GetListItineraryWithUserResponseDTO(){
+        this.listItinerary = new ArrayList<GetItineraryWithUserResponseDTO>();
+    }
 
     public ResultMessageDTO getResultMessage() {
         return resultMessage;

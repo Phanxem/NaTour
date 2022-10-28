@@ -1,5 +1,9 @@
 package com.unina.natour.controllers;
 
+import android.content.Intent;
+
+import com.unina.natour.views.activities.AutenticazioneActivity;
+import com.unina.natour.views.activities.HomeGuestActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 
 public class HomeController extends NaTourController{
@@ -26,6 +30,13 @@ public class HomeController extends NaTourController{
 
     public void setListaItinerariController(ListaItinerariController listaItinerariController) {
         this.listaItinerariController = listaItinerariController;
+    }
+
+
+
+    public static void openHomeGuestActivity(NaTourActivity fromActivity){
+        Intent intent = new Intent(fromActivity, HomeGuestActivity.class);
+        fromActivity.startActivity(intent);
     }
 
 }

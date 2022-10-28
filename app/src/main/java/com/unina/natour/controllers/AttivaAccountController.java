@@ -5,10 +5,13 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.unina.natour.R;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.dto.request.SaveUserRequestDTO;
+import com.unina.natour.dto.response.GetUserResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
@@ -114,6 +117,7 @@ public class AttivaAccountController extends NaTourController{
 
         resultMessageDTO = userDAO.addUser(saveUserRequestDTO);
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            Log.e(TAG, "Impossibile salvare l'utente nel DB");
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;
@@ -131,6 +135,14 @@ public class AttivaAccountController extends NaTourController{
             showErrorMessage(messageToShow);
             return false;
         }
+
+        GetUserResponseDTO getUserResponseDTO = userDAO.getUserByIdP(identityProvider,username);
+        if(!ResultMessageController.isSuccess(getUserResponseDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return false;
+        }
+        CurrentUserInfo.set(getUserResponseDTO.getId(),identityProvider,username);
 
         return true;
     }

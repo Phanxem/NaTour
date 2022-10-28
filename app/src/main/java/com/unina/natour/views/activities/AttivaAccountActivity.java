@@ -44,6 +44,7 @@ public class AttivaAccountActivity extends NaTourActivity {
         pressTextResendCode();
     }
 
+
     public void pressButtonConfirm(){
         NaTourActivity activity = this;
 
@@ -55,8 +56,6 @@ public class AttivaAccountActivity extends NaTourActivity {
                 String code = String.valueOf(numberField_code.getText());
 
                 Boolean result = attivaAccountController.activeAccount(code);
-
-                Log.i(TAG, "IS: " + result);
 
                 if(result) ImmagineProfiloController.openPersonalizzaAccountImmagineActivity(activity,true);
             }

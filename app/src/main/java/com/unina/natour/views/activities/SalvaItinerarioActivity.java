@@ -106,6 +106,8 @@ public class SalvaItinerarioActivity extends NaTourActivity
     }
 
     public void pressButtonSave(){
+        NaTourActivity activity = this;
+
         Button button_save = findViewById(R.id.SaveItinerary_button_salva);
         button_save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +119,9 @@ public class SalvaItinerarioActivity extends NaTourActivity
                 String descrizione = editText_descrizione.getText().toString();
 
                 boolean result = salvaItinerarioController.saveItinerary(titolo, descrizione);
-                //TODO if true go to main activity
+                if(result){
+                    activity.finish();
+                }
             }
         });
     }

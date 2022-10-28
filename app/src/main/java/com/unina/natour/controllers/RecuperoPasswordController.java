@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -31,19 +32,26 @@ public class RecuperoPasswordController extends NaTourController{
 
         if(!StringsUtils.areAllFieldsFull(username)){
             messageToShow = activity.getString(R.string.Message_EmptyFieldError);
-            showErrorMessageAndBack(messageToShow);
+            showErrorMessage(messageToShow);
             return false;
         }
 
+        Log.e(TAG, "1");
+
         ResultMessageDTO resultMessageDTO = amplifyDAO.startPasswordRecovery(username);
+
+        Log.e(TAG, "2");
+
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
 
             if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
+                Log.e(TAG, "ERROR2");
                 messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
                 showErrorMessage(messageToShow);
                 return false;
             }
 
+            Log.e(TAG, "ERROR3");
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessage(messageToShow);
             return false;

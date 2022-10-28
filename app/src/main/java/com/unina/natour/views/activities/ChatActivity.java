@@ -28,10 +28,6 @@ import java.util.Calendar;
 
 public class ChatActivity extends NaTourActivity {
 
-
-    //TODO
-    //ProfiloController profiloController;
-
     private ChatController chatController;
     private ListaMessaggiController listaMessaggiController;
 
@@ -119,6 +115,8 @@ public class ChatActivity extends NaTourActivity {
                 if(event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
 
                     String message = String.valueOf(editText_messageField.getText());
+
+
                     chatController.sendMessage(message);
 
                     new Handler().postDelayed(new Runnable() {

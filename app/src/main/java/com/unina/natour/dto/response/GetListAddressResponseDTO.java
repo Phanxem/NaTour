@@ -8,6 +8,7 @@ public class GetListAddressResponseDTO {
     private ResultMessageDTO resultMessage;
     private List<GetAddressResponseDTO> listAddress;
 
+
     public GetListAddressResponseDTO(){
         this.listAddress = new ArrayList<GetAddressResponseDTO>();
     }

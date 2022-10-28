@@ -16,7 +16,6 @@ import com.unina.natour.controllers.ImmagineProfiloController;
 import com.unina.natour.controllers.InfoOpzionaliProfiloController;
 import com.unina.natour.models.ImpostaImmagineProfiloModel;
 
-@RequiresApi(api = Build.VERSION_CODES.P)
 @SuppressLint("LongLogTag")
 public class PersonalizzaAccountImmagineActivity extends NaTourActivity {
 
@@ -65,7 +64,6 @@ public class PersonalizzaAccountImmagineActivity extends NaTourActivity {
                 if(result){
                     if(immagineProfiloController.isFirstUpdate()){
                         InfoOpzionaliProfiloController.openPersonalizzaAccountInfoOpzionaliActivity(activity, true);
-                        return;
                     }
                     activity.finish();
                 }

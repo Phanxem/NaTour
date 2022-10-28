@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -153,23 +154,30 @@ public class ImmagineProfiloController extends NaTourController{
         String messageToShow = null;
 
         if(CurrentUserInfo.isGuest()){
+            Log.e(TAG, "Utente non autenticato");
             return false;
         }
 
         Bitmap profileImage = impostaImmagineProfiloModel.getProfileImage();
 
         if(profileImage == null){
+            /*
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessage(messageToShow);
             return false;
+             */
+            return true;
         }
 
         Bitmap resizedProfileImage = resizeBitmap(profileImage, MIN_WIDTH);
 
         ResultMessageDTO resultMessageDTO = userDAO.updateProfileImage(CurrentUserInfo.getId(), resizedProfileImage);
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
+
+            Log.e(TAG, "updateProfileImage ERROR");
+
             messageToShow = activity.getString(R.string.Message_UnknownError);
-            showErrorMessageAndBack(messageToShow);
+            showErrorMessage(messageToShow);
             return false;
         }
 

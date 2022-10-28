@@ -219,7 +219,6 @@ public class AmplifyDAO extends ServerDAO {
 
     public ResultMessageDTO startPasswordRecovery(String username){
         CompletableFuture<ResultMessageDTO> completableFuture = new CompletableFuture<ResultMessageDTO>();
-
         Amplify.Auth.resetPassword(
                 username,
                 result -> {

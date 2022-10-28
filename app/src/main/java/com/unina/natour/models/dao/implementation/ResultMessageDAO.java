@@ -1,5 +1,7 @@
 package com.unina.natour.models.dao.implementation;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.google.gson.JsonElement;
@@ -18,22 +20,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ResultMessageDAO extends ServerDAO {
+//TODO togliere i Log.e
 
-/*
-    public static ResultMessageDTO toMessageDTO(JsonObject jsonObject){
-        if(!jsonObject.has("code")  || !jsonObject.has("message")){
-            return null;
-        }
-
-        long code = jsonObject.get("code").getAsLong();
-        String message = jsonObject.get("message").getAsString();
-
-        ResultMessageDTO resultMessageDTO = new ResultMessageDTO(code,message);
-
-        return resultMessageDTO;
-    }
-*/
+public class ResultMessageDAO {
 
     public ResultMessageDTO fulfilRequest(Request request){
         OkHttpClient client = new OkHttpClient();
@@ -46,6 +35,8 @@ public class ResultMessageDAO extends ServerDAO {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e("ResultMessageDAO", "Response FAILURE");
+
                 exception[0] = e;
                 completableFuture.complete(null);
                 return;
@@ -53,6 +44,8 @@ public class ResultMessageDAO extends ServerDAO {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                Log.e("ResultMessageDAO", "Response SUCCESS");
+
                 String jsonStringResult = response.body().string();
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
@@ -66,10 +59,12 @@ public class ResultMessageDAO extends ServerDAO {
             jsonObjectResult = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
+            Log.e("ResultMessageDAO", "FAILURE1");
             return ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
         }
 
         if(exception[0] != null){
+            Log.e("ResultMessageDAO", "FAILURE2");
             return ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
         }
 
@@ -78,11 +73,16 @@ public class ResultMessageDAO extends ServerDAO {
         return result;
     }
 
-    //TODO da testare
+
     public static ResultMessageDTO getResultMessage(JsonObject jsonObject){
         JsonObject jsonResultMessage = jsonObject;
 
-        if(!jsonObject.has("resultMessage") ){
+        if(jsonObject == null) return null;
+
+        if(jsonObject.has("resultMessage") ){
+            JsonElement jsonElement = jsonObject.get("resultMessage");
+            if(jsonElement.isJsonNull()) return null;
+
             jsonResultMessage = jsonObject.get("resultMessage").getAsJsonObject();
         }
 

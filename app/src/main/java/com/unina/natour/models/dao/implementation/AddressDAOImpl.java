@@ -1,6 +1,7 @@
 package com.unina.natour.models.dao.implementation;
 
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -95,7 +96,6 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-
                 String jsonStringResult = response.body().string();
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
@@ -126,6 +126,8 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
             getAddressResponseDTO.setResultMessage(resultMessage);
             return getAddressResponseDTO;
         }
+
+
 
         getAddressResponseDTO = toGetAddressResponseDTO(jsonObjectResult);
 
@@ -188,6 +190,8 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
             return getListAddressResponseDTO;
         }
 
+        Log.e("AddressDAOImpl", "HERE");
+
         getListAddressResponseDTO = toGetListAddressResponseDTO(jsonObjectResult);
 
         return getListAddressResponseDTO;
@@ -199,7 +203,7 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
     public GetAddressResponseDTO toGetAddressResponseDTO(JsonObject jsonObject){
         GetAddressResponseDTO getAddressResponseDTO = new GetAddressResponseDTO();
 
-        if(!jsonObject.has("resultMessage") ){
+        if(jsonObject.has("resultMessage") ){
             JsonObject jsonResultMessage = jsonObject.get("resultMessage").getAsJsonObject();
 
             long code = jsonResultMessage.get("code").getAsLong();
@@ -208,7 +212,6 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
             ResultMessageDTO resultMessageDTO = new ResultMessageDTO(code,message);
             getAddressResponseDTO.setResultMessage(resultMessageDTO);
         }
-
 
         JsonObject jsonObjectPoint = jsonObject.get("point").getAsJsonObject();
 
@@ -229,7 +232,7 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
     public GetListAddressResponseDTO toGetListAddressResponseDTO(JsonObject jsonObject){
         GetListAddressResponseDTO getListAddressResponseDTO = new GetListAddressResponseDTO();
 
-        if(!jsonObject.has("resultMessage") ){
+        if(jsonObject.has("resultMessage") ){
             JsonObject jsonResultMessage = jsonObject.get("resultMessage").getAsJsonObject();
 
             long code = jsonResultMessage.get("code").getAsLong();
@@ -239,12 +242,12 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
             getListAddressResponseDTO.setResultMessage(resultMessageDTO);
         }
 
-        JsonArray jsonArray = jsonObject.get("listUser").getAsJsonArray();
+        JsonArray jsonArray = jsonObject.get("listAddress").getAsJsonArray();
         List<GetAddressResponseDTO> listAddress = new ArrayList<GetAddressResponseDTO>();
         for(JsonElement jsonElement : jsonArray){
             JsonObject jsonObjectElement = jsonElement.getAsJsonObject();
 
-            GetAddressResponseDTO getAddressResponseDTO = toGetAddressResponseDTO(jsonObject);
+            GetAddressResponseDTO getAddressResponseDTO = toGetAddressResponseDTO(jsonObjectElement);
             listAddress.add(getAddressResponseDTO);
         }
         getListAddressResponseDTO.setListAddress(listAddress);
