@@ -251,14 +251,24 @@ public class PianificaItinerarioModel extends NaTourModel {
     }
 
     public void clear(){
-        this.startingPoint.clear();
-        this.destinationPoint.clear();
-        this.intermediatePoints.clear();
+        /*
+        if(startingPoint != null) this.startingPoint.clear();
+        if(destinationPoint != null) this.destinationPoint.clear();
+        if(intermediatePoints != null) this.intermediatePoints.clear();
+*/
+        this.startingPoint = null;
+        this.destinationPoint = null;
+        this.intermediatePoints = null;
 
-        this.pointSelectedOnMap.clear();
-        this.indexPointSelected = -1;
+        if(pointSelectedOnMap != null) this.pointSelectedOnMap = null;
+        this.indexPointSelected = null;
 
-        this.routeLegs.clear();
+        if(routeLegs != null) this.routeLegs.clear();
+    }
+
+    public void clearAndNotify(){
+        clear();
+        notifyObservers();
     }
 
 }

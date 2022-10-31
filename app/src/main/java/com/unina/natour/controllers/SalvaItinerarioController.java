@@ -1,16 +1,23 @@
 package com.unina.natour.controllers;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.util.Log;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.core.app.ActivityCompat;
+
 import com.unina.natour.R;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.dto.request.SaveItineraryRequestDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.AddressModel;
 import com.unina.natour.models.SalvaItinerarioModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
+import com.unina.natour.views.activities.ImportaFileGPXActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.SalvaItinerarioActivity;
 
@@ -32,6 +39,7 @@ public class SalvaItinerarioController extends NaTourController{
     public final static String EXTRA_DURATION = "duration";
     public final static String EXTRA_DISTANCE = "distance";
     public final static String EXTRA_WAYPOINTS = "waypoints";
+    public static final String EXTRA_IS_SAVED = "isSaved";
 
     SalvaItinerarioModel salvaItinerarioModel;
 
@@ -100,14 +108,14 @@ public class SalvaItinerarioController extends NaTourController{
 
 
         if(titolo == null || titolo.isEmpty()){
-            Log.e(TAG, "errore titolo");
-            //TODO exteption
+            messageToShow = activity.getString(R.string.Message_InvalidItineraryTitleError);
+            showErrorMessage(messageToShow);
             return false;
         }
 
         if(salvaItinerarioModel.getDifficulty() == null){
-            Log.e(TAG, "errore difficoltà");
-            //TODO exteption
+            messageToShow = activity.getString(R.string.Message_InvalidItineraryDifficultyError);
+            showErrorMessage(messageToShow);
             return false;
         }
 
@@ -135,6 +143,9 @@ public class SalvaItinerarioController extends NaTourController{
         itineraryDTO.setDifficulty(salvaItinerarioModel.getDifficulty());
         itineraryDTO.setGpx(gpx);
 
+        String stringIdUser = String.valueOf(CurrentUserInfo.getId());
+        itineraryDTO.setIdUser(stringIdUser);
+
 
 
         ResultMessageDTO resultMessageDTO = itineraryDAO.addItinerary(itineraryDTO);
@@ -143,16 +154,22 @@ public class SalvaItinerarioController extends NaTourController{
             showErrorMessage(messageToShow);
             return false;
         }
+
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_IS_SAVED, true);
+        getActivity().setResult(0, intent);
         return true;
     }
 
 
-    public static void openSalvaItinerarioActivity(NaTourActivity fromActivity, float duration, float distance, ArrayList<AddressModel> wayPoints){
+    public static void openSalvaItinerarioActivity(NaTourActivity fromActivity, ActivityResultLauncher<Intent> activityResultLauncherSalvaItinerario, float duration, float distance, ArrayList<AddressModel> wayPoints){
         Intent intent = new Intent(fromActivity, SalvaItinerarioActivity.class);
         intent.putExtra(EXTRA_DURATION,duration);
         intent.putExtra(EXTRA_DISTANCE,distance);
         intent.putParcelableArrayListExtra(EXTRA_WAYPOINTS,wayPoints);
-        fromActivity.startActivity(intent);
+        activityResultLauncherSalvaItinerario.launch(intent);
+
+        //fromActivity.startActivity(intent);
     }
 
     public void back(){

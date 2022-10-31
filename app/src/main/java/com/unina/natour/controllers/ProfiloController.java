@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -33,19 +34,27 @@ public class ProfiloController extends NaTourController {
         super(activity);
         String messageToShow = null;
 
+
+
         this.amplifyDAO = new AmplifyDAO();
         this.userDAO = new UserDAOImpl(activity);
 
         Intent intent = new Intent();
         long userId = intent.getLongExtra(EXTRA_USER_ID,-1);
 
+        Log.e(TAG,"er");
+
         if(userId < 0){
+            Log.e(TAG,"userId<0");
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return;
         }
 
+
         this.listaItinerariController = new ListaItinerariController(activity, ListaItinerariController.CODE_ITINERARY_BY_USER_ID, null, userId);
+
+
 
         this.profiloModel = new ProfiloModel();
         boolean result = initModel(userId);

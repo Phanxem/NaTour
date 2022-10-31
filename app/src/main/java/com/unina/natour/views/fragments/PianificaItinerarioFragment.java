@@ -289,7 +289,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
         button_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SalvaItinerarioController.openSalvaItinerarioActivity(activity,pianificaItinerarioModel.getDuration(), pianificaItinerarioModel.getDistance(), (ArrayList<AddressModel>) pianificaItinerarioModel.getInterestPoints());
+                pianificaItinerarioController.goToSaveItinerary(pianificaItinerarioModel.getDuration(), pianificaItinerarioModel.getDistance(), (ArrayList<AddressModel>) pianificaItinerarioModel.getInterestPoints());
             }
         });
     }

@@ -13,6 +13,8 @@ public class SaveItineraryRequestDTO {
     private Integer difficulty;
     private String description;
 
+    private String idUser;
+
 
     public String getName() {
         return name;
@@ -60,5 +62,13 @@ public class SaveItineraryRequestDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(String idUser) {
+        this.idUser = idUser;
     }
 }

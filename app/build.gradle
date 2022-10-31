@@ -77,7 +77,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
 
     //fb login
-    implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
+    implementation 'com.facebook.android:facebook-android-sdk:15.0.2'
 
     //bug fix
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'

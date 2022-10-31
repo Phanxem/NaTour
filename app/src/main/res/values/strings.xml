@@ -134,6 +134,8 @@
 
     <!-- Server ErrorMessage -->
     <string name="Message_ServerError">Server Irraggiungibile</string>
+    <string name="Message_InvalidItineraryTitleError">Inserire un titolo per l\'itinerario</string>
+    <string name="Message_InvalidItineraryDifficultyError">Selezionare una difficoltà valida</string>
 
 
 </resources>

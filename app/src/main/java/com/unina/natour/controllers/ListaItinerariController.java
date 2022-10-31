@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -57,12 +58,15 @@ public class ListaItinerariController extends NaTourController{
 
         boolean result;
         if(researchCode == CODE_ITINERARY_RANDOM){
+            Log.e(TAG,"RANDOM");
             result = initModel();
         }
         else if(researchCode == CODE_ITINERARY_BY_USER_ID && userId>0){
+            Log.e(TAG,"id user");
             result = initModel(userId);
         }
         else if(researchCode == CODE_ITINERARY_BY_RESEARCH && researchString != null && !researchString.isEmpty()){
+            Log.e(TAG,"RESEARCH");
             result = initModel(researchString);
         }
         else{
@@ -151,6 +155,7 @@ public class ListaItinerariController extends NaTourController{
         this.userId = userId;
 
         this.itineraryListAdapter = new ItineraryListAdapter(getActivity(),elementsItineraryModel, true);
+
         return true;
     }
 

@@ -1,6 +1,7 @@
 package com.unina.natour.models.dao.implementation;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -220,7 +221,7 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
 
         builder.setType(MultipartBody.FORM);
         builder.addFormDataPart("name", saveItineraryRequest.getName());
-        builder.addFormDataPart("gpx", null, gpxRequestBody);
+        builder.addFormDataPart("gpx", file.getName(), gpxRequestBody);
 
         String stringDuration = String.valueOf(saveItineraryRequest.getDuration());
         builder.addFormDataPart("duration", stringDuration);
@@ -232,6 +233,8 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
         builder.addFormDataPart("difficulty", stringDifficulty);
 
         builder.addFormDataPart("description", saveItineraryRequest.getDescription());
+
+        builder.addFormDataPart("idUser", saveItineraryRequest.getIdUser());
 
 
         RequestBody requestBody = builder.build();

@@ -66,7 +66,7 @@ public class PianificaItinerarioController extends NaTourController implements P
 
     ActivityResultLauncher<Intent> activityResultLauncherRicercaPunto;
     ActivityResultLauncher<Intent> activityResultLauncherImportaFileGPX;
-    
+    ActivityResultLauncher<Intent> activityResultLauncherSalvaItinerario;
     ActivityResultLauncher<String> activityResultLauncherPermissions;
 
     PuntiIntermediListAdapter puntiIntermediListAdapter;
@@ -144,6 +144,23 @@ public class PianificaItinerarioController extends NaTourController implements P
                                 puntiIntermediListAdapter.notifyDataSetChanged();
 
                             }
+                        }
+                    }
+                }
+        );
+
+        this.activityResultLauncherSalvaItinerario = activity.registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+
+                        if(result == null || result.getData() == null) return;
+                        Boolean isSaved = result.getData().getBooleanExtra(SalvaItinerarioController.EXTRA_IS_SAVED, false);
+
+                        if(isSaved){
+                            Log.e(TAG, "isSaved");
+                            pianificaItinerarioModel.clearAndNotify();
                         }
                     }
                 }
@@ -245,6 +262,10 @@ public class PianificaItinerarioController extends NaTourController implements P
 
     public void goToImportGPX(){
         ImportaFileGPXController.openImportaFileGPXActivity(getActivity(),activityResultLauncherImportaFileGPX,activityResultLauncherPermissions);
+    }
+
+    public void goToSaveItinerary(float duration, float distance, ArrayList<AddressModel> wayPoints){
+        SalvaItinerarioController.openSalvaItinerarioActivity(getActivity(),activityResultLauncherSalvaItinerario, duration, distance, wayPoints);
     }
 
 
