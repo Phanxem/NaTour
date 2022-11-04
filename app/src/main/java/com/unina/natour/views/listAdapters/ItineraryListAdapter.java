@@ -34,7 +34,6 @@ public class ItineraryListAdapter extends RecyclerView.Adapter<ItineraryListAdap
         this.activity = activity;
 
         this.doBelongToSameUser = doBelongToSameUser;
-
     }
 
 
@@ -72,7 +71,6 @@ public class ItineraryListAdapter extends RecyclerView.Adapter<ItineraryListAdap
         holder.linearLayout_itinerary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO TEST
                 DettagliItinerarioController.openDettagliItinerarioActivity(activity,itinerary.getItineraryId());
             }
         });

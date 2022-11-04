@@ -37,7 +37,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="NOME"
+        android:text="Itinerario"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -67,8 +67,10 @@
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ViewReports_textView_reports">
+        app:layout_constraintTop_toBottomOf="@+id/ViewReports_textView_reports"
+        app:layout_constraintVertical_bias="0.0">
 
         <ListView
             android:id="@+id/ViewReports_listView_risultati"

@@ -99,6 +99,22 @@ public class HomeFragment extends NaTourFragment {
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        this.homeController = new HomeController(getNaTourActivity());
+        this.listaItinerariController = homeController.getListaItinerariController();
+
+        RecyclerView recyclerView_itineraries = view.findViewById(R.id.HomeF_recycleView_itinerari);
+        NestedScrollView nestedScrollView_itineraries = view.findViewById(R.id.HomeF_nestedScrollView_itinerari);
+        ProgressBar progressBar_itinearies = view.findViewById(R.id.HomeF_progressBar_itinerari);
+
+        listaItinerariController.initList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
+
+    }
+
+
 
 
 }

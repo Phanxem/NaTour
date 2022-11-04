@@ -23,22 +23,22 @@ public class ModificaPasswordController extends NaTourController{
     }
 
 
-    public boolean updatePassword(String oldPassword, String newPassword, String newPassword2){
+    public boolean updatePassword(String oldPassword, String newPassword1, String newPassword2){
         Activity activity = getActivity();
         String messageToShow = null;
 
-        if(!StringsUtils.areAllFieldsFull(oldPassword, newPassword, newPassword2)){
+        if(!StringsUtils.areAllFieldsFull(oldPassword, newPassword1, newPassword2)){
             messageToShow = activity.getString(R.string.Message_EmptyFieldError);
             showErrorMessageAndBack(messageToShow);
             return false;
         }
-        if(!newPassword.equals(newPassword2)){
+        if(!newPassword1.equals(newPassword2)){
             messageToShow = activity.getString(R.string.Message_UnmatchPasswordsError);
             showErrorMessageAndBack(messageToShow);
             return false;
         }
 
-        ResultMessageDTO resultMessageDTO = amplifyDAO.updatePassword(oldPassword, newPassword);
+        ResultMessageDTO resultMessageDTO = amplifyDAO.updatePassword(oldPassword, newPassword1);
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
             if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
                 messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());

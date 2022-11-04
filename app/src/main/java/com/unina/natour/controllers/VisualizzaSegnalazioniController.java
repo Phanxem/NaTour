@@ -2,6 +2,7 @@ package com.unina.natour.controllers;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.unina.natour.R;
@@ -38,8 +39,6 @@ public class VisualizzaSegnalazioniController extends NaTourController{
         super(activity);
         String messageToShow = null;
 
-        this.visualizzaSegnalazioniModel = new VisualizzaSegnalazioniModel();
-
         long itineraryId = getActivity().getIntent().getLongExtra(EXTRA_ITINERARY_ID, -1);
         if(itineraryId < 0){
             messageToShow = activity.getString(R.string.Message_UnknownError);
@@ -47,9 +46,11 @@ public class VisualizzaSegnalazioniController extends NaTourController{
             return;
         }
 
+        this.visualizzaSegnalazioniModel = new VisualizzaSegnalazioniModel();
 
         this.itineraryDAO = new ItineraryDAOImpl(getActivity());
         this.reportDAO = new ReportDAOImpl();
+
 
         boolean result = initModel(itineraryId);
         if(!result){
@@ -57,7 +58,6 @@ public class VisualizzaSegnalazioniController extends NaTourController{
         }
 
         this.reportListAdapter = new ReportListAdapter(activity, visualizzaSegnalazioniModel.getReports(),getActivity());
-
     }
 
     public void initListViewReports(ListView listView) {
@@ -92,6 +92,14 @@ public class VisualizzaSegnalazioniController extends NaTourController{
             showErrorMessageAndBack(messageToShow);
             return false;
         }
+
+        Log.e(TAG, "itineraryId: " + visualizzaSegnalazioniModel.getItineraryId());
+        Log.e(TAG, "itineraryName: " + visualizzaSegnalazioniModel.getItineraryName());
+
+        for(ElementReportModel report : visualizzaSegnalazioniModel.getReports()){
+            Log.e(TAG, "reportId: " + report.getId() + " | reportName: " + report.getTitolo() + " | date: " + report.getDateOfInput());
+        }
+
         return true;
     }
 
@@ -117,7 +125,7 @@ public class VisualizzaSegnalazioniController extends NaTourController{
             ElementReportModel elementModel = new ElementReportModel();
             boolean result = dtoToModel(elementDto, elementModel);
             if(!result){
-                //todo error
+                Log.e("TAG", "dtoToModel Failure");
                 return false;
             }
             listReportModel.add(elementModel);
@@ -125,7 +133,10 @@ public class VisualizzaSegnalazioniController extends NaTourController{
 
         model.setItineraryName(itineraryDto.getName());
         model.setItineraryId(itineraryDto.getId());
-        model.setReports(listReportModel);
+
+        List<ElementReportModel> listReport = model.getReports();
+        listReport.clear();
+        listReport.addAll(listReportModel);
 
         return true;
     }

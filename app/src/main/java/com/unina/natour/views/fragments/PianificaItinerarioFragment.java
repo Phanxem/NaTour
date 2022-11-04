@@ -93,6 +93,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
         //selectionMarker.setIcon(getContext().getDrawable(R.drawable.ic_selected_point));
         selectionMarker.setIcon(DrawableUtils.getBitmapWithText(getContext(), R.drawable.ic_selected_point,null));
         selectionMarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
+        selectionMarker.setOnMarkerClickListener(null);
         overlays.add(selectionMarker);
 
         wayPointMarkers = new FolderOverlay();
@@ -289,7 +290,7 @@ public class PianificaItinerarioFragment extends NaTourFragment {
         button_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pianificaItinerarioController.goToSaveItinerary(pianificaItinerarioModel.getDuration(), pianificaItinerarioModel.getDistance(), (ArrayList<AddressModel>) pianificaItinerarioModel.getInterestPoints());
+                pianificaItinerarioController.goToSaveItinerary(pianificaItinerarioModel.getDuration(), pianificaItinerarioModel.getDistance(), pianificaItinerarioModel.getInterestPoints());
             }
         });
     }

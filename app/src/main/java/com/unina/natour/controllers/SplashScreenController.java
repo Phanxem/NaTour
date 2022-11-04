@@ -71,7 +71,7 @@ public class SplashScreenController extends NaTourController{
         }
 
         //TODO dopo la fase di testing rimuovere----------------------------------------------------
-        /*
+/*
         DisconnessioneController disconnessioneController = new DisconnessioneController(getActivity());
         disconnessioneController.signOut();
 
@@ -134,7 +134,6 @@ public class SplashScreenController extends NaTourController{
         GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = amplifyDAO.fetchAuthSessione();
         ResultMessageDTO resultMessageDTO = getCognitoAuthSessionResponseDTO.getResultMessage();
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
-
             if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
                 messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
                 showErrorMessage(messageToShow);

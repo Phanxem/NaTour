@@ -147,6 +147,7 @@ public class AutenticazioneActivity extends NaTourActivity {
             autenticazioneController.callbackGoogle(data);
         }
         else{
+
             //facebook
             autenticazioneController.callbackFacebook(requestCode,resultCode,data);
         }

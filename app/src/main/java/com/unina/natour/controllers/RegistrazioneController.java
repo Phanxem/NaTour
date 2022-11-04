@@ -7,14 +7,16 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.unina.natour.R;
+import com.unina.natour.controllers.utils.EmailUtils;
 import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.RegistrazioneActivity;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class RegistrazioneController extends NaTourController{
+
+    public final static int MIN_LENGHT_PASSWORD = 8;
 
     private AutenticazioneController autenticazioneController;
 
@@ -35,6 +37,18 @@ public class RegistrazioneController extends NaTourController{
 
         if(!StringsUtils.areAllFieldsFull(username,email,password)){
             messageToShow = activity.getString(R.string.Message_EmptyFieldError);
+            showErrorMessageAndBack(messageToShow);
+            return false;
+        }
+
+        if(password.length() < MIN_LENGHT_PASSWORD){
+            messageToShow = activity.getString(R.string.AmplifyException_PasswordNotConformPolicy);
+            showErrorMessageAndBack(messageToShow);
+            return false;
+        }
+
+        if(!EmailUtils.isEmail(email)){
+            messageToShow = activity.getString(R.string.AmplifyException_InvalidEmailFormat);
             showErrorMessageAndBack(messageToShow);
             return false;
         }

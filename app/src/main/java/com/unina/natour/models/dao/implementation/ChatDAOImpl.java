@@ -31,8 +31,10 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ChatDAOImpl extends ServerDAO implements ChatDAO {
@@ -55,6 +57,21 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
     }
 
     @Override
+    public ResultMessageDTO readAllMessageByIdsUser(long idUser1, long idUser2) {
+        String url = URL + "/readAllMessage?idUser1=" + idUser1 + "&idUser2=" + idUser2;
+
+        RequestBody requestBody = RequestBody.create(new byte[0]);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .put(requestBody)
+                .build();
+
+        ResultMessageDTO resultMessageDTO = resultMessageDAO.fulfilRequest(request);
+        return resultMessageDTO;
+    }
+
+    @Override
     public GetListChatWithUserResponseDTO getListChatByIdUser(long idUser, int page) {
 
         GetListChatWithUserResponseDTO getListChatWithUserResponseDTO = new GetListChatWithUserResponseDTO();
@@ -68,6 +85,11 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
 
         List<GetUserResponseDTO> listUser = getListUserResponseDTO.getListUser();
 
+
+        if(listUser.isEmpty()){
+            getListChatWithUserResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
+            return getListChatWithUserResponseDTO;
+        }
 
         //PER OGNI UTENTE RECUPERO L'IMMAGINI DI PROFILO
         GetBitmapResponseDTO[] arrayImage = new GetBitmapResponseDTO[listUser.size()];
@@ -241,7 +263,7 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
     public GetChatMessageResponseDTO toGetChatMessageResponseDTO(JsonObject jsonObject){
         GetChatMessageResponseDTO getChatMessageResponseDTO = new GetChatMessageResponseDTO();
 
-        if(!jsonObject.has("resultMessage") ){
+        if(jsonObject.has("resultMessage") ){
             JsonObject jsonResultMessage = jsonObject.get("resultMessage").getAsJsonObject();
 
             long code = jsonResultMessage.get("code").getAsLong();
@@ -272,7 +294,7 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
     public GetListChatMessageResponseDTO toGetListChatMessageResponseDTO(JsonObject jsonObject){
         GetListChatMessageResponseDTO getListChatMessageResponseDTO = new GetListChatMessageResponseDTO();
 
-        if(!jsonObject.has("resultMessage") ){
+        if(jsonObject.has("resultMessage") ){
             JsonObject jsonResultMessage = jsonObject.get("resultMessage").getAsJsonObject();
 
             long code = jsonResultMessage.get("code").getAsLong();
@@ -296,66 +318,5 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
     }
 
 
-    /*
-    @Override
-    public GetListChatMessageResponseDTO getMessageByidsUser(long userId1, long userId2) {
 
-        GetChatMessageResponseDTO test1 = new GetChatMessageResponseDTO();
-        test1.setBody("hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello");
-        test1.setDateOfInput("12/12/22");
-        test1.setIdUser(11);
-        test1.setIdChat(22);
-
-        GetChatMessageResponseDTO test2 = new GetChatMessageResponseDTO();
-        test2.setBody("hihihihihihiohellohelloheohellohelloheohellohelloheohellohellohehihihi");
-        test2.setDateOfInput("12/12/22");
-        test2.setIdUser(22);
-        test2.setIdChat(11);
-
-        GetChatMessageResponseDTO testP = new GetChatMessageResponseDTO();
-        testP.setBody("PRIMO");
-        testP.setDateOfInput("12/12/22");
-        testP.setIdUser(11);
-        testP.setIdChat(22);
-
-        GetChatMessageResponseDTO testU = new GetChatMessageResponseDTO();
-        testU.setBody("ULTIMO");
-        testU.setDateOfInput("12/12/22");
-        testU.setIdUser(22);
-        testU.setIdChat(11);
-
-
-        List<GetChatMessageResponseDTO> list = new ArrayList<GetChatMessageResponseDTO>();
-
-        list.add(testP);
-        list.add(test1);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(test2);
-        list.add(testU);
-
-        GetListChatMessageResponseDTO listTest = new GetListChatMessageResponseDTO();
-
-        listTest.setListMessage(list);
-        listTest.setResultMessage(ResultMessageController.getSuccessMessage());
-
-        return listTest;
-    }
-
-     */
 }

@@ -2,11 +2,16 @@ package com.unina.natour.controllers;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
 import com.unina.natour.R;
 import com.unina.natour.config.ApplicationController;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.TimeUtils;
+import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.models.dao.implementation.ChatDAOImpl;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
+import com.unina.natour.models.dao.interfaces.ChatDAO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.controllers.socketHandler.ChatWebSocketHandler;
 import com.unina.natour.views.activities.ChatActivity;
@@ -22,14 +27,13 @@ public class ChatController extends NaTourController{
     long idOtherUser;
 
     private UserDAO userDAO;
+    private ChatDAO chatDAO;
 
 
     public ChatController(NaTourActivity activity){
         super(activity);
 
-        this.userDAO = new UserDAOImpl(getActivity());
-
-        Intent intent = getActivity().getIntent();
+        Intent intent = activity.getIntent();
         this.idOtherUser = intent.getLongExtra(EXTRA_DESTATION_USER_ID, -1);
 
         if(this.idOtherUser < 0){
@@ -37,6 +41,10 @@ public class ChatController extends NaTourController{
             showErrorMessageAndBack(messageToShow);
             return;
         }
+
+        this.userDAO = new UserDAOImpl(getActivity());
+        this.chatDAO = new ChatDAOImpl(getActivity());
+
 
         this.listaMessaggiController = new ListaMessaggiController(activity, idOtherUser);
     }
@@ -81,6 +89,20 @@ public class ChatController extends NaTourController{
         listaMessaggiController.addMessageReceived(message, calendar);
     }
 
+    public boolean readAllMessage(){
+        if(!CurrentUserInfo.isSignedIn()){
+            return false;
+        }
+
+        long myId = CurrentUserInfo.getId();
+
+        ResultMessageDTO resultMessage = chatDAO.readAllMessageByIdsUser(myId, idOtherUser);
+        if(!ResultMessageController.isSuccess(resultMessage)){
+            return false;
+        }
+
+        return true;
+    }
 
 
     public static void openChatActivity(NaTourActivity fromActivity, long idUser){

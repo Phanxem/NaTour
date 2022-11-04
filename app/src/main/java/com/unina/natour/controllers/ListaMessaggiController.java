@@ -3,6 +3,7 @@ package com.unina.natour.controllers;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -15,6 +16,7 @@ import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.response.GetListChatMessageResponseDTO;
 import com.unina.natour.dto.response.GetChatMessageResponseDTO;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.ElementMessageModel;
 import com.unina.natour.models.dao.implementation.ChatDAOImpl;
 import com.unina.natour.models.dao.interfaces.ChatDAO;
@@ -58,7 +60,8 @@ public class ListaMessaggiController extends  NaTourController{
         Activity activity = getActivity();
         String messageToShow = null;
 
-        if(CurrentUserInfo.isGuest()){
+        if(!CurrentUserInfo.isSignedIn()){
+
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;
@@ -66,6 +69,11 @@ public class ListaMessaggiController extends  NaTourController{
 
         GetListChatMessageResponseDTO getListChatMessageResponseDTO = chatDAO.getMessageByIdsUser(CurrentUserInfo.getId(), idUserDestination, 0);
         if(!ResultMessageController.isSuccess(getListChatMessageResponseDTO.getResultMessage())){
+            ResultMessageDTO resultMessage = getListChatMessageResponseDTO.getResultMessage();
+            if(resultMessage.getCode() == ResultMessageController.ERROR_CODE_NOT_FOUND){
+                return true;
+            }
+
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;
@@ -73,6 +81,7 @@ public class ListaMessaggiController extends  NaTourController{
 
         boolean result = dtoToModel(getActivity(), getListChatMessageResponseDTO, elementsMessageModel);
         if(!result){
+
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;

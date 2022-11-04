@@ -3,9 +3,11 @@ package com.unina.natour.views.activities;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +18,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.unina.natour.R;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.DettagliItinerarioController;
 import com.unina.natour.controllers.SegnalaItinerarioController;
 import com.unina.natour.controllers.VisualizzaSegnalazioniController;
@@ -52,7 +55,10 @@ public class DettagliItinerarioActivity extends NaTourActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dettagli_itinerario);
 
-        dettagliItinerarioController = new DettagliItinerarioController(this);
+        Intent intent = this.getIntent();
+        long idItinerary = intent.getLongExtra(DettagliItinerarioController.EXTRA_ITINERARY_ID,-1);
+
+        dettagliItinerarioController = new DettagliItinerarioController(this, idItinerary);
         dettagliItinerarioModel = dettagliItinerarioController.getModel();
         dettagliItinerarioModel.registerObserver(this);
         addModel(dettagliItinerarioModel);
@@ -144,7 +150,7 @@ public class DettagliItinerarioActivity extends NaTourActivity {
     public void pressWarning(){
         NaTourActivity activity = this;
 
-        RelativeLayout relativeLayout_warning = findViewById(R.id.Profilo_relativeLayout_sendMessage);
+        RelativeLayout relativeLayout_warning = findViewById(R.id.ItineraryDetails_relativeLayout_warning);
         relativeLayout_warning.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,6 +183,7 @@ public class DettagliItinerarioActivity extends NaTourActivity {
         });
     }
 
+
     @Override
     public void onBackPressed() {
         if(dettagliItinerarioModel.isNavigationActive()){
@@ -187,7 +194,7 @@ public class DettagliItinerarioActivity extends NaTourActivity {
         super.onBackPressed();
     }
 
-    public void initUI(){
+    private void initUI(){
         TextView textView_name = findViewById(R.id.ItineraryDetails_textView_name);
         textView_name.setText(dettagliItinerarioModel.getName());
 
@@ -203,13 +210,23 @@ public class DettagliItinerarioActivity extends NaTourActivity {
         TextView textView_description = findViewById(R.id.ItineraryDetails_textView_descrizione);
         textView_description.setText(dettagliItinerarioModel.getDescription());
 
+
+        if(dettagliItinerarioModel.getProfileImage() != null){
+            ImageView imageView_profileImage = findViewById(R.id.ItineraryDetails_imageView_immagineProfilo);
+            imageView_profileImage.setImageBitmap(dettagliItinerarioModel.getProfileImage());
+        }
+
+
+        TextView textView_username = findViewById(R.id.ItineraryDetails_textView_username);
+        textView_username.setText(dettagliItinerarioModel.getUsername());
+
         updateMapWithRoutes();
         updateMapWithWaypointMarkers();
         centerMapToSeeMarkers();
     }
 
     public void update(){
-        RelativeLayout relativeLayout_warning = findViewById(R.id.Profilo_relativeLayout_sendMessage);
+
         ConstraintLayout constraintLayout_durationDistanceDifficulty = findViewById(R.id.ItineraryDetails_constraintLayout_durationDistanceDifficulty);
         ScrollView scrollView_body = findViewById(R.id.ItineraryDetails_scrollView_body);
         ImageView imageView_back = findViewById(R.id.ItineraryDetails_imageView_iconaIndietro);
@@ -217,33 +234,50 @@ public class DettagliItinerarioActivity extends NaTourActivity {
 
         Button button_close = findViewById(R.id.ItineraryDetails_button_close);
 
-        if(dettagliItinerarioModel.isNavigationActive()){
-
-            constraintLayout_durationDistanceDifficulty.setVisibility(View.GONE);
-            scrollView_body.setVisibility(View.GONE);
-            imageView_back.setVisibility(View.GONE);
-            imageView_menu.setVisibility(View.GONE);
-            relativeLayout_warning.setVisibility(View.GONE);
-
-            button_close.setVisibility(View.VISIBLE);
-
-            markerCurrentPosition.setVisible(true);
-            markerCurrentPosition.setPosition(dettagliItinerarioModel.getCurrentLocation());
-            markerCurrentPosition.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+        RelativeLayout relativeLayout_warning = findViewById(R.id.ItineraryDetails_relativeLayout_warning);
+        if(dettagliItinerarioModel.isHasBeenReported()){
+            relativeLayout_warning.setVisibility(View.VISIBLE);
         }
         else{
-            markerCurrentPosition.setVisible(false);
-
-            constraintLayout_durationDistanceDifficulty.setVisibility(View.VISIBLE);
-            scrollView_body.setVisibility(View.VISIBLE);
-            imageView_back.setVisibility(View.VISIBLE);
-            imageView_menu.setVisibility(View.VISIBLE);
-
-            if(dettagliItinerarioModel.hasBeenReported())relativeLayout_warning.setVisibility(View.VISIBLE);
-            else relativeLayout_warning.setVisibility(View.GONE);
-
-            button_close.setVisibility(View.GONE);
+            relativeLayout_warning.setVisibility(View.GONE);
         }
+
+        Button button_navigation = findViewById(R.id.ItineraryDetails_button_avviaNavigazione);
+        if(!CurrentUserInfo.isSignedIn()){
+            button_navigation.setVisibility(View.GONE);
+            imageView_menu.setVisibility(View.GONE);
+        }
+        else{
+            if(dettagliItinerarioModel.isNavigationActive()){
+
+                constraintLayout_durationDistanceDifficulty.setVisibility(View.GONE);
+                scrollView_body.setVisibility(View.GONE);
+                imageView_back.setVisibility(View.GONE);
+                imageView_menu.setVisibility(View.GONE);
+                relativeLayout_warning.setVisibility(View.GONE);
+
+                button_close.setVisibility(View.VISIBLE);
+
+                markerCurrentPosition.setVisible(true);
+                markerCurrentPosition.setPosition(dettagliItinerarioModel.getCurrentLocation());
+                markerCurrentPosition.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+            }
+            else{
+                markerCurrentPosition.setVisible(false);
+
+                constraintLayout_durationDistanceDifficulty.setVisibility(View.VISIBLE);
+                scrollView_body.setVisibility(View.VISIBLE);
+                imageView_back.setVisibility(View.VISIBLE);
+                imageView_menu.setVisibility(View.VISIBLE);
+
+                if(dettagliItinerarioModel.hasBeenReported())relativeLayout_warning.setVisibility(View.VISIBLE);
+                else relativeLayout_warning.setVisibility(View.GONE);
+
+                button_close.setVisibility(View.GONE);
+            }
+        }
+
+
 
         mapView.invalidate();
     }
@@ -309,13 +343,16 @@ public class DettagliItinerarioActivity extends NaTourActivity {
         boundingBox.setLonEast(boundingBox.getLonEast() + 0.01F);
         boundingBox.setLonWest(boundingBox.getLonWest() - 0.01F);
 
-
         return boundingBox;
     }
 
     @Override
     protected void onResume() {
-        dettagliItinerarioController.initModel();
+
+        Intent intent = this.getIntent();
+        long idItinerary = intent.getLongExtra(DettagliItinerarioController.EXTRA_ITINERARY_ID,-1);
+
+        dettagliItinerarioController.initModel(idItinerary);
         initUI();
         update();
         super.onResume();

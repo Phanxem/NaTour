@@ -59,7 +59,7 @@ public class DettagliSegnalazioneActivity extends NaTourActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if(item.getItemId() == R.id.DettagliSegnalazione_popupMenu_elimina){
-                    RimuoviSegnalazioneDialog rimuoviSegnalazioneDialog = new RimuoviSegnalazioneDialog(dettagliSegnalazioneModel.getReportId());
+                    RimuoviSegnalazioneDialog rimuoviSegnalazioneDialog = new RimuoviSegnalazioneDialog(dettagliSegnalazioneModel);
                     rimuoviSegnalazioneDialog.setNaTourActivity(activity);
                     rimuoviSegnalazioneDialog.showOverUi();
                     return true;
@@ -77,7 +77,7 @@ public class DettagliSegnalazioneActivity extends NaTourActivity {
     }
 
     public void update(){
-        if(dettagliSegnalazioneController.isMyItinerary()){
+        if(dettagliSegnalazioneController.isMyReport()){
             ImageView imageView_menu = findViewById(R.id.ReportDetails_imageView_iconaMenu);
             imageView_menu.setVisibility(View.VISIBLE);
         }

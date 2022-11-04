@@ -48,6 +48,8 @@ public class SalvaItinerarioController extends NaTourController{
 
     public SalvaItinerarioController(NaTourActivity activity){
         super(activity);
+        String messageToShow = null;
+
 
         Intent intent = activity.getIntent();
         float duration = intent.getFloatExtra(EXTRA_DURATION, -1);
@@ -56,15 +58,30 @@ public class SalvaItinerarioController extends NaTourController{
 
         this.salvaItinerarioModel = new SalvaItinerarioModel();
 
-        if(duration >= 0 && distance >= 0 && wayPoints != null && !wayPoints.isEmpty()){
-            salvaItinerarioModel.setDefaultDuration(duration);
-            salvaItinerarioModel.setDistance(distance);
-            salvaItinerarioModel.setWayPoints(wayPoints);
+        boolean result = initModel(duration, distance, wayPoints);
+
+        if(!result){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
+            return;
         }
 
 
         this.itineraryDAO = new ItineraryDAOImpl(activity);
 
+    }
+
+    public boolean initModel(float duration, float distance, List<AddressModel> wayPoints){
+
+        if(duration < 0 || distance < 0 || wayPoints == null || wayPoints.size() < 2){
+            return false;
+        }
+
+        salvaItinerarioModel.setDefaultDuration(duration);
+        salvaItinerarioModel.setDistance(distance);
+        salvaItinerarioModel.setWayPoints(wayPoints);
+
+        return true;
     }
 
     public SalvaItinerarioModel getModel(){ return salvaItinerarioModel; }
@@ -127,10 +144,11 @@ public class SalvaItinerarioController extends NaTourController{
             wayPoints.add(wayPoint);
         }
 
-        TrackSegment trackSegment = TrackSegment.of(wayPoints);
+        //TrackSegment trackSegment = TrackSegment.of(wayPoints);
 
         GPX gpx = GPX.builder()
-                .addTrack( track -> track.addSegment(trackSegment))
+                .wayPoints(wayPoints)
+                //.addTrack( track -> track.addSegment(trackSegment))
                 .build();
 
         SaveItineraryRequestDTO itineraryDTO = new SaveItineraryRequestDTO();
@@ -162,11 +180,14 @@ public class SalvaItinerarioController extends NaTourController{
     }
 
 
-    public static void openSalvaItinerarioActivity(NaTourActivity fromActivity, ActivityResultLauncher<Intent> activityResultLauncherSalvaItinerario, float duration, float distance, ArrayList<AddressModel> wayPoints){
+    public static void openSalvaItinerarioActivity(NaTourActivity fromActivity, ActivityResultLauncher<Intent> activityResultLauncherSalvaItinerario, float duration, float distance, List<AddressModel> wayPoints){
         Intent intent = new Intent(fromActivity, SalvaItinerarioActivity.class);
         intent.putExtra(EXTRA_DURATION,duration);
         intent.putExtra(EXTRA_DISTANCE,distance);
-        intent.putParcelableArrayListExtra(EXTRA_WAYPOINTS,wayPoints);
+
+        ArrayList<AddressModel> listAddress = new ArrayList<AddressModel>();
+        listAddress.addAll(wayPoints);
+        intent.putParcelableArrayListExtra(EXTRA_WAYPOINTS,listAddress);
         activityResultLauncherSalvaItinerario.launch(intent);
 
         //fromActivity.startActivity(intent);

@@ -19,9 +19,7 @@ public class ApplicationController extends Application {
 
     private final static String TAG = "ApplicationConfig";
 
-    private final static String IDP_COGNITO = "Cognito";
-    private final static String IDP_FACEBOOK = "Facebook";
-    private final static String IDP_GOOGLE = "Google";
+
 
     private NaTourActivity currentActivity;
     private ChatWebSocketHandler chatWebSocketHandler;

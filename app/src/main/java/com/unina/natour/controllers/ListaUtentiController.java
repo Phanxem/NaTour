@@ -68,7 +68,7 @@ public class ListaUtentiController extends NaTourController{
         Activity activity = getActivity();
         String messageToShow = null;
 
-        if(CurrentUserInfo.isGuest()){
+        if(!CurrentUserInfo.isSignedIn()){
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;

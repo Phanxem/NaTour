@@ -37,6 +37,7 @@ public class HomeController extends NaTourController{
     public static void openHomeGuestActivity(NaTourActivity fromActivity){
         Intent intent = new Intent(fromActivity, HomeGuestActivity.class);
         fromActivity.startActivity(intent);
+        fromActivity.finish();
     }
 
 }

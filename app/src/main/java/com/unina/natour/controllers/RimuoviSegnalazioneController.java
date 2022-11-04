@@ -1,23 +1,33 @@
 package com.unina.natour.controllers;
 
+import com.unina.natour.config.CurrentUserInfo;
+import com.unina.natour.models.DettagliSegnalazioneModel;
 import com.unina.natour.models.dao.implementation.ReportDAOImpl;
 import com.unina.natour.models.dao.interfaces.ReportDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 
 public class RimuoviSegnalazioneController extends NaTourController{
 
-    private long reportId;
+    private DettagliSegnalazioneModel dettagliSegnalazioneModel;
 
     private ReportDAO reportDAO;
 
 
-    public RimuoviSegnalazioneController(NaTourActivity activity, long reportId){
+    public RimuoviSegnalazioneController(NaTourActivity activity, DettagliSegnalazioneModel reportModel){
         super(activity);
-        this.reportId = reportId;
+        this.dettagliSegnalazioneModel = reportModel;
         this.reportDAO = new ReportDAOImpl();
     }
 
     public void deleteReport(){
-        reportDAO.deleteReportById(reportId);
+
+        if(!CurrentUserInfo.isSignedIn()) return;
+
+        long idUserReport = dettagliSegnalazioneModel.getUserId();
+
+        if(CurrentUserInfo.getId() == idUserReport){
+            reportDAO.deleteReportById(dettagliSegnalazioneModel.getReportId());
+        }
+
     }
 }

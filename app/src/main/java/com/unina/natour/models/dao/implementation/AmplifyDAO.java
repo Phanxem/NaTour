@@ -7,6 +7,7 @@ import com.amplifyframework.auth.AuthUserAttributeKey;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
+import com.unina.natour.R;
 import com.unina.natour.controllers.ResultMessageController;
 import com.unina.natour.dto.response.GetCognitoAuthSessionResponseDTO;
 import com.unina.natour.dto.response.GetCognitoEmailResponseDTO;
@@ -14,6 +15,8 @@ import com.unina.natour.dto.response.ResultMessageDTO;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+
+import javax.xml.transform.Result;
 
 public class AmplifyDAO extends ServerDAO {
 
@@ -185,7 +188,24 @@ public class AmplifyDAO extends ServerDAO {
     }
 
     public GetCognitoEmailResponseDTO getEmail(){
+        GetCognitoEmailResponseDTO result = new GetCognitoEmailResponseDTO();
+
         CompletableFuture<GetCognitoEmailResponseDTO> completableFuture = new CompletableFuture<GetCognitoEmailResponseDTO>();
+
+        GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = fetchAuthSessione();
+        if(!ResultMessageController.isSuccess(getCognitoAuthSessionResponseDTO.getResultMessage())){
+            result.setResultMessage(getCognitoAuthSessionResponseDTO.getResultMessage());
+            return result;
+        }
+
+
+        //Signed in with cognito
+        AWSCognitoAuthSession authSession = getCognitoAuthSessionResponseDTO.getAuthSessione();
+        if(!authSession.isSignedIn()){
+            result.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
+            return result;
+        }
+
 
         Amplify.Auth.fetchUserAttributes(
                 attributes -> {
@@ -205,7 +225,7 @@ public class AmplifyDAO extends ServerDAO {
                 }
         );
 
-        GetCognitoEmailResponseDTO result = null;
+
         try {
             result = completableFuture.get();
         }

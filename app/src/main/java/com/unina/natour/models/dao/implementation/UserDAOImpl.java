@@ -543,7 +543,7 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
     public GetListUserResponseDTO toGetListUserResponseDTO(JsonObject jsonObject){
         GetListUserResponseDTO getListUserResponseDTO = new GetListUserResponseDTO();
 
-        if(!jsonObject.has("resultMessage") ){
+        if(jsonObject.has("resultMessage") ){
             JsonObject jsonResultMessage = jsonObject.get("resultMessage").getAsJsonObject();
 
             long code = jsonResultMessage.get("code").getAsLong();
@@ -558,7 +558,7 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
         for(JsonElement jsonElement : jsonArray){
             JsonObject jsonObjectElement = jsonElement.getAsJsonObject();
 
-            GetUserResponseDTO getUserResponseDTO = toGetUserResponseDTO(jsonObject);
+            GetUserResponseDTO getUserResponseDTO = toGetUserResponseDTO(jsonObjectElement);
             listUser.add(getUserResponseDTO);
         }
         getListUserResponseDTO.setListUser(listUser);

@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
 import com.unina.natour.controllers.AutenticazioneController;
+import com.unina.natour.controllers.ChatController;
 import com.unina.natour.controllers.DisconnessioneController;
 import com.unina.natour.controllers.ListaItinerariController;
 import com.unina.natour.controllers.ModificaProfiloController;
@@ -41,7 +42,11 @@ public class ProfiloUtenteActivity extends NaTourActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_profilo);
 
-        this.profiloController = new ProfiloController(this);
+        Intent intent = this.getIntent();
+        long idUser = intent.getLongExtra(ProfiloController.EXTRA_USER_ID,-1);
+
+
+        this.profiloController = new ProfiloController(this, idUser);
         this.listaItinerariController = profiloController.getListaItinerariController();
 
         this.profiloModel = profiloController.getModel();
@@ -65,6 +70,7 @@ public class ProfiloUtenteActivity extends NaTourActivity{
 
         update();
 
+/*
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -82,6 +88,8 @@ public class ProfiloUtenteActivity extends NaTourActivity{
                 });
             }
         });
+
+ */
     }
 
     public void pressSendMessage() {
@@ -90,7 +98,7 @@ public class ProfiloUtenteActivity extends NaTourActivity{
         relativeLayout_sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //openChatUtenteActivity(this, userId);
+                ChatController.openChatActivity(activity, profiloModel.getId());
             }
         });
     }
@@ -102,23 +110,11 @@ public class ProfiloUtenteActivity extends NaTourActivity{
             textView_username.setBackgroundColor(Color.TRANSPARENT);
             textView_username.setText(username);
         }
-        else {
-            //textView_username.setBackgroundColor(Color.GRAY);
-            textView_username.setText("");
-        }
 
 
-        String email = profiloModel.getEmail();
+
         TextView textView_email = findViewById(R.id.Profilo_textView_email);
-        textView_email.setText(email);
-        if(email != null && !email.isEmpty()) {
-            //textView_email.setBackgroundColor(Color.TRANSPARENT);
-            textView_email.setText(email);
-        }
-        else {
-            //textView_email.setBackgroundColor(Color.GRAY);
-            textView_email.setText("");
-        }
+        textView_email.setVisibility(View.GONE);
 
         LinearLayout linearLayout_residence = findViewById(R.id.Profilo_linearLayout_residence);
         if(profiloModel.getPlaceOfResidence() != null) {
@@ -147,6 +143,7 @@ public class ProfiloUtenteActivity extends NaTourActivity{
 
     @Override
     public void onResume() {
+        /*
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -166,6 +163,7 @@ public class ProfiloUtenteActivity extends NaTourActivity{
                 });
             }
         });
+        */
         super.onResume();
     }
 

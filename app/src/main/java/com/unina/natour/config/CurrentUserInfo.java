@@ -6,7 +6,7 @@ public class CurrentUserInfo {
     private static String identityProvider;
     private static String idIdentityProvided;
 
-    private static boolean isGuest = true;
+    private static boolean isSignedIn = false;
 
 
     public static void set(long id, String identityProvider, String idIdentityProvided){
@@ -14,15 +14,15 @@ public class CurrentUserInfo {
         CurrentUserInfo.identityProvider = identityProvider;
         CurrentUserInfo.idIdentityProvided = idIdentityProvided;
 
-        CurrentUserInfo.isGuest = false;
+        CurrentUserInfo.isSignedIn = true;
     }
 
     public static void clear(){
-        CurrentUserInfo.id = null;
+        CurrentUserInfo.id = -1l;
         CurrentUserInfo.identityProvider = null;
         CurrentUserInfo.idIdentityProvided = null;
 
-        CurrentUserInfo.isGuest = true;
+        CurrentUserInfo.isSignedIn = false;
     }
 
     public static long getId() {
@@ -34,7 +34,7 @@ public class CurrentUserInfo {
     public static String getIdIdentityProvided() {
         return idIdentityProvided;
     }
-    public static boolean isGuest(){return isGuest;}
+    public static boolean isSignedIn(){return isSignedIn;}
 
 
 }

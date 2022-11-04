@@ -5,7 +5,7 @@ import com.unina.natour.dto.response.GetListItineraryResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.request.SaveItineraryRequestDTO;
 import com.unina.natour.dto.response.GetItineraryResponseDTO;
-import com.unina.natour.dto.response.composted.GetItineraryWithGpxAndReportResponseDTO;
+import com.unina.natour.dto.response.composted.GetItineraryWithGpxAndUserAndReportResponseDTO;
 import com.unina.natour.dto.response.composted.GetListItineraryWithUserResponseDTO;
 
 public interface ItineraryDAO{
@@ -35,7 +35,7 @@ public interface ItineraryDAO{
 
     public GetListItineraryWithUserResponseDTO getListItineraryWithUserByName(String name, int page);
 
-    public GetItineraryWithGpxAndReportResponseDTO getItineraryWithGpxAndReportById(long idItinerary);
+    public GetItineraryWithGpxAndUserAndReportResponseDTO getItineraryWithGpxAndUserAndReportById(long idItinerary);
 
 
 

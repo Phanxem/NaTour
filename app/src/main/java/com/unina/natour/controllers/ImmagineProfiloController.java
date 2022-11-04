@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat;
 import com.unina.natour.R;
 import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.FileUtils;
+import com.unina.natour.controllers.utils.ImageUtils;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 import com.unina.natour.models.ImpostaImmagineProfiloModel;
@@ -88,7 +89,7 @@ public class ImmagineProfiloController extends NaTourController{
                             return ;
                         }
 
-                        Bitmap resizedBitmap = resizeBitmap(bitmap,MIN_WIDTH);
+                        Bitmap resizedBitmap = ImageUtils.resizeBitmap(bitmap,MIN_WIDTH);
                         if(!isValidImage(resizedBitmap)){
                             messageToShow = activity.getString(R.string.Message_ImageInvalidError);
                             showErrorMessage(messageToShow);
@@ -122,7 +123,7 @@ public class ImmagineProfiloController extends NaTourController{
         Activity activity = getActivity();
         String messageToShow = null;
 
-        if(CurrentUserInfo.isGuest()){
+        if(!CurrentUserInfo.isSignedIn()){
             return false;
         }
 
@@ -153,8 +154,7 @@ public class ImmagineProfiloController extends NaTourController{
         Activity activity = getActivity();
         String messageToShow = null;
 
-        if(CurrentUserInfo.isGuest()){
-            Log.e(TAG, "Utente non autenticato");
+        if(!CurrentUserInfo.isSignedIn()){
             return false;
         }
 
@@ -169,7 +169,7 @@ public class ImmagineProfiloController extends NaTourController{
             return true;
         }
 
-        Bitmap resizedProfileImage = resizeBitmap(profileImage, MIN_WIDTH);
+        Bitmap resizedProfileImage = ImageUtils.resizeBitmap(profileImage, MIN_WIDTH);
 
         ResultMessageDTO resultMessageDTO = userDAO.updateProfileImage(CurrentUserInfo.getId(), resizedProfileImage);
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
@@ -182,23 +182,6 @@ public class ImmagineProfiloController extends NaTourController{
         }
 
         return true;
-    }
-
-    private Bitmap resizeBitmap(Bitmap image, int minSize) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        float bitmapRatio = (float) width / (float) height;
-        if (bitmapRatio > 1) {
-            height = minSize;
-            width = (int) (height * bitmapRatio);
-
-        }
-        else {
-            width = minSize;
-            height = (int) (width / bitmapRatio);
-        }
-        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
     public boolean isFirstUpdate(){

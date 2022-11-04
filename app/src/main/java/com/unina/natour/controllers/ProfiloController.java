@@ -19,7 +19,6 @@ import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.ProfiloUtenteActivity;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class ProfiloController extends NaTourController {
 
     public static final String EXTRA_USER_ID = "USER_ID";
@@ -30,34 +29,25 @@ public class ProfiloController extends NaTourController {
     private AmplifyDAO amplifyDAO;
     private UserDAO userDAO;
 
-    public ProfiloController(NaTourActivity activity) {
+    public ProfiloController(NaTourActivity activity, long idUser) {
         super(activity);
         String messageToShow = null;
 
+        Log.e(TAG, "idUser: " + idUser);
 
-
-        this.amplifyDAO = new AmplifyDAO();
-        this.userDAO = new UserDAOImpl(activity);
-
-        Intent intent = new Intent();
-        long userId = intent.getLongExtra(EXTRA_USER_ID,-1);
-
-        Log.e(TAG,"er");
-
-        if(userId < 0){
-            Log.e(TAG,"userId<0");
+        if(idUser < 0){
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return;
         }
 
+        this.listaItinerariController = new ListaItinerariController(getActivity(), ListaItinerariController.CODE_ITINERARY_BY_USER_ID, null, idUser);
 
-        this.listaItinerariController = new ListaItinerariController(activity, ListaItinerariController.CODE_ITINERARY_BY_USER_ID, null, userId);
-
-
+        this.amplifyDAO = new AmplifyDAO();
+        this.userDAO = new UserDAOImpl(activity);
 
         this.profiloModel = new ProfiloModel();
-        boolean result = initModel(userId);
+        boolean result = initModel(idUser);
         if(!result){return;}
     }
 
@@ -73,13 +63,20 @@ public class ProfiloController extends NaTourController {
             return false;
         }
 
-        if(CurrentUserInfo.isGuest()){
+        if(!CurrentUserInfo.isSignedIn()){
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;
         }
+
+
+
         String email = null;
-        if(userId == CurrentUserInfo.getId()){
+
+        String currentIdentityProvider = CurrentUserInfo.getIdentityProvider();
+        String cognitoIdentityProvider = getActivity().getString(R.string.IdentityProvider_Cognito);
+
+        if(userId == CurrentUserInfo.getId() && currentIdentityProvider.equals(cognitoIdentityProvider)){
             GetCognitoEmailResponseDTO getCognitoEmailResponseDTO = amplifyDAO.getEmail();
             if(!ResultMessageController.isSuccess(getCognitoEmailResponseDTO.getResultMessage())){
                 messageToShow = activity.getString(R.string.Message_UnknownError);
@@ -87,12 +84,11 @@ public class ProfiloController extends NaTourController {
                 return false;
             }
             email = getCognitoEmailResponseDTO.getEmail();
-
         }
 
         GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUserWithImageById(userId);
         if(!ResultMessageController.isSuccess(getUserWithImageResponseDTO.getResultMessage())){
-            messageToShow = activity.getString(R.string.Message_UserNotExistError);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;
         }
@@ -100,7 +96,7 @@ public class ProfiloController extends NaTourController {
 
         boolean result = dtoToModel(getActivity(), getUserWithImageResponseDTO, email, profiloModel);
         if(!result){
-            messageToShow = activity.getString(R.string.Message_UserNotExistError);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;
         }

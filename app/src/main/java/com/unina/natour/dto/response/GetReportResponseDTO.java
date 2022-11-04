@@ -10,7 +10,10 @@ public class GetReportResponseDTO {
     private String description;
 
     private long idUser;
+
     private long idItinerary;
+    private String nameItinerary;
+
 
     public ResultMessageDTO getResultMessage() {
         return resultMessage;
@@ -66,5 +69,13 @@ public class GetReportResponseDTO {
 
     public void setIdUser(long idUser) {
         this.idUser = idUser;
+    }
+
+    public String getNameItinerary() {
+        return nameItinerary;
+    }
+
+    public void setNameItinerary(String nameItinerary) {
+        this.nameItinerary = nameItinerary;
     }
 }

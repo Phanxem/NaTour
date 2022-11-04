@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,13 +23,18 @@ import com.unina.natour.R;
 import com.unina.natour.controllers.utils.AddressUtils;
 import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.GPSUtils;
+import com.unina.natour.controllers.utils.ImageUtils;
 import com.unina.natour.controllers.utils.TimeUtils;
+import com.unina.natour.dto.response.GetRouteLegResponseDTO;
+import com.unina.natour.dto.response.GetRouteResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
-import com.unina.natour.dto.response.composted.GetItineraryWithGpxAndReportResponseDTO;
+import com.unina.natour.dto.response.composted.GetItineraryWithGpxAndUserAndReportResponseDTO;
 import com.unina.natour.models.DettagliItinerarioModel;
 import com.unina.natour.models.dao.implementation.ItineraryDAOImpl;
+import com.unina.natour.models.dao.implementation.RouteDAOImpl;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.ItineraryDAO;
+import com.unina.natour.models.dao.interfaces.RouteDAO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.DettagliItinerarioActivity;
 import com.unina.natour.views.activities.NaTourActivity;
@@ -44,14 +51,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.jenetics.jpx.GPX;
-import io.jenetics.jpx.Track;
-import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 
 
 public class DettagliItinerarioController extends NaTourController{
 
+    private final static int USER_IMAGE_SIZE_DP = 24;
+
     public final static String EXTRA_ITINERARY_ID = "itineraryId";
+
 
     ActivityResultLauncher<String> activityResultLauncherPermissions;
 
@@ -61,13 +69,22 @@ public class DettagliItinerarioController extends NaTourController{
 
     private UserDAO userDAO;
     private ItineraryDAO itineraryDAO;
+    private RouteDAO routeDAO;
 
 
-    public DettagliItinerarioController(NaTourActivity activity){
+    public DettagliItinerarioController(NaTourActivity activity, long idItinerary){
         super(activity);
+        String messageToShow = null;
+
+        if(idItinerary < 0){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
+            return;
+        }
 
         this.userDAO = new UserDAOImpl(activity);
         this.itineraryDAO = new ItineraryDAOImpl(activity);
+        this.routeDAO = new RouteDAOImpl();
 
         this.locationListener = new LocationListener() {
             @Override
@@ -81,14 +98,13 @@ public class DettagliItinerarioController extends NaTourController{
 
             }
 
-
             public void onProviderEnabled(String provider) {
 
             }
         };
 
         this.dettagliItinerarioModel = new DettagliItinerarioModel();
-        boolean result = initModel();
+        boolean result = initModel(idItinerary);
         if(!result){
             return;
         }
@@ -105,21 +121,11 @@ public class DettagliItinerarioController extends NaTourController{
 
     }
 
-    public boolean initModel(){
+    public boolean initModel(long idItinerary){
         Activity activity = getActivity();
         String messageToShow = null;
 
-        Intent intent = getActivity().getIntent();
-        long itineraryId = intent.getLongExtra(EXTRA_ITINERARY_ID,-1);
-
-        if(itineraryId < 0){
-            messageToShow = activity.getString(R.string.Message_UnknownError);
-            showErrorMessageAndBack(messageToShow);
-            return false;
-        }
-
-
-        GetItineraryWithGpxAndReportResponseDTO itineraryDTO = itineraryDAO.getItineraryWithGpxAndReportById(itineraryId);
+        GetItineraryWithGpxAndUserAndReportResponseDTO itineraryDTO = itineraryDAO.getItineraryWithGpxAndUserAndReportById(idItinerary);
         ResultMessageDTO resultMessageDTO = itineraryDTO.getResultMessage();
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
             if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_NOT_FOUND){
@@ -127,11 +133,11 @@ public class DettagliItinerarioController extends NaTourController{
                 showErrorMessageAndBack(messageToShow);
                 return false;
             }
-
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;
         }
+
 
         boolean result = dtoToModel(itineraryDTO,dettagliItinerarioModel);
         if(!result){
@@ -174,10 +180,14 @@ public class DettagliItinerarioController extends NaTourController{
 
 
     public boolean isMyItinerary() {
-        if(CurrentUserInfo.isGuest()) return false;
+        if(!CurrentUserInfo.isSignedIn()){
+            return false;
+        }
 
         long id = CurrentUserInfo.getId();
         long idUserItinerary = dettagliItinerarioModel.getIdUser();
+
+        Log.e(TAG, "my id: " + id + ", other id: " + idUserItinerary);
 
         if(id == idUserItinerary) return true;
 
@@ -258,7 +268,7 @@ public class DettagliItinerarioController extends NaTourController{
 
     //---
 
-    public static boolean dtoToModel(GetItineraryWithGpxAndReportResponseDTO dto, DettagliItinerarioModel model){
+    public boolean dtoToModel(GetItineraryWithGpxAndUserAndReportResponseDTO dto, DettagliItinerarioModel model){
         model.clear();
 
         model.setItineraryId(dto.getId());
@@ -279,6 +289,21 @@ public class DettagliItinerarioController extends NaTourController{
 
         model.setName(dto.getName());
 
+        model.setIdUser(dto.getIdUser());
+        model.setUsername(dto.getUsername());
+
+        if(dto.getProfileImage() != null){
+            Bitmap resizeUserImage = ImageUtils.resizeBitmap(dto.getProfileImage(),USER_IMAGE_SIZE_DP);
+            model.setProfileImage(resizeUserImage);
+        }
+        /*
+        else {
+            Bitmap genericProfileImage = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.ic_generic_account);
+            model.setProfileImage(genericProfileImage);
+        }
+        */
+
+
         GPX gpx = dto.getGpx();
 
         List<GeoPoint> wayPoints = new ArrayList<GeoPoint>();
@@ -288,6 +313,20 @@ public class DettagliItinerarioController extends NaTourController{
         }
         model.setWayPoints(wayPoints);
 
+
+        List<GeoPoint> routePoints = new ArrayList<GeoPoint>();
+
+        GetRouteResponseDTO getRouteResponseDTO = routeDAO.getRouteByGeoPoints(wayPoints);
+        if(!ResultMessageController.isSuccess(getRouteResponseDTO.getResultMessage())){
+            return false;
+        }
+
+        List<GetRouteLegResponseDTO> listRouteLeg = getRouteResponseDTO.getTracks();
+        for(GetRouteLegResponseDTO routeLeg: listRouteLeg){
+            List<GeoPoint> listGeoPoint = routeLeg.getTrack();
+            routePoints.addAll(listGeoPoint);
+        }
+        /*
         List<GeoPoint> routePoints = new ArrayList<GeoPoint>();
         Track track = gpx.getTracks().get(0);
         List<TrackSegment> segments = track.getSegments();
@@ -298,6 +337,7 @@ public class DettagliItinerarioController extends NaTourController{
                 routePoints.add(geoPoint);
             }
         }
+        */
         model.setRoutePoints(routePoints);
 
         model.setHasBeenReported(dto.isReported());

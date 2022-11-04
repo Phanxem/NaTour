@@ -21,6 +21,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.AutenticazioneController;
 import com.unina.natour.controllers.DisconnessioneController;
 import com.unina.natour.controllers.ListaItinerariController;
@@ -49,7 +50,8 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profilo, container, false);
         setFragmentView(view);
-        this.profiloController = new ProfiloController(getNaTourActivity());
+
+        this.profiloController = new ProfiloController(getNaTourActivity(), CurrentUserInfo.getId());
         this.disconnessioneController = new DisconnessioneController(getNaTourActivity());
         this.listaItinerariController = profiloController.getListaItinerariController();
 
@@ -65,26 +67,6 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
         pressMenuIcon();
 
         update();
-
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent();
-                long userId = intent.getLongExtra(ProfiloController.EXTRA_USER_ID,-1);
-
-                profiloController.initModel(userId);
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        update();
-                    }
-                });
-            }
-        });
 
 
         return view;
@@ -140,10 +122,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
             textView_username.setBackgroundColor(Color.TRANSPARENT);
             textView_username.setText(username);
         }
-        else {
-            textView_username.setBackgroundColor(Color.GRAY);
-            textView_username.setText("");
-        }
+
 
 
         String email = profiloModel.getEmail();
@@ -154,8 +133,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
             textView_email.setText(email);
         }
         else {
-            textView_email.setBackgroundColor(Color.GRAY);
-            textView_email.setText("");
+            textView_email.setVisibility(View.GONE);
         }
 
         LinearLayout linearLayout_residence = view.findViewById(R.id.Profilo_linearLayout_residence);
@@ -185,6 +163,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
 
     @Override
     public void onResume() {
+        /*
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -204,7 +183,7 @@ public class ProfiloPersonaleFragment extends NaTourFragment{
                 });
             }
         });
-
+        */
 
         super.onResume();
     }

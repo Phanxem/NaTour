@@ -152,7 +152,6 @@ public class PersonalizzaAccountInfoOpzionaliActivity extends NaTourActivity
                 if(result){
                     if(infoOpzionaliProfiloController.isFirstUpdate()){
                         MainController.openMainActivity(activity);
-                        return;
                     }
 
                     activity.finish();

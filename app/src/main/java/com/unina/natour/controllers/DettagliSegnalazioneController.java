@@ -68,6 +68,7 @@ public class DettagliSegnalazioneController extends NaTourController{
             return false;
         }
 
+        /*
         long itineraryId = reportDTO.getIdItinerary();
 
         GetItineraryResponseDTO itineraryDTO = itineraryDAO.getItineraryById(itineraryId);
@@ -83,8 +84,10 @@ public class DettagliSegnalazioneController extends NaTourController{
             showErrorMessageAndBack(messageToShow);
             return false;
         }
+*/
 
-        boolean result = dtoToModel(reportDTO, itineraryDTO, dettagliSegnalazioneModel);
+        //boolean result = dtoToModel(reportDTO, itineraryDTO, dettagliSegnalazioneModel);
+        boolean result = dtoToModel(reportDTO, dettagliSegnalazioneModel);
         if(!result){
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
@@ -102,7 +105,9 @@ public class DettagliSegnalazioneController extends NaTourController{
         Activity activity = getActivity();
         String messageToShow = null;
 
-        if(CurrentUserInfo.isGuest()) return false;
+        if(!CurrentUserInfo.isSignedIn()){
+            return false;
+        }
 
         GetItineraryResponseDTO getItineraryResponseDTO = itineraryDAO.getItineraryById(dettagliSegnalazioneModel.getItineraryId());
         if(!ResultMessageController.isSuccess(getItineraryResponseDTO.getResultMessage())){
@@ -119,6 +124,19 @@ public class DettagliSegnalazioneController extends NaTourController{
         return false;
     }
 
+    public boolean isMyReport(){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        if(!CurrentUserInfo.isSignedIn()) return false;
+
+        long id = CurrentUserInfo.getId();
+        long idUserReport = dettagliSegnalazioneModel.getUserId();
+
+        if(id == idUserReport) return true;
+
+        return false;
+    }
     //---
 
     public static void openDettagliSegnalazioneActivity(NaTourActivity fromActivity, long reportId){
@@ -129,15 +147,18 @@ public class DettagliSegnalazioneController extends NaTourController{
 
     //---
 
-    public static boolean dtoToModel(GetReportResponseDTO dtoReport, GetItineraryResponseDTO dtoItinerary, DettagliSegnalazioneModel model){
+    public static boolean dtoToModel(GetReportResponseDTO dtoReport, DettagliSegnalazioneModel model){
         model.clear();
 
-        model.setItineraryId(dtoItinerary.getId());
-        model.setItineraryName(dtoItinerary.getName());
+        model.setReportId(dtoReport.getId());
         model.setReportName(dtoReport.getName());
         model.setDescrizione(dtoReport.getDescription());
         model.setDateOfInput(dtoReport.getDateOfInput());
-        model.setReportId(dtoReport.getId());
+
+        model.setUserId(dtoReport.getIdUser());
+
+        model.setItineraryId(dtoReport.getIdItinerary());
+        model.setItineraryName(dtoReport.getNameItinerary());
 
         return true;
     }

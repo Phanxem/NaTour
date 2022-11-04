@@ -52,13 +52,19 @@ public class VisualizzaSegnalazioniActivity extends NaTourActivity {
     public void update(){
         TextView textView_itineraryName = findViewById(R.id.ViewReports_textView_titoloItinerario);
         textView_itineraryName.setText(visualizzaSegnalazioniModel.getItineraryName());
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                visualizzaSegnalazioniController.notifyListAdapter();
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         visualizzaSegnalazioniController.initModel(visualizzaSegnalazioniModel.getItineraryId());
         update();
-        visualizzaSegnalazioniController.notifyListAdapter();
 
         List<ElementReportModel> reports = visualizzaSegnalazioniModel.getReports();
         if(reports.isEmpty()) finish();

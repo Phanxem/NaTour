@@ -1,6 +1,7 @@
 package com.unina.natour.views.activities;
 
 import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -32,7 +33,7 @@ public class ModificaProfiloActivity extends NaTourActivity {
 
         modificaProfiloController = new ModificaProfiloController(this);
 
-        profiloController = new ProfiloController(this);
+        profiloController = new ProfiloController(this, CurrentUserInfo.getId());
         profiloModel = profiloController.getModel();
         addModel(profiloModel);
         profiloModel.registerObserver(this);
@@ -102,16 +103,29 @@ public class ModificaProfiloActivity extends NaTourActivity {
 
         TextView textView_dateOfBirth = findViewById(R.id.ModificaProfilo_textView_dataNascita);
         String dateOfBirth = profiloModel.getDateOfBirth();
-        if(dateOfBirth != null || dateOfBirth.isEmpty()) textView_dateOfBirth.setText(TimeUtils.getDateWithoutHours(dateOfBirth));
+        if(dateOfBirth != null && !dateOfBirth.isEmpty()) textView_dateOfBirth.setText(TimeUtils.getDateWithoutHours(dateOfBirth));
         else textView_dateOfBirth.setText(getString(R.string.ModificaProfilo_textView_dataNascita_null));
 
         TextView textView_placeOfResidence = findViewById(R.id.ModificaProfilo_textView_luogoResidenza);
         String placeOfResidence = profiloModel.getPlaceOfResidence();
-        if(placeOfResidence != null || placeOfResidence.isEmpty()) textView_placeOfResidence.setText(profiloModel.getPlaceOfResidence());
+        if(placeOfResidence != null && !placeOfResidence.isEmpty()) textView_placeOfResidence.setText(profiloModel.getPlaceOfResidence());
         else textView_placeOfResidence.setText(getString(R.string.ModificaProfilo_textView_luogoResidenza_null));
 
+        String currentIdentityProvider = CurrentUserInfo.getIdentityProvider();
+        String cognitoIdentityProvider = this.getString(R.string.IdentityProvider_Cognito);
+
         TextView textView_email = findViewById(R.id.ModificaProfilo_textView_email);
-        textView_email.setText(profiloModel.getEmail());
+        ConstraintLayout constraintLayout_accountInfo = findViewById(R.id.ModificaProfilo_constraintLayout_account);
+        if(currentIdentityProvider.equals(cognitoIdentityProvider)){
+            textView_email.setText(profiloModel.getEmail());
+            constraintLayout_accountInfo.setVisibility(View.VISIBLE);
+        }
+        else{
+            textView_email.setText("");
+            constraintLayout_accountInfo.setVisibility(View.GONE);
+        }
+
+
     }
 
     @Override

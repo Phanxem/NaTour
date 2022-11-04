@@ -5,11 +5,15 @@ import com.unina.natour.controllers.DettagliSegnalazioneController;
 public class DettagliSegnalazioneModel extends NaTourModel{
 
     private long reportId;
-    private long itineraryId;
-    private String itineraryName;
     private String ReportName;
     private String dateOfInput;
     private String descrizione;
+
+    private long userId;
+
+    private long itineraryId;
+    private String itineraryName;
+
 
 
     public DettagliSegnalazioneModel(){
@@ -63,13 +67,23 @@ public class DettagliSegnalazioneModel extends NaTourModel{
         this.descrizione = descrizione;
     }
 
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
 
     public void clear(){
         this.reportId = -1;
-        this.itineraryId = -1;
-        this.itineraryName = null;
         this.ReportName = null;
         this.dateOfInput = null;
         this.descrizione = null;
+
+        this.userId = -1;
+
+        this.itineraryId = -1;
+        this.itineraryName = null;
     }
 }

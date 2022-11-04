@@ -1,5 +1,7 @@
 package com.unina.natour.models;
 
+import android.graphics.Bitmap;
+
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ public class DettagliItinerarioModel extends NaTourModel {
     private String difficulty;
 
     private long idUser;
+    private String username;
+    private Bitmap profileImage;
 
     private boolean hasBeenReported;
 
@@ -131,6 +135,25 @@ public class DettagliItinerarioModel extends NaTourModel {
         this.idUser = idUser;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Bitmap getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(Bitmap profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public boolean isHasBeenReported() {
+        return hasBeenReported;
+    }
 
     public void clear(){
         this.itineraryId = -1;
@@ -141,6 +164,8 @@ public class DettagliItinerarioModel extends NaTourModel {
         this.difficulty = null;
 
         this.idUser = -1;
+        this.username = "";
+        this.profileImage = null;
 
         this.hasBeenReported = false;
 

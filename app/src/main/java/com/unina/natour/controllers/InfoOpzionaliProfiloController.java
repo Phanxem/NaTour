@@ -106,7 +106,7 @@ public class InfoOpzionaliProfiloController extends NaTourController {
         Activity activity = getActivity();
         String messageToShow = null;
 
-        if(CurrentUserInfo.isGuest()){ return false; }
+        if(!CurrentUserInfo.isSignedIn()){ return false; }
 
         SaveUserOptionalInfoRequestDTO saveUserOptionalInfoRequestDTO = new SaveUserOptionalInfoRequestDTO();
 

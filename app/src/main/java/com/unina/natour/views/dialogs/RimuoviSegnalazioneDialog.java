@@ -9,6 +9,7 @@ import android.widget.Button;
 import com.unina.natour.R;
 import com.unina.natour.controllers.EliminaItinerarioController;
 import com.unina.natour.controllers.RimuoviSegnalazioneController;
+import com.unina.natour.models.DettagliSegnalazioneModel;
 
 public class RimuoviSegnalazioneDialog extends NaTourDialog{
 
@@ -17,8 +18,8 @@ public class RimuoviSegnalazioneDialog extends NaTourDialog{
     private RimuoviSegnalazioneController rimuoviSegnalazioneController;
 
 
-    public RimuoviSegnalazioneDialog(long reportId) {
-        this.rimuoviSegnalazioneController = new RimuoviSegnalazioneController(getNaTourActivity(), reportId);
+    public RimuoviSegnalazioneDialog(DettagliSegnalazioneModel reportModel) {
+        this.rimuoviSegnalazioneController = new RimuoviSegnalazioneController(getNaTourActivity(), reportModel);
     }
 
     @Override

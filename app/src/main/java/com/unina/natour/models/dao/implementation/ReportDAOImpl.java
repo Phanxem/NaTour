@@ -219,7 +219,9 @@ public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
     public GetReportResponseDTO toGetReportResponseDTO(JsonObject jsonObject){
         GetReportResponseDTO getReportResponseDTO = new GetReportResponseDTO();
 
-        if(!jsonObject.has("resultMessage") ){
+        Log.e("ReportDAO", jsonObject.toString());
+
+        if(jsonObject.has("resultMessage") ){
             JsonObject jsonResultMessage = jsonObject.get("resultMessage").getAsJsonObject();
 
             long code = jsonResultMessage.get("code").getAsLong();
@@ -249,13 +251,16 @@ public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
         long idItinerary = jsonObject.get("idItinerary").getAsLong();
         getReportResponseDTO.setIdItinerary(idItinerary);
 
+        String nameItinerary = jsonObject.get("nameItinerary").getAsString();
+        getReportResponseDTO.setNameItinerary(nameItinerary);
+
         return getReportResponseDTO;
     }
 
     public GetListReportResponseDTO toGetListReportResponseDTO(JsonObject jsonObject){
         GetListReportResponseDTO getListReportResponseDTO = new GetListReportResponseDTO();
 
-        if(!jsonObject.has("resultMessage") ){
+        if(jsonObject.has("resultMessage") ){
             JsonObject jsonResultMessage = jsonObject.get("resultMessage").getAsJsonObject();
 
             long code = jsonResultMessage.get("code").getAsLong();
@@ -270,7 +275,7 @@ public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
         for(JsonElement jsonElement : jsonArray){
             JsonObject jsonObjectElement = jsonElement.getAsJsonObject();
 
-            GetReportResponseDTO getReportResponseDTO = toGetReportResponseDTO(jsonObject);
+            GetReportResponseDTO getReportResponseDTO = toGetReportResponseDTO(jsonObjectElement);
             listReport.add(getReportResponseDTO);
         }
         getListReportResponseDTO.setListReport(listReport);

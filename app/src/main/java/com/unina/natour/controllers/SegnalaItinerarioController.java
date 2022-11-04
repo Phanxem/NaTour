@@ -50,11 +50,11 @@ public class SegnalaItinerarioController extends NaTourController{
         Activity activity = getActivity();
         String messageToShow = null;
 
-        if(CurrentUserInfo.isGuest()) return false;
+        if(!CurrentUserInfo.isSignedIn()) return false;
 
-        if(StringsUtils.areAllFieldsFull(titolo)){
+        if(!StringsUtils.areAllFieldsFull(titolo)){
             messageToShow = activity.getString(R.string.Message_EmptyFieldError);
-            showErrorMessageAndBack(messageToShow);
+            showErrorMessage(messageToShow);
             return false;
         }
 

@@ -51,6 +51,10 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="4dp"
+                    android:maxWidth="24dp"
+                    android:maxHeight="24dp"
+                    android:minWidth="24dp"
+                    android:minHeight="24dp"
                     android:src="@drawable/ic_generic_account_minor" />
 
                 <TextView

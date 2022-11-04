@@ -1,10 +1,12 @@
 package com.unina.natour.dto.response.composted;
 
+import android.graphics.Bitmap;
+
 import com.unina.natour.dto.response.ResultMessageDTO;
 
 import io.jenetics.jpx.GPX;
 
-public class GetItineraryWithGpxAndReportResponseDTO {
+public class GetItineraryWithGpxAndUserAndReportResponseDTO {
 
     private ResultMessageDTO resultMessage;
 
@@ -16,6 +18,8 @@ public class GetItineraryWithGpxAndReportResponseDTO {
     private String description;
 
     private long idUser;
+    private String username;
+    private Bitmap profileImage;
 
     private GPX gpx;
     private boolean isReported;
@@ -98,5 +102,21 @@ public class GetItineraryWithGpxAndReportResponseDTO {
 
     public void setGpx(GPX gpx) {
         this.gpx = gpx;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Bitmap getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(Bitmap profileImage) {
+        this.profileImage = profileImage;
     }
 }

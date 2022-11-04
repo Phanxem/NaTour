@@ -41,6 +41,31 @@ public class AttivaAccountController extends NaTourController{
     private AmplifyDAO amplifyDAO;
     private UserDAO userDAO;
 
+    public AttivaAccountController(NaTourActivity activity,
+                                   AutenticazioneController autenticazioneController,
+                                   String username,
+                                   String password,
+                                   String email,
+                                   AmplifyDAO amplifyDAO,
+                                   UserDAO userDAO){
+        super(activity);
+
+        this.autenticazioneController = autenticazioneController;
+
+        this.amplifyDAO = amplifyDAO;
+        this.userDAO = userDAO;
+
+        this.username = username;
+        this.password = password;
+        this.email = email;
+
+        if(!StringsUtils.areAllFieldsFull(username, password, email)){
+            String messageToShow = activity.getString(R.string.Message_EmptyFieldError);
+            showErrorMessageAndBack(messageToShow);
+            return;
+        }
+    }
+
     public AttivaAccountController(NaTourActivity activity){
         super(activity);
 

@@ -52,7 +52,9 @@ public class SegnalaItinerarioActivity extends NaTourActivity {
                 EditText editText_descrizione = findViewById(R.id.ReportItinerary_textField_descrizione);
                 String descrizione = String.valueOf(editText_descrizione.getText());
 
-                segnalaItinerarioController.inviaSegnalazione(titolo, descrizione);
+                boolean result = segnalaItinerarioController.inviaSegnalazione(titolo, descrizione);
+
+                if(result) activity.finish();
             }
         });
     }

@@ -9,6 +9,7 @@ import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobile.auth.core.IdentityManager;
@@ -18,6 +19,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.Profile;
+import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -37,6 +39,8 @@ import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.activities.NaTourActivity;
+
+import org.osmdroid.api.IGeoPoint;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -126,8 +130,29 @@ public class AutenticazioneController extends NaTourController{
 
 
                 String identityProvider = activity.getString(R.string.IdentityProvider_Facebook);
+
                 //TODO da testare
                 //String idProvided = loginResult.getAccessToken().getUserId();
+
+
+                if(Profile.getCurrentProfile() == null){
+                    ProfileTracker profileTracker = new ProfileTracker() {
+                        @Override
+                        protected void onCurrentProfileChanged(@Nullable Profile profile, @Nullable Profile profile1) {
+                            this.stopTracking();
+                            Profile.setCurrentProfile(profile1);
+                        }
+                    };
+                    profileTracker.startTracking();
+                }
+
+                Log.e(TAG, "fb in | id: " + Profile.getCurrentProfile().getId() + ", name: " + Profile.getCurrentProfile().getName());
+
+
+
+
+
+
                 String idProvided = Profile.getCurrentProfile().getId();
                 String username = Profile.getCurrentProfile().getName();
 

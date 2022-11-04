@@ -264,7 +264,7 @@ public class PianificaItinerarioController extends NaTourController implements P
         ImportaFileGPXController.openImportaFileGPXActivity(getActivity(),activityResultLauncherImportaFileGPX,activityResultLauncherPermissions);
     }
 
-    public void goToSaveItinerary(float duration, float distance, ArrayList<AddressModel> wayPoints){
+    public void goToSaveItinerary(float duration, float distance, List<AddressModel> wayPoints){
         SalvaItinerarioController.openSalvaItinerarioActivity(getActivity(),activityResultLauncherSalvaItinerario, duration, distance, wayPoints);
     }
 

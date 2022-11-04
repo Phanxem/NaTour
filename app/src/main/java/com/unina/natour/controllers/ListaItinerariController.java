@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unina.natour.R;
+import com.unina.natour.controllers.utils.ImageUtils;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.response.GetItineraryResponseDTO;
 import com.unina.natour.dto.response.composted.GetItineraryWithUserResponseDTO;
@@ -36,6 +37,7 @@ public class ListaItinerariController extends NaTourController{
     public final static long CODE_ITINERARY_RANDOM = 0;
     public final static long CODE_ITINERARY_BY_USER_ID = 1;
     public final static long CODE_ITINERARY_BY_RESEARCH = 2;
+    private static final int USER_IMAGE_SIZE_DP = 24;
 
 
     private ItineraryListAdapter itineraryListAdapter;
@@ -111,7 +113,7 @@ public class ListaItinerariController extends NaTourController{
         String messageToShow = null;
 
         GetListItineraryWithUserResponseDTO getListItineraryWithUserResponseDTO = itinearyDAO.getListItineraryWithUserByName(researchString, 0);
-        if(ResultMessageController.isSuccess(getListItineraryWithUserResponseDTO.getResultMessage())){
+        if(!ResultMessageController.isSuccess(getListItineraryWithUserResponseDTO.getResultMessage())){
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;
@@ -137,7 +139,7 @@ public class ListaItinerariController extends NaTourController{
         String messageToShow = null;
 
         GetListItineraryResponseDTO itinerariesDTO = itinearyDAO.getListItineraryByIdUser(userId, 0);
-        if(ResultMessageController.isSuccess(itinerariesDTO.getResultMessage())){
+        if(!ResultMessageController.isSuccess(itinerariesDTO.getResultMessage())){
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;
@@ -198,6 +200,7 @@ public class ListaItinerariController extends NaTourController{
 
                     boolean result = dtoToModel(getActivity(), itinerariesDTO, nextPageElements);
                     if(!result){
+
                         messageToShow[0] = activity.getString(R.string.Message_UnknownError);
                         showErrorMessageAndBack(messageToShow[0]);
                         return;
@@ -258,8 +261,11 @@ public class ListaItinerariController extends NaTourController{
 
         model.setName(dto.getName());
 
-        model.setUserImage(dto.getUserImage());
-        if(dto.getUserImage() != null) model.setUserImage(dto.getUserImage());
+
+        if(dto.getUserImage() != null){
+            Bitmap resizeUserImage = ImageUtils.resizeBitmap(dto.getUserImage(),USER_IMAGE_SIZE_DP);
+            model.setUserImage(resizeUserImage);
+        }
         else {
             Bitmap genericProfileImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_generic_account);
             model.setUserImage(genericProfileImage);

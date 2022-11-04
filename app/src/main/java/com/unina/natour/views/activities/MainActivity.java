@@ -53,28 +53,21 @@ public class MainActivity extends NaTourActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Thread.setDefaultUncaughtExceptionHandler(un);
-
         setContentView(R.layout.activity_main);
 
         mainController = new MainController(this);
-  /*
-        profiloPersonaleController = new ProfiloPersonaleController(this);
-        pianificaItinerarioController = new PianificaItinerarioController(this);
-*/
+
 
 
 
         HomeFragment homeFragment = new HomeFragment();
         homeFragment.setNaTourActivity(this);
 
-        //ProfiloPersonaleFragment profiloFragment = ProfiloPersonaleFragment.newInstance(profiloPersonaleController);
         ProfiloPersonaleFragment profiloFragment = new ProfiloPersonaleFragment();
         profiloFragment.setNaTourActivity(this);
 
         PianificaItinerarioController pianificaItinerarioController = new PianificaItinerarioController(this);
         PianificaItinerarioFragment pianificaFragment = PianificaItinerarioFragment.newInstance(pianificaItinerarioController);
-        //PianificaItinerarioFragment pianificaFragment = new PianificaItinerarioFragment();
         pianificaFragment.setNaTourActivity(this);
 
         CommunityFragment communityFragment = new CommunityFragment();

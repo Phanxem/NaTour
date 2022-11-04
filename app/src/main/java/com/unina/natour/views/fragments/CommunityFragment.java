@@ -25,16 +25,13 @@ public class CommunityFragment extends NaTourFragment {
     private ListaUtentiController listaUtentiController;
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_community, container, false);
         setFragmentView(view);
 
-
         this.communityController = new CommunityController(getNaTourActivity());
         this.listaUtentiController = communityController.getListaUtentiController();
-
 
         RecyclerView recyclerView_users = view.findViewById(R.id.Community_recycleView_utenti);
         NestedScrollView nestedScrollView_users = view.findViewById(R.id.Community_nestedScrollView_utenti);
@@ -44,7 +41,6 @@ public class CommunityFragment extends NaTourFragment {
 
         searchFromSearchBar();
         pressIconCancel();
-
 
         return view;
     }
