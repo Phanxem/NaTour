@@ -9,12 +9,23 @@ import com.unina.natour.controllers.socketHandler.ChatWebSocketHandler;
 import com.unina.natour.views.activities.MainActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 
+import javax.xml.transform.Result;
+
 public class MainController extends NaTourController{
 
 
     public static final String KEY_CONTROLLER = "CONTROLLER";
 
     public Fragment currentFragment;
+
+    public MainController(NaTourActivity activity,
+                          ResultMessageController resultMessageController,
+                          Fragment currentFragment)
+    {
+        super(activity, resultMessageController);
+
+        this.currentFragment = currentFragment;
+    }
 
     public MainController(NaTourActivity activity){
         super(activity);
@@ -25,6 +36,7 @@ public class MainController extends NaTourController{
         ChatWebSocketHandler chatWebSocketHandler = applicationController.getChatWebSocketHandler();
 
         chatWebSocketHandler.openWebSocket();
+        //chatWebSocketHandler.initConnectionToWebSocket();
     }
 
     public Fragment getCurrentFragment() {

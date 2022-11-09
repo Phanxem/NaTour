@@ -21,7 +21,19 @@ public class RegistrazioneController extends NaTourController{
     private AutenticazioneController autenticazioneController;
 
     private AmplifyDAO  amplifyDAO;
-    
+
+    public RegistrazioneController(NaTourActivity activity,
+                                   ResultMessageController resultMessageController,
+                                   AutenticazioneController autenticazioneController,
+                                   AmplifyDAO  amplifyDAO)
+    {
+        super(activity, resultMessageController);
+
+        this.autenticazioneController = autenticazioneController;
+
+        this.amplifyDAO = amplifyDAO;
+    }
+
     public RegistrazioneController(NaTourActivity activity){
         super(activity);
 
@@ -29,6 +41,7 @@ public class RegistrazioneController extends NaTourController{
 
         this.amplifyDAO = new AmplifyDAO();
     }
+
 
 
     public Boolean signUp(String username, String email, String password){

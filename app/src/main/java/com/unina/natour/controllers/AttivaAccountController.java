@@ -42,13 +42,14 @@ public class AttivaAccountController extends NaTourController{
     private UserDAO userDAO;
 
     public AttivaAccountController(NaTourActivity activity,
+                                   ResultMessageController resultMessageController,
                                    AutenticazioneController autenticazioneController,
                                    String username,
                                    String password,
                                    String email,
                                    AmplifyDAO amplifyDAO,
                                    UserDAO userDAO){
-        super(activity);
+        super(activity, resultMessageController);
 
         this.autenticazioneController = autenticazioneController;
 
@@ -58,12 +59,6 @@ public class AttivaAccountController extends NaTourController{
         this.username = username;
         this.password = password;
         this.email = email;
-
-        if(!StringsUtils.areAllFieldsFull(username, password, email)){
-            String messageToShow = activity.getString(R.string.Message_EmptyFieldError);
-            showErrorMessageAndBack(messageToShow);
-            return;
-        }
     }
 
     public AttivaAccountController(NaTourActivity activity){

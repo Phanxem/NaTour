@@ -42,6 +42,20 @@ public class SplashScreenController extends NaTourController{
     private ServerDAO serverDAO;
     private UserDAO userDAO;
 
+    public SplashScreenController(NaTourActivity activity,
+                                  ResultMessageController resultMessageController,
+                                  AutenticazioneController autenticazioneController,
+                                  AmplifyDAO amplifyDAO,
+                                  ServerDAO serverDAO,
+                                  UserDAO userDAO)
+    {
+        super(activity, resultMessageController);
+
+        this.autenticazioneController = autenticazioneController;
+        this.amplifyDAO = amplifyDAO;
+        this.serverDAO = serverDAO;
+        this.userDAO = userDAO;
+    }
 
     public SplashScreenController(NaTourActivity activity){
         super(activity);

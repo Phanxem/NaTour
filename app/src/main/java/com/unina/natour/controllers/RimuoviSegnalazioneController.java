@@ -12,6 +12,14 @@ public class RimuoviSegnalazioneController extends NaTourController{
 
     private ReportDAO reportDAO;
 
+    public RimuoviSegnalazioneController(NaTourActivity activity,
+                                         ResultMessageController resultMessageController,
+                                         DettagliSegnalazioneModel reportModel,
+                                         ReportDAO reportDAO){
+        super(activity, resultMessageController);
+        this.dettagliSegnalazioneModel = reportModel;
+        this.reportDAO = reportDAO;
+    }
 
     public RimuoviSegnalazioneController(NaTourActivity activity, DettagliSegnalazioneModel reportModel){
         super(activity);

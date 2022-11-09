@@ -59,6 +59,15 @@ public class AutenticazioneController extends NaTourController{
     private AmplifyDAO amplifyDAO;
     private UserDAO userDAO;
 
+    public AutenticazioneController(NaTourActivity activity,
+                                    ResultMessageController resultMessageController,
+                                    AmplifyDAO amplifyDAO,
+                                    UserDAO userDAO){
+
+        super(activity, resultMessageController);
+        this.amplifyDAO = amplifyDAO;
+        this.userDAO = userDAO;
+    }
 
     public AutenticazioneController(NaTourActivity activity){
         super(activity);

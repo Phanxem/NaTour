@@ -45,6 +45,15 @@ public class SalvaItinerarioController extends NaTourController{
 
     ItineraryDAO itineraryDAO;
 
+    public SalvaItinerarioController(NaTourActivity activity,
+                                     ResultMessageController resultMessageController,
+                                     SalvaItinerarioModel salvaItinerarioModel,
+                                     ItineraryDAO itineraryDAO){
+        super(activity, resultMessageController);
+
+        this.salvaItinerarioModel = salvaItinerarioModel;
+        this.itineraryDAO = itineraryDAO;
+    }
 
     public SalvaItinerarioController(NaTourActivity activity){
         super(activity);

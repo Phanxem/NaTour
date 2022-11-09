@@ -50,6 +50,28 @@ public class ListaItinerariController extends NaTourController{
 
     private ItineraryDAO itinearyDAO;
 
+    public ListaItinerariController(NaTourActivity activity,
+                                    ResultMessageController resultMessageController,
+                                    ItineraryListAdapter itineraryListAdapter,
+                                    ArrayList<ElementItineraryModel> elementsItineraryModel,
+                                    ItineraryDAO itinearyDAO,
+                                    long researchCode,
+                                    String researchString,
+                                    long userId)
+    {
+        super(activity, resultMessageController);
+
+        this.elementsItineraryModel = elementsItineraryModel;
+
+        this.itinearyDAO = itinearyDAO;
+
+        this.itineraryListAdapter = itineraryListAdapter;
+
+        this.researchCode = researchCode;
+        this.researchString = researchString;
+        this.userId = userId;
+    }
+
     public ListaItinerariController(NaTourActivity activity, long researchCode, String researchString, long userId){
         super(activity);
         String messageToShow = null;

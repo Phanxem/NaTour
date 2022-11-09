@@ -53,6 +53,17 @@ public class ImportaFileGPXController extends NaTourController{
 
     private AddressDAO addressDAO;
 
+    public ImportaFileGPXController(NaTourActivity activity,
+                                    ResultMessageController resultMessageController,
+                                    FileGpxListAdapter fileGpxListAdapter,
+                                    ImportaFileGPXModel importaFileGPXModel,
+                                    AddressDAO addressDAO){
+        super(activity, resultMessageController);
+
+        this.importaFileGPXModel = importaFileGPXModel;
+        this.fileGpxListAdapter = fileGpxListAdapter;
+        this.addressDAO = addressDAO;
+    }
 
     public ImportaFileGPXController(NaTourActivity activity){
         super(activity);

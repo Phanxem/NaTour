@@ -1,5 +1,6 @@
 package com.unina.natour.views.activities;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -45,10 +47,19 @@ public class ChatActivity extends NaTourActivity {
 
         listaMessaggiController.initList(nestedScrollView_messages,recyclerView_messages, progressBar_messages);
 
+        TextView textView_username = findViewById(R.id.Chat_textView_username);
+        textView_username.setText(chatController.getUsername());
+
+        ImageView imageView_profileImage = findViewById(R.id.Chat_imageView_immagineProfilo);
+        Bitmap bitmap = chatController.getProfileImage();
+        if(bitmap != null) imageView_profileImage.setImageBitmap(bitmap);
+
         pressBackIcon();
         pressMenuIcon();
         pressSendKey();
         pressUserAccount();
+
+
 
     }
 
@@ -80,7 +91,7 @@ public class ChatActivity extends NaTourActivity {
     }
 
     public void pressUserAccount(){
-        RelativeLayout relativeLayout_user = findViewById(R.id.ListElementItinerary_relativeLayout_user);
+        RelativeLayout relativeLayout_user = findViewById(R.id.Chat_relativeLayout_user);
         relativeLayout_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,7 +128,10 @@ public class ChatActivity extends NaTourActivity {
                     String message = String.valueOf(editText_messageField.getText());
 
 
-                    chatController.sendMessage(message);
+                    boolean result = chatController.sendMessage(message);
+                    if(!result){
+                        return false;
+                    }
 
                     new Handler().postDelayed(new Runnable() {
                         @Override

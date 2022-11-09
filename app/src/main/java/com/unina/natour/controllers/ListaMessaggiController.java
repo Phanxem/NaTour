@@ -3,6 +3,7 @@ package com.unina.natour.controllers;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -11,6 +12,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.common.internal.ResourceUtils;
 import com.unina.natour.R;
 import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.TimeUtils;
@@ -39,6 +41,23 @@ public class ListaMessaggiController extends  NaTourController{
 
     private ChatDAO chatDAO;
 
+    public ListaMessaggiController(NaTourActivity activity,
+                                   ResultMessageController resultMessageController,
+                                   MessagesListAdapter messagesListAdapter,
+                                   ArrayList<ElementMessageModel> elementsMessageModel,
+                                   ChatDAO chatDAO,
+                                   long idUserDestination){
+        super(activity, resultMessageController);
+
+        this.idUserDestination = idUserDestination;
+
+        this.elementsMessageModel = elementsMessageModel;
+
+        this.chatDAO = chatDAO;
+
+        this.messagesListAdapter = messagesListAdapter;
+    }
+
     public ListaMessaggiController(NaTourActivity activity, long idUserDestination){
         super(activity);
         String messageToShow = null;
@@ -61,7 +80,6 @@ public class ListaMessaggiController extends  NaTourController{
         String messageToShow = null;
 
         if(!CurrentUserInfo.isSignedIn()){
-
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;
@@ -71,6 +89,9 @@ public class ListaMessaggiController extends  NaTourController{
         if(!ResultMessageController.isSuccess(getListChatMessageResponseDTO.getResultMessage())){
             ResultMessageDTO resultMessage = getListChatMessageResponseDTO.getResultMessage();
             if(resultMessage.getCode() == ResultMessageController.ERROR_CODE_NOT_FOUND){
+
+                this.messagesListAdapter = new MessagesListAdapter(getActivity(),elementsMessageModel);
+                messagesListAdapter.notifyDataSetChanged();
                 return true;
             }
 
@@ -81,7 +102,6 @@ public class ListaMessaggiController extends  NaTourController{
 
         boolean result = dtoToModel(getActivity(), getListChatMessageResponseDTO, elementsMessageModel);
         if(!result){
-
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return false;

@@ -29,12 +29,25 @@ public class InfoOpzionaliProfiloController extends NaTourController {
     private static final String EXTRA_FIRST_UPDATE = "FIRST_UPDATE";
 
 
-    ImpostaInfoOpzionaliProfiloModel impostaInfoOpzionaliProfiloModel;
+    private ImpostaInfoOpzionaliProfiloModel impostaInfoOpzionaliProfiloModel;
 
     private boolean isFirstUpdate;
 
-    UserDAO userDAO;
+    private UserDAO userDAO;
 
+    public InfoOpzionaliProfiloController(NaTourActivity activity,
+                                          ResultMessageController resultMessageController,
+                                          ImpostaInfoOpzionaliProfiloModel impostaInfoOpzionaliProfiloModel,
+                                          boolean isFirstUpdate,
+                                          UserDAO userDAO){
+        super(activity, resultMessageController);
+
+        this.impostaInfoOpzionaliProfiloModel = impostaInfoOpzionaliProfiloModel;
+
+        this.isFirstUpdate = isFirstUpdate;
+
+        this.userDAO = userDAO;
+    }
 
     public InfoOpzionaliProfiloController(NaTourActivity activity){
         super(activity);

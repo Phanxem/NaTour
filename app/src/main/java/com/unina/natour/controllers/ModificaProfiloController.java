@@ -11,6 +11,11 @@ import com.unina.natour.views.activities.NaTourActivity;
 
 public class ModificaProfiloController extends NaTourController{
 
+    public ModificaProfiloController(NaTourActivity activity,
+                                     ResultMessageController resultMessageController) {
+        super(activity, resultMessageController);
+    }
+
     public ModificaProfiloController(NaTourActivity activity) {
         super(activity);
     }

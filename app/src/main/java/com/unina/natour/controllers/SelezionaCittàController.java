@@ -26,6 +26,10 @@ public class SelezionaCittàController extends NaTourController{
     private String country;
     private String[] cities;
 
+    public SelezionaCittàController(NaTourActivity activity, ResultMessageController resultMessageController){
+        super(activity, resultMessageController);
+    }
+
     public SelezionaCittàController(NaTourActivity activity){
         super(activity);
     }

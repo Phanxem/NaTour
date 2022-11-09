@@ -17,6 +17,14 @@ public class EliminaItinerarioController extends NaTourController{
 
     private ItineraryDAO itineraryDAO;
 
+    public EliminaItinerarioController(NaTourActivity activity,
+                                       ResultMessageController resultMessageController,
+                                       ItineraryDAO itineraryDAO,
+                                       long itineraryId){
+        super(activity, resultMessageController);
+        this.itineraryId = itineraryId;
+        this.itineraryDAO = itineraryDAO;
+    }
 
     public EliminaItinerarioController(NaTourActivity activity, long itineraryId){
         super(activity);

@@ -10,11 +10,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.unina.natour.config.ApplicationController;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.ChatController;
 import com.unina.natour.controllers.CommunityController;
 import com.unina.natour.controllers.ListaUtentiController;
 import com.unina.natour.controllers.MainController;
+import com.unina.natour.controllers.ResultMessageController;
 import com.unina.natour.controllers.utils.TimeUtils;
+import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.views.activities.ChatActivity;
 import com.unina.natour.views.activities.MainActivity;
 import com.unina.natour.views.fragments.CommunityFragment;
@@ -29,8 +32,16 @@ import okio.ByteString;
 
 public class ChatWebSocketListener extends WebSocketListener {
 
+    private final static String KEY_ACTION = "action";
+    private final static String KEY_ID_USER = "idUser";
+
+    private final static String ACTION_INIT_CONNECTION = "initConnection";
+
     private static final int NORMAL_CLOSURE_STATUS = 1000;
     private static final String TAG = "ChatWebSocketListener";
+
+
+
 
     private Context context;
 
@@ -42,10 +53,18 @@ public class ChatWebSocketListener extends WebSocketListener {
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
         Log.i(TAG, "ON OPEN");
-        //webSocket.send("{\"action\": \"sendmessage\", \"message\": \"hello, I'm connect\"}");
 
+        if(!CurrentUserInfo.isSignedIn()){
+            return;
+        }
 
-        //webSocket.close(NORMAL_CLOSURE_STATUS, "Goodbye !");
+        String messageString = "{\"" + KEY_ACTION + "\" : \"" + ACTION_INIT_CONNECTION + "\", " +
+                                "\"" + KEY_ID_USER + "\" : \"" + CurrentUserInfo.getId() + "\"}";
+
+        boolean result = webSocket.send(messageString);
+        if(!result){
+            return;
+        }
 
     }
 
@@ -67,6 +86,22 @@ public class ChatWebSocketListener extends WebSocketListener {
         }
 
         JsonObject jsonObject = jsonElement.getAsJsonObject();
+
+
+        if(jsonObject.has("code") && jsonObject.has("message")){
+            long code = jsonObject.get("code").getAsLong();
+            String message = jsonObject.get("message").getAsString();
+
+            ResultMessageDTO resultMessageDTO = new ResultMessageDTO(code,message);
+            return;
+        }
+
+        if(!jsonObject.has("idUserSource") ||
+           !jsonObject.has("message") ||
+           !jsonObject.has("inputTime") )
+        {
+            return;
+        }
 
         String stringIdSource = jsonObject.get("idUserSource").getAsString();
         String message = jsonObject.get("message").getAsString();
@@ -128,6 +163,7 @@ public class ChatWebSocketListener extends WebSocketListener {
             return;
         }
 
+
     }
 
     @Override
@@ -145,7 +181,7 @@ public class ChatWebSocketListener extends WebSocketListener {
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         Log.i(TAG, "ON FAILURE");
-        //t.printStackTrace();
+        t.printStackTrace();
     }
 
 }

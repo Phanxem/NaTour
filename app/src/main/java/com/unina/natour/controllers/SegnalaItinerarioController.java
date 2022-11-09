@@ -27,6 +27,18 @@ public class SegnalaItinerarioController extends NaTourController{
     private ReportDAO reportDAO;
     private UserDAO userDAO;
 
+    public SegnalaItinerarioController(NaTourActivity activity,
+                                       ResultMessageController resultMessageController,
+                                       ReportDAO reportDAO,
+                                       UserDAO userDAO,
+                                       long itineraryId){
+        super(activity, resultMessageController);
+
+        this.itineraryId = itineraryId;
+
+        this.reportDAO = reportDAO;
+        this.userDAO = userDAO;
+    }
 
     public SegnalaItinerarioController(NaTourActivity activity){
         super(activity);

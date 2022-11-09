@@ -28,6 +28,21 @@ public class DettagliSegnalazioneController extends NaTourController{
     private ItineraryDAO itineraryDAO;
     private ReportDAO reportDAO;
 
+    public DettagliSegnalazioneController(NaTourActivity activity,
+                                          ResultMessageController resultMessageController,
+                                          DettagliSegnalazioneModel dettagliSegnalazioneModel,
+                                          UserDAO userDAO,
+                                          ItineraryDAO itineraryDAO,
+                                          ReportDAO reportDAO){
+        super(activity, resultMessageController);
+
+        this.dettagliSegnalazioneModel = dettagliSegnalazioneModel;
+
+        this.userDAO = userDAO;
+        this.itineraryDAO = itineraryDAO;
+        this.reportDAO = reportDAO;
+    }
+
     public DettagliSegnalazioneController(NaTourActivity activity){
         super(activity);
 

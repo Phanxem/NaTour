@@ -34,6 +34,21 @@ public class VisualizzaSegnalazioniController extends NaTourController{
     private ItineraryDAO itineraryDAO;
     private ReportDAO reportDAO;
 
+    public VisualizzaSegnalazioniController(NaTourActivity activity,
+                                            ResultMessageController resultMessageController,
+                                            ReportListAdapter reportListAdapter,
+                                             VisualizzaSegnalazioniModel visualizzaSegnalazioniModel,
+                                            ItineraryDAO itineraryDAO,
+                                            ReportDAO reportDAO){
+        super(activity, resultMessageController);
+
+        this.visualizzaSegnalazioniModel = visualizzaSegnalazioniModel;
+        this.itineraryDAO = itineraryDAO;
+        this.reportDAO = reportDAO;
+
+
+        this.reportListAdapter = reportListAdapter;
+    }
 
     public VisualizzaSegnalazioniController(NaTourActivity activity){
         super(activity);

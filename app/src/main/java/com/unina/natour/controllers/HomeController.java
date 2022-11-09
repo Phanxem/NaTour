@@ -6,9 +6,19 @@ import com.unina.natour.views.activities.AutenticazioneActivity;
 import com.unina.natour.views.activities.HomeGuestActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 
+import java.util.List;
+
 public class HomeController extends NaTourController{
 
     private ListaItinerariController listaItinerariController;
+
+    public HomeController(NaTourActivity activity,
+                          ResultMessageController resultMessageController,
+                          ListaItinerariController listaItinerariController) {
+        super(activity, resultMessageController);
+
+        this.listaItinerariController = listaItinerariController;
+    }
 
     public HomeController(NaTourActivity activity) {
         super(activity);

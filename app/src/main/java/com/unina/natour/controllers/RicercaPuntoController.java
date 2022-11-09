@@ -36,7 +36,7 @@ import org.osmdroid.util.GeoPoint;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
+
 public class RicercaPuntoController extends NaTourController{
     public static final int REQUEST_CODE = 100;
 
@@ -45,15 +45,28 @@ public class RicercaPuntoController extends NaTourController{
 
     public final static String EXTRA_ADDRESS = "ADDRESS";
 
-    RisultatiRicercaPuntoListAdapter risultatiRicercaPuntoListAdapter;
+    private RisultatiRicercaPuntoListAdapter risultatiRicercaPuntoListAdapter;
 
-    ActivityResultLauncher<String> activityResultLauncherPermissions;
+    private ActivityResultLauncher<String> activityResultLauncherPermissions;
 
-    RicercaPuntoModel ricercaPuntoModel;
+    private RicercaPuntoModel ricercaPuntoModel;
 
-    AddressDAO addressDAO;
+    private AddressDAO addressDAO;
 
+    public RicercaPuntoController(NaTourActivity activity,
+                                  ResultMessageController resultMessageController,
+                                  RisultatiRicercaPuntoListAdapter risultatiRicercaPuntoListAdapter,
+                                  ActivityResultLauncher<String> activityResultLauncherPermissions,
+                                  RicercaPuntoModel ricercaPuntoModel,
+                                  AddressDAO addressDAO
+                                  ){
+        super(activity, resultMessageController);
 
+        this.ricercaPuntoModel = ricercaPuntoModel;
+        this.risultatiRicercaPuntoListAdapter = risultatiRicercaPuntoListAdapter;
+        this.activityResultLauncherPermissions = activityResultLauncherPermissions;
+        this.addressDAO = addressDAO;
+    }
 
 
     public RicercaPuntoController(NaTourActivity activity){

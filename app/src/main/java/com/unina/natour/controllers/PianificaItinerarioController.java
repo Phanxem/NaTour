@@ -64,17 +64,47 @@ public class PianificaItinerarioController extends NaTourController implements P
 
     private static final String EXTRA_ID_ITINERARY = "NEW_ITINERARY";
 
-    ActivityResultLauncher<Intent> activityResultLauncherRicercaPunto;
-    ActivityResultLauncher<Intent> activityResultLauncherImportaFileGPX;
-    ActivityResultLauncher<Intent> activityResultLauncherSalvaItinerario;
-    ActivityResultLauncher<String> activityResultLauncherPermissions;
+    private ActivityResultLauncher<Intent> activityResultLauncherRicercaPunto;
+    private ActivityResultLauncher<Intent> activityResultLauncherImportaFileGPX;
+    private ActivityResultLauncher<Intent> activityResultLauncherSalvaItinerario;
+    private ActivityResultLauncher<String> activityResultLauncherPermissions;
 
-    PuntiIntermediListAdapter puntiIntermediListAdapter;
+    private PuntiIntermediListAdapter puntiIntermediListAdapter;
 
-    PianificaItinerarioModel pianificaItinerarioModel;
+    private PianificaItinerarioModel pianificaItinerarioModel;
 
-    RouteDAO routeDAO;
-    AddressDAO addressDAO;
+    private RouteDAO routeDAO;
+    private AddressDAO addressDAO;
+
+    public PianificaItinerarioController(NaTourActivity activity,
+                                         ResultMessageController resultMessageController,
+                                         ActivityResultLauncher<Intent> activityResultLauncherRicercaPunto,
+                                         ActivityResultLauncher<Intent> activityResultLauncherImportaFileGPX,
+                                         ActivityResultLauncher<Intent> activityResultLauncherSalvaItinerario,
+                                         ActivityResultLauncher<String> activityResultLauncherPermissions,
+                                         PuntiIntermediListAdapter puntiIntermediListAdapter,
+                                         PianificaItinerarioModel pianificaItinerarioModel,
+                                         RouteDAO routeDAO,
+                                         AddressDAO addressDAO)
+    {
+        super(activity, resultMessageController);
+
+        this.activityResultLauncherRicercaPunto = activityResultLauncherRicercaPunto;
+
+        this.activityResultLauncherImportaFileGPX = activityResultLauncherImportaFileGPX;
+
+        this.activityResultLauncherSalvaItinerario = activityResultLauncherSalvaItinerario;
+
+        this.activityResultLauncherPermissions = activityResultLauncherPermissions;
+
+        this.pianificaItinerarioModel = pianificaItinerarioModel;
+
+        this.puntiIntermediListAdapter = puntiIntermediListAdapter;
+
+        this.routeDAO = routeDAO;
+        this.addressDAO = addressDAO;
+    }
+
 
     public PianificaItinerarioController(NaTourActivity activity){
         super(activity);

@@ -6,10 +6,18 @@ import java.util.Arrays;
 import java.util.Locale;
 
 public class SelezionaNazioneController extends NaTourController{
-
-
-
     private String[] countries;
+
+    public SelezionaNazioneController(NaTourActivity activity,
+                                      ResultMessageController resultMessageController,
+                                      String[] countries){
+        super(activity, resultMessageController);
+
+        this.countries = countries;
+
+
+
+    }
 
     public SelezionaNazioneController(NaTourActivity activity){
         super(activity);

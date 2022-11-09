@@ -21,6 +21,13 @@ public class RecuperoPasswordController extends NaTourController{
 
     private AmplifyDAO amplifyDAO;
 
+    public RecuperoPasswordController(NaTourActivity activity,
+                                      ResultMessageController resultMessageController,
+                                      AmplifyDAO amplifyDAO){
+        super(activity, resultMessageController);
+        this.amplifyDAO = amplifyDAO;
+    }
+
     public RecuperoPasswordController(NaTourActivity activity){
         super(activity);
         this.amplifyDAO = new AmplifyDAO();

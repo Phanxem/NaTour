@@ -49,6 +49,26 @@ public class ImmagineProfiloController extends NaTourController{
 
     private UserDAO userDAO;
 
+    public ImmagineProfiloController(NaTourActivity activity,
+                                     ResultMessageController resultMessageController,
+                                     ActivityResultLauncher<Intent> activityResultLauncherGallery,
+                                     ActivityResultLauncher<String> activityResultLauncherPermissions,
+                                     ImpostaImmagineProfiloModel impostaImmagineProfiloModel,
+                                     boolean isFirstUpdate,
+                                     UserDAO userDAO)
+    {
+        super(activity, resultMessageController);
+        this.impostaImmagineProfiloModel = impostaImmagineProfiloModel;
+
+        this.activityResultLauncherGallery = activityResultLauncherGallery;
+
+        this.activityResultLauncherPermissions = activityResultLauncherPermissions;
+
+        this.isFirstUpdate = isFirstUpdate;
+
+        this.userDAO = userDAO;
+    }
+
 
     public ImmagineProfiloController(NaTourActivity activity){
         super(activity);

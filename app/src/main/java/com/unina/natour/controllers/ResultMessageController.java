@@ -30,6 +30,11 @@ public class ResultMessageController {
     private NaTourActivity activity;
     private MessageDialog messageDialog;
 
+    public ResultMessageController(NaTourActivity activity, MessageDialog messageDialog){
+        this.activity = activity;
+        this.messageDialog = messageDialog;
+    }
+
     public ResultMessageController(NaTourActivity activity){
         this.activity = activity;
         this.messageDialog = new MessageDialog();

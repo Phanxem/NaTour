@@ -41,6 +41,27 @@ public class ListaUtentiController extends NaTourController{
     private UserDAO userDAO;
     private ChatDAO chatDAO;
 
+    public ListaUtentiController(NaTourActivity activity,
+                                 ResultMessageController resultMessageController,
+                                 UserListAdapter userListAdapter,
+                                 ArrayList<ElementUserModel> elementsUserModel,
+                                 UserDAO userDAO,
+                                 ChatDAO chatDAO,
+                                 long researchCode,
+                                 String researchString) {
+        super(activity, resultMessageController);
+
+        this.elementsUserModel = elementsUserModel;
+
+        this.userDAO = userDAO;
+
+        this.chatDAO = chatDAO;
+
+        this.userListAdapter = userListAdapter;
+
+        this.researchCode = researchCode;
+        this. researchString = researchString;
+    }
 
     public ListaUtentiController(NaTourActivity activity, long researchCode, String researchString) {
         super(activity);
@@ -101,6 +122,15 @@ public class ListaUtentiController extends NaTourController{
                 showErrorMessageAndBack(messageToShow);
                 return false;
             }
+
+            List<GetUserWithImageResponseDTO> listUser = new ArrayList<GetUserWithImageResponseDTO>();
+            for(GetUserWithImageResponseDTO elementUser : getListUserWithImageResponseDTO.getListUser()){
+                if(elementUser.getId() != CurrentUserInfo.getId()){
+                    listUser.add(elementUser);
+                }
+            }
+
+            getListUserWithImageResponseDTO.setListUser(listUser);
 
             result = dtoToModel(getActivity(), getListUserWithImageResponseDTO, elementsUserModel);
             if(!result){
@@ -265,6 +295,7 @@ public class ListaUtentiController extends NaTourController{
         List<GetUserWithImageResponseDTO> usersDto = dto.getListUser();
 
         for(GetUserWithImageResponseDTO elementDto : usersDto){
+
             ElementUserModel elementModel = new ElementUserModel();
             boolean result = dtoToModel(context, elementDto, elementModel);
             if(!result){

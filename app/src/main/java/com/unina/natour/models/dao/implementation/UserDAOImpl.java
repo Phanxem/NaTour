@@ -319,7 +319,13 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
 
         GetBitmapResponseDTO[] arrayImage = new GetBitmapResponseDTO[listUser.size()];
 
+        if(listUser.isEmpty()){
+            List<GetUserWithImageResponseDTO> listUserDTO = new ArrayList<GetUserWithImageResponseDTO>();
+            getListUserWithImageResponseDTO.setListUser(listUserDTO);
+            getListUserWithImageResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
 
+            return getListUserWithImageResponseDTO;
+        }
         ExecutorService executor = Executors.newFixedThreadPool(listUser.size());
 
         for(int i = 0; i < listUser.size(); i++){

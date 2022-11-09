@@ -29,6 +29,21 @@ public class ProfiloController extends NaTourController {
     private AmplifyDAO amplifyDAO;
     private UserDAO userDAO;
 
+    public ProfiloController(NaTourActivity activity,
+                             ResultMessageController resultMessageController,
+                             ListaItinerariController listaItinerariController,
+                             ProfiloModel profiloModel,
+                             AmplifyDAO amplifyDAO,
+                             UserDAO userDAO)
+    {
+        super(activity, resultMessageController);
+
+        this.listaItinerariController = listaItinerariController;
+        this.amplifyDAO = amplifyDAO;
+        this.userDAO = userDAO;
+        this.profiloModel = profiloModel;
+    }
+
     public ProfiloController(NaTourActivity activity, long idUser) {
         super(activity);
         String messageToShow = null;

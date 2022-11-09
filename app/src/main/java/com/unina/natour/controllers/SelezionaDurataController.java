@@ -9,6 +9,12 @@ import java.util.Locale;
 
 public class SelezionaDurataController extends NaTourController{
 
+    public SelezionaDurataController(NaTourActivity activity,
+                                     ResultMessageController resultMessageController)
+    {
+        super(activity, resultMessageController);
+    }
+
     public SelezionaDurataController(NaTourActivity activity){
         super(activity);
     }

@@ -2,13 +2,14 @@ package com.unina.natour.controllers;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
+import android.graphics.Bitmap;
 
 import com.unina.natour.R;
 import com.unina.natour.config.ApplicationController;
 import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 import com.unina.natour.models.dao.implementation.ChatDAOImpl;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
 import com.unina.natour.models.dao.interfaces.ChatDAO;
@@ -24,20 +25,51 @@ public class ChatController extends NaTourController{
 
     private ListaMessaggiController listaMessaggiController;
 
-    long idOtherUser;
+    private long idOtherUser;
+    private String username;
+    private Bitmap profileImage;
+
+    private Long idChat = null;
 
     private UserDAO userDAO;
     private ChatDAO chatDAO;
 
+    public ChatController(NaTourActivity activity,
+                          ResultMessageController resultMessageController,
+                          ListaMessaggiController listaMessaggiController,
+                          long idOtherUser,
+                          String username,
+                          Bitmap profileImage,
+                          Long idChat,
+                          UserDAO userDAO,
+                          ChatDAO chatDAO){
+
+        super(activity, resultMessageController);
+
+        this.listaMessaggiController = listaMessaggiController;
+        this.idOtherUser = idOtherUser;
+        this.username = username;
+        this.profileImage = profileImage;
+        this.idChat = idChat;
+        this.userDAO = userDAO;
+        this.chatDAO = chatDAO;
+    }
 
     public ChatController(NaTourActivity activity){
         super(activity);
+        String messageToShow = null;
+
+        if(!CurrentUserInfo.isSignedIn()){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
+            return;
+        }
 
         Intent intent = activity.getIntent();
         this.idOtherUser = intent.getLongExtra(EXTRA_DESTATION_USER_ID, -1);
 
         if(this.idOtherUser < 0){
-            String messageToShow = activity.getString(R.string.Message_UnknownError);
+            messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessageAndBack(messageToShow);
             return;
         }
@@ -45,6 +77,32 @@ public class ChatController extends NaTourController{
         this.userDAO = new UserDAOImpl(getActivity());
         this.chatDAO = new ChatDAOImpl(getActivity());
 
+        GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUserWithImageById(idOtherUser);
+        if(!ResultMessageController.isSuccess(getUserWithImageResponseDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
+            return;
+        }
+
+        username = getUserWithImageResponseDTO.getUsername();
+        profileImage = getUserWithImageResponseDTO.getProfileImage();
+
+
+        /*
+        //TODO find chat
+        GetIdChatResponseDTO getIdChatResponseDTO = chatDAO.getChatByIdsUser(CurrentUserInfo.getId(), idOtherUser);
+        if(!ResultMessageController.isSuccess(getIdChatResponseDTO.getResultMessage())){
+            ResultMessageDTO resultMessageDTO = getIdChatResponseDTO.getResultMessage();
+            if(resultMessageDTO.getCode() != ResultMessageController.ERROR_CODE_NOT_FOUND){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessageAndBack(messageToShow);
+                return;
+            }
+        }
+        else{
+            idChat = getIdChatResponseDTO.getId();
+        }
+*/
 
         this.listaMessaggiController = new ListaMessaggiController(activity, idOtherUser);
     }
@@ -72,9 +130,27 @@ public class ChatController extends NaTourController{
 
         ApplicationController applicationController = (ApplicationController) getActivity().getApplicationContext();
         ChatWebSocketHandler chatWebSocketHandler = applicationController.getChatWebSocketHandler();
+/*
+        if(idChat == null){
+            ResultMessageDTO resultMessageDTO = chatDAO.addChat(CurrentUserInfo.getId(), idOtherUser);
+            if(!ResultMessageController.isSuccess(resultMessageDTO)){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessage(messageToShow);
+                return false;
+            }
 
+            GetIdChatResponseDTO getIdChatResponseDTO = chatDAO.getChatByIdsUser(CurrentUserInfo.getId(), idOtherUser);
+            if(!ResultMessageController.isSuccess(getIdChatResponseDTO.getResultMessage())){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessage(messageToShow);
+                return false;
+            }
 
-        boolean result = chatWebSocketHandler.sendToWebSocket(stringId, message, stringInputTime);
+            idChat = getIdChatResponseDTO.getId();
+        }
+*/
+
+        boolean result = chatWebSocketHandler.sendMessageToWebSocket(stringId, message, stringInputTime);
         if(!result) {
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessage(messageToShow);
@@ -104,6 +180,22 @@ public class ChatController extends NaTourController{
         return true;
     }
 
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Bitmap getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(Bitmap profileImage) {
+        this.profileImage = profileImage;
+    }
 
     public static void openChatActivity(NaTourActivity fromActivity, long idUser){
         Intent intent = new Intent(fromActivity, ChatActivity.class);

@@ -2,6 +2,14 @@ package com.unina.natour.controllers.socketHandler;
 
 import android.content.Context;
 
+import com.unina.natour.config.CurrentUserInfo;
+import com.unina.natour.controllers.ResultMessageController;
+import com.unina.natour.dto.response.GetBitmapResponseDTO;
+import com.unina.natour.dto.response.GetUserResponseDTO;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
@@ -9,8 +17,8 @@ import okhttp3.WebSocket;
 public class ChatWebSocketHandler {
 
     //testing socket
-    private final static String URL_WEBSOCKET = "wss://w7m7m8mork.execute-api.eu-west-1.amazonaws.com/production";
-    private final static String URL_CONNECTION = "https://w7m7m8mork.execute-api.eu-west-1.amazonaws.com/production/@connections";
+    private final static String URL_WEBSOCKET = "wss://hren0i7ir6.execute-api.eu-west-1.amazonaws.com/production";
+    private final static String URL_CONNECTION = "https://hren0i7ir6.execute-api.eu-west-1.amazonaws.com/production/@connections";
 
     private final static String KEY_ACTION = "action";
     private final static String KEY_MESSAGE = "message";
@@ -18,6 +26,7 @@ public class ChatWebSocketHandler {
     private final static String KEY_INPUT_TIME = "inputTime";
 
     private final static String ACTION_SEND_MESSAGE = "sendMessage";
+    private final static String ACTION_INIT_CONNECTION = "initConnection";
 
     private Context context;
     private WebSocket webSocket;
@@ -27,7 +36,9 @@ public class ChatWebSocketHandler {
         this.context = context;
     }
 
-    public void openWebSocket(){
+    public boolean openWebSocket(){
+        if(!CurrentUserInfo.isSignedIn()) return false;
+
         Request request = new Request.Builder()
                 .url(URL_WEBSOCKET)
                 .build();
@@ -37,14 +48,17 @@ public class ChatWebSocketHandler {
 
         webSocket = client.newWebSocket(request, listener);
 
-        client.dispatcher().executorService().shutdown();
+        ExecutorService executorService = client.dispatcher().executorService();
+        executorService.shutdown();
+
+        return true;
     }
 
     public void closeWebSocket(){
         if(webSocket != null) webSocket.close(1001, "Goodbye !");
     }
 
-    public boolean sendToWebSocket(String idUser, String message, String inputTime){
+    public boolean sendMessageToWebSocket(String idUser, String message, String inputTime){
 
         //TODO definire la web socket in modo che venga specificato anche il destinatario e l'orario di invio
 
@@ -62,4 +76,16 @@ public class ChatWebSocketHandler {
         return result;
     }
 
+    public boolean initConnectionToWebSocket(){
+        boolean result = false;
+
+        if(!CurrentUserInfo.isSignedIn()) return false;
+
+        String messageString = "{\"" + KEY_ACTION + "\" : \"" + ACTION_INIT_CONNECTION + "\", " +
+                                "\"" + KEY_ID_USER + "\" : \"" + CurrentUserInfo.getId() + "\"}";
+
+        result = webSocket.send(messageString);
+
+        return result;
+    }
 }

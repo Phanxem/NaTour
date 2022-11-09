@@ -50,6 +50,8 @@ import org.osmdroid.views.MapView;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.transform.Result;
+
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.WayPoint;
 
@@ -61,7 +63,7 @@ public class DettagliItinerarioController extends NaTourController{
     public final static String EXTRA_ITINERARY_ID = "itineraryId";
 
 
-    ActivityResultLauncher<String> activityResultLauncherPermissions;
+    private ActivityResultLauncher<String> activityResultLauncherPermissions;
 
     private LocationListener locationListener;
 
@@ -71,6 +73,23 @@ public class DettagliItinerarioController extends NaTourController{
     private ItineraryDAO itineraryDAO;
     private RouteDAO routeDAO;
 
+    public DettagliItinerarioController(NaTourActivity activity,
+                                        ResultMessageController resultMessageController,
+                                        ActivityResultLauncher<String> activityResultLauncherPermissions,
+                                        LocationListener locationListener,
+                                        DettagliItinerarioModel dettagliItinerarioModel,
+                                        UserDAO userDAO,
+                                        ItineraryDAO itineraryDAO,
+                                        RouteDAO routeDAO){
+        super(activity, resultMessageController);
+
+        this.activityResultLauncherPermissions = activityResultLauncherPermissions;
+        this.locationListener = locationListener;
+        this.dettagliItinerarioModel = dettagliItinerarioModel;
+        this.userDAO = userDAO;
+        this.itineraryDAO = itineraryDAO;
+        this.routeDAO = routeDAO;
+    }
 
     public DettagliItinerarioController(NaTourActivity activity, long idItinerary){
         super(activity);

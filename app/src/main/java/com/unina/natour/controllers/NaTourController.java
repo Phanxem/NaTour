@@ -10,11 +10,14 @@ public class NaTourController {
     private NaTourActivity activity;
     private ResultMessageController resultMessageController;
 
+    public NaTourController(NaTourActivity activity, ResultMessageController resultMessageController){
+        this.activity = activity;
+        this.resultMessageController = resultMessageController;
+    }
 
     public NaTourController(NaTourActivity activity){
         this.activity = activity;
         this.resultMessageController = new ResultMessageController(activity);
-
     }
 
     public NaTourController(){}

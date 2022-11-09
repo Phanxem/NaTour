@@ -24,6 +24,17 @@ public class DisconnessioneController extends NaTourController{
 
     private AmplifyDAO amplifyDAO;
 
+    public DisconnessioneController(NaTourActivity activity,
+                                    ResultMessageController resultMessageController,
+                                    AutenticazioneController autenticazioneController,
+                                    AmplifyDAO amplifyDAO){
+        super(activity, resultMessageController);
+
+        this.autenticazioneController = autenticazioneController;
+
+        this.amplifyDAO = amplifyDAO;
+    }
+
     public DisconnessioneController(NaTourActivity activity){
         super(activity);
 
