@@ -12,6 +12,7 @@ import com.unina.natour.controllers.ResultMessageController;
 import com.unina.natour.dto.response.GetAuthSessionResponseDTO;
 import com.unina.natour.dto.response.GetEmailResponseDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
+import com.unina.natour.models.dao.interfaces.AccountDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
@@ -24,54 +25,12 @@ public class RegistrazioneControllerTest {
     private NaTourActivity activity;
     private ResultMessageController resultMessageController;
     private AutenticazioneController autenticazioneController;
-    private AmplifyDAO amplifyDAO;
+    private AccountDAO accountDAO;
 
     @Before
     public void setUp(){
 
         activity = mock(NaTourActivity.class);
-
-        autenticazioneController = mock(AutenticazioneController.class);
-        when(autenticazioneController.signIn(anyString(), anyString()))
-                .thenReturn(true);
-
-
-
-        amplifyDAO = mock(AmplifyDAO.class);
-
-        when(amplifyDAO.signUp(anyString(), anyString(), anyString()))
-                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
-
-        when(amplifyDAO.signIn(anyString(), anyString()))
-                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
-
-        when(amplifyDAO.activateAccount(anyString(), anyString()))
-                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
-
-        when(amplifyDAO.startPasswordRecovery(anyString()))
-                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
-
-        when(amplifyDAO.completePasswordRecovery(anyString(), anyString()))
-                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
-
-        when(amplifyDAO.resendActivationCode(anyString()))
-                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
-
-        when(amplifyDAO.signOut())
-                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
-
-        when(amplifyDAO.updatePassword(anyString(), anyString()))
-                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
-
-        GetAuthSessionResponseDTO getAuthSessionResponseDTO = new GetAuthSessionResponseDTO();
-        getAuthSessionResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
-        when(amplifyDAO.fetchAuthSessione())
-                .thenReturn(getAuthSessionResponseDTO);
-
-        GetEmailResponseDTO getEmailResponseDTO = new GetEmailResponseDTO();
-        getEmailResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
-        when(amplifyDAO.getEmail())
-                .thenReturn(getEmailResponseDTO);
 
 
         resultMessageController = mock(ResultMessageController.class);
@@ -85,8 +44,52 @@ public class RegistrazioneControllerTest {
                 .thenReturn(activity);
 
 
+        autenticazioneController = mock(AutenticazioneController.class);
+        when(autenticazioneController.signIn(anyString(), anyString()))
+                .thenReturn(true);
 
-        registrazioneController = new RegistrazioneController(activity, resultMessageController,autenticazioneController,amplifyDAO);
+
+
+
+
+        accountDAO = mock(AmplifyDAO.class);
+
+        when(accountDAO.signUp(anyString(), anyString(), anyString()))
+                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
+
+        when(accountDAO.signIn(anyString(), anyString()))
+                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
+
+        when(accountDAO.activateAccount(anyString(), anyString()))
+                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
+
+        when(accountDAO.startPasswordRecovery(anyString()))
+                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
+
+        when(accountDAO.completePasswordRecovery(anyString(), anyString()))
+                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
+
+        when(accountDAO.resendActivationCode(anyString()))
+                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
+
+        when(accountDAO.signOut())
+                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
+
+        when(accountDAO.updatePassword(anyString(), anyString()))
+                .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
+
+        GetAuthSessionResponseDTO getAuthSessionResponseDTO = new GetAuthSessionResponseDTO();
+        getAuthSessionResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
+        when(accountDAO.fetchAuthSessione())
+                .thenReturn(getAuthSessionResponseDTO);
+
+        GetEmailResponseDTO getEmailResponseDTO = new GetEmailResponseDTO();
+        getEmailResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
+        when(accountDAO.getEmail())
+                .thenReturn(getEmailResponseDTO);
+
+
+        registrazioneController = new RegistrazioneController(activity, resultMessageController,autenticazioneController,accountDAO);
     }
 
     //Test Case 1 ---

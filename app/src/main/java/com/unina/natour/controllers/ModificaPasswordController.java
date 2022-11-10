@@ -40,6 +40,16 @@ public class ModificaPasswordController extends NaTourController{
             showErrorMessageAndBack(messageToShow);
             return false;
         }
+
+        if(oldPassword.length() < RegistrazioneController.MIN_LENGHT_PASSWORD ||
+           newPassword1.length() < RegistrazioneController.MIN_LENGHT_PASSWORD ||
+           newPassword2.length() < RegistrazioneController.MIN_LENGHT_PASSWORD )
+        {
+            messageToShow = activity.getString(R.string.Message_PasswordNotConformPolicyError);
+            showErrorMessageAndBack(messageToShow);
+            return false;
+        }
+
         if(!newPassword1.equals(newPassword2)){
             messageToShow = activity.getString(R.string.Message_UnmatchPasswordsError);
             showErrorMessageAndBack(messageToShow);
