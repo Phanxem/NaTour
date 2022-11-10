@@ -3,18 +3,16 @@ package com.unina.natour.controllers;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
-
-import androidx.annotation.RequiresApi;
 
 import com.unina.natour.R;
 import com.unina.natour.config.CurrentUserInfo;
-import com.unina.natour.dto.response.GetCognitoEmailResponseDTO;
+import com.unina.natour.dto.response.GetEmailResponseDTO;
 import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
 import com.unina.natour.models.ProfiloModel;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
+import com.unina.natour.models.dao.interfaces.AccountDAO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.ProfiloUtenteActivity;
@@ -26,20 +24,20 @@ public class ProfiloController extends NaTourController {
 
     private ProfiloModel profiloModel;
 
-    private AmplifyDAO amplifyDAO;
+    private AccountDAO accountDAO;
     private UserDAO userDAO;
 
     public ProfiloController(NaTourActivity activity,
                              ResultMessageController resultMessageController,
                              ListaItinerariController listaItinerariController,
                              ProfiloModel profiloModel,
-                             AmplifyDAO amplifyDAO,
+                             AccountDAO accountDAO,
                              UserDAO userDAO)
     {
         super(activity, resultMessageController);
 
         this.listaItinerariController = listaItinerariController;
-        this.amplifyDAO = amplifyDAO;
+        this.accountDAO = accountDAO;
         this.userDAO = userDAO;
         this.profiloModel = profiloModel;
     }
@@ -58,7 +56,7 @@ public class ProfiloController extends NaTourController {
 
         this.listaItinerariController = new ListaItinerariController(getActivity(), ListaItinerariController.CODE_ITINERARY_BY_USER_ID, null, idUser);
 
-        this.amplifyDAO = new AmplifyDAO();
+        this.accountDAO = new AmplifyDAO();
         this.userDAO = new UserDAOImpl(activity);
 
         this.profiloModel = new ProfiloModel();
@@ -92,13 +90,13 @@ public class ProfiloController extends NaTourController {
         String cognitoIdentityProvider = getActivity().getString(R.string.IdentityProvider_Cognito);
 
         if(userId == CurrentUserInfo.getId() && currentIdentityProvider.equals(cognitoIdentityProvider)){
-            GetCognitoEmailResponseDTO getCognitoEmailResponseDTO = amplifyDAO.getEmail();
-            if(!ResultMessageController.isSuccess(getCognitoEmailResponseDTO.getResultMessage())){
+            GetEmailResponseDTO getEmailResponseDTO = accountDAO.getEmail();
+            if(!ResultMessageController.isSuccess(getEmailResponseDTO.getResultMessage())){
                 messageToShow = activity.getString(R.string.Message_UnknownError);
                 showErrorMessageAndBack(messageToShow);
                 return false;
             }
-            email = getCognitoEmailResponseDTO.getEmail();
+            email = getEmailResponseDTO.getEmail();
         }
 
         GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUserWithImageById(userId);

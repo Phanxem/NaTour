@@ -150,6 +150,12 @@ public class ListaMessaggiController extends  NaTourController{
                         return;
                     }
 
+                    List<GetChatMessageResponseDTO> listMessage = getListChatMessageResponseDTO.getListMessage();
+                    if(listMessage == null || listMessage.isEmpty()){
+                        progressBar_messages.setVisibility(View.GONE);
+                        return;
+                    }
+
                     ArrayList<ElementMessageModel> nextPageElements = new ArrayList<ElementMessageModel>();
                     boolean result = dtoToModel(getActivity(), getListChatMessageResponseDTO, nextPageElements);
                     if(!result){
@@ -158,10 +164,6 @@ public class ListaMessaggiController extends  NaTourController{
                         return;
                     }
 
-                    if(nextPageElements == null || nextPageElements.isEmpty()){
-                        progressBar_messages.setVisibility(View.GONE);
-                        return;
-                    }
 
                     int oldHeight = v.getChildAt(0).getMeasuredHeight();
 

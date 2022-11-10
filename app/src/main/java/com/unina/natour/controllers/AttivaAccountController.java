@@ -15,6 +15,7 @@ import com.unina.natour.dto.response.GetUserResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
+import com.unina.natour.models.dao.interfaces.AccountDAO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.AttivaAccountActivity;
 import com.unina.natour.views.activities.AutenticazioneActivity;
@@ -38,7 +39,7 @@ public class AttivaAccountController extends NaTourController{
     private String password;
     private String email;
 
-    private AmplifyDAO amplifyDAO;
+    private AccountDAO accountDAO;
     private UserDAO userDAO;
 
     public AttivaAccountController(NaTourActivity activity,
@@ -47,13 +48,13 @@ public class AttivaAccountController extends NaTourController{
                                    String username,
                                    String password,
                                    String email,
-                                   AmplifyDAO amplifyDAO,
+                                   AccountDAO accountDAO,
                                    UserDAO userDAO){
         super(activity, resultMessageController);
 
         this.autenticazioneController = autenticazioneController;
 
-        this.amplifyDAO = amplifyDAO;
+        this.accountDAO = accountDAO;
         this.userDAO = userDAO;
 
         this.username = username;
@@ -66,7 +67,7 @@ public class AttivaAccountController extends NaTourController{
 
         this.autenticazioneController = new AutenticazioneController(activity);
 
-        this.amplifyDAO = new AmplifyDAO();
+        this.accountDAO = new AmplifyDAO();
         this.userDAO = new UserDAOImpl(getActivity());
 
         Intent intent = activity.getIntent();
@@ -103,7 +104,7 @@ public class AttivaAccountController extends NaTourController{
             return false;
         }
 
-        ResultMessageDTO resultMessageDTO = amplifyDAO.activateAccount(username, code);
+        ResultMessageDTO resultMessageDTO = accountDAO.activateAccount(username, code);
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
 
             if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
@@ -143,7 +144,7 @@ public class AttivaAccountController extends NaTourController{
             return false;
         }
 
-        resultMessageDTO = amplifyDAO.signIn(username,password);
+        resultMessageDTO = accountDAO.signIn(username,password);
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
             if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
                 messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
@@ -204,7 +205,7 @@ public class AttivaAccountController extends NaTourController{
         Activity activity = getActivity();
         String messageToShow = null;
 
-        ResultMessageDTO resultMessageDTO = amplifyDAO.resendActivationCode(username);
+        ResultMessageDTO resultMessageDTO = accountDAO.resendActivationCode(username);
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
 
             if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){

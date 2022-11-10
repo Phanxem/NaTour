@@ -7,18 +7,16 @@ import com.amplifyframework.auth.AuthUserAttributeKey;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
-import com.unina.natour.R;
 import com.unina.natour.controllers.ResultMessageController;
-import com.unina.natour.dto.response.GetCognitoAuthSessionResponseDTO;
-import com.unina.natour.dto.response.GetCognitoEmailResponseDTO;
+import com.unina.natour.dto.response.GetAuthSessionResponseDTO;
+import com.unina.natour.dto.response.GetEmailResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.models.dao.interfaces.AccountDAO;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import javax.xml.transform.Result;
-
-public class AmplifyDAO extends ServerDAO {
+public class AmplifyDAO extends ServerDAO implements AccountDAO {
 
     public ResultMessageDTO signUp(String username, String email, String password){
 
@@ -187,20 +185,20 @@ public class AmplifyDAO extends ServerDAO {
         return result;
     }
 
-    public GetCognitoEmailResponseDTO getEmail(){
-        GetCognitoEmailResponseDTO result = new GetCognitoEmailResponseDTO();
+    public GetEmailResponseDTO getEmail(){
+        GetEmailResponseDTO result = new GetEmailResponseDTO();
 
-        CompletableFuture<GetCognitoEmailResponseDTO> completableFuture = new CompletableFuture<GetCognitoEmailResponseDTO>();
+        CompletableFuture<GetEmailResponseDTO> completableFuture = new CompletableFuture<GetEmailResponseDTO>();
 
-        GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = fetchAuthSessione();
-        if(!ResultMessageController.isSuccess(getCognitoAuthSessionResponseDTO.getResultMessage())){
-            result.setResultMessage(getCognitoAuthSessionResponseDTO.getResultMessage());
+        GetAuthSessionResponseDTO getAuthSessionResponseDTO = fetchAuthSessione();
+        if(!ResultMessageController.isSuccess(getAuthSessionResponseDTO.getResultMessage())){
+            result.setResultMessage(getAuthSessionResponseDTO.getResultMessage());
             return result;
         }
 
 
         //Signed in with cognito
-        AWSCognitoAuthSession authSession = getCognitoAuthSessionResponseDTO.getAuthSessione();
+        AWSCognitoAuthSession authSession = getAuthSessionResponseDTO.getAuthSessione();
         if(!authSession.isSignedIn()){
             result.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
             return result;
@@ -211,8 +209,8 @@ public class AmplifyDAO extends ServerDAO {
                 attributes -> {
                     for (AuthUserAttribute attribute : attributes) {
                         if (attribute.getKey().getKeyString().equals("email")) {
-                            GetCognitoEmailResponseDTO getCognitoEmailResponseDTO = new GetCognitoEmailResponseDTO(ResultMessageController.SUCCESS_MESSAGE,attribute.getValue());
-                            completableFuture.complete(getCognitoEmailResponseDTO);
+                            GetEmailResponseDTO getEmailResponseDTO = new GetEmailResponseDTO(ResultMessageController.SUCCESS_MESSAGE,attribute.getValue());
+                            completableFuture.complete(getEmailResponseDTO);
                         }
                     }
                 },
@@ -220,8 +218,8 @@ public class AmplifyDAO extends ServerDAO {
                     String message = error.getCause().getMessage();
                     Log.e("TAG","error",error);
                     ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ResultMessageController.ERROR_CODE_AMPLIFY, message);
-                    GetCognitoEmailResponseDTO getCognitoEmailResponseDTO = new GetCognitoEmailResponseDTO(resultMessageDTO, null);
-                    completableFuture.complete(getCognitoEmailResponseDTO);
+                    GetEmailResponseDTO getEmailResponseDTO = new GetEmailResponseDTO(resultMessageDTO, null);
+                    completableFuture.complete(getEmailResponseDTO);
                 }
         );
 
@@ -231,7 +229,7 @@ public class AmplifyDAO extends ServerDAO {
         }
         catch (ExecutionException | InterruptedException e) {
             ResultMessageDTO resultMessageDTO = ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
-            result = new GetCognitoEmailResponseDTO(resultMessageDTO,null);
+            result = new GetEmailResponseDTO(resultMessageDTO,null);
         }
 
         return result;
@@ -288,35 +286,35 @@ public class AmplifyDAO extends ServerDAO {
         return result;
     }
 
-    public GetCognitoAuthSessionResponseDTO fetchAuthSessione(){
+    public GetAuthSessionResponseDTO fetchAuthSessione(){
 
-        CompletableFuture<GetCognitoAuthSessionResponseDTO> completableFuture = new CompletableFuture<GetCognitoAuthSessionResponseDTO>();
+        CompletableFuture<GetAuthSessionResponseDTO> completableFuture = new CompletableFuture<GetAuthSessionResponseDTO>();
 
         Amplify.Auth.fetchAuthSession(
                 result -> {
                     AWSCognitoAuthSession cognitoAuthSession = (AWSCognitoAuthSession) result;
 
-                    GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = new GetCognitoAuthSessionResponseDTO();
-                    getCognitoAuthSessionResponseDTO.setAuthSessione(cognitoAuthSession);
-                    getCognitoAuthSessionResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
-                    completableFuture.complete(getCognitoAuthSessionResponseDTO);
+                    GetAuthSessionResponseDTO getAuthSessionResponseDTO = new GetAuthSessionResponseDTO();
+                    getAuthSessionResponseDTO.setAuthSessione(cognitoAuthSession);
+                    getAuthSessionResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
+                    completableFuture.complete(getAuthSessionResponseDTO);
                 },
                 error -> {
                     String message = error.getCause().getMessage();
-                    GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = new GetCognitoAuthSessionResponseDTO();
+                    GetAuthSessionResponseDTO getAuthSessionResponseDTO = new GetAuthSessionResponseDTO();
                     ResultMessageDTO resultMessageDTO = new ResultMessageDTO(ResultMessageController.ERROR_CODE_AMPLIFY, message);
-                    getCognitoAuthSessionResponseDTO.setResultMessage(resultMessageDTO);
-                    completableFuture.complete(getCognitoAuthSessionResponseDTO);
+                    getAuthSessionResponseDTO.setResultMessage(resultMessageDTO);
+                    completableFuture.complete(getAuthSessionResponseDTO);
                 }
         );
 
-        GetCognitoAuthSessionResponseDTO result = null;
+        GetAuthSessionResponseDTO result = null;
 
         try {
             result = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            result = new GetCognitoAuthSessionResponseDTO();
+            result = new GetAuthSessionResponseDTO();
             ResultMessageDTO resultMessageDTO = ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
             result.setResultMessage(resultMessageDTO);
         }

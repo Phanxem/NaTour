@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,16 +34,32 @@ public class CommunityFragment extends NaTourFragment {
         this.communityController = new CommunityController(getNaTourActivity());
         this.listaUtentiController = communityController.getListaUtentiController();
 
+
+
+        searchFromSearchBar();
+        pressIconCancel();
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        Log.e(TAG, "onResume");
+        long researchCode = listaUtentiController.getResearchCode();
+
+        Log.e(TAG, "researchCode = " + researchCode);
+
+        if(researchCode < 0 || researchCode == ListaUtentiController.CODE_USER_WITH_CONVERSATION){
+            listaUtentiController.initModel(ListaUtentiController.CODE_USER_WITH_CONVERSATION,null);
+        }
+
         RecyclerView recyclerView_users = view.findViewById(R.id.Community_recycleView_utenti);
         NestedScrollView nestedScrollView_users = view.findViewById(R.id.Community_nestedScrollView_utenti);
         ProgressBar progressBar_users = view.findViewById(R.id.Community_progressBar_utenti);
 
         listaUtentiController.initList(nestedScrollView_users,recyclerView_users, progressBar_users);
 
-        searchFromSearchBar();
-        pressIconCancel();
-
-        return view;
+        super.onResume();
     }
 
     public void searchFromSearchBar(){

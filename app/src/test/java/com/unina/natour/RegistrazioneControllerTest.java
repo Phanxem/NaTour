@@ -6,32 +6,25 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.junit.Assert.*;
 
-import android.os.Message;
-import android.support.v4.media.MediaMetadataCompat;
-
 import com.unina.natour.controllers.AutenticazioneController;
 import com.unina.natour.controllers.RegistrazioneController;
 import com.unina.natour.controllers.ResultMessageController;
-import com.unina.natour.dto.response.GetCognitoAuthSessionResponseDTO;
-import com.unina.natour.dto.response.GetCognitoEmailResponseDTO;
+import com.unina.natour.dto.response.GetAuthSessionResponseDTO;
+import com.unina.natour.dto.response.GetEmailResponseDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 public class RegistrazioneControllerTest {
     private RegistrazioneController registrazioneController;
 
-    NaTourActivity activity;
-    ResultMessageController resultMessageController;
-    AutenticazioneController autenticazioneController;
-    AmplifyDAO amplifyDAO;
+    private NaTourActivity activity;
+    private ResultMessageController resultMessageController;
+    private AutenticazioneController autenticazioneController;
+    private AmplifyDAO amplifyDAO;
 
     @Before
     public void setUp(){
@@ -70,15 +63,15 @@ public class RegistrazioneControllerTest {
         when(amplifyDAO.updatePassword(anyString(), anyString()))
                 .thenReturn(ResultMessageController.SUCCESS_MESSAGE);
 
-        GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = new GetCognitoAuthSessionResponseDTO();
-        getCognitoAuthSessionResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
+        GetAuthSessionResponseDTO getAuthSessionResponseDTO = new GetAuthSessionResponseDTO();
+        getAuthSessionResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
         when(amplifyDAO.fetchAuthSessione())
-                .thenReturn(getCognitoAuthSessionResponseDTO);
+                .thenReturn(getAuthSessionResponseDTO);
 
-        GetCognitoEmailResponseDTO getCognitoEmailResponseDTO = new GetCognitoEmailResponseDTO();
-        getCognitoEmailResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
+        GetEmailResponseDTO getEmailResponseDTO = new GetEmailResponseDTO();
+        getEmailResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
         when(amplifyDAO.getEmail())
-                .thenReturn(getCognitoEmailResponseDTO);
+                .thenReturn(getEmailResponseDTO);
 
 
         resultMessageController = mock(ResultMessageController.class);

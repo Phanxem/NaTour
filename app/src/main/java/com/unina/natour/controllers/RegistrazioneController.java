@@ -11,6 +11,7 @@ import com.unina.natour.controllers.utils.EmailUtils;
 import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
+import com.unina.natour.models.dao.interfaces.AccountDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.activities.RegistrazioneActivity;
 
@@ -20,18 +21,18 @@ public class RegistrazioneController extends NaTourController{
 
     private AutenticazioneController autenticazioneController;
 
-    private AmplifyDAO  amplifyDAO;
+    private AccountDAO accountDAO;
 
     public RegistrazioneController(NaTourActivity activity,
                                    ResultMessageController resultMessageController,
                                    AutenticazioneController autenticazioneController,
-                                   AmplifyDAO  amplifyDAO)
+                                   AccountDAO accountDAO)
     {
         super(activity, resultMessageController);
 
         this.autenticazioneController = autenticazioneController;
 
-        this.amplifyDAO = amplifyDAO;
+        this.accountDAO = accountDAO;
     }
 
     public RegistrazioneController(NaTourActivity activity){
@@ -39,7 +40,7 @@ public class RegistrazioneController extends NaTourController{
 
         this.autenticazioneController = new AutenticazioneController(activity);
 
-        this.amplifyDAO = new AmplifyDAO();
+        this.accountDAO = new AmplifyDAO();
     }
 
 
@@ -66,7 +67,7 @@ public class RegistrazioneController extends NaTourController{
             return false;
         }
 
-        ResultMessageDTO resultMessageDTO = amplifyDAO.signUp(username, email, password);
+        ResultMessageDTO resultMessageDTO = accountDAO.signUp(username, email, password);
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
 
             if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){

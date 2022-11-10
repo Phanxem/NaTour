@@ -37,9 +37,6 @@ public class ApplicationController extends Application {
             Log.e(TAG, "Could not initialize Amplify", error);
         }
 
-        //FacebookSdk.fullyInitialize();
-        //AppEventsLogger.activateApp(this);
-
         Application.ActivityLifecycleCallbacks activityLifecycleCallbacks = generateActivityLifecycleCallbacks();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
 

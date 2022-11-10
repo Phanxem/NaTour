@@ -32,10 +32,15 @@ public class DettagliSegnalazioneActivity extends NaTourActivity {
         this.dettagliSegnalazioneController = new DettagliSegnalazioneController(this);
         this.dettagliSegnalazioneModel = dettagliSegnalazioneController.getModel();
 
-        update();
-
         pressIconBack();
         pressIconMenu();
+    }
+
+    @Override
+    protected void onResume() {
+        dettagliSegnalazioneController.initModel();
+        update();
+        super.onResume();
     }
 
     public void pressIconBack(){
@@ -96,10 +101,5 @@ public class DettagliSegnalazioneActivity extends NaTourActivity {
     }
 
 
-    @Override
-    protected void onResume() {
-        dettagliSegnalazioneController.initModel();
-        update();
-        super.onResume();
-    }
+
 }

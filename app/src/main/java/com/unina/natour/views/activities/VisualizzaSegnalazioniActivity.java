@@ -32,10 +32,20 @@ public class VisualizzaSegnalazioniActivity extends NaTourActivity {
         ListView listView = findViewById(R.id.ViewReports_listView_risultati);
         visualizzaSegnalazioniController.initListViewReports(listView);
 
-        update();
-
         pressIconBack();
     }
+
+    @Override
+    protected void onResume() {
+        visualizzaSegnalazioniController.initModel(visualizzaSegnalazioniModel.getItineraryId());
+        update();
+
+        List<ElementReportModel> reports = visualizzaSegnalazioniModel.getReports();
+        if(reports.isEmpty()) finish();
+
+        super.onResume();
+    }
+
 
     public void pressIconBack(){
         NaTourActivity activity = this;
@@ -61,15 +71,5 @@ public class VisualizzaSegnalazioniActivity extends NaTourActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        visualizzaSegnalazioniController.initModel(visualizzaSegnalazioniModel.getItineraryId());
-        update();
-
-        List<ElementReportModel> reports = visualizzaSegnalazioniModel.getReports();
-        if(reports.isEmpty()) finish();
-
-        super.onResume();
-    }
 
 }

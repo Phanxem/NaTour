@@ -3,6 +3,8 @@ package com.unina.natour.models.dao.implementation;
 import android.util.Log;
 
 import com.amazonaws.auth.AWSSessionCredentials;
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.unina.natour.controllers.utils.SignAWSv4Utils;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.response.ResultMessageDTO;
@@ -31,6 +33,24 @@ public class ServerDAO {
     public ServerDAO(){
         this.resultMessageDAO = new ResultMessageDAO();
     }
+
+    //How to find AWSSessionCredential
+    /*
+    CognitoCachingCredentialsProvider cognitoCachingCredentialsProvider = IdentityManager.getDefaultIdentityManager().getUnderlyingProvider();
+    cognitoCachingCredentialsProvider.getCredentials();
+     */
+
+    //How to sign okHttp Request
+    /*
+    Request request = new Request.Builder()
+                        .url(url)
+                        //.post(requestBody)
+                        .build();
+
+
+     request = ServerDAO.signRequest(request, cccp.getCredentials());
+     */
+
 
     public static Request signRequest(Request request, AWSSessionCredentials awsSessionCredentials) throws Exception {
 

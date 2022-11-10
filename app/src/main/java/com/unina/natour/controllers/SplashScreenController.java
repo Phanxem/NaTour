@@ -23,12 +23,13 @@ import com.google.android.gms.tasks.Continuation;
 import com.unina.natour.R;
 import com.unina.natour.config.ApplicationController;
 import com.unina.natour.config.CurrentUserInfo;
-import com.unina.natour.dto.response.GetCognitoAuthSessionResponseDTO;
+import com.unina.natour.dto.response.GetAuthSessionResponseDTO;
 import com.unina.natour.dto.response.GetUserResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.models.dao.implementation.ServerDAO;
 import com.unina.natour.models.dao.implementation.UserDAOImpl;
+import com.unina.natour.models.dao.interfaces.AccountDAO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.ConnessioneServerFallitaActivity;
 import com.unina.natour.views.activities.NaTourActivity;
@@ -38,21 +39,21 @@ public class SplashScreenController extends NaTourController{
 
 
     private AutenticazioneController autenticazioneController;
-    private AmplifyDAO amplifyDAO;
+    private AccountDAO accountDAO;
     private ServerDAO serverDAO;
     private UserDAO userDAO;
 
     public SplashScreenController(NaTourActivity activity,
                                   ResultMessageController resultMessageController,
                                   AutenticazioneController autenticazioneController,
-                                  AmplifyDAO amplifyDAO,
+                                  AccountDAO accountDAO,
                                   ServerDAO serverDAO,
                                   UserDAO userDAO)
     {
         super(activity, resultMessageController);
 
         this.autenticazioneController = autenticazioneController;
-        this.amplifyDAO = amplifyDAO;
+        this.accountDAO = accountDAO;
         this.serverDAO = serverDAO;
         this.userDAO = userDAO;
     }
@@ -61,7 +62,7 @@ public class SplashScreenController extends NaTourController{
         super(activity);
 
         this.autenticazioneController = new AutenticazioneController(getActivity());
-        this.amplifyDAO = new AmplifyDAO();
+        this.accountDAO = new AmplifyDAO();
         this.serverDAO = new ServerDAO();
         this.userDAO = new UserDAOImpl(activity);
     }
@@ -145,8 +146,8 @@ public class SplashScreenController extends NaTourController{
         Activity activity = getActivity();
         String messageToShow = null;
 
-        GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = amplifyDAO.fetchAuthSessione();
-        ResultMessageDTO resultMessageDTO = getCognitoAuthSessionResponseDTO.getResultMessage();
+        GetAuthSessionResponseDTO getAuthSessionResponseDTO = accountDAO.fetchAuthSessione();
+        ResultMessageDTO resultMessageDTO = getAuthSessionResponseDTO.getResultMessage();
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
             if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
                 messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
@@ -162,7 +163,7 @@ public class SplashScreenController extends NaTourController{
 
 
         //Signed in with cognito
-        AWSCognitoAuthSession authSession = getCognitoAuthSessionResponseDTO.getAuthSessione();
+        AWSCognitoAuthSession authSession = getAuthSessionResponseDTO.getAuthSessione();
         if(authSession.isSignedIn()){
             Log.i(TAG, "logged with Cognito");
             return true;

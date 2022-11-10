@@ -76,16 +76,4 @@ public class ChatWebSocketHandler {
         return result;
     }
 
-    public boolean initConnectionToWebSocket(){
-        boolean result = false;
-
-        if(!CurrentUserInfo.isSignedIn()) return false;
-
-        String messageString = "{\"" + KEY_ACTION + "\" : \"" + ACTION_INIT_CONNECTION + "\", " +
-                                "\"" + KEY_ID_USER + "\" : \"" + CurrentUserInfo.getId() + "\"}";
-
-        result = webSocket.send(messageString);
-
-        return result;
-    }
 }

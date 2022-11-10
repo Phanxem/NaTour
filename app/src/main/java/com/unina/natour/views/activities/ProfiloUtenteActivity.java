@@ -51,7 +51,6 @@ public class ProfiloUtenteActivity extends NaTourActivity{
 
         this.profiloModel = profiloController.getModel();
 
-
         RecyclerView recyclerView_itineraries = findViewById(R.id.Profilo_recycleView_itinerari);
         NestedScrollView nestedScrollView_itineraries = findViewById(R.id.Profilo_nestedScrollView_itinerari);
         ProgressBar progressBar_itinearies = findViewById(R.id.Profilo_progressBar_itinerari);
@@ -68,29 +67,14 @@ public class ProfiloUtenteActivity extends NaTourActivity{
 
         pressSendMessage();
 
-        update();
-
-/*
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent();
-                long userId = intent.getLongExtra(ProfiloController.EXTRA_USER_ID,-1);
-
-                profiloController.initModel(userId);
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() { update(); }
-                });
-            }
-        });
-
- */
     }
+
+    @Override
+    public void onResume() {
+        update();
+        super.onResume();
+    }
+
 
     public void pressSendMessage() {
         NaTourActivity activity = this;
@@ -141,30 +125,5 @@ public class ProfiloUtenteActivity extends NaTourActivity{
 
     }
 
-    @Override
-    public void onResume() {
-        /*
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent();
-                long userId = intent.getLongExtra(ProfiloController.EXTRA_USER_ID,-1);
-
-                profiloController.initModel(userId);
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        update();
-                    }
-                });
-            }
-        });
-        */
-        super.onResume();
-    }
 
 }

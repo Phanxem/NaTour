@@ -1,6 +1,7 @@
 package com.unina.natour.models.dao.implementation;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -16,6 +17,7 @@ import com.unina.natour.dto.response.GetListChatMessageResponseDTO;
 import com.unina.natour.dto.response.GetChatMessageResponseDTO;
 import com.unina.natour.dto.response.GetListUserResponseDTO;
 import com.unina.natour.dto.response.GetUserResponseDTO;
+import com.unina.natour.dto.response.HasMessageToReadResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.response.composted.GetChatWithUserResponseDTO;
 import com.unina.natour.dto.response.composted.GetListChatWithUserResponseDTO;
@@ -138,6 +140,70 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
     }
 
     @Override
+    public HasMessageToReadResponseDTO checkIfHasMessageToRead(long idUser) {
+        String url = URL + "/has/messageToRead/" + idUser;
+
+        HasMessageToReadResponseDTO hasMessageToReadResponseDTO = new HasMessageToReadResponseDTO();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        OkHttpClient client = new OkHttpClient();
+
+        Call call = client.newCall(request);
+
+        final IOException[] exception = {null};
+        CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();
+
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                exception[0] = e;
+                completableFuture.complete(null);
+                return;
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+
+                String jsonStringResult = response.body().string();
+                JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
+                JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
+
+                completableFuture.complete(jsonObjectResult);
+            }
+        });
+
+
+
+        JsonObject jsonObjectResult = null;
+        try {
+            jsonObjectResult = completableFuture.get();
+        }
+        catch (ExecutionException | InterruptedException e) {
+            hasMessageToReadResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
+            return hasMessageToReadResponseDTO;
+        }
+
+        if(exception[0] != null){
+            hasMessageToReadResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
+            return hasMessageToReadResponseDTO;
+        }
+
+        ResultMessageDTO resultMessage = ResultMessageDAO.getResultMessage(jsonObjectResult);
+
+        if(!ResultMessageController.isSuccess(resultMessage)){
+            hasMessageToReadResponseDTO.setResultMessage(resultMessage);
+            return hasMessageToReadResponseDTO;
+        }
+
+        hasMessageToReadResponseDTO = toHasMessageToReadResponseDTO(jsonObjectResult);
+
+        return hasMessageToReadResponseDTO;
+    }
+
+    @Override
     public ResultMessageDTO addChat(long idUser1, long idUser2) {
         String url = URL + "/add?idUser1=" + idUser1 + "&idUser2=" + idUser2;
 
@@ -210,6 +276,7 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
 
 
         //PER OGNI UTENTE RECUPERO GLI ULTIMI MESSAGGI DELLA CHAT
+        executor = Executors.newFixedThreadPool(listUser.size());
         boolean[] arrayMessageToRead = new boolean[listUser.size()];
         for(int i = 0; i < listUser.size(); i++){
             int iTemp = i;
@@ -223,21 +290,26 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
                     GetListChatMessageResponseDTO getListChatMessageResponseDTO = getMessageByIdsUser(CurrentUserInfo.getId(), user.getId(),0);
                     List<GetChatMessageResponseDTO> listMessage = getListChatMessageResponseDTO.getListMessage();
 
-                    if(listMessage == null || listMessage.isEmpty()) arrayMessageToRead[iTemp] = false;
-                    else {
-                        GetChatMessageResponseDTO tempMessage;
-                        for(int i = 0; i < listMessage.size(); i++){
-                            tempMessage = listMessage.get(i);
-                            if(tempMessage.getIdUser() != CurrentUserInfo.getId()){
-                                if(tempMessage.isToRead()) arrayMessageToRead[iTemp] = true;
-                                else arrayMessageToRead[iTemp] = false;
-                                return;
-                            }
-                        }
+                    if(listMessage == null || listMessage.isEmpty()){
                         arrayMessageToRead[iTemp] = false;
+                        return;
                     }
+
+                    GetChatMessageResponseDTO tempMessage;
+                    for(int j = listMessage.size()-1; j>=0; j--){
+                        tempMessage = listMessage.get(j);
+                        if(tempMessage.getIdUser() != CurrentUserInfo.getId()){
+                            if(tempMessage.isToRead()) arrayMessageToRead[iTemp] = true;
+                            else arrayMessageToRead[iTemp] = false;
+                            return;
+                        }
+                    }
+                    arrayMessageToRead[iTemp] = false;
+
                 }
             };
+
+
 
             executor.execute(runnable);
         }
@@ -373,6 +445,9 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
         long idChat = jsonObject.get("idChat").getAsLong();
         getChatMessageResponseDTO.setIdChat(idChat);
 
+        boolean toRead = jsonObject.get("toRead").getAsBoolean();
+        getChatMessageResponseDTO.setToRead(toRead);
+
         return getChatMessageResponseDTO;
     }
 
@@ -392,12 +467,12 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
         long idChat = jsonObject.get("idChat").getAsLong();
         getListChatMessageResponseDTO.setIdChat(idChat);
 
-        JsonArray jsonArray = jsonObject.get("listUser").getAsJsonArray();
+        JsonArray jsonArray = jsonObject.get("listMessage").getAsJsonArray();
         List<GetChatMessageResponseDTO> listMessage = new ArrayList<GetChatMessageResponseDTO>();
         for(JsonElement jsonElement : jsonArray){
             JsonObject jsonObjectElement = jsonElement.getAsJsonObject();
 
-            GetChatMessageResponseDTO getChatMessageResponseDTO = toGetChatMessageResponseDTO(jsonObject);
+            GetChatMessageResponseDTO getChatMessageResponseDTO = toGetChatMessageResponseDTO(jsonObjectElement);
             listMessage.add(getChatMessageResponseDTO);
         }
         getListChatMessageResponseDTO.setListMessage(listMessage);
@@ -424,5 +499,23 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
         return getIdChatResponseDTO;
     }
 
+    public HasMessageToReadResponseDTO toHasMessageToReadResponseDTO(JsonObject jsonObject){
+        HasMessageToReadResponseDTO hasMessageToReadResponseDTO = new HasMessageToReadResponseDTO();
+
+        if(jsonObject.has("resultMessage") ){
+            JsonObject jsonResultMessage = jsonObject.get("resultMessage").getAsJsonObject();
+
+            long code = jsonResultMessage.get("code").getAsLong();
+            String message = jsonResultMessage.get("message").getAsString();
+
+            ResultMessageDTO resultMessageDTO = new ResultMessageDTO(code,message);
+            hasMessageToReadResponseDTO.setResultMessage(resultMessageDTO);
+        }
+
+        boolean hasMessageToRead = jsonObject.get("hasMessageToRead").getAsBoolean();
+        hasMessageToReadResponseDTO.setHasMessageToRead(hasMessageToRead);
+
+        return hasMessageToReadResponseDTO;
+    }
 
 }

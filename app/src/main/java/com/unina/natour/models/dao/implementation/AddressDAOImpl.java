@@ -33,7 +33,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-@RequiresApi(api = Build.VERSION_CODES.N)
+
 public class AddressDAOImpl extends ServerDAO implements AddressDAO {
 
     private static final String URL = SERVER_URL + "/address";

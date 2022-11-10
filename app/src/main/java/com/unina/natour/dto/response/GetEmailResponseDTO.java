@@ -1,17 +1,17 @@
 package com.unina.natour.dto.response;
 
-public class GetCognitoEmailResponseDTO {
+public class GetEmailResponseDTO {
     private ResultMessageDTO resultMessage;
     private String email;
 
-    public GetCognitoEmailResponseDTO(ResultMessageDTO resultMessage, String email){
+    public GetEmailResponseDTO(ResultMessageDTO resultMessage, String email){
         this.resultMessage = resultMessage;
         this.email = email;
     }
 
 
 
-    public GetCognitoEmailResponseDTO(){
+    public GetEmailResponseDTO(){
         this.resultMessage = new ResultMessageDTO();
     }
 

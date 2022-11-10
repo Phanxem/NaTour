@@ -10,23 +10,24 @@ import com.unina.natour.R;
 import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
+import com.unina.natour.models.dao.interfaces.AccountDAO;
 import com.unina.natour.views.activities.ModificaPasswordActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 
 public class ModificaPasswordController extends NaTourController{
 
-    private AmplifyDAO amplifyDAO;
+    private AccountDAO accountDAO;
 
     public ModificaPasswordController(NaTourActivity activity,
                                       ResultMessageController resultMessageController,
-                                      AmplifyDAO amplifyDAO){
+                                      AccountDAO accountDAO){
         super(activity, resultMessageController);
-        this.amplifyDAO = amplifyDAO;
+        this.accountDAO = accountDAO;
     }
 
     public ModificaPasswordController(NaTourActivity activity){
         super(activity);
-        this.amplifyDAO = new AmplifyDAO();
+        this.accountDAO = new AmplifyDAO();
     }
 
 
@@ -45,7 +46,7 @@ public class ModificaPasswordController extends NaTourController{
             return false;
         }
 
-        ResultMessageDTO resultMessageDTO = amplifyDAO.updatePassword(oldPassword, newPassword1);
+        ResultMessageDTO resultMessageDTO = accountDAO.updatePassword(oldPassword, newPassword1);
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
             if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
                 messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());

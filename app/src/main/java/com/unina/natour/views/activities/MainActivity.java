@@ -2,17 +2,15 @@ package com.unina.natour.views.activities;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.RequiresApi;
 
-import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
-import com.amplifyframework.core.Amplify;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.unina.natour.R;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.PianificaItinerarioController;
 import com.unina.natour.views.fragments.CommunityFragment;
@@ -28,25 +26,7 @@ public class MainActivity extends NaTourActivity {
     public final static long CODE_FRAGMENT_PIANIFICA = 2l;
     public final static long CODE_FRAGMENT_COMMUNITY = 3l;
 
-/*
-    public void openAwsConfigurationFile(){
-        Resources resources = getActivity().getResources();
-
-        InputStream inputStream = resources.openRawResource(R.raw.awsconfiguration);
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-        JsonElement jsonElement = JsonParser.parseReader(inputStreamReader);
-        JsonObject jsonObject = jsonElement.getAsJsonObject();
-    }
-    */
-
-
-
     private MainController mainController;
-
-
-    //ProfiloPersonaleController profiloPersonaleController;
-    //PianificaItinerarioController pianificaItinerarioController;
-    //home controller ecc...
 
 
     @Override
@@ -56,9 +36,6 @@ public class MainActivity extends NaTourActivity {
         setContentView(R.layout.activity_main);
 
         mainController = new MainController(this);
-
-
-
 
         HomeFragment homeFragment = new HomeFragment();
         homeFragment.setNaTourActivity(this);
@@ -74,19 +51,12 @@ public class MainActivity extends NaTourActivity {
         communityFragment.setNaTourActivity(this);
 
 
-
-
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.Main_navigationBar_menu);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.Main_fragment_containter, homeFragment)
                 .commit();
 
         mainController.setCurrentFragment(homeFragment);
-
-
-        BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.bottomMenu_community);
-        badgeDrawable.setVisible(true);
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -130,8 +100,30 @@ public class MainActivity extends NaTourActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        mainController.checkIfHasChatNotification();
+        updateChatNotification();
+
+
+
+        super.onResume();
+    }
+
     public MainController getMainController() {
         return mainController;
     }
+
+    public void updateChatNotification(){
+        BottomNavigationView bottomNavigationView = findViewById(R.id.Main_navigationBar_menu);
+        BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.bottomMenu_community);
+        if(mainController.hasChatNotification()){
+            badgeDrawable.setVisible(true);
+        }
+        else badgeDrawable.setVisible(false);
+    }
+
+
+
 
 }

@@ -87,24 +87,27 @@ public class ChatController extends NaTourController{
         username = getUserWithImageResponseDTO.getUsername();
         profileImage = getUserWithImageResponseDTO.getProfileImage();
 
-
-        /*
-        //TODO find chat
-        GetIdChatResponseDTO getIdChatResponseDTO = chatDAO.getChatByIdsUser(CurrentUserInfo.getId(), idOtherUser);
-        if(!ResultMessageController.isSuccess(getIdChatResponseDTO.getResultMessage())){
-            ResultMessageDTO resultMessageDTO = getIdChatResponseDTO.getResultMessage();
-            if(resultMessageDTO.getCode() != ResultMessageController.ERROR_CODE_NOT_FOUND){
-                messageToShow = activity.getString(R.string.Message_UnknownError);
-                showErrorMessageAndBack(messageToShow);
-                return;
-            }
-        }
-        else{
-            idChat = getIdChatResponseDTO.getId();
-        }
-*/
-
         this.listaMessaggiController = new ListaMessaggiController(activity, idOtherUser);
+    }
+
+    public boolean readAllMessage(){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        if(!CurrentUserInfo.isSignedIn()){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return false;
+        }
+
+        ResultMessageDTO resultMessageDTO = chatDAO.readAllMessageByIdsUser(CurrentUserInfo.getId(), idOtherUser);
+        if(!ResultMessageController.isSuccess(resultMessageDTO)){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return false;
+        }
+
+        return true;
     }
 
     public ListaMessaggiController getListaMessaggiController() {
@@ -130,25 +133,6 @@ public class ChatController extends NaTourController{
 
         ApplicationController applicationController = (ApplicationController) getActivity().getApplicationContext();
         ChatWebSocketHandler chatWebSocketHandler = applicationController.getChatWebSocketHandler();
-/*
-        if(idChat == null){
-            ResultMessageDTO resultMessageDTO = chatDAO.addChat(CurrentUserInfo.getId(), idOtherUser);
-            if(!ResultMessageController.isSuccess(resultMessageDTO)){
-                messageToShow = activity.getString(R.string.Message_UnknownError);
-                showErrorMessage(messageToShow);
-                return false;
-            }
-
-            GetIdChatResponseDTO getIdChatResponseDTO = chatDAO.getChatByIdsUser(CurrentUserInfo.getId(), idOtherUser);
-            if(!ResultMessageController.isSuccess(getIdChatResponseDTO.getResultMessage())){
-                messageToShow = activity.getString(R.string.Message_UnknownError);
-                showErrorMessage(messageToShow);
-                return false;
-            }
-
-            idChat = getIdChatResponseDTO.getId();
-        }
-*/
 
         boolean result = chatWebSocketHandler.sendMessageToWebSocket(stringId, message, stringInputTime);
         if(!result) {
@@ -165,20 +149,7 @@ public class ChatController extends NaTourController{
         listaMessaggiController.addMessageReceived(message, calendar);
     }
 
-    public boolean readAllMessage(){
-        if(!CurrentUserInfo.isSignedIn()){
-            return false;
-        }
 
-        long myId = CurrentUserInfo.getId();
-
-        ResultMessageDTO resultMessage = chatDAO.readAllMessageByIdsUser(myId, idOtherUser);
-        if(!ResultMessageController.isSuccess(resultMessage)){
-            return false;
-        }
-
-        return true;
-    }
 
 
     public String getUsername() {

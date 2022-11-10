@@ -38,15 +38,19 @@ public class ModificaProfiloActivity extends NaTourActivity {
         addModel(profiloModel);
         profiloModel.registerObserver(this);
 
-        profiloController.initModel(CurrentUserInfo.getId());
-
         pressIconBack();
         pressTextUpdateImage();
         pressTextUpdateOptionalInfo();
         pressTextUpdatePassword();
-
-        update();
     }
+
+    @Override
+    protected void onResume() {
+        profiloController.initModel(CurrentUserInfo.getId());
+        update();
+        super.onResume();
+    }
+
 
     public void pressIconBack(){
         ImageView imageView_iconBack = findViewById(R.id.ModificaProfilo_imageView_iconBack);
@@ -128,10 +132,5 @@ public class ModificaProfiloActivity extends NaTourActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        profiloController.initModel(CurrentUserInfo.getId());
-        super.onResume();
-    }
 
 }

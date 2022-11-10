@@ -218,6 +218,12 @@ public class ListaItinerariController extends NaTourController{
                         return ;
                     }
 
+                    List<GetItineraryResponseDTO> listItinerary = itinerariesDTO.getListItinerary();
+                    if(listItinerary == null || listItinerary.isEmpty()){
+                        progressBar_itineraries.setVisibility(View.GONE);
+                        return;
+                    }
+
                     ArrayList<ElementItineraryModel> nextPageElements = new ArrayList<ElementItineraryModel>();
 
                     boolean result = dtoToModel(getActivity(), itinerariesDTO, nextPageElements);
@@ -227,12 +233,7 @@ public class ListaItinerariController extends NaTourController{
                         showErrorMessageAndBack(messageToShow[0]);
                         return;
                     }
-
-                    if(nextPageElements == null || nextPageElements.isEmpty()){
-                        progressBar_itineraries.setVisibility(View.GONE);
-                        return;
-                    }
-
+                    
                     elementsItineraryModel.addAll(nextPageElements);
                     itineraryListAdapter.notifyDataSetChanged();
                 }

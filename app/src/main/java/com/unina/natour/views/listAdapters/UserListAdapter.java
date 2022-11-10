@@ -41,6 +41,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         return new UserListAdapter.ViewHolder(view);
     }
 
+
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ElementUserModel user = elementsUserModel.get(position);
@@ -61,8 +63,6 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
             });
 
             holder.imageView_notification.setVisibility(View.GONE);
-
-
         }
         else{
             holder.relativeLayout_user.setOnClickListener(new View.OnClickListener() {
@@ -72,8 +72,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
                 }
             });
 
-            if(user.hasMessagesToRead()) holder.imageView_notification.setVisibility(View.GONE);
-            else holder.imageView_notification.setVisibility(View.VISIBLE);
+            if(user.hasMessagesToRead()) holder.imageView_notification.setVisibility(View.VISIBLE);
+            else holder.imageView_notification.setVisibility(View.GONE);
         }
 
 

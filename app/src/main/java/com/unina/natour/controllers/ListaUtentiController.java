@@ -31,8 +31,8 @@ public class ListaUtentiController extends NaTourController{
     public final static long CODE_USER_WITH_CONVERSATION = 0;
     public final static long CODE_USER_BY_RESEARCH = 1;
 
-    private String researchString;
-    private long researchCode;
+    private String researchString = null;
+    private long researchCode = -1;
 
     private UserListAdapter userListAdapter;
 
@@ -79,10 +79,13 @@ public class ListaUtentiController extends NaTourController{
             showErrorMessageAndBack(messageToShow);
             return;
         }
+        /*
         boolean result = initModel(researchCode, researchString);
         if(!result){
             return;
         }
+
+        */
     }
 
     public boolean initModel(long researchCode, String researchString){
@@ -149,9 +152,13 @@ public class ListaUtentiController extends NaTourController{
         this.researchString = researchString;
         this.researchCode = researchCode;
 
-        this.userListAdapter = new UserListAdapter(getActivity(),elementsUserModel, researchCode);
+        this.userListAdapter = new UserListAdapter(getActivity(), elementsUserModel, researchCode);
 
         return true;
+    }
+
+    public void notifyDataSetChanged(){
+        userListAdapter.notifyDataSetChanged();
     }
 
     public void initList(NestedScrollView nestedScrollView_users, RecyclerView recyclerView_users, ProgressBar progressBar_users) {
@@ -168,8 +175,6 @@ public class ListaUtentiController extends NaTourController{
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
-                    // in this method we are incrementing page number,
-                    // making progress bar visible and calling get data method.
                     page++;
                     progressBar_users.setVisibility(View.VISIBLE);
 
@@ -184,6 +189,12 @@ public class ListaUtentiController extends NaTourController{
                             messageToShow[0] = activity.getString(R.string.Message_UnknownError);
                             showErrorMessage(messageToShow[0]);
                             return ;
+                        }
+
+                        List<GetChatWithUserResponseDTO> listChat = getListChatWithUserResponseDTO.getListChat();
+                        if(listChat == null || listChat.isEmpty()){
+                            progressBar_users.setVisibility(View.GONE);
+                            return;
                         }
 
                         result = dtoToModel(getActivity(), getListChatWithUserResponseDTO, elementsUserModel);
@@ -202,6 +213,12 @@ public class ListaUtentiController extends NaTourController{
                             return;
                         }
 
+                        List<GetUserWithImageResponseDTO> listUser = getListUserWithImageResponseDTO.getListUser();
+                        if(listUser == null || listUser.isEmpty()){
+                            progressBar_users.setVisibility(View.GONE);
+                            return;
+                        }
+
                         result = dtoToModel(getActivity(), getListUserWithImageResponseDTO, elementsUserModel);
                         if(!result){
                             messageToShow[0] = activity.getString(R.string.Message_UnknownError);
@@ -217,10 +234,7 @@ public class ListaUtentiController extends NaTourController{
 
                     ArrayList<ElementUserModel> nextPageElements = new ArrayList<ElementUserModel>();
 
-                    if(nextPageElements == null || nextPageElements.isEmpty()){
-                        progressBar_users.setVisibility(View.GONE);
-                        return;
-                    }
+
 
                     elementsUserModel.addAll(nextPageElements);
                     userListAdapter.notifyDataSetChanged();
@@ -230,10 +244,14 @@ public class ListaUtentiController extends NaTourController{
 
     }
 
-    public void updateList(long researchCode, String searchString) {
+    public boolean updateList(long researchCode, String searchString) {
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         if(researchCode < 0 || researchCode > 1){
-            //TODO EXCEPTION
-            return;
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return false;
         }
 
         elementsUserModel.clear();
@@ -241,16 +259,50 @@ public class ListaUtentiController extends NaTourController{
         this.researchString = searchString;
 
         initModel(researchCode, searchString);
+
+        return true;
     }
 
+    public long getResearchCode() {
+        return researchCode;
+    }
+
+    public ElementUserModel findUserById(long idSource) {
+        Activity activity = getActivity();
+        String messageToShow = null;
+
+        GetUserWithImageResponseDTO getUserWithImageResponseDTO = userDAO.getUserWithImageById(idSource);
+        if(!ResultMessageController.isSuccess(getUserWithImageResponseDTO.getResultMessage())){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
+            return null;
+        }
+
+        ElementUserModel elementUserModel = new ElementUserModel();
+        boolean result = dtoToModel(activity, getUserWithImageResponseDTO, elementUserModel);
+        if(!result){
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessageAndBack(messageToShow);
+            return null;
+        }
+
+        return elementUserModel;
+    }
+
+    public ArrayList<ElementUserModel> getElementsUserModel() {
+        return elementsUserModel;
+    }
 
     public boolean dtoToModel(Context context, GetChatWithUserResponseDTO dto, ElementUserModel model){
         model.clear();
+
+
 
         model.setUserId(dto.getIdUser());
         model.setUsername(dto.getNameChat());
         model.setProfileImage(dto.getProfileImage());
         model.setMessagesToRead(dto.hasMessagesToRead());
+
         return true;
     }
 

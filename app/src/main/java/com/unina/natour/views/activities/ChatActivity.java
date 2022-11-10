@@ -63,6 +63,14 @@ public class ChatActivity extends NaTourActivity {
 
     }
 
+
+    @Override
+    protected void onResume() {
+        chatController.readAllMessage();
+
+        super.onResume();
+    }
+
     public ChatController getChatController() {
         return chatController;
     }

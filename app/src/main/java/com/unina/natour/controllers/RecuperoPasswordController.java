@@ -12,6 +12,7 @@ import com.unina.natour.R;
 import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
+import com.unina.natour.models.dao.interfaces.AccountDAO;
 import com.unina.natour.views.activities.CompletaRecuperoPasswordActivity;
 import com.unina.natour.views.activities.IniziaRecuperoPasswordActivity;
 import com.unina.natour.views.activities.NaTourActivity;
@@ -19,18 +20,18 @@ import com.unina.natour.views.activities.NaTourActivity;
 @SuppressLint("LongLogTag")
 public class RecuperoPasswordController extends NaTourController{
 
-    private AmplifyDAO amplifyDAO;
+    private AccountDAO accountDAO;
 
     public RecuperoPasswordController(NaTourActivity activity,
                                       ResultMessageController resultMessageController,
-                                      AmplifyDAO amplifyDAO){
+                                      AccountDAO accountDAO){
         super(activity, resultMessageController);
-        this.amplifyDAO = amplifyDAO;
+        this.accountDAO = accountDAO;
     }
 
     public RecuperoPasswordController(NaTourActivity activity){
         super(activity);
-        this.amplifyDAO = new AmplifyDAO();
+        this.accountDAO = new AmplifyDAO();
     }
 
     public Boolean startPasswordRecovery(String username) {
@@ -45,7 +46,7 @@ public class RecuperoPasswordController extends NaTourController{
 
         Log.e(TAG, "1");
 
-        ResultMessageDTO resultMessageDTO = amplifyDAO.startPasswordRecovery(username);
+        ResultMessageDTO resultMessageDTO = accountDAO.startPasswordRecovery(username);
 
         Log.e(TAG, "2");
 
@@ -83,7 +84,7 @@ public class RecuperoPasswordController extends NaTourController{
             return false;
         }
 
-        ResultMessageDTO resultMessageDTO = amplifyDAO.completePasswordRecovery(code,password);
+        ResultMessageDTO resultMessageDTO = accountDAO.completePasswordRecovery(code,password);
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
 
             if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){

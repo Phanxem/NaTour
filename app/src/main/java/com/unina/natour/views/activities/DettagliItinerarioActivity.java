@@ -80,14 +80,22 @@ public class DettagliItinerarioActivity extends NaTourActivity {
 
         dettagliItinerarioController.initOsmdroidConfiguration();
 
-        initUI();
-        update();
-
         pressIconBack();
         pressButtonNavigation();
         pressButtonClose();
         pressIconMenu();
         pressWarning();
+    }
+
+    @Override
+    protected void onResume() {
+        Intent intent = this.getIntent();
+        long idItinerary = intent.getLongExtra(DettagliItinerarioController.EXTRA_ITINERARY_ID,-1);
+
+        dettagliItinerarioController.initModel(idItinerary);
+        initUI();
+        update();
+        super.onResume();
     }
 
     public void pressIconBack(){
@@ -346,16 +354,6 @@ public class DettagliItinerarioActivity extends NaTourActivity {
         return boundingBox;
     }
 
-    @Override
-    protected void onResume() {
 
-        Intent intent = this.getIntent();
-        long idItinerary = intent.getLongExtra(DettagliItinerarioController.EXTRA_ITINERARY_ID,-1);
-
-        dettagliItinerarioController.initModel(idItinerary);
-        initUI();
-        update();
-        super.onResume();
-    }
 
 }

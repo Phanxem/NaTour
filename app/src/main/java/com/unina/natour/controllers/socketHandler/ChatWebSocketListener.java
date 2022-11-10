@@ -9,21 +9,23 @@ import androidx.fragment.app.Fragment;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.unina.natour.R;
 import com.unina.natour.config.ApplicationController;
 import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.ChatController;
 import com.unina.natour.controllers.CommunityController;
 import com.unina.natour.controllers.ListaUtentiController;
 import com.unina.natour.controllers.MainController;
-import com.unina.natour.controllers.ResultMessageController;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.models.ElementUserModel;
 import com.unina.natour.views.activities.ChatActivity;
 import com.unina.natour.views.activities.MainActivity;
 import com.unina.natour.views.fragments.CommunityFragment;
 
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.List;
 
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -39,8 +41,6 @@ public class ChatWebSocketListener extends WebSocketListener {
 
     private static final int NORMAL_CLOSURE_STATUS = 1000;
     private static final String TAG = "ChatWebSocketListener";
-
-
 
 
     private Context context;
@@ -68,6 +68,7 @@ public class ChatWebSocketListener extends WebSocketListener {
 
     }
 
+
     @Override
     public void onMessage(WebSocket webSocket, String text) {
         Log.i(TAG, "ON MESSAGE (String) : " + text);
@@ -87,7 +88,7 @@ public class ChatWebSocketListener extends WebSocketListener {
 
         JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-
+        //Arriva un Messaggio di risposta ad una richiesta
         if(jsonObject.has("code") && jsonObject.has("message")){
             long code = jsonObject.get("code").getAsLong();
             String message = jsonObject.get("message").getAsString();
@@ -96,6 +97,7 @@ public class ChatWebSocketListener extends WebSocketListener {
             return;
         }
 
+        //Arriva un messaggio sconosciuto
         if(!jsonObject.has("idUserSource") ||
            !jsonObject.has("message") ||
            !jsonObject.has("inputTime") )
@@ -103,11 +105,14 @@ public class ChatWebSocketListener extends WebSocketListener {
             return;
         }
 
-        String stringIdSource = jsonObject.get("idUserSource").getAsString();
-        String message = jsonObject.get("message").getAsString();
-        String stringInputTime = jsonObject.get("inputTime").getAsString();
 
+        //Arriva un messaggio
+        String stringIdSource = jsonObject.get("idUserSource").getAsString();
         long idSource = Long.valueOf(stringIdSource);
+
+        String message = jsonObject.get("message").getAsString();
+
+        String stringInputTime = jsonObject.get("inputTime").getAsString();
         Calendar inputTime = null;
         try {
             inputTime = TimeUtils.toCalendar(stringInputTime);
@@ -118,6 +123,7 @@ public class ChatWebSocketListener extends WebSocketListener {
         }
 
 
+        //Schermata Chat
         if(currentActivity instanceof ChatActivity){
             Log.i(TAG, "Activity : ChatActivity");
 
@@ -137,32 +143,64 @@ public class ChatWebSocketListener extends WebSocketListener {
                 });
 
             }
-            //sono in un'altra chat
-            else{
-
-            }
+            return;
         }
 
+        //Schermata Main
         if(currentActivity instanceof MainActivity){
             Log.i(TAG, "Activity : MainActivity");
 
             MainActivity mainActivity = (MainActivity) currentActivity;
             MainController mainController = mainActivity.getMainController();
 
+            mainController.setHasChatNotification(true);
+            mainActivity.updateChatNotification();
+
+
             Fragment currentFragment = mainController.getCurrentFragment();
 
+            //Fragment Community
             if(currentFragment instanceof CommunityFragment){
 
                 CommunityFragment communityFragment = (CommunityFragment) currentFragment;
                 CommunityController communityController =  communityFragment.getCommunityController();
                 ListaUtentiController listaUtentiController = communityFragment.getListaUtentiController();
-                //TODO rimuovi chat e riaggiungila in cima alla lista, con toRead=true
+
+                //Gli elementi visualizzati sono le conversazioni effettuate
+                long researchCode = listaUtentiController.getResearchCode();
+                if(researchCode == ListaUtentiController.CODE_USER_WITH_CONVERSATION){
+
+                    List<ElementUserModel> listUser = listaUtentiController.getElementsUserModel();
+
+                    ElementUserModel tempUser = null;
+                    tempUser = listUser.get(0);
+                    if(tempUser.getUserId() == idSource){
+                        tempUser.setMessagesToRead(true);
+                        return;
+                    }
+
+                    for(int i = 1; i < listUser.size(); i++){
+                        tempUser = listUser.get(i);
+                        if(tempUser.getUserId() == idSource){
+                            listUser.remove(i);
+                            tempUser.setMessagesToRead(true);
+                            listUser.add(0,tempUser);
+                            return;
+                        }
+                    }
+
+                    tempUser = listaUtentiController.findUserById(idSource);
+                    if(tempUser == null){
+                        String messageToShow = mainActivity.getString(R.string.Message_UnknownError);
+                        mainController.showErrorMessage(messageToShow);
+                        return;
+                    }
+
+                    tempUser.setMessagesToRead(true);
+                    listUser.add(0,tempUser);
+                }
             }
-
-            //TODO Se non è presente, aggiungi notifica all'icona Community
-            return;
         }
-
 
     }
 
@@ -170,6 +208,8 @@ public class ChatWebSocketListener extends WebSocketListener {
     public void onMessage(WebSocket webSocket, ByteString bytes) {
         Log.i(TAG, "ON MESSAGE (bytes)");
     }
+
+
     @Override
     public void onClosing(WebSocket webSocket, int code, String reason) {
         Log.i(TAG, "ON CLOSING");

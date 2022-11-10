@@ -12,27 +12,28 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.unina.natour.R;
 import com.unina.natour.config.ApplicationController;
-import com.unina.natour.dto.response.GetCognitoAuthSessionResponseDTO;
+import com.unina.natour.dto.response.GetAuthSessionResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
 import com.unina.natour.controllers.socketHandler.ChatWebSocketHandler;
+import com.unina.natour.models.dao.interfaces.AccountDAO;
 import com.unina.natour.views.activities.NaTourActivity;
 
 @SuppressLint("LongLogTag")
 public class DisconnessioneController extends NaTourController{
     private AutenticazioneController autenticazioneController;
 
-    private AmplifyDAO amplifyDAO;
+    private AccountDAO accountDAO;
 
     public DisconnessioneController(NaTourActivity activity,
                                     ResultMessageController resultMessageController,
                                     AutenticazioneController autenticazioneController,
-                                    AmplifyDAO amplifyDAO){
+                                    AccountDAO accountDAO){
         super(activity, resultMessageController);
 
         this.autenticazioneController = autenticazioneController;
 
-        this.amplifyDAO = amplifyDAO;
+        this.accountDAO = accountDAO;
     }
 
     public DisconnessioneController(NaTourActivity activity){
@@ -40,7 +41,7 @@ public class DisconnessioneController extends NaTourController{
 
         this.autenticazioneController = new AutenticazioneController(activity);
 
-        this.amplifyDAO = new AmplifyDAO();
+        this.accountDAO = new AmplifyDAO();
     }
 
 
@@ -49,8 +50,8 @@ public class DisconnessioneController extends NaTourController{
         String messageToShow = null;
 
         //loggato con cognito
-        GetCognitoAuthSessionResponseDTO getCognitoAuthSessionResponseDTO = amplifyDAO.fetchAuthSessione();
-        ResultMessageDTO resultMessageDTO = getCognitoAuthSessionResponseDTO.getResultMessage();
+        GetAuthSessionResponseDTO getAuthSessionResponseDTO = accountDAO.fetchAuthSessione();
+        ResultMessageDTO resultMessageDTO = getAuthSessionResponseDTO.getResultMessage();
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
             if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
                 messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
@@ -63,13 +64,13 @@ public class DisconnessioneController extends NaTourController{
             return false;
         }
 
-        AWSCognitoAuthSession authSession = getCognitoAuthSessionResponseDTO.getAuthSessione();
+        AWSCognitoAuthSession authSession = getAuthSessionResponseDTO.getAuthSessione();
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity());
 
         //Signed in with cognito
         if(authSession.isSignedIn()){
-            resultMessageDTO = amplifyDAO.signOut();
+            resultMessageDTO = accountDAO.signOut();
 
             if(!ResultMessageController.isSuccess(resultMessageDTO)){
                 if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
