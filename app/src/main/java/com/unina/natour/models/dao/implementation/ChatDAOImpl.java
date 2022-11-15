@@ -296,8 +296,12 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
                     }
 
                     GetChatMessageResponseDTO tempMessage;
-                    for(int j = listMessage.size()-1; j>=0; j--){
+                    //for(int j = listMessage.size()-1; j>=0; j--){
+                    for(int j = 0; j<listMessage.size(); j++){
                         tempMessage = listMessage.get(j);
+
+                        Log.e("ChatDAO", "| " + tempMessage.getId() + ", " +  tempMessage.getIdUser() + ", " + tempMessage.getBody() + ", " + tempMessage.isToRead() + " |");
+
                         if(tempMessage.getIdUser() != CurrentUserInfo.getId()){
                             if(tempMessage.isToRead()) arrayMessageToRead[iTemp] = true;
                             else arrayMessageToRead[iTemp] = false;

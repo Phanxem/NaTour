@@ -1,5 +1,6 @@
 package com.unina.natour.views.activities;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -118,6 +119,7 @@ public class MainActivity extends NaTourActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.Main_navigationBar_menu);
         BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.bottomMenu_community);
         if(mainController.hasChatNotification()){
+            badgeDrawable.setBackgroundColor(Color.BLUE);
             badgeDrawable.setVisible(true);
         }
         else badgeDrawable.setVisible(false);

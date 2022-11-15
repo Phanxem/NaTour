@@ -2,6 +2,7 @@ package com.unina.natour.controllers;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -24,6 +25,7 @@ import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.listAdapters.UserListAdapter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ListaUtentiController extends NaTourController{
@@ -261,6 +263,41 @@ public class ListaUtentiController extends NaTourController{
         initModel(researchCode, searchString);
 
         return true;
+    }
+
+    public void receiveMessage(long idUserSender){
+        ElementUserModel tempUser = null;
+
+        tempUser = elementsUserModel.get(0);
+        if(tempUser.getUserId() == idUserSender){
+            Log.e(TAG, "1");
+            tempUser.setMessagesToRead(true);
+            userListAdapter.notifyDataSetChanged();
+            return;
+        }
+
+        for(int i = 1; i < elementsUserModel.size(); i++){
+            tempUser = elementsUserModel.get(i);
+            if(tempUser.getUserId() == idUserSender){
+                Log.e("ChatWebSocketListener", ""+i);
+                elementsUserModel.remove(i);
+                tempUser.setMessagesToRead(true);
+                elementsUserModel.add(0,tempUser);
+                userListAdapter.notifyDataSetChanged();
+                return;
+            }
+        }
+
+        tempUser = findUserById(idUserSender);
+        if(tempUser == null){
+            return;
+        }
+
+        Log.e("ChatWebSocketListener", "new");
+
+        tempUser.setMessagesToRead(true);
+        elementsUserModel.add(0,tempUser);
+        userListAdapter.notifyDataSetChanged();
     }
 
     public long getResearchCode() {

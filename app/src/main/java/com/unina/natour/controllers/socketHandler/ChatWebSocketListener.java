@@ -169,35 +169,12 @@ public class ChatWebSocketListener extends WebSocketListener {
                 //Gli elementi visualizzati sono le conversazioni effettuate
                 long researchCode = listaUtentiController.getResearchCode();
                 if(researchCode == ListaUtentiController.CODE_USER_WITH_CONVERSATION){
-
-                    List<ElementUserModel> listUser = listaUtentiController.getElementsUserModel();
-
-                    ElementUserModel tempUser = null;
-                    tempUser = listUser.get(0);
-                    if(tempUser.getUserId() == idSource){
-                        tempUser.setMessagesToRead(true);
-                        return;
-                    }
-
-                    for(int i = 1; i < listUser.size(); i++){
-                        tempUser = listUser.get(i);
-                        if(tempUser.getUserId() == idSource){
-                            listUser.remove(i);
-                            tempUser.setMessagesToRead(true);
-                            listUser.add(0,tempUser);
-                            return;
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listaUtentiController.receiveMessage(idSource);
                         }
-                    }
-
-                    tempUser = listaUtentiController.findUserById(idSource);
-                    if(tempUser == null){
-                        String messageToShow = mainActivity.getString(R.string.Message_UnknownError);
-                        mainController.showErrorMessage(messageToShow);
-                        return;
-                    }
-
-                    tempUser.setMessagesToRead(true);
-                    listUser.add(0,tempUser);
+                    });
                 }
             }
         }

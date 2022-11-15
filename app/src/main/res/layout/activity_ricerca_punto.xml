@@ -50,6 +50,7 @@
                 android:layout_marginBottom="8dp"
                 android:background="@android:color/transparent"
                 android:ems="10"
+                android:hint="Ricerca Punto di Interesse"
                 android:imeOptions="actionSearch"
                 android:inputType="textPersonName"
                 app:layout_constraintBottom_toBottomOf="parent"

@@ -26,11 +26,8 @@ public class TimeUtils {
             date = simpleDateFormat.parse(string);
         }
         catch (ParseException e) {
-            e.printStackTrace();
-
             simpleDateFormat = new SimpleDateFormat(DATE_FULL_PATTERN);
             date = simpleDateFormat.parse(string);
-
         }
 
         calendar.setTime(date);
