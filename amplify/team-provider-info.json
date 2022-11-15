@@ -13,7 +13,25 @@
     },
     "categories": {
       "auth": {
-        "natour119af764": {
+        "natour2dde75a4": {}
+      }
+    }
+  },
+  "deve": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-natour-deve-122107-authRole",
+      "UnauthRoleArn": "arn:aws:iam::694502295237:role/amplify-natour-deve-122107-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::694502295237:role/amplify-natour-deve-122107-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-natour-deve-122107-deployment",
+      "UnauthRoleName": "amplify-natour-deve-122107-unauthRole",
+      "StackName": "amplify-natour-deve-122107",
+      "StackId": "arn:aws:cloudformation:eu-west-1:694502295237:stack/amplify-natour-deve-122107/999098d0-64d7-11ed-9580-02be8696ab3d",
+      "AmplifyAppId": "dxzvj02mvowme"
+    },
+    "categories": {
+      "auth": {
+        "natour2dde75a4": {
           "facebookAppId": "601529914964479",
           "googleClientId": "975864961953-1p4la1diaks1858j9kgr19hl391vm2m7.apps.googleusercontent.com",
           "googleAndroid": "975864961953-d9qnpm5qshp5oc2si706e3a6f4sjgsom.apps.googleusercontent.com"

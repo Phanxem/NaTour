@@ -1,14 +1,14 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "natour119af764_identitypool_119af764",
+    "identityPoolName": "natour2dde75a4_identitypool_2dde75a4",
     "allowUnauthenticatedIdentities": true,
-    "resourceNameTruncated": "natour119af764",
-    "userPoolName": "natour119af764_userpool_119af764",
+    "resourceNameTruncated": "natour2dde75a4",
+    "userPoolName": "natour2dde75a4_userpool_2dde75a4",
     "autoVerifiedAttributes": [
       "email"
     ],
-    "mfaConfiguration": "OPTIONAL",
+    "mfaConfiguration": "OFF",
     "mfaTypes": [
       "SMS Text Message"
     ],
@@ -17,7 +17,7 @@
     "emailVerificationSubject": "Your verification code",
     "emailVerificationMessage": "Your verification code is {####}",
     "defaultPasswordPolicy": false,
-    "passwordPolicyMinLength": "6",
+    "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [],
     "requiredAttributes": [
       "email"
@@ -31,14 +31,15 @@
     "userpoolClientReadAttributes": [
       "email"
     ],
-    "userpoolClientLambdaRole": "natour119af764_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "natour2dde75a4_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "119af764",
-    "resourceName": "natour119af764",
+    "sharedId": "2dde75a4",
+    "resourceName": "natour2dde75a4",
     "authSelections": "identityPoolAndUserPool",
     "useDefault": "manual",
     "hostedUI": true,
-    "hostedUIDomainName": "natour119af764-119af764",
+    "triggers": {},
+    "hostedUIDomainName": "natour2dde75a4-2dde75a4",
     "authProvidersUserPool": [
       "Facebook",
       "Google"
@@ -69,15 +70,14 @@
     ],
     "userPoolGroups": false,
     "adminQueries": false,
-    "triggers": {},
-    "parentStack": {
-      "Ref": "AWS::StackId"
-    },
-    "permissions": [],
     "audiences": [
       "975864961953-1p4la1diaks1858j9kgr19hl391vm2m7.apps.googleusercontent.com",
       "975864961953-d9qnpm5qshp5oc2si706e3a6f4sjgsom.apps.googleusercontent.com"
     ],
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"myapp://\"],\"LogoutURLs\":[\"myapp://\"]}"
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"myapp://\"],\"LogoutURLs\":[\"myapp://\"]}",
+    "parentStack": {
+      "Ref": "AWS::StackId"
+    },
+    "permissions": []
   }
 }

@@ -125,7 +125,8 @@ public class MainActivity extends NaTourActivity {
         else badgeDrawable.setVisible(false);
     }
 
-
-
-
+    @Override
+    public void onBackPressed() {
+        mainController.back();
+    }
 }

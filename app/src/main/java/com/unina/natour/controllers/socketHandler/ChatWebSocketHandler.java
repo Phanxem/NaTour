@@ -14,11 +14,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
 
-public class ChatWebSocketHandler {
+public class ChatWebSocketHandler implements  ChatWebSocketHandlerInterface{
 
     //testing socket
-    private final static String URL_WEBSOCKET = "wss://hren0i7ir6.execute-api.eu-west-1.amazonaws.com/production";
-    private final static String URL_CONNECTION = "https://hren0i7ir6.execute-api.eu-west-1.amazonaws.com/production/@connections";
+    private final static String URL_WEBSOCKET = "wss://q80y613dnc.execute-api.eu-west-1.amazonaws.com/production";
+    private final static String URL_CONNECTION = "https://q80y613dnc.execute-api.eu-west-1.amazonaws.com/production/@connections";
 
     private final static String KEY_ACTION = "action";
     private final static String KEY_MESSAGE = "message";
@@ -50,7 +50,15 @@ public class ChatWebSocketHandler {
 
         ExecutorService executorService = client.dispatcher().executorService();
         executorService.shutdown();
-
+/*
+        boolean finished = false;
+        try {
+            finished = executorService.awaitTermination(1, TimeUnit.MINUTES);
+        }
+        catch (InterruptedException e) {
+            return false;
+        }
+*/
         return true;
     }
 
@@ -75,5 +83,20 @@ public class ChatWebSocketHandler {
 
         return result;
     }
+
+    /*
+    public boolean initConnectionToWebSocket(){
+        boolean result = false;
+
+        if(!CurrentUserInfo.isSignedIn()) return false;
+
+        String messageString = "{\"" + KEY_ACTION + "\" : \"" + ACTION_INIT_CONNECTION + "\", " +
+                                "\"" + KEY_ID_USER + "\" : \"" + CurrentUserInfo.getId() + "\"}";
+
+        result = webSocket.send(messageString);
+
+        return result;
+    }
+    */
 
 }

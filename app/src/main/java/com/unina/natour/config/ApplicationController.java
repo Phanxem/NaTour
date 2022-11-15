@@ -13,6 +13,7 @@ import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.core.Amplify;
 import com.unina.natour.controllers.socketHandler.ChatWebSocketHandler;
+import com.unina.natour.controllers.socketHandler.ChatWebSocketHandlerInterface;
 import com.unina.natour.views.activities.NaTourActivity;
 
 public class ApplicationController extends Application {
@@ -22,7 +23,7 @@ public class ApplicationController extends Application {
 
 
     private NaTourActivity currentActivity;
-    private ChatWebSocketHandler chatWebSocketHandler;
+    private ChatWebSocketHandlerInterface chatWebSocketHandler;
 
     public void onCreate() {
         super.onCreate();
@@ -51,7 +52,7 @@ public class ApplicationController extends Application {
         this.currentActivity = currentActivity;
     }
 
-    public ChatWebSocketHandler getChatWebSocketHandler() {
+    public ChatWebSocketHandlerInterface getChatWebSocketHandler() {
         return chatWebSocketHandler;
     }
 

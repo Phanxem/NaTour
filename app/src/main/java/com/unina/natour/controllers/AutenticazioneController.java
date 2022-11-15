@@ -20,6 +20,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -48,6 +49,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class AutenticazioneController extends NaTourController{
 
@@ -74,6 +76,16 @@ public class AutenticazioneController extends NaTourController{
         super(activity);
         this.accountDAO = new AmplifyDAO();
         this.userDAO = new UserDAOImpl(activity);
+
+        ProfileTracker profileTracker = new ProfileTracker() {
+            @Override
+            protected void onCurrentProfileChanged(@Nullable Profile profile, @Nullable Profile profile1) {
+                this.stopTracking();
+                Profile.setCurrentProfile(profile1);
+            }
+        };
+        profileTracker.startTracking();
+
     }
 
     public Boolean signIn(String username, String password) {
@@ -121,6 +133,7 @@ public class AutenticazioneController extends NaTourController{
 
         loginButton.setPermissions(Arrays.asList(EMAIL));
 
+
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -136,32 +149,14 @@ public class AutenticazioneController extends NaTourController{
                     showErrorMessage(messageToShow[0]);
                     return;
                 }
+
                 Log.i(TAG, "----------------FB SUCCESS");
 
-
+/*
                 String identityProvider = activity.getString(R.string.IdentityProvider_Facebook);
 
-                //TODO da testare
-                //String idProvided = loginResult.getAccessToken().getUserId();
-
-
-                if(Profile.getCurrentProfile() == null){
-                    ProfileTracker profileTracker = new ProfileTracker() {
-                        @Override
-                        protected void onCurrentProfileChanged(@Nullable Profile profile, @Nullable Profile profile1) {
-                            this.stopTracking();
-                            Profile.setCurrentProfile(profile1);
-                        }
-                    };
-                    profileTracker.startTracking();
-                }
 
                 Log.e(TAG, "fb in | id: " + Profile.getCurrentProfile().getId() + ", name: " + Profile.getCurrentProfile().getName());
-
-
-
-
-
 
                 String idProvided = Profile.getCurrentProfile().getId();
                 String username = Profile.getCurrentProfile().getName();
@@ -196,7 +191,7 @@ public class AutenticazioneController extends NaTourController{
                     showErrorMessage(messageToShow[0]);
                     return;
                 }
-
+*/
             }
 
             @Override
@@ -217,7 +212,6 @@ public class AutenticazioneController extends NaTourController{
     private boolean federateWithFacebook(AccessToken accessToken){
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
 
         executorService.execute(new Runnable() {
             @Override
@@ -231,7 +225,6 @@ public class AutenticazioneController extends NaTourController{
 
                 CognitoCachingCredentialsProvider cognitoCachingCredentialsProvider = IdentityManager.getDefaultIdentityManager().getUnderlyingProvider();
 
-
                 Map<String, String> logins = new HashMap<String, String>();
                 logins.put("graph.facebook.com", accessToken.getToken());
 
@@ -244,15 +237,135 @@ public class AutenticazioneController extends NaTourController{
                 Log.i(TAG, "AccessKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSAccessKeyId());
                 Log.i(TAG, "SecretKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSSecretKey());
                 Log.i(TAG, "SessionToken: " + cognitoCachingCredentialsProvider.getCredentials().getSessionToken());
-                Log.i(TAG, "Facebook UserId: " + Profile.getCurrentProfile().getId());
-                Log.i(TAG, "Facebook User Name: " + Profile.getCurrentProfile().getName());
             }
         });
+
+        executorService.shutdown();
+
+        boolean finished = false;
+        try {
+            finished = executorService.awaitTermination(1, TimeUnit.MINUTES);
+        }
+        catch (InterruptedException e) {
+            Log.i(TAG, "InterrupedException");
+            return false;
+        }
+
         return true;
     }
 
     public void callbackFacebook(int requestCode, int resultCode, Intent data){
+        Activity activity = getActivity();
+        String messageToShow = null;
+
         callbackManager.onActivityResult(requestCode, resultCode, data);
+
+
+
+        //while(Profile.getCurrentProfile() == null) {}
+        //Log.e(TAG,"Profile.getCurrentProfile() != null");
+
+/*
+        Log.i(TAG, "Facebook UserId: " + Profile.getCurrentProfile().getId());
+        Log.i(TAG, "Facebook User Name: " + Profile.getCurrentProfile().getName());
+
+        Log.e(TAG, "fb in | id: " + Profile.getCurrentProfile().getId() + ", name: " + Profile.getCurrentProfile().getName());
+
+        String idProvided = Profile.getCurrentProfile().getId();
+        String username = Profile.getCurrentProfile().getName();
+
+        String identityProvider = activity.getString(R.string.IdentityProvider_Facebook);
+        GetUserResponseDTO getUserResponseDTO = userDAO.getUserByIdP(identityProvider, idProvided);
+        if(ResultMessageController.isSuccess(getUserResponseDTO.getResultMessage())){
+            CurrentUserInfo.set(getUserResponseDTO.getId(),identityProvider,idProvided);
+            MainController.openMainActivity(getActivity());
+            return;
+        }
+
+
+        ResultMessageDTO resultMessageDTO = getUserResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_NOT_FOUND){
+            SaveUserRequestDTO saveUserRequestDTO = new SaveUserRequestDTO();
+            saveUserRequestDTO.setUsername(username);
+            saveUserRequestDTO.setIdentityProvider(identityProvider);
+            saveUserRequestDTO.setIdIdentityProvided(idProvided);
+
+            resultMessageDTO = userDAO.addUser(saveUserRequestDTO);
+            if(!ResultMessageController.isSuccess(resultMessageDTO)){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessage(messageToShow);
+                return;
+            }
+
+            CurrentUserInfo.set(getUserResponseDTO.getId(),identityProvider,idProvided);
+            MainController.openMainActivity(getActivity());
+            return;
+        }
+        else{
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return;
+        }
+
+*/
+    }
+
+    public void addFacebookUser(){
+        Activity activity  = getActivity();
+        String messageToShow = null;
+
+        if(Profile.getCurrentProfile() == null){
+            Log.e(TAG,"Profile.getCurrentProfile() == null");
+            return;
+        }
+
+        Log.i(TAG, "Facebook UserId: " + Profile.getCurrentProfile().getId());
+        Log.i(TAG, "Facebook User Name: " + Profile.getCurrentProfile().getName());
+
+        Log.e(TAG, "fb in | id: " + Profile.getCurrentProfile().getId() + ", name: " + Profile.getCurrentProfile().getName());
+
+        String idProvided = Profile.getCurrentProfile().getId();
+        String username = Profile.getCurrentProfile().getName();
+
+        String identityProvider = activity.getString(R.string.IdentityProvider_Facebook);
+        GetUserResponseDTO getUserResponseDTO = userDAO.getUserByIdP(identityProvider, idProvided);
+        if(ResultMessageController.isSuccess(getUserResponseDTO.getResultMessage())){
+            CurrentUserInfo.set(getUserResponseDTO.getId(),identityProvider,idProvided);
+            MainController.openMainActivity(getActivity());
+            return;
+        }
+
+
+        ResultMessageDTO resultMessageDTO = getUserResponseDTO.getResultMessage();
+        if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_NOT_FOUND){
+            SaveUserRequestDTO saveUserRequestDTO = new SaveUserRequestDTO();
+            saveUserRequestDTO.setUsername(username);
+            saveUserRequestDTO.setIdentityProvider(identityProvider);
+            saveUserRequestDTO.setIdIdentityProvided(idProvided);
+
+            resultMessageDTO = userDAO.addUser(saveUserRequestDTO);
+            if(!ResultMessageController.isSuccess(resultMessageDTO)){
+                messageToShow = activity.getString(R.string.Message_UnknownError);
+                showErrorMessage(messageToShow);
+                return;
+            }
+
+            CurrentUserInfo.set(getUserResponseDTO.getId(),identityProvider,idProvided);
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MainController.openMainActivity(getActivity());
+                }
+            });
+
+
+            return;
+        }
+        else{
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return;
+        }
     }
 
 
@@ -278,6 +391,7 @@ public class AutenticazioneController extends NaTourController{
         if(account.getIdToken() == null){
              return false;
         }
+
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -315,6 +429,16 @@ public class AutenticazioneController extends NaTourController{
 
             }
         });
+
+        executorService.shutdown();
+
+        boolean finished = false;
+        try {
+            finished = executorService.awaitTermination(1, TimeUnit.MINUTES);
+        }
+        catch (InterruptedException e) {
+            return false;
+        }
 
         return true;
     }

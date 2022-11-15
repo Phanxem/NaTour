@@ -4,16 +4,19 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.RequiresApi;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobile.auth.core.IdentityManager;
+import com.amazonaws.mobile.config.AWSConfiguration;
+import com.facebook.Profile;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.SignInButton;
 import com.unina.natour.R;
@@ -22,6 +25,13 @@ import com.unina.natour.controllers.HomeController;
 import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.RecuperoPasswordController;
 import com.unina.natour.controllers.RegistrazioneController;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class AutenticazioneActivity extends NaTourActivity {
 
@@ -41,8 +51,8 @@ public class AutenticazioneActivity extends NaTourActivity {
 
         pressButtonSignInGuest();
 
-        pressButtonFacebook();
-        pressButtonGoogle();
+        initButtonFacebook();
+        initButtonGoogle();
     }
 
 
@@ -100,12 +110,19 @@ public class AutenticazioneActivity extends NaTourActivity {
         button_signInGuest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HomeController.openHomeGuestActivity(activity);
+                //HomeController.openHomeGuestActivity(activity);
+
+                if(Profile.getCurrentProfile() == null){
+                    Log.e(TAG,"Profile.getCurrentProfile() == null");
+                }
+                else{
+                    Log.e(TAG,"Profile.getCurrentProfile() != null");
+                }
             }
         });
     }
 
-    private void pressButtonFacebook() {
+    private void initButtonFacebook() {
 
         LoginButton facebookLoginButton = findViewById(R.id.SignIn_loginButton_loginFacebook);
 
@@ -113,7 +130,7 @@ public class AutenticazioneActivity extends NaTourActivity {
 
     }
 
-    public void pressButtonGoogle(){
+    public void initButtonGoogle(){
         AutenticazioneActivity activity = this;
         ActivityResultLauncher<Intent> activityResultLauncherGoogleLogin;
         activityResultLauncherGoogleLogin = registerForActivityResult(
@@ -133,9 +150,6 @@ public class AutenticazioneActivity extends NaTourActivity {
         SignInButton googleLoginButton = findViewById(R.id.SignIn_signInButton_loginGoogle);
 
         autenticazioneController.initButtonGoogle(googleLoginButton, activityResultLauncherGoogleLogin);
-
-
-
     }
 
     @Override
@@ -150,9 +164,53 @@ public class AutenticazioneActivity extends NaTourActivity {
 
             //facebook
             autenticazioneController.callbackFacebook(requestCode,resultCode,data);
+
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    ExecutorService executorService = Executors.newSingleThreadExecutor();
+                    executorService.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            while(Profile.getCurrentProfile() == null){}
+                        }
+                    });
+
+                    executorService.shutdown();
+                    try {
+                        executorService.awaitTermination(1,TimeUnit.MINUTES);
+                    }
+                    catch (InterruptedException e) {
+                        return;
+                    }
+                    autenticazioneController.addFacebookUser();
+                }
+            });
+
+
+            /*
+            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
+            executorService.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    while(Profile.getCurrentProfile() == null){}
+
+                    Log.e(TAG, "Profile.getCurrentProfile() != null");
+                    autenticazioneController.addFacebookUser();
+                }
+            },1,TimeUnit.MINUTES);
+*/
         }
-
-
     }
 
+    @Override
+    protected void onResume() {
+        //initButtonFacebook();
+
+
+        super.onResume();
+    }
 }

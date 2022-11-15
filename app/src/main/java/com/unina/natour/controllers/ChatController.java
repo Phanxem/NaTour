@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import com.unina.natour.R;
 import com.unina.natour.config.ApplicationController;
 import com.unina.natour.config.CurrentUserInfo;
+import com.unina.natour.controllers.socketHandler.ChatWebSocketHandlerInterface;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.dto.response.composted.GetUserWithImageResponseDTO;
@@ -132,7 +133,7 @@ public class ChatController extends NaTourController{
         String stringId = String.valueOf(idOtherUser);
 
         ApplicationController applicationController = (ApplicationController) getActivity().getApplicationContext();
-        ChatWebSocketHandler chatWebSocketHandler = applicationController.getChatWebSocketHandler();
+        ChatWebSocketHandlerInterface chatWebSocketHandler = applicationController.getChatWebSocketHandler();
 
         boolean result = chatWebSocketHandler.sendMessageToWebSocket(stringId, message, stringInputTime);
         if(!result) {

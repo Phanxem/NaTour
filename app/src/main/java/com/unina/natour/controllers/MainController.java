@@ -9,6 +9,7 @@ import com.unina.natour.R;
 import com.unina.natour.config.ApplicationController;
 import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.socketHandler.ChatWebSocketHandler;
+import com.unina.natour.controllers.socketHandler.ChatWebSocketHandlerInterface;
 import com.unina.natour.dto.response.HasMessageToReadResponseDTO;
 import com.unina.natour.models.dao.implementation.ChatDAOImpl;
 import com.unina.natour.models.dao.interfaces.ChatDAO;
@@ -63,7 +64,7 @@ public class MainController extends NaTourController{
         hasChatNotification = hasMessageToReadResponseDTO.hasMessageToRead();
 */
         ApplicationController applicationController = (ApplicationController) activity.getApplicationContext();
-        ChatWebSocketHandler chatWebSocketHandler = applicationController.getChatWebSocketHandler();
+        ChatWebSocketHandlerInterface chatWebSocketHandler = applicationController.getChatWebSocketHandler();
 
         chatWebSocketHandler.openWebSocket();
         //chatWebSocketHandler.initConnectionToWebSocket();
@@ -96,6 +97,13 @@ public class MainController extends NaTourController{
             return;
         }
         hasChatNotification = hasMessageToReadResponseDTO.hasMessageToRead();
+    }
+
+    public void back(){
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getActivity().startActivity(intent);
     }
 
 

@@ -2,9 +2,11 @@ package com.unina.natour.controllers;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.util.Log;
 
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.facebook.AccessToken;
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -12,6 +14,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.unina.natour.R;
 import com.unina.natour.config.ApplicationController;
+import com.unina.natour.controllers.socketHandler.ChatWebSocketHandlerInterface;
 import com.unina.natour.dto.response.GetAuthSessionResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
@@ -49,6 +52,10 @@ public class DisconnessioneController extends NaTourController{
         Activity activity = getActivity();
         String messageToShow = null;
 
+        LoginManager.getInstance().logOut();
+
+
+
         //loggato con cognito
         GetAuthSessionResponseDTO getAuthSessionResponseDTO = accountDAO.fetchAuthSessione();
         ResultMessageDTO resultMessageDTO = getAuthSessionResponseDTO.getResultMessage();
@@ -70,6 +77,7 @@ public class DisconnessioneController extends NaTourController{
 
         //Signed in with cognito
         if(authSession.isSignedIn()){
+
             resultMessageDTO = accountDAO.signOut();
 
             if(!ResultMessageController.isSuccess(resultMessageDTO)){
@@ -84,12 +92,11 @@ public class DisconnessioneController extends NaTourController{
                 return false;
             }
         }
-        //Signed in with facebook
-        else if(accessToken != null && !accessToken.isExpired()){
-            LoginManager.getInstance().logOut();
-        }
+
+
+
         //Signed in with google
-        else if(account != null && !account.isExpired()){
+        if(account != null && !account.isExpired()){
             GoogleSignInOptions gso = new GoogleSignInOptions.
                     Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
                     build();
@@ -97,14 +104,21 @@ public class DisconnessioneController extends NaTourController{
             GoogleSignInClient googleSignInClient=GoogleSignIn.getClient(getActivity(),gso);
             googleSignInClient.signOut();
         }
+        //Signed in with facebook
+        //if(accessToken != null && !accessToken.isExpired()){
+
+        //}
+        /*
         else{
             messageToShow = activity.getString(R.string.Message_UnknownError);
             showErrorMessage(messageToShow);
             return false;
         }
+*/
+
 
         ApplicationController applicationController = (ApplicationController) getActivity().getApplicationContext();
-        ChatWebSocketHandler chatWebSocketHandler = applicationController.getChatWebSocketHandler();
+        ChatWebSocketHandlerInterface chatWebSocketHandler = applicationController.getChatWebSocketHandler();
         chatWebSocketHandler.closeWebSocket();
 
         return true;
