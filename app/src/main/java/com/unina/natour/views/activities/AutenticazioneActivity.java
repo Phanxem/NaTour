@@ -190,19 +190,6 @@ public class AutenticazioneActivity extends NaTourActivity {
             });
 
 
-            /*
-            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-
-            executorService.schedule(new Runnable() {
-                @Override
-                public void run() {
-                    while(Profile.getCurrentProfile() == null){}
-
-                    Log.e(TAG, "Profile.getCurrentProfile() != null");
-                    autenticazioneController.addFacebookUser();
-                }
-            },1,TimeUnit.MINUTES);
-*/
         }
     }
 

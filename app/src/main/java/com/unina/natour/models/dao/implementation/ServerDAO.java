@@ -1,13 +1,16 @@
 package com.unina.natour.models.dao.implementation;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.amazonaws.auth.AWSSessionCredentials;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobile.auth.core.IdentityManager;
+import com.amazonaws.mobile.config.AWSConfiguration;
 import com.unina.natour.controllers.utils.SignAWSv4Utils;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.response.ResultMessageDTO;
+import com.unina.natour.views.activities.NaTourActivity;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,7 +24,9 @@ import okhttp3.RequestBody;
 
 public class ServerDAO {
 
-    public static final String DOMAIN = "192.168.1.3:8080";
+    //public static final String DOMAIN = "192.168.1.3:8080";
+    public static final String DOMAIN = "d512-93-148-98-215.eu.ngrok.io";
+
     public static final String SERVER_URL = "http://" + DOMAIN;
 
     private static final String REGION = "eu-west-1";
@@ -52,7 +57,28 @@ public class ServerDAO {
      */
 
 
-    public static Request signRequest(Request request, AWSSessionCredentials awsSessionCredentials) throws Exception {
+    public static Request signRequest(Request request, Context context) throws Exception {
+
+        Log.e("ServerDAO", "START SIGNING");
+
+
+        IdentityManager identityManager = new IdentityManager(
+                context.getApplicationContext(),
+                new AWSConfiguration(context.getApplicationContext()));
+
+        IdentityManager.setDefaultIdentityManager(identityManager);
+
+        CognitoCachingCredentialsProvider cognitoCachingCredentialsProvider = IdentityManager.getDefaultIdentityManager().getUnderlyingProvider();
+
+
+
+        Log.e("ServerDAO", "FederatedLogin Facebook");
+        Log.e("ServerDAO", "Token: " + cognitoCachingCredentialsProvider.getToken());
+        Log.e("ServerDAO", "AccessKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSAccessKeyId());
+        Log.e("ServerDAO", "SecretKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSSecretKey());
+        Log.e("ServerDAO", "SessionToken: " + cognitoCachingCredentialsProvider.getCredentials().getSessionToken());
+
+        AWSSessionCredentials awsSessionCredentials = cognitoCachingCredentialsProvider.getCredentials();
 
         URL url = request.url().url();
         String method = request.method().toString().toUpperCase();

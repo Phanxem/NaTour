@@ -25,6 +25,9 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobile.auth.core.IdentityManager;
+import com.amazonaws.mobile.config.AWSConfiguration;
 import com.unina.natour.R;
 import com.unina.natour.controllers.utils.AddressMapper;
 import com.unina.natour.controllers.utils.GPSUtils;
@@ -52,7 +55,9 @@ import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressLint("LongLogTag")
 public class PianificaItinerarioController extends NaTourController implements Parcelable{
@@ -216,6 +221,23 @@ public class PianificaItinerarioController extends NaTourController implements P
 
         this.routeDAO = new RouteDAOImpl();
         this.addressDAO = new AddressDAOImpl();
+
+
+/*
+        IdentityManager identityManager = new IdentityManager(
+                getActivity().getApplicationContext(),
+                new AWSConfiguration(getActivity().getApplicationContext()));
+
+        IdentityManager.setDefaultIdentityManager(identityManager);
+
+        CognitoCachingCredentialsProvider cognitoCachingCredentialsProvider = IdentityManager.getDefaultIdentityManager().getUnderlyingProvider();
+
+        Log.e(TAG, "FederatedLogin Facebook");
+        Log.e(TAG, "Token: " + cognitoCachingCredentialsProvider.getToken());
+        Log.e(TAG, "AccessKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSAccessKeyId());
+        Log.e(TAG, "SecretKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSSecretKey());
+        Log.e(TAG, "SessionToken: " + cognitoCachingCredentialsProvider.getCredentials().getSessionToken());
+*/
     }
 
 

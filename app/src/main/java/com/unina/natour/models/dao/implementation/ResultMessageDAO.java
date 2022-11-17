@@ -64,6 +64,7 @@ public class ResultMessageDAO {
         }
 
         if(exception[0] != null){
+            exception[0].printStackTrace();
             Log.e("ResultMessageDAO", "FAILURE2");
             return ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
         }

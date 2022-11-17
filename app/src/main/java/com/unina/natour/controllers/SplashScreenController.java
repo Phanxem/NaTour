@@ -34,7 +34,6 @@ import com.unina.natour.models.dao.interfaces.UserDAO;
 import com.unina.natour.views.activities.ConnessioneServerFallitaActivity;
 import com.unina.natour.views.activities.NaTourActivity;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class SplashScreenController extends NaTourController{
 
 
@@ -86,10 +85,10 @@ public class SplashScreenController extends NaTourController{
         }
 
         //TODO dopo la fase di testing rimuovere----------------------------------------------------
-
+/*
         DisconnessioneController disconnessioneController = new DisconnessioneController(getActivity());
         disconnessioneController.signOut();
-/*
+
         String packageName = getActivity().getApplicationContext().getPackageName();
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(packageName,Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
@@ -291,6 +290,8 @@ public class SplashScreenController extends NaTourController{
                 return false;
             }
         }
+
+        Log.e(TAG, "error internet connection");
         return false;
     }
 
@@ -302,7 +303,6 @@ public class SplashScreenController extends NaTourController{
         if(!ResultMessageController.isSuccess(resultMessageDTO)){
 
             if(resultMessageDTO == null){
-                Log.e(TAG, "result null");
                 messageToShow = activity.getString(R.string.Message_ServerError);
                 showErrorMessage(messageToShow);
                 return false;

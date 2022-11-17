@@ -203,7 +203,9 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
 
     @Override
     public ResultMessageDTO addItinerary(SaveItineraryRequestDTO saveItineraryRequest) {
-        String url = URL + "/add";
+        //String url = URL + "/add";
+
+        String url = "https://m4xyqnli3i.execute-api.eu-west-1.amazonaws.com/Production/itinerary/add";
 
         GPX gpx = saveItineraryRequest.getGpx();
 
@@ -243,6 +245,15 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
                 .url(url)
                 .post(requestBody)
                 .build();
+
+
+
+        Request signedRequest;
+        try {
+            signedRequest = ServerDAO.signRequest(request, context);
+        } catch (Exception e) {
+            signedRequest = request;
+        }
 
         ResultMessageDTO resultMessageDTO = resultMessageDAO.fulfilRequest(request);
 

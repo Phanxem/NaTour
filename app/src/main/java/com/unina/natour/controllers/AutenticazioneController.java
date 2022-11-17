@@ -14,6 +14,9 @@ import androidx.annotation.Nullable;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.regions.Regions;
+import com.amplifyframework.auth.AuthSession;
+import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -33,6 +36,7 @@ import com.unina.natour.R;
 import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.dto.request.SaveUserRequestDTO;
+import com.unina.natour.dto.response.GetAuthSessionResponseDTO;
 import com.unina.natour.dto.response.GetUserResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
@@ -120,8 +124,31 @@ public class AutenticazioneController extends NaTourController{
             return false;
         }
 
-
         CurrentUserInfo.set(getUserResponseDTO.getId(),identityProvider,username);
+
+
+        String idIdentityPool = "eu-west-1:f7e961f5-0038-4fdd-9384-95671ef663d0";
+
+
+        IdentityManager identityManager = new IdentityManager(
+                getActivity().getApplicationContext(),
+                new AWSConfiguration(getActivity().getApplicationContext()));
+
+        IdentityManager.setDefaultIdentityManager(identityManager);
+
+        CognitoCachingCredentialsProvider cognitoCachingCredentialsProvider = IdentityManager.getDefaultIdentityManager().getUnderlyingProvider();
+
+
+
+
+
+        CognitoCachingCredentialsProvider cognitoCachingCredentialsProvider2 = new CognitoCachingCredentialsProvider(activity,idIdentityPool, Regions.EU_WEST_1);
+
+        cognitoCachingCredentialsProvider = cognitoCachingCredentialsProvider2;
+
+        //cognitoCachingCredentialsProvider.refresh();
+
+
 
         return true;
     }
@@ -232,11 +259,11 @@ public class AutenticazioneController extends NaTourController{
                 cognitoCachingCredentialsProvider.setLogins(logins);
                 cognitoCachingCredentialsProvider.refresh();
 
-                Log.i(TAG, "FederatedLogin Facebook");
-                Log.i(TAG, "Token: " + cognitoCachingCredentialsProvider.getToken());
-                Log.i(TAG, "AccessKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSAccessKeyId());
-                Log.i(TAG, "SecretKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSSecretKey());
-                Log.i(TAG, "SessionToken: " + cognitoCachingCredentialsProvider.getCredentials().getSessionToken());
+                Log.e(TAG, "FederatedLogin Facebook");
+                Log.e(TAG, "Token: " + cognitoCachingCredentialsProvider.getToken());
+                Log.e(TAG, "AccessKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSAccessKeyId());
+                Log.e(TAG, "SecretKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSSecretKey());
+                Log.e(TAG, "SessionToken: " + cognitoCachingCredentialsProvider.getCredentials().getSessionToken());
             }
         });
 
@@ -406,27 +433,23 @@ public class AutenticazioneController extends NaTourController{
 
                 IdentityManager.setDefaultIdentityManager(identityManager);
 
-                CognitoCachingCredentialsProvider cccp = IdentityManager.getDefaultIdentityManager().getUnderlyingProvider();
+                CognitoCachingCredentialsProvider cognitoCachingCredentialsProvider = IdentityManager.getDefaultIdentityManager().getUnderlyingProvider();
 
 
 
                 Map<String, String> logins = new HashMap<String, String>();
                 logins.put("accounts.google.com", account.getIdToken());
 
-                cccp.clear();
-                cccp.setLogins(logins);
-                cccp.refresh();
+                cognitoCachingCredentialsProvider.clear();
+                cognitoCachingCredentialsProvider.setLogins(logins);
+                cognitoCachingCredentialsProvider.refresh();
 
                 Log.i(TAG, "FederatedLogin Google");
 
-
-                Log.i(TAG, "Token: " + cccp.getToken());
-                Log.i(TAG, "AccessKey: " + cccp.getCredentials().getAWSAccessKeyId());
-                Log.i(TAG, "SecretKey: " + cccp.getCredentials().getAWSSecretKey());
-                Log.i(TAG, "SessionToken: " + cccp.getCredentials().getSessionToken());
-                Log.i(TAG, "Google UserId: " + account.getId());
-                Log.i(TAG, "Google User Name: " + account.getDisplayName());
-
+                Log.i(TAG, "Token: " + cognitoCachingCredentialsProvider.getToken());
+                Log.i(TAG, "AccessKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSAccessKeyId());
+                Log.i(TAG, "SecretKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSSecretKey());
+                Log.i(TAG, "SessionToken: " + cognitoCachingCredentialsProvider.getCredentials().getSessionToken());
             }
         });
 
