@@ -25,6 +25,7 @@ import com.unina.natour.models.dao.interfaces.ChatDAO;
 import com.unina.natour.models.dao.interfaces.UserDAO;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -55,7 +56,11 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
     public GetListChatMessageResponseDTO getMessageByIdsUser(long idUser1, long idUser2, int page) {
         String url = URL + "/get/messages?idUser1=" + idUser1 + "&idUser2=" + idUser2 + "&page=" + page;
 
-        GetListChatMessageResponseDTO getListChatMessageResponseDTO = getListChatMessageResponseDTO(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        GetListChatMessageResponseDTO getListChatMessageResponseDTO = getListChatMessageResponseDTO(request);
 
         return getListChatMessageResponseDTO;
     }
@@ -88,7 +93,15 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
-                String jsonStringResult = response.body().string();
+                String jsonStringResult;
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                        response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                    jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                }
+                else{
+                    jsonStringResult = response.body().string();
+                }
+
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 
@@ -167,7 +180,15 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
-                String jsonStringResult = response.body().string();
+                String jsonStringResult;
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                        response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                    jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                }
+                else{
+                    jsonStringResult = response.body().string();
+                }
+
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 
@@ -357,12 +378,8 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
     }
 
 
-    private GetListChatMessageResponseDTO getListChatMessageResponseDTO(String url){
+    private GetListChatMessageResponseDTO getListChatMessageResponseDTO(Request request){
         GetListChatMessageResponseDTO getListChatMessageResponseDTO = new GetListChatMessageResponseDTO();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
 
         OkHttpClient client = new OkHttpClient();
 
@@ -382,7 +399,15 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
-                String jsonStringResult = response.body().string();
+                String jsonStringResult;
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                        response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                    jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                }
+                else{
+                    jsonStringResult = response.body().string();
+                }
+
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 

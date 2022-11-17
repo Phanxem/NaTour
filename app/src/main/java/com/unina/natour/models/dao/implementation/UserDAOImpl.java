@@ -24,6 +24,7 @@ import com.unina.natour.models.dao.interfaces.UserDAO;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,17 +49,6 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
 
     private static final String URL = SERVER_URL + "/user";
 
-    private static final String UPDATE_IMAGE = "/update/image";
-    private static final String UPDATE_OPTIONAL_INFO = "/update/optionalInfo";
-
-
-
-    private static final String BODY_KEY_IMAGE = "image";
-
-    private static final String TAG = "UserDAO";
-
-    private static final String TEST_USER = "user";
-
 
     private ResultMessageDAO resultMessageDAO;
 
@@ -74,7 +64,11 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
     public GetUserResponseDTO getUserById(long idUser) {
         String url = URL + "/get/" + idUser;
 
-        GetUserResponseDTO getUserResponseDTO = getUserResponseDTO(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        GetUserResponseDTO getUserResponseDTO = getUserResponseDTO(request);
 
         return getUserResponseDTO;
     }
@@ -95,6 +89,7 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
 
         final IOException[] exception = {null};
         final boolean[] isSuccessful = {true};
+        final boolean[] isAutorized = {true};
         CompletableFuture<byte[]> completableFuture = new CompletableFuture<byte[]>();
 
         call.enqueue(new Callback() {
@@ -109,6 +104,13 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(!response.isSuccessful()){
                     isSuccessful[0] = false;
+
+                    if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                       response.code() == HttpURLConnection.HTTP_FORBIDDEN)
+                    {
+                        isAutorized[0] = false;
+                    }
+
                     completableFuture.complete(null);
                     return;
                 }
@@ -133,6 +135,10 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
         }
 
         if(!isSuccessful[0]){
+            if(!isAutorized[0]){
+                getBitmapResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_UNAUTORIZED);
+                return getBitmapResponseDTO;
+            }
             getBitmapResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
             return getBitmapResponseDTO;
         }
@@ -150,7 +156,11 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
     public GetUserResponseDTO getUserByIdP(String identityProvider, String idIdentityProvided) {
         String url = URL + "/get/identityProvider?identityProvider=" + identityProvider + "&idIdentityProvided=" + idIdentityProvided;
 
-        GetUserResponseDTO getUserResponseDTO = getUserResponseDTO(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        GetUserResponseDTO getUserResponseDTO = getUserResponseDTO(request);
 
         return getUserResponseDTO;
     }
@@ -159,7 +169,11 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
     public GetUserResponseDTO getUserByIdConnection(String idConnection) {
         String url = URL + "/get/connection/" + idConnection;
 
-        GetUserResponseDTO getUserResponseDTO = getUserResponseDTO(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        GetUserResponseDTO getUserResponseDTO = getUserResponseDTO(request);
 
         return getUserResponseDTO;
 
@@ -170,7 +184,11 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
     public GetListUserResponseDTO getListUserByUsername(String username, int page) {
         String url = URL + "/search?username=" + username + "&page=" + page;
 
-        GetListUserResponseDTO getListUserResponseDTO = getListUserResponseDTO(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        GetListUserResponseDTO getListUserResponseDTO = getListUserResponseDTO(request);
 
         return getListUserResponseDTO;
     }
@@ -179,7 +197,11 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
     public GetListUserResponseDTO getListUserWithConversation(long idUser, int page) {
         String url = URL + "/get/" + idUser + "/conversation?page=" + page;
 
-        GetListUserResponseDTO getListUserResponseDTO = getListUserResponseDTO(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        GetListUserResponseDTO getListUserResponseDTO = getListUserResponseDTO(request);
 
         return getListUserResponseDTO;
     }
@@ -384,12 +406,11 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
     }
 
 
-    private GetUserResponseDTO getUserResponseDTO(String url){
+
+
+    private GetUserResponseDTO getUserResponseDTO(Request request){
         GetUserResponseDTO getUserResponseDTO = new GetUserResponseDTO();
 
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
 
         OkHttpClient client = new OkHttpClient();
 
@@ -408,7 +429,15 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                String jsonStringResult = response.body().string();
+                String jsonStringResult;
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                        response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                    jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                }
+                else{
+                    jsonStringResult = response.body().string();
+                }
+
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 
@@ -444,12 +473,8 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
         return getUserResponseDTO;
     }
 
-    private GetListUserResponseDTO getListUserResponseDTO(String url){
+    private GetListUserResponseDTO getListUserResponseDTO(Request request){
         GetListUserResponseDTO getListUserResponseDTO = new GetListUserResponseDTO();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
 
         OkHttpClient client = new OkHttpClient();
 
@@ -469,7 +494,15 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
-                String jsonStringResult = response.body().string();
+                String jsonStringResult;
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                        response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                    jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                }
+                else{
+                    jsonStringResult = response.body().string();
+                }
+
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 

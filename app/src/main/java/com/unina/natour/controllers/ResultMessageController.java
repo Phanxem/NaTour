@@ -7,6 +7,8 @@ import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.views.activities.NaTourActivity;
 import com.unina.natour.views.dialogs.MessageDialog;
 
+import javax.xml.transform.Result;
+
 public class ResultMessageController {
 
     public static final ResultMessageDTO SUCCESS_MESSAGE = new ResultMessageDTO(200, "");
@@ -18,6 +20,10 @@ public class ResultMessageController {
     public static final ResultMessageDTO ERROR_MESSAGE_NOT_FOUND = new ResultMessageDTO(404,"");
     public static final ResultMessageDTO ERROR_MESSAGE_UNIQUE_VIOLATION = new ResultMessageDTO(402,"");
 
+    public static final int CODE_ERROR_UNAUTHORIZED = 401;
+    public static final String MESSAGE_ERROR_UNAUTORIZED = "";
+
+    public static final ResultMessageDTO ERROR_MESSAGE_UNAUTORIZED = new ResultMessageDTO(CODE_ERROR_UNAUTHORIZED, MESSAGE_ERROR_UNAUTORIZED);
 
 
     public static final long ERROR_CODE_AMPLIFY = 300;
@@ -62,22 +68,6 @@ public class ResultMessageController {
     public void setGoBackOnClose(boolean value){
         this.messageDialog.setGoBackOnClose(value);
     }
-
-/*
-    public void showErrorMessage(ResultMessageDTO resultMessageDTO) {
-        long errorCode = resultMessageDTO.getCode();
-        String errorMessage = resultMessageDTO.getMessage();
-        String messageToShow = ERROR_MESSAGE_UNKNOWN;
-
-        if(errorCode == ERROR_CODE_AMPLIFY){
-            messageToShow = findMessageFromAmplifyMessage(errorMessage);
-        }
-
-        messageDialog.setMessage(messageToShow);
-        messageDialog.showOverUi();
-    }
-
-*/
 
     public void showErrorMessage(String messageToShow) {
         messageDialog.setMessage(messageToShow);

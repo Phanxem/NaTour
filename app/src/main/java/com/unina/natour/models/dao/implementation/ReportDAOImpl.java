@@ -16,6 +16,7 @@ import com.unina.natour.dto.response.GetReportResponseDTO;
 import com.unina.natour.models.dao.interfaces.ReportDAO;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -36,7 +37,12 @@ public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
     @Override
     public GetReportResponseDTO getReportById(long idReport) {
         String url = URL + "/get/" + idReport;
-        GetReportResponseDTO getReportResponseDTO =  getReportResponseDTO(url);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        GetReportResponseDTO getReportResponseDTO =  getReportResponseDTO(request);
 
         return getReportResponseDTO;
     }
@@ -45,7 +51,12 @@ public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
     @Override
     public GetListReportResponseDTO getReportByIdItinerary(long idItinerary) {
         String url = URL + "/get/itinerary/" + idItinerary;
-        GetListReportResponseDTO getListReportResponseDTO =  getListReportResponseDTO(url);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        GetListReportResponseDTO getListReportResponseDTO =  getListReportResponseDTO(request);
 
         return getListReportResponseDTO;
     }
@@ -92,12 +103,8 @@ public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
 
 
 
-    private GetReportResponseDTO getReportResponseDTO(String url){
+    private GetReportResponseDTO getReportResponseDTO(Request request){
         GetReportResponseDTO getReportResponseDTO = new GetReportResponseDTO();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
 
         OkHttpClient client = new OkHttpClient();
 
@@ -117,7 +124,15 @@ public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
-                String jsonStringResult = response.body().string();
+                String jsonStringResult;
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                        response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                    jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                }
+                else{
+                    jsonStringResult = response.body().string();
+                }
+
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 
@@ -153,12 +168,8 @@ public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
         return getReportResponseDTO;
     }
 
-    private GetListReportResponseDTO getListReportResponseDTO(String url){
+    private GetListReportResponseDTO getListReportResponseDTO(Request request){
         GetListReportResponseDTO getListReportResponseDTO = new GetListReportResponseDTO();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
 
         OkHttpClient client = new OkHttpClient();
 
@@ -178,7 +189,15 @@ public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
-                String jsonStringResult = response.body().string();
+                String jsonStringResult;
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                        response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                    jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                }
+                else{
+                    jsonStringResult = response.body().string();
+                }
+
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 
@@ -215,7 +234,7 @@ public class ReportDAOImpl extends ServerDAO  implements ReportDAO {
     }
 
 
-
+//MAPPER
     public GetReportResponseDTO toGetReportResponseDTO(JsonObject jsonObject){
         GetReportResponseDTO getReportResponseDTO = new GetReportResponseDTO();
 

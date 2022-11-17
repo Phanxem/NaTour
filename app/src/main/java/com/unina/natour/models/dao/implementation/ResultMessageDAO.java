@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.amazonaws.http.HttpResponse;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -11,6 +12,7 @@ import com.unina.natour.controllers.ResultMessageController;
 import com.unina.natour.dto.response.ResultMessageDTO;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -36,7 +38,6 @@ public class ResultMessageDAO {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.e("ResultMessageDAO", "Response FAILURE");
-
                 exception[0] = e;
                 completableFuture.complete(null);
                 return;
@@ -46,7 +47,15 @@ public class ResultMessageDAO {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 Log.e("ResultMessageDAO", "Response SUCCESS");
 
-                String jsonStringResult = response.body().string();
+                String jsonStringResult;
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                   response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                    jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                }
+                else{
+                    jsonStringResult = response.body().string();
+                }
+
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 
@@ -59,13 +68,11 @@ public class ResultMessageDAO {
             jsonObjectResult = completableFuture.get();
         }
         catch (ExecutionException | InterruptedException e) {
-            Log.e("ResultMessageDAO", "FAILURE1");
             return ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
         }
 
         if(exception[0] != null){
             exception[0].printStackTrace();
-            Log.e("ResultMessageDAO", "FAILURE2");
             return ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT;
         }
 

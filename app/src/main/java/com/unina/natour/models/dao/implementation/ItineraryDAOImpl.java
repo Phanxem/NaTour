@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -91,7 +92,11 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
     public GetItineraryResponseDTO getItineraryById(long idItinerary) {
         String url = URL + "/get/" + idItinerary;
 
-        GetItineraryResponseDTO getItineraryResponseDTO = getItineraryResponseDTO(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        GetItineraryResponseDTO getItineraryResponseDTO = getItineraryResponseDTO(request);
 
         return getItineraryResponseDTO;
     }
@@ -112,6 +117,7 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
 
         final IOException[] exception = {null};
         final boolean[] isSuccessful = {true};
+        final boolean[] isAutorized = {true};
         CompletableFuture<byte[]> completableFuture = new CompletableFuture<byte[]>();
 
         call.enqueue(new Callback() {
@@ -126,6 +132,12 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(!response.isSuccessful()){
                     isSuccessful[0] = false;
+
+                    if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                       response.code() == HttpURLConnection.HTTP_FORBIDDEN)
+                    {
+                        isAutorized[0] = false;
+                    }
                     completableFuture.complete(null);
                     return;
                 }
@@ -150,6 +162,10 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
         }
 
         if(!isSuccessful[0]){
+            if(!isAutorized[0]){
+                getGpxResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_UNAUTORIZED);
+                return getGpxResponseDTO;
+            }
             getGpxResponseDTO.setResultMessage(ResultMessageController.ERROR_MESSAGE_FAILURE_CLIENT);
             return getGpxResponseDTO;
         }
@@ -177,7 +193,11 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
     public GetListItineraryResponseDTO getListItineraryByIdUser(long idUser, int page) {
         String url = URL + "/get/user/" + idUser + "?page=" + page;
 
-        GetListItineraryResponseDTO getListItineraryResponseDTO = getListItineraryResponseDTO(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        GetListItineraryResponseDTO getListItineraryResponseDTO = getListItineraryResponseDTO(request);
 
         return getListItineraryResponseDTO;
     }
@@ -186,7 +206,11 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
     public GetListItineraryResponseDTO getListItineraryRandom() {
         String url = URL + "/get/random";
 
-        GetListItineraryResponseDTO getListItineraryResponseDTO = getListItineraryResponseDTO(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        GetListItineraryResponseDTO getListItineraryResponseDTO = getListItineraryResponseDTO(request);
 
         return getListItineraryResponseDTO;
     }
@@ -195,7 +219,11 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
     public GetListItineraryResponseDTO getListItineraryByName(String name, int page) {
         String url = URL + "/search?name=" + name + "&page=" + page;
 
-        GetListItineraryResponseDTO getListItineraryResponseDTO = getListItineraryResponseDTO(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        GetListItineraryResponseDTO getListItineraryResponseDTO = getListItineraryResponseDTO(request);
 
         return getListItineraryResponseDTO;
     }
@@ -356,12 +384,8 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
 
 
 
-    private GetItineraryResponseDTO getItineraryResponseDTO(String url){
+    private GetItineraryResponseDTO getItineraryResponseDTO(Request request){
         GetItineraryResponseDTO getItineraryResponseDTO = new GetItineraryResponseDTO();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
 
         OkHttpClient client = new OkHttpClient();
 
@@ -381,7 +405,15 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
-                String jsonStringResult = response.body().string();
+                String jsonStringResult;
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                        response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                    jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                }
+                else{
+                    jsonStringResult = response.body().string();
+                }
+
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 
@@ -417,12 +449,8 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
         return getItineraryResponseDTO;
     }
 
-    private GetListItineraryResponseDTO getListItineraryResponseDTO(String url){
+    private GetListItineraryResponseDTO getListItineraryResponseDTO(Request request){
         GetListItineraryResponseDTO getListItineraryResponseDTO = new GetListItineraryResponseDTO();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
 
         OkHttpClient client = new OkHttpClient();
 
@@ -442,7 +470,15 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
-                String jsonStringResult = response.body().string();
+                String jsonStringResult;
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                        response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                    jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                }
+                else{
+                    jsonStringResult = response.body().string();
+                }
+
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 

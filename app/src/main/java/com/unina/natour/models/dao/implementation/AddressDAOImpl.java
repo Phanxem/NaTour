@@ -22,6 +22,7 @@ import org.osmdroid.util.GeoPoint;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,11 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
             return getAddressResponseDTO;
         }
 
-        getAddressResponseDTO = getAddressResponseDTO(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        getAddressResponseDTO = getAddressResponseDTO(request);
 
         return getAddressResponseDTO;
     }
@@ -64,7 +69,11 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
     public GetListAddressResponseDTO getAddressesByQuery(String query) {
         String url = URL + "/search?query=" + query;
 
-        GetListAddressResponseDTO getListAddressResponseDTO = getListAddressResponseDTO(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        GetListAddressResponseDTO getListAddressResponseDTO = getListAddressResponseDTO(request);
 
         return getListAddressResponseDTO;
     }
@@ -72,12 +81,8 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
 
 
 
-    private GetAddressResponseDTO getAddressResponseDTO(String url){
+    private GetAddressResponseDTO getAddressResponseDTO(Request request){
         GetAddressResponseDTO getAddressResponseDTO = new GetAddressResponseDTO();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
 
         OkHttpClient client = new OkHttpClient();
 
@@ -96,7 +101,15 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                String jsonStringResult = response.body().string();
+                String jsonStringResult;
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                        response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                    jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                }
+                else{
+                    jsonStringResult = response.body().string();
+                }
+
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 
@@ -134,12 +147,8 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
         return getAddressResponseDTO;
     }
 
-    private GetListAddressResponseDTO getListAddressResponseDTO(String url){
+    private GetListAddressResponseDTO getListAddressResponseDTO(Request request){
         GetListAddressResponseDTO getListAddressResponseDTO = new GetListAddressResponseDTO();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
 
         OkHttpClient client = new OkHttpClient();
 
@@ -159,7 +168,15 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
-                String jsonStringResult = response.body().string();
+                String jsonStringResult;
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                        response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                    jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                }
+                else{
+                    jsonStringResult = response.body().string();
+                }
+
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 

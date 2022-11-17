@@ -20,6 +20,7 @@ import org.osmdroid.util.GeoPoint;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +54,11 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
             return getRouteResponseDTO;
         }
 
-        Log.e("TAG", "BEFORE getRouteResponseDTO()");
-        getRouteResponseDTO = getRouteResponseDTO(url);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        getRouteResponseDTO = getRouteResponseDTO(request);
 
         return getRouteResponseDTO;
     }
@@ -80,12 +84,8 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
 
 
 
-    private GetRouteResponseDTO getRouteResponseDTO(String url){
+    private GetRouteResponseDTO getRouteResponseDTO(Request request){
         GetRouteResponseDTO getRouteResponseDTO = new GetRouteResponseDTO();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
 
         OkHttpClient client = new OkHttpClient();
 
@@ -105,7 +105,15 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
-                String jsonStringResult = response.body().string();
+                String jsonStringResult;
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
+                        response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                    jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                }
+                else{
+                    jsonStringResult = response.body().string();
+                }
+
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);
                 JsonObject jsonObjectResult = jsonElementResult.getAsJsonObject();
 
@@ -135,8 +143,6 @@ public class RouteDAOImpl extends ServerDAO implements RouteDAO {
             getRouteResponseDTO.setResultMessage(resultMessage);
             return getRouteResponseDTO;
         }
-
-        Log.e("TAG", "BEFORE toGet");
 
         getRouteResponseDTO = toGetRouteResponseDTO(jsonObjectResult);
 
