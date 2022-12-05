@@ -19,26 +19,20 @@ public class RegistrazioneController extends NaTourController{
 
     public final static int MIN_LENGHT_PASSWORD = 8;
 
-    private AutenticazioneController autenticazioneController;
-
     private AccountDAO accountDAO;
 
     public RegistrazioneController(NaTourActivity activity,
                                    ResultMessageController resultMessageController,
-                                   AutenticazioneController autenticazioneController,
                                    AccountDAO accountDAO)
     {
         super(activity, resultMessageController);
 
-        this.autenticazioneController = autenticazioneController;
 
         this.accountDAO = accountDAO;
     }
 
     public RegistrazioneController(NaTourActivity activity){
         super(activity);
-
-        this.autenticazioneController = new AutenticazioneController(activity);
 
         this.accountDAO = new AmplifyDAO();
     }
@@ -51,19 +45,19 @@ public class RegistrazioneController extends NaTourController{
 
         if(!StringsUtils.areAllFieldsFull(username,email,password)){
             messageToShow = activity.getString(R.string.Message_EmptyFieldError);
-            showErrorMessageAndBack(messageToShow);
+            showErrorMessage(messageToShow);
             return false;
         }
 
         if(password.length() < MIN_LENGHT_PASSWORD){
             messageToShow = activity.getString(R.string.AmplifyException_PasswordNotConformPolicy);
-            showErrorMessageAndBack(messageToShow);
+            showErrorMessage(messageToShow);
             return false;
         }
 
         if(!EmailUtils.isEmail(email)){
             messageToShow = activity.getString(R.string.AmplifyException_InvalidEmailFormat);
-            showErrorMessageAndBack(messageToShow);
+            showErrorMessage(messageToShow);
             return false;
         }
 

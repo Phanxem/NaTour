@@ -1,20 +1,32 @@
 package com.unina.natour.config;
 
+import com.amazonaws.auth.AWSCredentials;
+
 public class CurrentUserInfo {
 
     private static Long id;
     private static String identityProvider;
     private static String idIdentityProvided;
 
-    private static boolean isSignedIn = false;
+    private static AWSCredentials credentials;
 
+
+    public static void set(long id, String identityProvider, String idIdentityProvided, AWSCredentials credentials){
+        CurrentUserInfo.id = id;
+        CurrentUserInfo.identityProvider = identityProvider;
+        CurrentUserInfo.idIdentityProvided = idIdentityProvided;
+
+        CurrentUserInfo.credentials = credentials;
+    }
 
     public static void set(long id, String identityProvider, String idIdentityProvided){
         CurrentUserInfo.id = id;
         CurrentUserInfo.identityProvider = identityProvider;
         CurrentUserInfo.idIdentityProvided = idIdentityProvided;
+    }
 
-        CurrentUserInfo.isSignedIn = true;
+    public static void setCredentials(AWSCredentials credentials){
+        CurrentUserInfo.credentials = credentials;
     }
 
     public static void clear(){
@@ -22,7 +34,7 @@ public class CurrentUserInfo {
         CurrentUserInfo.identityProvider = null;
         CurrentUserInfo.idIdentityProvided = null;
 
-        CurrentUserInfo.isSignedIn = false;
+        CurrentUserInfo.credentials = null;
     }
 
     public static long getId() {
@@ -34,7 +46,14 @@ public class CurrentUserInfo {
     public static String getIdIdentityProvided() {
         return idIdentityProvided;
     }
-    public static boolean isSignedIn(){return isSignedIn;}
+    public static AWSCredentials getCredentials() {
+        return credentials;
+    }
+
+    public static boolean isSignedIn(){
+        if(CurrentUserInfo.credentials == null) return false;
+        return true;
+    }
 
 
 }

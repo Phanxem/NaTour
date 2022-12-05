@@ -55,19 +55,6 @@
         app:layout_constraintTop_toTopOf="@+id/Chat_relativeLayout_user"
         app:srcCompat="@drawable/ic_back" />
 
-    <ImageView
-        android:id="@+id/Chat_imageView_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/effect_ripple"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/Chat_relativeLayout_user"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/Chat_relativeLayout_user"
-        app:srcCompat="@drawable/ic_menu" />
-
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/Chat_nestedScrollView_messages"

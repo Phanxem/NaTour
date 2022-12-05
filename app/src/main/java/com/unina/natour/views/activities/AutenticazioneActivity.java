@@ -13,9 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.amazonaws.auth.CognitoCachingCredentialsProvider;
-import com.amazonaws.mobile.auth.core.IdentityManager;
-import com.amazonaws.mobile.config.AWSConfiguration;
 import com.facebook.Profile;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.SignInButton;
@@ -26,11 +23,8 @@ import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.RecuperoPasswordController;
 import com.unina.natour.controllers.RegistrazioneController;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class AutenticazioneActivity extends NaTourActivity {
@@ -110,14 +104,7 @@ public class AutenticazioneActivity extends NaTourActivity {
         button_signInGuest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //HomeController.openHomeGuestActivity(activity);
-
-                if(Profile.getCurrentProfile() == null){
-                    Log.e(TAG,"Profile.getCurrentProfile() == null");
-                }
-                else{
-                    Log.e(TAG,"Profile.getCurrentProfile() != null");
-                }
+                HomeController.openHomeGuestActivity(activity);
             }
         });
     }
@@ -185,7 +172,7 @@ public class AutenticazioneActivity extends NaTourActivity {
                     catch (InterruptedException e) {
                         return;
                     }
-                    autenticazioneController.addFacebookUser();
+                    autenticazioneController.completeSignInWithFacebook();
                 }
             });
 
@@ -196,8 +183,6 @@ public class AutenticazioneActivity extends NaTourActivity {
     @Override
     protected void onResume() {
         //initButtonFacebook();
-
-
         super.onResume();
     }
 }

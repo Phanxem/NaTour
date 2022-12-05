@@ -44,12 +44,6 @@ public class RegistrazioneControllerTest {
                 .thenReturn(activity);
 
 
-        autenticazioneController = mock(AutenticazioneController.class);
-        when(autenticazioneController.signIn(anyString(), anyString()))
-                .thenReturn(true);
-
-
-
 
 
         accountDAO = mock(AmplifyDAO.class);
@@ -89,7 +83,7 @@ public class RegistrazioneControllerTest {
                 .thenReturn(getEmailResponseDTO);
 
 
-        registrazioneController = new RegistrazioneController(activity, resultMessageController,autenticazioneController,accountDAO);
+        registrazioneController = new RegistrazioneController(activity, resultMessageController,accountDAO);
     }
 
     //Test Case 1 ---

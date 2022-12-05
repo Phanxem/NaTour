@@ -267,9 +267,12 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
         String url = URL + "/update/" + idUser + "/optionalInfo";
 
         FormBody.Builder builder = new FormBody.Builder();
-        builder.add("placeOfResidence", saveOptionalInfoRequest.getPlaceOfResidence());
-        builder.add("dateOfBirth", saveOptionalInfoRequest.getDateOfBirth());
-
+        if(saveOptionalInfoRequest.getPlaceOfResidence() != null){
+            builder.add("placeOfResidence", saveOptionalInfoRequest.getPlaceOfResidence());
+        }
+        if(saveOptionalInfoRequest.getDateOfBirth() != null) {
+            builder.add("dateOfBirth", saveOptionalInfoRequest.getDateOfBirth());
+        }
         RequestBody requestBody = builder.build();
 
 

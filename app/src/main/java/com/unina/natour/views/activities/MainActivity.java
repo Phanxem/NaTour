@@ -11,7 +11,6 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.unina.natour.R;
-import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.MainController;
 import com.unina.natour.controllers.PianificaItinerarioController;
 import com.unina.natour.views.fragments.CommunityFragment;
@@ -38,6 +37,10 @@ public class MainActivity extends NaTourActivity {
 
         mainController = new MainController(this);
 
+        pressNavigationIcon();
+    }
+
+    private void pressNavigationIcon(){
         HomeFragment homeFragment = new HomeFragment();
         homeFragment.setNaTourActivity(this);
 

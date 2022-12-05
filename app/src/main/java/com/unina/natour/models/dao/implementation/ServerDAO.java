@@ -3,10 +3,12 @@ package com.unina.natour.models.dao.implementation;
 import android.content.Context;
 import android.util.Log;
 
+import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSSessionCredentials;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.config.AWSConfiguration;
+import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.SignAWSv4Utils;
 import com.unina.natour.controllers.utils.TimeUtils;
 import com.unina.natour.dto.response.ResultMessageDTO;
@@ -25,13 +27,16 @@ import okhttp3.RequestBody;
 public class ServerDAO {
 
     //public static final String DOMAIN = "192.168.1.3:8080";
-    public static final String DOMAIN = "d512-93-148-98-215.eu.ngrok.io";
+    public static final String DOMAIN = "6c6c-93-148-98-215.eu.ngrok.io";
 
     public static final String SERVER_URL = "http://" + DOMAIN;
 
     private static final String REGION = "eu-west-1";
     private static final String SERVICE = "execute-api";
     private static final ZoneId ZONE_ID = ZoneId.of("Europe/Dublin");
+
+
+    private static final String API = "https://m4xyqnli3i.execute-api.eu-west-1.amazonaws.com/Production";
 
     public ResultMessageDAO resultMessageDAO;
 
@@ -41,8 +46,7 @@ public class ServerDAO {
 
     //How to find AWSSessionCredential
     /*
-    CognitoCachingCredentialsProvider cognitoCachingCredentialsProvider = IdentityManager.getDefaultIdentityManager().getUnderlyingProvider();
-    cognitoCachingCredentialsProvider.getCredentials();
+
      */
 
     //How to sign okHttp Request
@@ -57,34 +61,43 @@ public class ServerDAO {
      */
 
 
-    public static Request signRequest(Request request, Context context) throws Exception {
-
+    public static Request signRequest(Request request){
         Log.e("ServerDAO", "START SIGNING");
 
+        if(!CurrentUserInfo.isSignedIn()) return request;
 
-        IdentityManager identityManager = new IdentityManager(
-                context.getApplicationContext(),
-                new AWSConfiguration(context.getApplicationContext()));
+        AWSCredentials awsCredentials = CurrentUserInfo.getCredentials();
+        AWSSessionCredentials awsSessionCredentials = null;
 
-        IdentityManager.setDefaultIdentityManager(identityManager);
+        if(awsCredentials instanceof AWSSessionCredentials){
+            awsSessionCredentials = (AWSSessionCredentials) awsCredentials;
+        }
+        else{
+            awsSessionCredentials = new AWSSessionCredentials() {
+                @Override
+                public String getSessionToken() {
+                    return null;
+                }
 
-        CognitoCachingCredentialsProvider cognitoCachingCredentialsProvider = IdentityManager.getDefaultIdentityManager().getUnderlyingProvider();
+                @Override
+                public String getAWSAccessKeyId() {
+                    return awsCredentials.getAWSAccessKeyId();
+                }
 
+                @Override
+                public String getAWSSecretKey() {
+                    return awsCredentials.getAWSSecretKey();
+                }
+            };
 
-
-        Log.e("ServerDAO", "FederatedLogin Facebook");
-        Log.e("ServerDAO", "Token: " + cognitoCachingCredentialsProvider.getToken());
-        Log.e("ServerDAO", "AccessKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSAccessKeyId());
-        Log.e("ServerDAO", "SecretKey: " + cognitoCachingCredentialsProvider.getCredentials().getAWSSecretKey());
-        Log.e("ServerDAO", "SessionToken: " + cognitoCachingCredentialsProvider.getCredentials().getSessionToken());
-
-        AWSSessionCredentials awsSessionCredentials = cognitoCachingCredentialsProvider.getCredentials();
+        }
 
         URL url = request.url().url();
         String method = request.method().toString().toUpperCase();
-        ZonedDateTime time = ZonedDateTime.now(ZONE_ID).minusHours(1);
+        ZonedDateTime time = ZonedDateTime.now(ZONE_ID);
 
         String domain = url.getHost();
+        //domain = API;
         String urlString = url.toString();
 
         String[] strings = urlString.split(domain);
@@ -102,17 +115,41 @@ public class ServerDAO {
 
         Log.i("SERVER DAO", "test\nurl: " + url + "\nmethod: " + method + "\nuri: " + uri + "\nquery: " + query);
 
-        String canonicalRequest = getCanonicalRequest(method,uri,query,domain,time, awsSessionCredentials.getSessionToken(), request);
+        String canonicalRequest = null;
+        try {
+            canonicalRequest = getCanonicalRequest(method,uri,query,domain,time, awsSessionCredentials.getSessionToken(), request);
+        }
+        catch (IOException | NoSuchAlgorithmException e) {
+            return request;
+        }
+
         String stringToSign = getStringToSign(time, REGION, SERVICE, canonicalRequest);
-        byte[] derivedSigningKey = getDerivedSigningKey(awsSessionCredentials.getAWSSecretKey(), time, REGION, SERVICE);
+
+        byte[] derivedSigningKey = new byte[0];
+        try {
+            derivedSigningKey = getDerivedSigningKey(awsSessionCredentials.getAWSSecretKey(), time, REGION, SERVICE);
+        }
+        catch (Exception e) {
+            return request;
+        }
+
         String signature = getSignature(stringToSign, derivedSigningKey);
+
         String authorization = getAuthorization(awsSessionCredentials.getAWSAccessKeyId(), time, REGION, SERVICE, signature);
 
-        Request signedRequest = request.newBuilder()
-                .addHeader("X-Amz-Date", TimeUtils.toISO8601String(time))
-                .addHeader("X-Amz-Security-Token", awsSessionCredentials.getSessionToken())
-                .addHeader("Authorization", authorization)
-                .build();
+
+        Log.e("DAO","\n - \"X-Amz-Date\"" +  TimeUtils.toISO8601String(time) + "\n " +
+                "\"Authorization\"" +  authorization +"\n " +
+                "\"X-Amz-Security-Token\"" +  awsSessionCredentials.getSessionToken() + "\n ");
+
+
+        Request.Builder requestBuilder = request.newBuilder();
+        requestBuilder.addHeader("X-Amz-Date", TimeUtils.toISO8601String(time));
+        requestBuilder.addHeader("Authorization", authorization);
+        if(awsSessionCredentials.getSessionToken() != null){
+            requestBuilder.addHeader("X-Amz-Security-Token", awsSessionCredentials.getSessionToken());
+        }
+        Request signedRequest = requestBuilder.build();
 
         return signedRequest;
     }
@@ -128,10 +165,10 @@ public class ServerDAO {
 
 
         String canonicalHeaders = "host:" + domain + '\n' +
-                //"x-amz-date:" + TimeUtils.toISO8601String(ZonedDateTime.now(ZoneId.of("Europe/Dublin"))) + '\n' +
-                "x-amz-date:" + TimeUtils.toISO8601String(time) + '\n' +
-                "x-amz-security-token:" + sessionToken +'\n';
-
+                                  "x-amz-date:" + TimeUtils.toISO8601String(time) + '\n';
+        if(sessionToken != null){
+            canonicalHeaders = canonicalHeaders + "x-amz-security-token:" + sessionToken +'\n';
+        }
 
         String signedHeaders = "host;x-amz-date;x-amz-security-token";
 

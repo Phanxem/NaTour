@@ -45,15 +45,19 @@ public class ResultMessageDAO {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                Log.e("ResultMessageDAO", "Response SUCCESS");
+                Log.e("ResultMessageDAO", "Response SUCCESS - code: " + response.code() + ", message: " + response.message());
 
-                String jsonStringResult;
+                String jsonStringResult = null;
                 if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED ||
-                   response.code() == HttpURLConnection.HTTP_FORBIDDEN){
+                   response.code() == HttpURLConnection.HTTP_FORBIDDEN)
+                {
                     jsonStringResult = "{ \"code\": " + ResultMessageController.CODE_ERROR_UNAUTHORIZED + ", \"message\": \"" + ResultMessageController.MESSAGE_ERROR_UNAUTORIZED + "\" }";
+                    Log.e("DAO", jsonStringResult);
+                    Log.e("DAO2", response.body().string());
                 }
                 else{
                     jsonStringResult = response.body().string();
+                    Log.e("DAO", jsonStringResult);
                 }
 
                 JsonElement jsonElementResult = JsonParser.parseString(jsonStringResult);

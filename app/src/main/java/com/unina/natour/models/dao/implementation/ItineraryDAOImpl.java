@@ -275,15 +275,9 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
                 .build();
 
 
+        Request signedRequest = ServerDAO.signRequest(request);
 
-        Request signedRequest;
-        try {
-            signedRequest = ServerDAO.signRequest(request, context);
-        } catch (Exception e) {
-            signedRequest = request;
-        }
-
-        ResultMessageDTO resultMessageDTO = resultMessageDAO.fulfilRequest(request);
+        ResultMessageDTO resultMessageDTO = resultMessageDAO.fulfilRequest(signedRequest);
 
         return resultMessageDTO;
     }

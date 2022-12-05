@@ -37,7 +37,7 @@ public class RegistrazioneActivity extends NaTourActivity {
         Button button_signUp = findViewById(R.id.SignUp_button_signUp);
         button_signUp.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v){
                 EditText textField_username = findViewById(R.id.SignUp_textField_username);
                 String username = String.valueOf(textField_username.getText());
 

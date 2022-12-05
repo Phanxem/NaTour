@@ -7,10 +7,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.unina.natour.R;
 import com.unina.natour.config.CurrentUserInfo;
 import com.unina.natour.controllers.utils.StringsUtils;
 import com.unina.natour.dto.request.SaveUserRequestDTO;
+import com.unina.natour.dto.response.GetAuthSessionResponseDTO;
 import com.unina.natour.dto.response.GetUserResponseDTO;
 import com.unina.natour.dto.response.ResultMessageDTO;
 import com.unina.natour.models.dao.implementation.AmplifyDAO;
@@ -163,7 +166,26 @@ public class AttivaAccountController extends NaTourController{
             showErrorMessage(messageToShow);
             return false;
         }
-        CurrentUserInfo.set(getUserResponseDTO.getId(),identityProvider,username);
+
+        GetAuthSessionResponseDTO getAuthSessionResponseDTO = accountDAO.fetchAuthSessione();
+        if (!ResultMessageController.isSuccess(getAuthSessionResponseDTO.getResultMessage())) {
+            if(resultMessageDTO.getCode() == ResultMessageController.ERROR_CODE_AMPLIFY){
+                messageToShow = ResultMessageController.findMessageFromAmplifyMessage(activity, resultMessageDTO.getMessage());
+                showErrorMessage(messageToShow);
+                return false;
+            }
+
+            messageToShow = activity.getString(R.string.Message_UnknownError);
+            showErrorMessage(messageToShow);
+            return false;
+        }
+
+        AWSCognitoAuthSession authSession = getAuthSessionResponseDTO.getAuthSessione();
+        AWSCredentials awsCredentials = authSession.getAWSCredentials().getValue();
+
+        CurrentUserInfo.set(getUserResponseDTO.getId(),identityProvider,username, awsCredentials);
+
+
 
         return true;
     }

@@ -23,10 +23,6 @@ import com.unina.natour.controllers.ListaMessaggiController;
 
 import java.util.Calendar;
 
-//FATE PRELIMINARE DI TESTING
-//facciamo in modo che tutti i messaggi che scriviamo vengono visualizzati come inviati da noi
-//tutti i messaggi che arrivano vengono visualizzati come mandati da altri
-
 
 public class ChatActivity extends NaTourActivity {
 
@@ -55,14 +51,9 @@ public class ChatActivity extends NaTourActivity {
         if(bitmap != null) imageView_profileImage.setImageBitmap(bitmap);
 
         pressBackIcon();
-        pressMenuIcon();
         pressSendKey();
-        pressUserAccount();
-
-
 
     }
-
 
     @Override
     protected void onResume() {
@@ -87,41 +78,6 @@ public class ChatActivity extends NaTourActivity {
         });
     }
 
-    public void pressMenuIcon(){
-        ImageView imageView_menu = findViewById(R.id.Chat_imageView_menu);
-        imageView_menu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO
-                //chatController.testOpen();
-            }
-        });
-    }
-
-    public void pressUserAccount(){
-        RelativeLayout relativeLayout_user = findViewById(R.id.Chat_relativeLayout_user);
-        relativeLayout_user.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO
-                //chatController.testSend();
-                NestedScrollView nestedScrollView_messages = findViewById(R.id.Chat_nestedScrollView_messages);
-
-                chatController.receiveMessage("test hello", Calendar.getInstance());
-
-                new Handler().postDelayed(new Runnable() {
-                                              @Override
-                                              public void run() {
-                                                  nestedScrollView_messages.fullScroll(View.FOCUS_DOWN);
-                                              }
-                                          },
-                        350);
-
-            }
-        });
-
-        //profiloController.openProfiloActivity(long idUser);
-    }
 
     public void pressSendKey(){
         EditText editText_messageField = findViewById(R.id.Chat_textField_messageField);

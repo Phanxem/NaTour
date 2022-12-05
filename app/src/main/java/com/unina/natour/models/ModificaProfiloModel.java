@@ -12,8 +12,7 @@ public class ModificaProfiloModel extends NaTourModel {
     private ImpostaInfoOpzionaliProfiloModel optionalInfoModel;
 
     private String email;
-    private boolean isFacebookAccountLinked;
-    private boolean isGoogleAccountLinked;
+
 
 
 
@@ -50,23 +49,6 @@ public class ModificaProfiloModel extends NaTourModel {
         this.email = email;
     }
 
-    public boolean isFacebookAccountLinked() {
-        return isFacebookAccountLinked;
-    }
-
-    public void setFacebookAccountLinked(boolean facebookAccountLinked) {
-        isFacebookAccountLinked = facebookAccountLinked;
-    }
-
-    public boolean isGoogleAccountLinked() {
-        return isGoogleAccountLinked;
-    }
-
-    public void setGoogleAccountLinked(boolean googleAccountLinked) {
-        isGoogleAccountLinked = googleAccountLinked;
-    }
-
-
 
     public void setByDTO(GetUserWithImageResponseDTO getUserWithImageResponseDTO) throws ParseException {
 
@@ -101,8 +83,6 @@ public class ModificaProfiloModel extends NaTourModel {
         this.optionalInfoModel.clear();
 
         this.email = null;
-        this.isFacebookAccountLinked = false;
-        this.isGoogleAccountLinked = false;
     }
 
 
