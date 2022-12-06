@@ -26,8 +26,8 @@ import okhttp3.RequestBody;
 
 public class ServerDAO {
 
-    //public static final String DOMAIN = "192.168.1.3:8080";
-    public static final String DOMAIN = "6c6c-93-148-98-215.eu.ngrok.io";
+    public static final String DOMAIN = "192.168.1.5:8080";
+    //public static final String DOMAIN = "m4xyqnli3i.execute-api.eu-west-1.amazonaws.com/Production";
 
     public static final String SERVER_URL = "http://" + DOMAIN;
 
@@ -35,30 +35,11 @@ public class ServerDAO {
     private static final String SERVICE = "execute-api";
     private static final ZoneId ZONE_ID = ZoneId.of("Europe/Dublin");
 
-
-    private static final String API = "https://m4xyqnli3i.execute-api.eu-west-1.amazonaws.com/Production";
-
     public ResultMessageDAO resultMessageDAO;
 
     public ServerDAO(){
         this.resultMessageDAO = new ResultMessageDAO();
     }
-
-    //How to find AWSSessionCredential
-    /*
-
-     */
-
-    //How to sign okHttp Request
-    /*
-    Request request = new Request.Builder()
-                        .url(url)
-                        //.post(requestBody)
-                        .build();
-
-
-     request = ServerDAO.signRequest(request, cccp.getCredentials());
-     */
 
 
     public static Request signRequest(Request request){
@@ -97,7 +78,7 @@ public class ServerDAO {
         ZonedDateTime time = ZonedDateTime.now(ZONE_ID);
 
         String domain = url.getHost();
-        //domain = API;
+        //String domain = DOMAIN;
         String urlString = url.toString();
 
         String[] strings = urlString.split(domain);

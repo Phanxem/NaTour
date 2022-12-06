@@ -92,11 +92,11 @@ public class SplashScreenController extends NaTourController{
             return;
         }
 
-        //TODO dopo la fase di testing rimuovere----------------------------------------------------
-
+        //------------------------------------------------------------------------------------------
+/*
         DisconnessioneController disconnessioneController = new DisconnessioneController(getActivity());
         disconnessioneController.signOut();
-/*
+
         String packageName = getActivity().getApplicationContext().getPackageName();
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(packageName,Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();

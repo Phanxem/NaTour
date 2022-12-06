@@ -33,6 +33,7 @@ public class HomeFragment extends NaTourFragment {
         view =  inflater.inflate(R.layout.fragment_home, container, false);
         setFragmentView(view);
 
+        /*
         this.homeController = new HomeController(getNaTourActivity());
         this.listaItinerariController = homeController.getListaItinerariController();
 
@@ -41,7 +42,7 @@ public class HomeFragment extends NaTourFragment {
         ProgressBar progressBar_itinearies = view.findViewById(R.id.HomeF_progressBar_itinerari);
 
         listaItinerariController.initList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
-
+*/
         searchFromSearchBar();
         pressIconCancel();
 
@@ -113,8 +114,6 @@ public class HomeFragment extends NaTourFragment {
         listaItinerariController.initList(nestedScrollView_itineraries,recyclerView_itineraries, progressBar_itinearies);
 
     }
-
-
 
 
 }

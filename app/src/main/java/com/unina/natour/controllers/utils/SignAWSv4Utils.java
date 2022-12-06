@@ -1,5 +1,7 @@
 package com.unina.natour.controllers.utils;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

@@ -29,7 +29,9 @@ public class ResultMessageDAO {
     public ResultMessageDTO fulfilRequest(Request request){
         OkHttpClient client = new OkHttpClient();
 
-        Call call = client.newCall(request);
+        Request signedRequest = ServerDAO.signRequest(request);
+
+        Call call = client.newCall(signedRequest);
 
         final IOException[] exception = {null};
         CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();

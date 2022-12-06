@@ -34,6 +34,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.transform.Result;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -164,7 +166,9 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
 
         OkHttpClient client = new OkHttpClient();
 
-        Call call = client.newCall(request);
+        Request signedRequest = ServerDAO.signRequest(request);
+
+        Call call = client.newCall(signedRequest);
 
         final IOException[] exception = {null};
         CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();
@@ -215,6 +219,11 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
         ResultMessageDTO resultMessage = ResultMessageDAO.getResultMessage(jsonObjectResult);
 
         if(!ResultMessageController.isSuccess(resultMessage)){
+            if(resultMessage.getCode() == ResultMessageController.ERROR_CODE_NOT_FOUND){
+                hasMessageToReadResponseDTO.setResultMessage(ResultMessageController.SUCCESS_MESSAGE);
+                hasMessageToReadResponseDTO.setHasMessageToRead(false);
+                return hasMessageToReadResponseDTO;
+            }
             hasMessageToReadResponseDTO.setResultMessage(resultMessage);
             return hasMessageToReadResponseDTO;
         }
@@ -383,7 +392,9 @@ public class ChatDAOImpl extends ServerDAO implements ChatDAO {
 
         OkHttpClient client = new OkHttpClient();
 
-        Call call = client.newCall(request);
+        Request signedRequest = ServerDAO.signRequest(request);
+
+        Call call = client.newCall(signedRequest);
 
         final IOException[] exception = {null};
         CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();

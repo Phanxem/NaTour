@@ -28,7 +28,6 @@ public class MainActivity extends NaTourActivity {
 
     private MainController mainController;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,8 +107,6 @@ public class MainActivity extends NaTourActivity {
     protected void onResume() {
         mainController.checkIfHasChatNotification();
         updateChatNotification();
-
-
 
         super.onResume();
     }

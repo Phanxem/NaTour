@@ -50,15 +50,7 @@ public class ChatWebSocketHandler implements  ChatWebSocketHandlerInterface{
 
         ExecutorService executorService = client.dispatcher().executorService();
         executorService.shutdown();
-/*
-        boolean finished = false;
-        try {
-            finished = executorService.awaitTermination(1, TimeUnit.MINUTES);
-        }
-        catch (InterruptedException e) {
-            return false;
-        }
-*/
+
         return true;
     }
 
@@ -68,35 +60,17 @@ public class ChatWebSocketHandler implements  ChatWebSocketHandlerInterface{
 
     public boolean sendMessageToWebSocket(String idUser, String message, String inputTime){
 
-        //TODO definire la web socket in modo che venga specificato anche il destinatario e l'orario di invio
-
         boolean result = false;
 
         String messageString = "{\"" + KEY_ACTION + "\" : \"" + ACTION_SEND_MESSAGE + "\", " +
                                 "\"" + KEY_MESSAGE + "\": \"" + message + "\", " +
                                 "\"" + KEY_ID_USER + "\": \"" + idUser + "\", " +
                                 "\"" + KEY_INPUT_TIME + "\": \"" + inputTime + "\"}";
-        //webSocket.send("{\"action\": \"sendmessage\", \"message\": \"hello, I'm connect\"}");
-
-        result = webSocket.send(messageString);
-        //result = webSocket.send("{\"" + KEY_ACTION + "\" : \"" + ACTION_SEND_MESSAGE + "\", \"" + KEY_MESSAGE + "\": \"" + message + "\"}");
-
-        return result;
-    }
-
-    /*
-    public boolean initConnectionToWebSocket(){
-        boolean result = false;
-
-        if(!CurrentUserInfo.isSignedIn()) return false;
-
-        String messageString = "{\"" + KEY_ACTION + "\" : \"" + ACTION_INIT_CONNECTION + "\", " +
-                                "\"" + KEY_ID_USER + "\" : \"" + CurrentUserInfo.getId() + "\"}";
 
         result = webSocket.send(messageString);
 
         return result;
     }
-    */
+
 
 }

@@ -67,7 +67,7 @@ public class MainController extends NaTourController{
         ChatWebSocketHandlerInterface chatWebSocketHandler = applicationController.getChatWebSocketHandler();
 
         chatWebSocketHandler.openWebSocket();
-        //chatWebSocketHandler.initConnectionToWebSocket();
+
     }
 
     public Fragment getCurrentFragment() {
@@ -93,7 +93,7 @@ public class MainController extends NaTourController{
         HasMessageToReadResponseDTO hasMessageToReadResponseDTO = chatDAO.checkIfHasMessageToRead(CurrentUserInfo.getId());
         if(!ResultMessageController.isSuccess((hasMessageToReadResponseDTO.getResultMessage()))){
             messageToShow = activity.getString(R.string.Message_UnknownError);
-            showErrorMessageAndBack(messageToShow);
+            showErrorMessage(messageToShow);
             return;
         }
         hasChatNotification = hasMessageToReadResponseDTO.hasMessageToRead();

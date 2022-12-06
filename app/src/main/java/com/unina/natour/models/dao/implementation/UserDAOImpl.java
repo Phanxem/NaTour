@@ -85,7 +85,9 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
 
         OkHttpClient client = new OkHttpClient();
 
-        Call call = client.newCall(request);
+        Request signedRequest = ServerDAO.signRequest(request);
+
+        Call call = client.newCall(signedRequest);
 
         final IOException[] exception = {null};
         final boolean[] isSuccessful = {true};
@@ -417,7 +419,9 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
 
         OkHttpClient client = new OkHttpClient();
 
-        Call call = client.newCall(request);
+        Request signedRequest = ServerDAO.signRequest(request);
+
+        Call call = client.newCall(signedRequest);
 
         final IOException[] exception = {null};
         CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();
@@ -481,7 +485,9 @@ public class UserDAOImpl extends ServerDAO implements UserDAO {
 
         OkHttpClient client = new OkHttpClient();
 
-        Call call = client.newCall(request);
+        Request signedRequest = ServerDAO.signRequest(request);
+
+        Call call = client.newCall(signedRequest);
 
         final IOException[] exception = {null};
         CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();

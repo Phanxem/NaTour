@@ -59,22 +59,6 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
 
     private static final int ELEMENT_PER_PAGE = 20;
 
-    private static final String ADD_ITINERARY = "/add";
-
-
-    private static final String PARAM_KEY_USERNAME = "usernameUser";
-    private static final String BODY_KEY_NAME = "name";
-    private static final String BODY_KEY_GPX = "gpx";
-    private static final String BODY_KEY_DURATION = "duration";
-    private static final String BODY_KEY_LENGHT = "lenght";
-    private static final String BODY_KEY_DIFFICULTY = "difficulty";
-    private static final String BODY_KEY_DESCRIPTION = "description";
-
-
-    private static final String TAG = "UserDAO";
-
-    private static final String TEST_USER = "user";
-
     private Context context;
     private ResultMessageDAO resultMessageDAO;
     private UserDAO userDAO;
@@ -231,9 +215,7 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
 
     @Override
     public ResultMessageDTO addItinerary(SaveItineraryRequestDTO saveItineraryRequest) {
-        //String url = URL + "/add";
-
-        String url = "https://m4xyqnli3i.execute-api.eu-west-1.amazonaws.com/Production/itinerary/add";
+        String url = URL + "/add";
 
         GPX gpx = saveItineraryRequest.getGpx();
 
@@ -274,10 +256,7 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
                 .post(requestBody)
                 .build();
 
-
-        Request signedRequest = ServerDAO.signRequest(request);
-
-        ResultMessageDTO resultMessageDTO = resultMessageDAO.fulfilRequest(signedRequest);
+        ResultMessageDTO resultMessageDTO = resultMessageDAO.fulfilRequest(request);
 
         return resultMessageDTO;
     }
@@ -383,7 +362,9 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
 
         OkHttpClient client = new OkHttpClient();
 
-        Call call = client.newCall(request);
+        Request signedRequest = ServerDAO.signRequest(request);
+
+        Call call = client.newCall(signedRequest);
 
         final IOException[] exception = {null};
         CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();
@@ -448,7 +429,9 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
 
         OkHttpClient client = new OkHttpClient();
 
-        Call call = client.newCall(request);
+        Request signedRequest = ServerDAO.signRequest(request);
+
+        Call call = client.newCall(signedRequest);
 
         final IOException[] exception = {null};
         CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();
@@ -519,8 +502,6 @@ public class ItineraryDAOImpl extends ServerDAO implements ItineraryDAO {
             return getListItineraryWithUserResponseDTO;
         }
 
-        //inserisci gli idUser in un Map(long, Set<int>)
-        //dove la key è l'idUser, e il value è l'insieme di index della lista itinerari corrispondenti all'idUser
         Map<Long, Set<Integer>> mapIdUser = new HashMap<Long, Set<Integer>>();
 
         GetItineraryResponseDTO tempItinerary = null;

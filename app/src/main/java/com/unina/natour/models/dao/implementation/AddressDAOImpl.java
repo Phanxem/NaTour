@@ -86,7 +86,9 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
 
         OkHttpClient client = new OkHttpClient();
 
-        Call call = client.newCall(request);
+        Request signedRequest = ServerDAO.signRequest(request);
+
+        Call call = client.newCall(signedRequest);
 
         final IOException[] exception = {null};
         CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();
@@ -152,7 +154,9 @@ public class AddressDAOImpl extends ServerDAO implements AddressDAO {
 
         OkHttpClient client = new OkHttpClient();
 
-        Call call = client.newCall(request);
+        Request signedRequest = ServerDAO.signRequest(request);
+
+        Call call = client.newCall(signedRequest);
 
         final IOException[] exception = {null};
         CompletableFuture<JsonObject> completableFuture = new CompletableFuture<JsonObject>();
